@@ -170,6 +170,11 @@ img{max-width:100%}
 .cta-section h2{font-size:34px;font-weight:800;margin-bottom:12px;position:relative}
 .cta-section p{font-size:15.5px;opacity:.92;max-width:560px;margin:0 auto 28px;position:relative}
 .cta-section .btn{position:relative}
+.cta-actions{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;position:relative}
+@media(max-width:560px){
+  .cta-actions{flex-direction:column;gap:14px}
+  .cta-actions .btn{width:100%;justify-content:center}
+}
 
 /* ── Auth (register/login) ── */
 .auth-page{min-height:calc(100vh - 68px);background:radial-gradient(800px 400px at 80% 0%,rgba(47,128,237,.10),transparent 60%),var(--bg-alt);display:flex;align-items:center;padding:44px 0}
