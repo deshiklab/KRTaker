@@ -634,8 +634,12 @@ img{max-width:100%}
 [data-theme="dark"] .chat-input input{background:rgba(255,255,255,.05);color:#E8EEF9;border-color:var(--border)}
 [data-theme="dark"] .chat-quick button{background:rgba(255,255,255,.05);color:#7EB3F5;border-color:var(--border)}
 @media(max-width:480px){
-  .chat-box{left:10px;right:10px;width:auto;bottom:84px}
-  .btt-btn{right:14px;bottom:24px}
-  .chat-fab{left:14px;bottom:24px}
+  .chat-box{left:10px;right:10px;width:auto;bottom:calc(84px + env(safe-area-inset-bottom))}
+  .btt-btn{right:14px;bottom:calc(84px + env(safe-area-inset-bottom))}
+  .chat-fab{left:14px;bottom:calc(84px + env(safe-area-inset-bottom))}
+}
+@media(max-width:768px) and (min-width:481px){
+  .chat-fab{bottom:calc(84px + env(safe-area-inset-bottom))}
+  .btt-btn{bottom:calc(84px + env(safe-area-inset-bottom))}
 }
 
