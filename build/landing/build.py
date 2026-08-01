@@ -16,7 +16,8 @@ MENU_OF = {
   'features': 'platform', 'how-it-works': 'platform', 'legal-compliance': 'platform',
   'for-owners': 'for', 'for-tenants': 'for', 'for-partners': 'for', 'for-nrb': 'for',
   'blog': 'resources', 'tools': 'resources', 'blog-lease-registration': 'resources', 'blog-holding-tax': 'resources',
-  'blog-nrb-remittance': 'resources', 'faq': 'resources', 'about': 'resources', 'contact': 'resources',
+  'blog-nrb-remittance': 'resources', 'blog-tds-commercial': 'resources', 'blog-nrb-buying': 'resources',
+  'blog-eviction': 'resources', 'case-studies': 'resources', 'faq': 'resources', 'about': 'resources', 'contact': 'resources',
   'pricing': 'pricing', 'ai-caretaker': 'ai',
 }
 
@@ -38,6 +39,10 @@ PAGES = {
   'blog-lease-registration': ('Why your 2-year lease is legally invisible — KRTaker', 'TPA 1882 §107 + Registration Act §17(1)(d) explained, and how KRTaker automates the gate.', 'blog'),
   'blog-holding-tax': ('Holding tax in 4 steps: Net Annual Value — KRTaker', 'The formula city corporations use — and how to check their math.', 'blog'),
   'blog-nrb-remittance': ('NRB guide: bringing rental income home — KRTaker', 'NRTA/NITA, AD banks and the dossier that makes repatriation painless.', 'blog'),
+  'blog-tds-commercial': ('TDS on commercial rent: the 4% rule — KRTaker', 'Income Tax Act 2023 §128 — every commercial tenant is a collecting agent. TDS 4%, challan, certificates.', 'blog'),
+  'blog-nrb-buying': ('NRB property-buying guide: from Dubai to Dhaka — KRTaker', 'NITA accounts, power of attorney and due diligence — a practical checklist before you wire money home.', 'blog'),
+  'blog-eviction': ('Eviction in Bangladesh: the lawful walkthrough — KRTaker', 'PRCA 1991 grounds, the 30-day notice and why self-help eviction costs more than the rent.', 'blog'),
+  'case-studies': ('Case studies — KRTaker', 'Real portfolios, real numbers: Mirpur 40-unit, Gulshan plaza and an NRB portfolio in Dubai — what changes on KRTaker.', 'resources'),
   'tools': ('Calculators — KRTaker', 'Holding tax, TDS and rent yield calculators for Bangladeshi property — instant, bilingual, accurate.', 'resources'),
   'faq': ('FAQ — KRTaker', 'Answers for owners, tenants, service partners and NRBs.', None),
   'contact': ('Contact — KRTaker', 'Questions, pilot onboarding, partner applications — we reply within 24 hours.', None),

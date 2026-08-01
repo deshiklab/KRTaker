@@ -235,6 +235,30 @@ img{max-width:100%}
 .blog-body p{font-size:13px;color:var(--text-soft);margin-bottom:12px}
 .blog-meta{font-size:11px;color:var(--text-mute);display:flex;gap:12px}
 
+/* ── Case studies ── */
+.case-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.case-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .2s;display:flex;flex-direction:column;gap:14px}
+.case-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.case-head{display:flex;gap:14px;align-items:center}
+.case-ico{width:52px;height:52px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.case-ico.green{background:linear-gradient(135deg,#1F8A4C,#27AE60)}
+.case-ico.orange{background:linear-gradient(135deg,#C96A12,#E67E22)}
+.case-head h3{font-size:17px;margin:0 0 3px}
+.case-deck{font-size:13.5px;color:var(--text-soft);margin:0}
+.case-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;padding:14px}
+.case-stats div{text-align:center}
+.case-stats b{display:block;font-size:18px;font-weight:800;color:var(--primary)}
+.case-stats span{font-size:10.5px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.4px}
+.case-points{margin:0;padding-left:18px;font-size:13px;color:#3A4757}
+.case-points li{margin-bottom:8px}
+.case-cta{text-align:center;margin-top:44px;padding:38px 24px;background:var(--grad);border-radius:18px;color:#fff}
+.case-cta h3{font-size:22px;margin:0 0 8px;color:#fff}
+.case-cta p{font-size:14px;margin:0 auto 20px;max-width:520px;opacity:.92}
+[data-theme="dark"] .case-card{background:var(--card);border-color:var(--border)}
+[data-theme="dark"] .case-points li{color:#C2CFE4}
+[data-theme="dark"] .case-stats{background:rgba(255,255,255,.04)}
+[data-theme="dark"] .case-stats b{color:#7EB3F5}
+
 /* ── FAQ ── */
 .faq-list{max-width:760px;margin:0 auto}
 .faq-item{border:1px solid var(--border);border-radius:13px;margin-bottom:10px;overflow:hidden;background:#fff}

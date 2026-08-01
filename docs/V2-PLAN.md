@@ -43,7 +43,7 @@ Single page `tools.html` (also linked from Resources mega-menu):
 ## Status
 - [x] V2 kickoff, README/V1 release docs, tag v1.0.0
 - [x] Calculators (holding tax / TDS / yield) — verified vs. blog example (NAV ৳20L → 8% → ৳1.6L)
-- [ ] Blog + case studies
+- [x] Blog + case studies (3 new posts: TDS commercial, NRB buying, eviction; case-studies page with Mirpur/Gulshan/Dubai)
 - [ ] SEO (sitemap, JSON-LD, OG)
 - [ ] krtaker.com deployment
 - [ ] Auth wiring

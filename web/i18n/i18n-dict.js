@@ -39,6 +39,7 @@ en: {
   "footer.legal": "Legal & Compliance",
   "footer.about": "About us",
   "footer.blog": "Insights & Blog",
+  "footer.caseStudies": "Case studies",
   "footer.faq": "FAQ",
   "footer.contact": "Contact",
   "footer.ai": "AI Caretaker",
@@ -307,7 +308,9 @@ en: {
   "page.hero.about": "Why we built KRTaker",
   "page.hero.aboutSub": "The Key Responsibility Taker — our story and principles.",
   "page.hero.blog": "Insights & Blog",
-  "page.hero.blogSub": "Guides on Bangladeshi property law, taxes and portfolio management."
+  "page.hero.blogSub": "Guides on Bangladeshi property law, taxes and portfolio management.",
+  "page.hero.caseStudies": "Case studies",
+  "page.hero.caseStudiesSub": "Real portfolios, real numbers — what changes when a building runs on KRTaker."
 },
 bn: {
   "nav.features": "বৈশিষ্ট্য",
@@ -348,6 +351,7 @@ bn: {
   "footer.legal": "আইনি ও কমপ্লায়েন্স",
   "footer.about": "আমাদের সম্পর্কে",
   "footer.blog": "ব্লগ ও তথ্য",
+  "footer.caseStudies": "কেস স্টাডি",
   "footer.faq": "প্রশ্নোত্তর",
   "footer.contact": "যোগাযোগ",
   "footer.ai": "এআই কেয়ারটেকার",
@@ -616,6 +620,8 @@ bn: {
   "page.hero.about": "কেন আমরা কেআরটেকার বানালাম",
   "page.hero.aboutSub": "কি রেসপনসিবিলিটি টেকার — আমাদের গল্প ও নীতি।",
   "page.hero.blog": "ব্লগ ও তথ্য",
-  "page.hero.blogSub": "বাংলাদেশের প্রপার্টি আইন, ট্যাক্স ও পোর্টফোলিও ম্যানেজমেন্টের গাইড।"
+  "page.hero.blogSub": "বাংলাদেশের প্রপার্টি আইন, ট্যাক্স ও পোর্টফোলিও ম্যানেজমেন্টের গাইড।",
+  "page.hero.caseStudies": "কেস স্টাডি",
+  "page.hero.caseStudiesSub": "বাস্তব পোর্টফোলিও, বাস্তব সংখ্যা — কেআরটেকারে একটি বিল্ডিং চালালে কী বদলে যায়।"
 }
 };
