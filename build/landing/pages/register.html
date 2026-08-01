@@ -1,0 +1,76 @@
+<div class="auth-page">
+  <div class="container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <span class="auth-icon">🏠</span>
+        <h1>Create your KRTaker account</h1>
+        <p>14-day free trial · No credit card needed</p>
+      </div>
+      <form id="registerForm">
+        <div class="form-group">
+          <label>I am a…</label>
+          <div class="role-pick">
+            <input type="radio" name="acctType" id="rt_owner" value="owner" checked>
+            <label for="rt_owner">🏠 Property Owner</label>
+            <input type="radio" name="acctType" id="rt_partner" value="partner">
+            <label for="rt_partner">🛠️ Service Partner</label>
+            <input type="radio" name="acctType" id="rt_legal" value="legal">
+            <label for="rt_legal">⚖️ Legal Firm / Consultant</label>
+            <input type="radio" name="acctType" id="rt_tenant" value="tenant">
+            <label for="rt_tenant">👤 Tenant (invited)</label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Your name</label>
+            <input type="text" name="name" placeholder="Rofiqul Islam" required>
+          </div>
+          <div class="form-group">
+            <label>Organization (optional)</label>
+            <input type="text" name="org" placeholder="Green View Residency">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email address</label>
+            <input type="email" name="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label>Phone / WhatsApp</label>
+            <input type="tel" name="phone" placeholder="+880 17XX-XXXXXX">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Min 6 characters" minlength="6" required>
+        </div>
+        <div class="form-group">
+          <label>Choose your plan</label>
+          <div class="plan-pick">
+            <input type="radio" name="plan" id="pl_starter" value="Starter" checked>
+            <label for="pl_starter">Starter<br><b>৳5,000</b>/mo</label>
+            <input type="radio" name="plan" id="pl_business" value="Business">
+            <label for="pl_business">Business<br><b>৳15,000</b>/mo</label>
+            <input type="radio" name="plan" id="pl_enterprise" value="Enterprise">
+            <label for="pl_enterprise">Enterprise<br><b>৳45,000</b>/mo</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">⚡ Create my account</button>
+        <p class="terms-note">By registering you agree to our <a href="terms.html">Terms</a> &amp; <a href="privacy.html">Privacy Policy</a>.</p>
+      </form>
+      <div id="regSuccess" class="success-box" style="display:none">
+        <div class="ok-ico">✓</div>
+        <h3 style="margin-bottom:6px">Welcome to KRTaker!</h3>
+        <p style="color:var(--text-soft);font-size:14px"><b id="regSuccessName"></b> is registered. Opening your AI caretaker workspace…</p>
+      </div>
+      <div class="auth-footer">
+        <p>Already have an account? <a href="login.html">Log in</a></p>
+      </div>
+      <div class="auth-feats">
+        <span>✅ Free trial</span>
+        <span>✅ Cancel anytime</span>
+        <span>✅ bKash payment</span>
+      </div>
+    </div>
+  </div>
+</div>

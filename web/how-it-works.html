@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2F80ED">
+<meta name="description" content="From onboarding to full autonomy — the KRTaker journey step by step.">
+<title>How it works — KRTaker</title>
+<link rel="icon" href="https://servers-diagnostic-kirk-jeremy.trycloudflare.com/pwa/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container">
+    <a class="nav-logo" href="index.html"><span class="logo-mark">KR</span> KRTaker</a>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <ul class="nav-links">
+      <li><a href="features.html" >Features</a></li>
+      <li><a href="how-it-works.html" class="active">How it works</a></li>
+      <li><a href="pricing.html" >Pricing</a></li>
+      <li><a href="for-owners.html" >For Owners</a></li>
+      <li><a href="for-partners.html" >Partners</a></li>
+      <li><a href="ai-caretaker.html" >AI Caretaker</a></li>
+      <li><a href="blog.html" >Insights</a></li>
+      <li><a href="about.html" >About</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="login.html" class="btn btn-ghost" style="padding:9px 14px;font-size:13px">Log in</a>
+      <a href="register.html" class="btn btn-primary" style="padding:9px 18px;font-size:13px">Get started</a>
+    </div>
+  </div>
+</nav>
+<div class="page-hero">
+  <div class="container">
+    <h1>How KRTaker works</h1>
+    <p>From first login to a fully autonomous portfolio — here's the journey, step by step, role by role.</p>
+  </div>
+</div>
+<div class="page-body">
+  <div class="container">
+    <h2>1 · Onboarding (Owner)</h2>
+    <ol>
+      <li><b>Register</b> and choose your plan (Starter / Business / Enterprise).</li>
+      <li><b>Add your properties</b> — name, type, jurisdiction, holding number, khatian refs (CS/SA/RS/BS). Add units with floor and square footage.</li>
+      <li><b>Invite your team</b> — property managers get scoped access to assigned buildings only.</li>
+      <li><b>Invite tenants</b> — they receive a portal login to view their lease and pay rent.</li>
+    </ol>
+    <div class="callout">The compliance engine validates every asset against khatian records and flags any jurisdiction gaps before leasing starts.</div>
+
+    <h2>2 · Leasing with legal gates</h2>
+    <ol>
+      <li>Create a lease — pick the unit, tenant, dates, rent and advance.</li>
+      <li>KRTaker instantly checks the law:
+        <ul>
+          <li>Term &gt; 12 months → <b>Pending Registration</b> until sub-registry deed uploaded (TPA §107).</li>
+          <li>Residential advance &gt; 1 month rent → flagged (PRCA §10/§23).</li>
+          <li>Commercial corporate tenant → TDS rate auto-applied on invoices.</li>
+        </ul>
+      </li>
+      <li>Tenant accepts digitally; the ledger activates once registration is verified.</li>
+    </ol>
+
+    <h2>3 · The monthly cycle (automated)</h2>
+    <div class="card-grid">
+      <div class="mini-card"><h4>1st — Invoices</h4><p>KR generates rent invoices for every active lease, splitting TDS for corporate tenants.</p></div>
+      <div class="mini-card"><h4>Ongoing — Payments</h4><p>Tenants pay via bKash or SSLCommerz; signed receipts issue automatically (PRCA §13).</p></div>
+      <div class="mini-card"><h4>5th — Reminders</h4><p>Overdue tenants get polite automated reminders; escalation rules kick in at day 30.</p></div>
+      <div class="mini-card"><h4>Monthly — Tax engine</h4><p>Holding tax recalculated on Net Annual Value; TDS ledger updated for the accountant.</p></div>
+    </div>
+
+    <h2>4 · Maintenance &amp; partners</h2>
+    <ol>
+      <li>Tenant reports an issue ("roof leak") from the portal or chat.</li>
+      <li><b>KR resolves liability</b> — structural → landlord; day-to-day → tenant (PRCA defaults).</li>
+      <li>Landlord-side work is dispatched to a <b>Service Partner</b> with a quotation.</li>
+      <li>A <b>Service Manager</b> inspects the completed work, runs QC, and approves payout.</li>
+      <li>If the landlord ignores a structural ticket, tenants can submit contractor invoices for rent deduction.</li>
+    </ol>
+
+    <h2>5 · Compliance &amp; legal</h2>
+    <div class="card-grid">
+      <div class="mini-card"><h4>Registration tracker</h4><p>Every &gt;12-month lease monitored until its deed is verified.</p></div>
+      <div class="mini-card"><h4>Eviction monitor</h4><p>3+ months unpaid → compliant §114A notice generated for legal review.</p></div>
+      <div class="mini-card"><h4>Statutory calendar</h4><p>Holding tax, TDS PSR, surcharge, income tax deadlines — with reminders.</p></div>
+      <div class="mini-card"><h4>Legal team docket</h4><p>Platform legal counsel (or B2B firms) manage cases inside KRTaker.</p></div>
+    </div>
+
+    <h2>6 · The platform behind it</h2>
+    <div class="card-grid">
+      <div class="mini-card"><h4>Super Admin</h4><p>Subscriptions, billing, packages, integrations, partner onboarding, finance, HR.</p></div>
+      <div class="mini-card"><h4>Accountant</h4><p>MRR, settlements, payouts, TDS &amp; VAT ledger, financial exports.</p></div>
+      <div class="mini-card"><h4>CRM &amp; Help Desk</h4><p>Tickets with SLA, subscriber onboarding, CSAT.</p></div>
+      <div class="mini-card"><h4>Security</h4><p>Role-based access + row-level isolation — data is siloed per tenant, always.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo"><span class="logo-mark">KR</span> KRTaker</div>
+        <p>Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="features.html">Features</a></li>
+          <li><a href="how-it-works.html">How it works</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="register.html">Register</a></li>
+          <li><a href="login.html">Log in</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>For you</h4>
+        <ul>
+          <li><a href="for-owners.html">Property Owners</a></li>
+          <li><a href="for-tenants.html">Tenants</a></li>
+          <li><a href="for-partners.html">Service Partners</a></li>
+          <li><a href="for-nrb.html">NRB Investors</a></li>
+          <li><a href="legal-compliance.html">Legal &amp; Compliance</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About us</a></li>
+          <li><a href="blog.html">Insights &amp; Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="ai-caretaker.html">AI Caretaker</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Get in touch</h4>
+        <ul>
+          <li>📧 hello@krtaker.com</li>
+          <li>📞 +880 1712-000000</li>
+          <li>📍 Dhaka, Bangladesh</li>
+          <li>🕐 24/7 AI caretaker online</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 KRTaker. All rights reserved.</span>
+      <span><a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Support</a></span>
+    </div>
+  </div>
+</footer>
+<script src="js/main.js"></script>
+</body>
+</html>
