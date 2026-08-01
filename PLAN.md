@@ -2,6 +2,10 @@
 **Key Responsibility Taker** — AI-Driven Autonomous Property Management Platform (Bangladesh SaaS)
 
 Status: 🚀 Project start · Reference: REM ERP (design/code/styling) · Date: 2026-08-01
+**Decisions:** AI provider = **DeepSeek** (Phase 5) · Repo = `kabirswe/KRTaker` (private; move to `deshiklab` when org access available)
+
+## Phase Log
+- **Phase 1 ✅ (2026-08-01, commit `76b6dc7`)** — PWA prototype v1.0 (`docs/design-prototype.html`, SW `krtaker-v1-0`): 12 modules (Dashboard, Properties, Units, Tenants, Leases, Invoices, Receipts, Payments, Taxes, Maintenance, Compliance, AI Assistant); legal engines verified (TPA §107 registration gate, PRCA §10/§23 advance cap + §18 eviction, TDS split §109/§128, holding-tax Net Annual Value pipeline); bKash sandbox 4-step pay flow; AI caretaker chat with tool actions; zero JS errors, tunnel preview live.
 
 ---
 
