@@ -59,7 +59,7 @@ function renderLeases(){
       {k:'months', label:'Length', sortable:true, sort:r=>leaseMonths(r), render:r=>leaseMonths(r)+' mo'},
       {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
     ],
-    rows: DB.leases,
+    rows: visibleLeases(),
     filters:['Active','Pending Registration','Expired','Terminated'],
     filterMatch:(r,f)=>r.status===f,
     search:(r,q)=>((r.id+' '+unitLabel(unitById(r.unit))+' '+(tenantById(r.tenant)?.name||'')).toLowerCase().includes(q)),
@@ -173,7 +173,7 @@ function renderInvoices(){
       {k:'net', label:'Net', sortable:true, sort:r=>r.net, render:r=>`<b>${fmt(r.net)}</b>`},
       {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
     ],
-    rows: DB.invoices,
+    rows: visibleInvoices(),
     filters:['Paid','Unpaid','Overdue'],
     filterMatch:(r,f)=>r.status===f,
     search:(r,q)=>((r.id+' '+r.lease+' '+r.month).toLowerCase().includes(q)),
@@ -292,7 +292,7 @@ function renderReceipts(){
       {k:'sig', label:'Signature', sortable:false, render:r=>`<span class="mono">${r.sig}</span>`},
       {k:'act', label:'', sortable:false, render:r=>`<button class="mini-btn" onclick="event.stopPropagation(); printReceipt('${r.id}')">🖨 Print</button>`}
     ],
-    rows: DB.receipts,
+    rows: visibleReceipts(),
     filters:[],
     filterMatch:(r,f)=>true,
     search:(r,q)=>((r.id+' '+r.invoice+' '+r.method+' '+r.sig).toLowerCase().includes(q)),
@@ -337,7 +337,7 @@ function renderMaintenance(){
       {k:'cost', label:'Cost', sortable:true, sort:r=>r.cost, render:r=>r.cost?fmt(r.cost):'—'},
       {k:'act', label:'', sortable:false, render:r=>`<button class="mini-btn" onclick="event.stopPropagation(); openTicketDetail('${r.id}')">View</button>`}
     ],
-    rows: DB.tickets,
+    rows: visibleTickets(),
     filters:['Open','In Progress','Awaiting Payment','Closed'],
     filterMatch:(r,f)=>r.status===f,
     search:(r,q)=>((r.id+' '+r.desc+' '+r.contractor+' '+unitLabel(unitById(r.unit))).toLowerCase().includes(q)),

@@ -130,7 +130,7 @@ function renderPayments(){
       {k:'date', label:'Date', sortable:true, sort:r=>r.date, render:r=>r.date},
       {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
     ],
-    rows: DB.payments,
+    rows: visiblePayments(),
     filters:['Success'],
     filterMatch:(r,f)=>r.status===f,
     search:(r,q)=>((r.id+' '+r.invoice+' '+r.method+' '+r.ref).toLowerCase().includes(q)),
@@ -185,6 +185,10 @@ function sendChatText(text){
 }
 function aiAnswer(q){
   const s = q.toLowerCase();
+  const role = currentUser.role;
+  if((role==='tenant'||role==='partner'||role==='crm'||role==='hr'||role==='accountant') && /generat.*invoice|create.*invoice|issue.*invoice|evict/.test(s)){
+    return {text:'🔒 Permission denied — your role ('+roleOf().label+') cannot perform this action. Ask about your lease, PRCA rights, maintenance liability, or tax questions instead.', tools:['permission_check()']};
+  }
   const L = DB.leases, I = DB.invoices, P = DB.properties;
   let m = s.match(/invoice\s+(for\s+)?(l-\d+)/i);
   if(m && /generat|create|make|issue|bill/.test(s)){

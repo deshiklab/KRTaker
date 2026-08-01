@@ -872,7 +872,7 @@
           </div>
         </div>
         <button class="action-btn primary" onclick="openQuickAdd()" title="Quick add">＋ Add</button>
-        <div class="user-avatar" id="userAvatar" title="Owner — Kabir (demo)" onclick="resetDB()" style="cursor:pointer">KB</div>
+        <div class="user-avatar" id="userAvatar" title="Switch role — click to explore personas" onclick="openRoleSwitcher()" style="cursor:pointer">KB</div>
       </div>
     </div>
     <div class="content" id="content"></div>
@@ -889,7 +889,7 @@
         <span style="color:#e0e0e0">|</span>
         <button onclick="toggleFullScreen()" style="padding:2px 6px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:10px;color:#555" title="Fullscreen">⛶</button>
         <span style="color:#e0e0e0">|</span>
-        <span id="swInfo" style="font-size:9px;color:#9aa5b1">SW krtaker-v2-1</span>
+        <span id="swInfo" style="font-size:9px;color:#9aa5b1">SW krtaker-v2-2</span>
       </div>
     </div>
   </main>
@@ -996,13 +996,69 @@ const SEED = {
     { id:'PAY-002', invoice:'INV-2026-003', amount:405000, method:'bKash', ref:'BK-91cd', date:'2026-06-10', status:'Success' },
     { id:'PAY-003', invoice:'INV-2026-007', amount:40000, method:'Nagad', ref:'NG-33ab', date:'2026-06-12', status:'Success' }
   ],
+  users: [
+    { id:'USR-ADM', role:'superadmin', name:'Kabir (Platform)', avatar:'KB', scope:{} },
+    { id:'USR-OWN', role:'owner', name:'Rofiqul Islam', avatar:'RI', scope:{} },
+    { id:'USR-MGR', role:'manager', name:'Shakil Ahmed', avatar:'SA', scope:{properties:['P-001','P-005']} },
+    { id:'USR-TEN', role:'tenant', name:'Sultana Rahman', avatar:'SR', scope:{tenant:'T-002', unit:'U-010'} },
+    { id:'USR-PAR', role:'partner', name:'Rahim Steel Works', avatar:'RS', scope:{partner:'SP-01'} },
+    { id:'USR-SVM', role:'svc_mgr', name:'Arif Chowdhury', avatar:'AC', scope:{} },
+    { id:'USR-LEG', role:'legal', name:'Barrister Naima', avatar:'BN', scope:{} },
+    { id:'USR-CRM', role:'crm', name:'Mithila Rahman', avatar:'MR', scope:{} },
+    { id:'USR-ACC', role:'accountant', name:'Sohel Rana', avatar:'SR', scope:{} },
+    { id:'USR-HR', role:'hr', name:'Nusrat Jahan', avatar:'NJ', scope:{} }
+  ],
+  staff: [
+    { id:'ST-01', name:'Arif Chowdhury', role:'Service Manager', dept:'Operations', status:'Active' },
+    { id:'ST-02', name:'Mithila Rahman', role:'CRM & Help Desk', dept:'Support', status:'Active' },
+    { id:'ST-03', name:'Sohel Rana', role:'Accountant', dept:'Finance', status:'Active' },
+    { id:'ST-04', name:'Nusrat Jahan', role:'HR & Admin', dept:'Admin', status:'Active' },
+    { id:'ST-05', name:'Barrister Naima Karim', role:'Legal Counsel', dept:'Legal', status:'Active' },
+    { id:'ST-06', name:'Tanvir Hasan', role:'Service Manager (Jr)', dept:'Operations', status:'Active' },
+    { id:'ST-07', name:'Farzana Akter', role:'CRM Executive', dept:'Support', status:'Probation' },
+    { id:'ST-08', name:'Mahmudul Islam', role:'Finance Officer', dept:'Finance', status:'Active' }
+  ],
+  partners: [
+    { id:'SP-01', name:'Rahim Steel Works', trade:'Structural & Steel', rating:4.8, jobs:24, status:'Active' },
+    { id:'SP-02', name:'Kazi Plumbing', trade:'Plumbing & Sanitary', rating:4.5, jobs:41, status:'Active' },
+    { id:'SP-03', name:'Meghna Builders', trade:'Interior & Renovation', rating:4.2, jobs:17, status:'Active' },
+    { id:'SP-04', name:'SecureLine Security', trade:'Security Services', rating:4.9, jobs:33, status:'Active' },
+    { id:'SP-05', name:'CleanPro BD', trade:'Cleaning & Facility', rating:4.0, jobs:52, status:'Onboarding' }
+  ],
+  supportTickets: [
+    { id:'SUP-001', from:'Rofiqul Islam (Owner)', subject:'Cannot upload registration deed for L-004', status:'Open', prio:'High', age:'2h', assignee:'' },
+    { id:'SUP-002', from:'Orbit Textiles (Tenant)', subject:'TDS certificate not received for June', status:'Open', prio:'Medium', age:'5h', assignee:'' },
+    { id:'SUP-003', from:'Sultana Rahman (Tenant)', subject:'How to submit repair invoice for deduction?', status:'In Progress', prio:'Low', age:'1d', assignee:'Mithila' },
+    { id:'SUP-004', from:'Rahim Steel Works (Partner)', subject:'QC feedback on MT-001 — photos uploaded', status:'In Progress', prio:'Medium', age:'1d', assignee:'Arif' },
+    { id:'SUP-005', from:'Dr. Nadia Karim (Tenant)', subject:'Payment failed — bKash timeout', status:'Resolved', prio:'High', age:'2d', assignee:'Sohel' },
+    { id:'SUP-006', from:'Bengal Agro Foods (Tenant)', subject:'Need invoice re-issue with VAT', status:'Open', prio:'Medium', age:'3h', assignee:'' }
+  ],
+  platform: {
+    subscribers: 128, mrr: 2480000, partners: 45, staff: 8, csat: 4.6,
+    subsTrend: '+12 this month', arr: 29760000,
+    subscriptions: [
+      { id:'SUB-001', org:'Green View Residency', plan:'Business', seats:3, mrr:15000, status:'Active', next:'2026-07-01' },
+      { id:'SUB-002', org:'Banani Commercial Tower', plan:'Enterprise', seats:10, mrr:45000, status:'Active', next:'2026-07-05' },
+      { id:'SUB-003', org:'Chattogram Industrial Shed', plan:'Business', seats:2, mrr:15000, status:'Active', next:'2026-07-12' },
+      { id:'SUB-004', org:'Dhanmondi Apartment', plan:'Starter', seats:1, mrr:5000, status:'Active', next:'2026-07-20' },
+      { id:'SUB-005', org:'Gulshan Lakeside Plot', plan:'Starter', seats:1, mrr:5000, status:'Trial', next:'2026-06-28' }
+    ],
+    finance: [
+      { id:'FIN-001', type:'Subscription revenue', month:'Jun 2026', amount:2480000, status:'Settled' },
+      { id:'FIN-002', type:'Partner payout', month:'Jun 2026', amount:-420000, status:'Paid' },
+      { id:'FIN-003', type:'Gateway fees (bKash/SSL)', month:'Jun 2026', amount:-96250, status:'Settled' },
+      { id:'FIN-004', type:'TDS collected (platform)', month:'Jun 2026', amount:152000, status:'Payable' },
+      { id:'FIN-005', type:'Legal add-on revenue', month:'Jun 2026', amount:180000, status:'Invoiced' },
+      { id:'FIN-006', type:'Hosting & infra', month:'Jun 2026', amount:-78000, status:'Paid' }
+    ]
+  },
   ai_log: [
     { role:'ai', text:'Hello 👋 I\'m KR — your AI property caretaker. Ask me about leases, taxes, PRCA compliance, or say "generate invoice for L-003" and I\'ll take action.', ts:'2026-06-30 09:00' }
   ]
 };
 
 // === KRTaker core v2: state, groups/nav, table framework, dashboard, portfolio, tenancy ===
-const SW_CACHE = 'krtaker-v2-1';
+const SW_CACHE = 'krtaker-v2-2';
 let DB = loadDB();
 let currentView = 'dashboard';
 let currentGroup = 'overview';
@@ -1037,15 +1093,132 @@ const QUICK_ACTIONS = [
   {ico:'🔧', label:'Report Maintenance', fn:'openTicketForm()'}
 ];
 
+// ---------- role engine (v2.2 role explorer) ----------
+const ROLES = [
+  { id:'superadmin', label:'Super Admin',         ico:'👑', tag:'Platform Owner' },
+  { id:'owner',      label:'Subscriber (Owner)',  ico:'🏠', tag:'Property Owner' },
+  { id:'manager',    label:'Property Manager',    ico:'🗝️', tag:'Owner\'s sub-user' },
+  { id:'tenant',     label:'Tenant',              ico:'👤', tag:'Occupant' },
+  { id:'partner',    label:'Service Partner',     ico:'🛠️', tag:'B2B contractor' },
+  { id:'svc_mgr',    label:'Service Manager',     ico:'📋', tag:'Platform QC' },
+  { id:'legal',      label:'Legal Team',          ico:'⚖️', tag:'Compliance' },
+  { id:'crm',        label:'CRM & Help Desk',     ico:'🎧', tag:'Platform support' },
+  { id:'accountant', label:'Accountant',          ico:'💰', tag:'Platform finance' },
+  { id:'hr',         label:'HR & Admin',          ico:'🗂️', tag:'Platform ops' }
+];
+const PERMS = {
+  superadmin: { mods:['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai'], scope:'all', label:'Platform' },
+  owner:      { mods:['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai'], scope:'owner', label:'My Portfolio' },
+  manager:    { mods:['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai'], scope:'assigned', label:'Assigned' },
+  tenant:     { mods:['dashboard','invoices','receipts','payments','maintenance','ai'], scope:'tenant', label:'Tenant Portal' },
+  partner:    { mods:['dashboard','maintenance','invoices','payments','ai'], scope:'partner', label:'Partner Works' },
+  svc_mgr:    { mods:['dashboard','maintenance','compliance','ai'], scope:'all', label:'QC' },
+  legal:      { mods:['dashboard','compliance','leases','ai'], scope:'all', label:'Legal' },
+  crm:        { mods:['dashboard','maintenance','ai'], scope:'all', label:'Support' },
+  accountant: { mods:['dashboard','invoices','receipts','payments','taxes','ai'], scope:'all', label:'Finance' },
+  hr:         { mods:['dashboard','ai'], scope:'all', label:'HR' }
+};
+let currentUser = DB.users.find(u=>u.id==='USR-ADM') || {id:'USR-ADM', role:'superadmin', name:'Kabir', avatar:'KB', scope:{}};
+function roleOf(){ return ROLES.find(r=>r.id===currentUser.role) || ROLES[0]; }
+function can(mod){ return PERMS[currentUser.role].mods.includes(mod); }
+function modLabel(mid){
+  const m = MODS[mid];
+  if(currentUser.role==='tenant'){
+    if(mid==='invoices') return {label:'My Invoices', ico:'🧾'};
+    if(mid==='maintenance') return {label:'Report Issue', ico:'🔧'};
+    if(mid==='payments') return {label:'Pay Rent', ico:'💳'};
+  }
+  if(currentUser.role==='partner' && mid==='maintenance') return {label:'My Works', ico:'🛠️'};
+  return m;
+}
+// data scoping
+function visibleProperties(){
+  const s = currentUser.scope || {};
+  if(currentUser.role==='manager') return DB.properties.filter(p=>s.properties.includes(p.id));
+  return DB.properties;
+}
+function visibleUnits(){
+  const s = currentUser.scope || {};
+  if(currentUser.role==='tenant') return DB.units.filter(u=>u.id===s.unit);
+  if(currentUser.role==='manager') return DB.units.filter(u=>s.properties.includes(u.property));
+  return DB.units;
+}
+function visibleLeases(){
+  const s = currentUser.scope || {};
+  if(currentUser.role==='tenant') return DB.leases.filter(l=>l.tenant===s.tenant);
+  if(currentUser.role==='manager'){
+    const us = visibleUnits(); return DB.leases.filter(l=>us.some(u=>u.id===l.unit));
+  }
+  return DB.leases;
+}
+function visibleInvoices(){
+  const ls = visibleLeases();
+  return DB.invoices.filter(v=>ls.some(l=>l.id===v.lease));
+}
+function visibleTickets(){
+  const s = currentUser.scope || {};
+  if(currentUser.role==='tenant') return DB.tickets.filter(t=>t.unit===s.unit);
+  if(currentUser.role==='partner'){
+    const p = DB.partners.find(x=>x.id===s.partner);
+    return DB.tickets.filter(t=>p && t.contractor && t.contractor.includes(p.name.replace(' Works','').replace(' Builders','')));
+  }
+  if(currentUser.role==='manager'){ const us=visibleUnits(); return DB.tickets.filter(t=>us.some(u=>u.id===t.unit)); }
+  return DB.tickets;
+}
+function visibleTenants(){
+  const s = currentUser.scope || {};
+  if(currentUser.role==='tenant') return DB.tenants.filter(t=>t.id===s.tenant);
+  if(currentUser.role==='manager'){
+    const ls = visibleLeases(); return DB.tenants.filter(t=>ls.some(l=>l.tenant===t.id));
+  }
+  return DB.tenants;
+}
+function visibleReceipts(){
+  const vis = visibleInvoices().map(v=>v.id);
+  return DB.receipts.filter(r=>vis.includes(r.invoice));
+}
+function visiblePayments(){
+  const vis = visibleInvoices().map(v=>v.id);
+  return DB.payments.filter(p=>vis.includes(p.invoice));
+}
+function switchRole(userId){
+  const u = DB.users.find(x=>x.id===userId);
+  if(!u) return;
+  currentUser = u;
+  const avatar = document.getElementById('userAvatar');
+  if(avatar) avatar.textContent = u.avatar;
+  const ua = document.getElementById('userAvatarTitle');
+  if(ua) ua.textContent = u.name + ' — ' + roleOf().label;
+  if(!can(currentView)) nav('dashboard'); else nav(currentView);
+  toast('Switched to ' + u.name + ' · ' + roleOf().label, 'success');
+  closeModal();
+}
+function openRoleSwitcher(){
+  const items = ROLES.map((r,i)=>{
+    const u = DB.users.find(x=>x.role===r.id);
+    const active = currentUser.role===r.id;
+    return `<div class="rs-item ${active?'rs-active':''}" onclick="switchRole('${u.id}')" style="display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:9px;cursor:pointer;border:1px solid ${active?'#cfe0ff':'#f0f2f5'};background:${active?'#f2f7ff':'#fff'};margin-bottom:5px">
+      <span style="font-size:17px">${r.ico}</span>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:#222">${r.label}${active?' <span style="color:#2F80ED;font-size:9px">· ACTIVE</span>':''}</div>
+      <div style="font-size:10px;color:#8895a7">${esc(u.name)} · ${r.tag}</div></div>
+      <span style="font-size:9px;color:#2F80ED;background:#eef6ff;padding:2px 8px;border-radius:10px">${r.id==='superadmin'?'all data':PERMS[r.id].label}</span></div>`;
+  }).join('');
+  openModal('🔀 Role Explorer — switch persona',
+    `<div style="font-size:11px;color:#667;line-height:1.7;margin-bottom:10px">Explore KRTaker from each user's perspective. Nav, dashboard and data scope adapt to the role.</div>
+     <div id="rsList" style="max-height:56vh;overflow-y:auto;padding-right:2px">${items}</div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Close</button>
+     <button class="drawer-btn primary" onclick="resetDB()">Reset demo data</button>`);
+}
+
 // ---------- persistence ----------
 function loadDB(){
   try{
-    const raw = localStorage.getItem('krtaker_db_v2');
+    const raw = localStorage.getItem('krtaker_db_v3');
     if(raw) return JSON.parse(raw);
   }catch(e){}
   return JSON.parse(JSON.stringify(SEED));
 }
-function saveDB(){ try{ localStorage.setItem('krtaker_db_v2', JSON.stringify(DB)); }catch(e){} }
+function saveDB(){ try{ localStorage.setItem('krtaker_db_v3', JSON.stringify(DB)); }catch(e){} }
 function resetDB(){ DB = JSON.parse(JSON.stringify(SEED)); saveDB(); toast('Demo data reset','success'); nav(currentView); }
 
 // ---------- utils ----------
@@ -1094,17 +1267,20 @@ function closeModal(){ document.getElementById('modalOverlay').style.display = '
 function closeModalOnBackdrop(e){ if(e.target.id==='modalOverlay') closeModal(); }
 
 // ---------- nav / groups / top nav ----------
+function groupMods(gid){ const g=GROUPS.find(x=>x.id===gid); return g.mods.filter(can); }
 function renderSidebar(){
   const h = GROUPS.map(g=>{
+    if(!groupMods(g.id).length) return '';
     const active = currentGroup===g.id;
     return `<div class="sidebar-item ${active?'active':''} has-children" data-tip="${g.tip}" onclick="switchGroup('${g.id}')" id="s_${g.id}">${g.ico}</div>`;
-  }).join('<div class="s-grp-sep"></div>');
+  }).filter(x=>x!=='').join('<div class="s-grp-sep"></div>');
   document.getElementById('sidebarNav').innerHTML = h;
 }
 function renderTopNav(){
   const g = GROUPS.find(x=>x.id===currentGroup);
-  document.getElementById('topNav').innerHTML = g.mods.map(mid=>{
-    const m = MODS[mid];
+  const mods = g.mods.filter(can);
+  document.getElementById('topNav').innerHTML = mods.map(mid=>{
+    const m = modLabel(mid);
     return `<div class="top-nav-item ${currentView===mid?'active':''}" onclick="nav('${mid}')">${m.ico} ${m.label}</div>`;
   }).join('');
 }
@@ -1112,11 +1288,15 @@ function switchGroup(gid){
   currentGroup = gid;
   renderSidebar(); renderTopNav();
   const g = GROUPS.find(x=>x.id===gid);
-  nav(g.mods[0]);
+  const mods = g.mods.filter(can);
+  nav(mods[0] || 'dashboard');
 }
 function openMobileNav(){
   const p = document.getElementById('mobileNavPanel');
-  const groupsHtml = GROUPS.map(g=>`<div class="mnav-grp ${currentGroup===g.id?'active':''}" onclick="switchGroup('${g.id}'); renderMobileNavList();">${g.ico}</div>`).join('');
+  const groupsHtml = GROUPS.map(g=>{
+    if(!groupMods(g.id).length) return '';
+    return `<div class="mnav-grp ${currentGroup===g.id?'active':''}" onclick="switchGroup('${g.id}'); renderMobileNavList();">${g.ico}</div>`;
+  }).join('');
   p.innerHTML = `
     <div class="mnav-head"><span>KRTaker — Modules</span><span class="mnav-close" onclick="closeMobileNav()">✕</span></div>
     <div class="mnav-groups">${groupsHtml}</div>
@@ -1128,21 +1308,22 @@ function renderMobileNavList(){
   const g = GROUPS.find(x=>x.id===currentGroup);
   const wrap = document.getElementById('mnavListWrap');
   if(!wrap) return;
-  const mods = g.mods.map(mid=>{
-    const m = MODS[mid];
+  const mods = g.mods.filter(can).map(mid=>{
+    const m = modLabel(mid);
     return `<div class="mnav-item ${currentView===mid?'active':''}" onclick="nav('${mid}'); closeMobileNav()">${m.ico} ${m.label}${currentView===mid?'<span class="mnav-check">✓</span>':''}</div>`;
   }).join('');
   wrap.innerHTML = `<div class="mnav-grp-label">${g.tip}</div><div class="mnav-list">${mods}</div>`;
 }
 function closeMobileNav(){ document.getElementById('mobileNavSheet').style.display = 'none'; }
 function nav(id){
+  if(!can(id)) id = 'dashboard';
   currentView = id;
   const m = MODS[id];
   if(m && m.group !== currentGroup){ currentGroup = m.group; }
   renderSidebar(); renderTopNav();
-  document.getElementById('mobileNavBtnLabel').textContent = m ? m.label : 'Dashboard';
+  document.getElementById('mobileNavBtnLabel').textContent = m ? modLabel(id).label : 'Dashboard';
   document.getElementById('footerGroup').textContent = m ? GROUPS.find(g=>g.id===m.group).tip : 'Overview';
-  document.getElementById('footerModName').textContent = m ? m.label : 'Dashboard';
+  document.getElementById('footerModName').textContent = m ? modLabel(id).label : 'Dashboard';
   window.scrollTo(0,0);
   const renderers = {
     dashboard: renderDashboard, properties: renderProperties, units: renderUnits,
@@ -1288,8 +1469,16 @@ document.addEventListener('keydown', e=>{
 (function(){ const kbd = document.getElementById('gsKbd'); if(kbd && /Mac|iPhone|iPad/.test(navigator.platform)) kbd.textContent = '⌘K'; })();
 
 // ---------- quick add ----------
+function quickActionsFor(){
+  const role = currentUser.role;
+  if(role==='tenant') return QUICK_ACTIONS.filter(a=>/Report|Invoice/.test(a.label));
+  if(role==='partner') return QUICK_ACTIONS.filter(a=>/Report/.test(a.label));
+  return QUICK_ACTIONS;
+}
 function openQuickAdd(){
-  document.getElementById('qaList').innerHTML = QUICK_ACTIONS.map(a=>
+  const acts = quickActionsFor();
+  if(!acts.length){ toast('No quick actions for this role','error'); return; }
+  document.getElementById('qaList').innerHTML = acts.map(a=>
     `<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid #f0f2f5" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${a.fn}; closeQuickAdd()">
       <span style="font-size:15px">${a.ico}</span><span style="font-size:12px;font-weight:600">${a.label}</span></div>`).join('');
   document.getElementById('qaDropdown').style.display = 'flex';
@@ -1392,27 +1581,63 @@ function smartTable(mod, opts){
   </div>`;
 }
 
-// ---------- dashboard ----------
+// ---------- dashboard (role-aware) ----------
 function renderDashboard(){
-  const activeLeases = DB.leases.filter(l=>l.status==='Active');
-  const pendingReg = DB.leases.filter(l=>l.status==='Pending Registration');
-  const occupied = DB.units.filter(u=>u.status==='Leased').length;
-  const totalUnits = DB.units.length;
-  const portValue = DB.properties.reduce((s,p)=>s+p.value,0);
-  const rentDue = DB.invoices.filter(v=>v.status==='Unpaid'||v.status==='Overdue').reduce((s,v)=>s+v.gross,0);
-  const openTickets = DB.tickets.filter(t=>t.status==='Open'||t.status==='In Progress').length;
-  const due30 = DB.invoices.filter(v=>v.status==='Overdue').reduce((s,v)=>s+v.gross,0);
+  const ds = { superadmin:renderDSuper, owner:renderDOwner, manager:renderDManager, tenant:renderDTenant, partner:renderDPartner, svc_mgr:renderDSvcMgr, legal:renderDLegal, crm:renderDCrm, accountant:renderDAcct, hr:renderDHr };
+  (ds[currentUser.role]||renderDOwner)();
+}
+function dashShell(title, sub, actions, body){
+  document.getElementById('content').innerHTML = pageHeader(title, sub, actions) + body;
+}
+function renderDSuper(){
+  const pf = DB.platform;
+  const openTickets = DB.supportTickets.filter(t=>t.status==='Open').length;
+  const trials = pf.subscriptions.filter(s=>s.status==='Trial').length;
+  const net = pf.finance.reduce((s,f)=>s+f.amount,0);
+  let h = statCards([
+    ['Subscribers', pf.subscribers, '#2F80ED', pf.subsTrend],
+    ['MRR / ARR', fmt(pf.mrr)+' / '+fmt(pf.arr), '#27ae60', 'SaaS revenue'],
+    ['Service Partners', pf.partners, '#9b59b6', 'B2B orgs'],
+    ['Open Support Tickets', openTickets, openTickets?'#e74c3c':'#27ae60', 'SLA monitor'],
+    ['Platform Net (Jun)', fmt(net), '#e67e22', 'after fees & payouts']
+  ]);
+  const ops = [
+    {ico:'💳', t:'Subscriptions & Plans', d:pf.subscriptions.length+' active · '+trials+' trial', fn:"toast('Subscriptions — Phase 2 backend','success')"},
+    {ico:'📦', t:'Packages', d:'Starter · Business · Enterprise', fn:"toast('Packages — Phase 2 backend','success')"},
+    {ico:'🔌', t:'Integrations', d:'bKash · SSLCommerz · e-Porcha', fn:"toast('Integrations — gateway config','success')"},
+    {ico:'🌐', t:'Web CMS', d:'Marketing site & landing pages', fn:"toast('Web CMS — Phase 2 backend','success')"},
+    {ico:'🛠️', t:'Service Partners', d:pf.partners+' orgs · '+DB.partners.filter(p=>p.status==='Onboarding').length+' onboarding', fn:"nav('maintenance')"},
+    {ico:'⚖️', t:'Legal Team', d:'Staff + B2B firms · cases docket', fn:"nav('compliance')"},
+    {ico:'💰', t:'Accounts & Finance', d:'MRR · settlements · payouts', fn:"nav('invoices')"},
+    {ico:'🗂️', t:'HR & Admin', d:pf.staff+' staff · onboarding', fn:"nav('ai')"}
+  ];
+  const opsHtml = ops.map(o=>`<div class="prop-card" onclick="${o.fn}"><div style="font-size:15px">${o.ico}</div><div class="pc-name" style="margin-top:6px;font-size:12px">${o.t}</div><div class="pc-sub" style="font-size:10px;color:#8895a7;margin-top:2px">${o.d}</div></div>`).join('');
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card" style="grid-column:1/-1"><div class="card-header">🛠 Platform Operations</div><div class="card-body"><div class="grid-cards" style="padding:0">${opsHtml}</div></div></div>
+    <div class="card"><div class="card-header">💳 Active Subscriptions</div><div class="card-body">${pf.subscriptions.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f4f6f9;font-size:11px"><span><b>${esc(s.org)}</b><div style="font-size:9.5px;color:#8895a7">${s.plan} · ${s.seats} seat(s)</div></span><span style="text-align:right">${fmt(s.mrr)}/mo<br><span style="font-size:9px;color:#8895a7">${s.status}</span></span></div>`).join('')}</div></div>
+    <div class="card"><div class="card-header">🧾 Platform Finance (Jun 2026)</div><div class="card-body">${pf.finance.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f4f6f9;font-size:11px"><span>${esc(f.type)}</span><b style="color:${f.amount<0?'#e74c3c':'#27ae60'}">${f.amount<0?'−':'+'}${fmt(Math.abs(f.amount))}</b></div>`).join('')}<div style="display:flex;justify-content:space-between;padding-top:7px;font-weight:700;font-size:12px"><span>Net</span><span>${fmt(net)}</span></div></div></div>
+  </div>`;
+  dashShell('Platform Command Center', 'Super Admin — '+roleOf().tag+' · subscriptions, billing, partners, finance, HR', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button><button class="action-btn primary" onclick="openQuickAdd()">＋ Quick add</button>`, h);
+}
+function renderDOwner(){
+  const activeLeases = visibleLeases().filter(l=>l.status==='Active');
+  const pendingReg = visibleLeases().filter(l=>l.status==='Pending Registration');
+  const occupied = visibleUnits().filter(u=>u.status==='Leased').length;
+  const totalUnits = visibleUnits().length;
+  const portValue = visibleProperties().reduce((s,p)=>s+p.value,0);
+  const rentDue = visibleInvoices().filter(v=>v.status==='Unpaid'||v.status==='Overdue').reduce((s,v)=>s+v.gross,0);
+  const openTickets = visibleTickets().filter(t=>t.status==='Open'||t.status==='In Progress').length;
+  const due30 = visibleInvoices().filter(v=>v.status==='Overdue').reduce((s,v)=>s+v.gross,0);
 
-  let h = pageHeader('Overview', 'Portfolio at a glance — rent roll, compliance & AI caretaker', `<button class="action-btn ghost" onclick="openQuickAdd()">＋ Quick add</button><button class="action-btn primary" onclick="nav('ai')">🤖 Ask KR</button>`);
-  h += statCards([
+  let h = statCards([
     ['Portfolio Value', fmt(portValue), '#2F80ED', '৳'+(portValue/1e7).toFixed(1)+' Cr'],
-    ['Units', totalUnits+' ('+occupied+' leased)', '#27ae60', Math.round(occupied/totalUnits*100)+'% occupancy'],
+    ['Units', totalUnits+' ('+occupied+' leased)', '#27ae60', totalUnits?Math.round(occupied/totalUnits*100)+'% occupancy':'—'],
     ['Rent Due (Jun–Jul)', fmt(rentDue), '#e67e22', 'Overdue '+fmt(due30)],
     ['Leases Pending Registration', pendingReg.length, pendingReg.length?'#e74c3c':'#27ae60', 'Legal gate active'],
-    ['Open Tickets', openTickets, '#9b59b6', DB.tickets.filter(t=>t.liability==='Landlord'&&t.status==='Open').length+' landlord-side']
+    ['Open Tickets', openTickets, '#9b59b6', visibleTickets().filter(t=>t.liability==='Landlord'&&t.status==='Open').length+' landlord-side']
   ]);
 
-  const occBars = DB.properties.map(p=>{
+  const occBars = visibleProperties().map(p=>{
     const us = DB.units.filter(u=>u.property===p.id);
     const oc = us.filter(u=>u.status==='Leased').length;
     const pct = us.length ? Math.round(oc/us.length*100) : 0;
@@ -1438,16 +1663,196 @@ function renderDashboard(){
     <div class="card"><div class="card-header">Compliance Snapshot</div><div class="card-body">
       <div style="font-size:11px;line-height:1.9">
         <div>⚖️ <b>${pendingReg.length}</b> lease${pendingReg.length>1?'s':''} pending registration (TPA 1882 §107)${pendingReg.length?` — <a href="javascript:nav('compliance')" style="color:#2F80ED">review</a>`:''}</div>
-        <div>🏠 <b>${DB.leases.filter(l=>l.residential && l.advance>l.rent).length}</b> residential lease(s) exceed 1-month advance cap (PRCA 1991 §10/§23)</div>
-        <div>📅 <b>${DB.leases.filter(l=>l.status==='Active'&&l.end<today()).length}</b> lease(s) expired or ending soon</div>
-        <div>🧾 <b>${DB.invoices.filter(v=>v.tds>0).length}</b> invoices with TDS split (Income Tax Act 2023)</div>
+        <div>🏠 <b>${visibleLeases().filter(l=>l.residential && l.advance>l.rent).length}</b> residential lease(s) exceed 1-month advance cap (PRCA 1991 §10/§23)</div>
+        <div>🧾 <b>${visibleInvoices().filter(v=>v.tds>0).length}</b> invoices with TDS split (Income Tax Act 2023)</div>
       </div></div></div>
     <div class="card"><div class="card-header">AI Caretaker</div><div class="card-body">
       <div style="font-size:11px;color:#667;line-height:1.7;margin-bottom:8px">Ask KR to generate invoices, check PRCA limits, resolve maintenance liability, or answer tax questions.</div>
       <button class="action-btn primary" style="width:100%" onclick="nav('ai')">🤖 Open AI Assistant</button>
     </div></div>
   </div>`;
-  document.getElementById('content').innerHTML = h;
+  dashShell('My Portfolio', 'Subscriber (Owner) — '+roleOf().tag+' · '+visibleProperties().length+' properties', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button><button class="action-btn primary" onclick="nav('ai')">🤖 Ask KR</button>`, h);
+}
+function renderDManager(){
+  const props = visibleProperties(); const units = visibleUnits(); const ls = visibleLeases();
+  const invs = visibleInvoices();
+  const rentDue = invs.filter(v=>v.status==='Unpaid'||v.status==='Overdue').reduce((s,v)=>s+v.gross,0);
+  const openTix = visibleTickets().filter(t=>t.status!=='Closed').length;
+  let h = statCards([
+    ['Assigned Properties', props.length, '#2F80ED', props.map(p=>esc(p.name.split(' ')[0])).join(' · ')],
+    ['Units Managed', units.length+' ('+units.filter(u=>u.status==='Leased').length+' leased)', '#27ae60', ''],
+    ['Rent Due (scoped)', fmt(rentDue), '#e67e22', invs.filter(v=>v.status==='Overdue').length+' overdue'],
+    ['Open Tasks / Tickets', openTix, '#9b59b6', '']
+  ]);
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card"><div class="card-header">🗝️ My Properties</div><div class="card-body">${props.map(p=>{
+      const us=DB.units.filter(u=>u.property===p.id); const oc=us.filter(u=>u.status==='Leased').length;
+      return `<div class="prop-card" style="margin-bottom:8px" onclick="nav('properties'); openPropDetail('${p.id}')"><div style="display:flex;justify-content:space-between"><div class="pc-name">${esc(p.name)}</div>${badge(p.status)}</div><div class="pc-sub">${us.length} units · ${oc} leased · ${esc(p.jurisdiction)}</div></div>`;
+    }).join('')}</div></div>
+    <div class="card"><div class="card-header">⚡ Today's focus</div><div class="card-body" style="font-size:11px;line-height:2">
+      <div>📄 ${ls.filter(l=>l.status==='Pending Registration').length} lease(s) pending registration — upload sub-registry docs</div>
+      <div>🧾 ${invs.filter(v=>v.status==='Unpaid'||v.status==='Overdue').length} unpaid invoice(s) — send reminders or trigger AI</div>
+      <div>🔧 ${openTix} open ticket(s) — ${visibleTickets().filter(t=>t.liability==='Landlord'&&t.status!=='Closed').length} landlord-side</div>
+      <div style="margin-top:6px"><button class="mini-btn" onclick="nav('leases')">Review leases</button> <button class="mini-btn" onclick="nav('maintenance')">Tickets</button></div>
+    </div></div>
+  </div>`;
+  dashShell('My Workboard', 'Property Manager — '+roleOf().tag+' · scoped to assigned properties', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button>`, h);
+}
+function renderDTenant(){
+  const s = currentUser.scope || {};
+  const me = DB.tenants.find(t=>t.id===s.tenant);
+  const unit = DB.units.find(u=>u.id===s.unit);
+  const ls = visibleLeases();
+  const invs = visibleInvoices();
+  const due = invs.filter(v=>v.status==='Unpaid'||v.status==='Overdue');
+  const myTix = visibleTickets();
+  let h = statCards([
+    ['My Unit', unit?esc(unit.name):'—', '#2F80ED', esc(propertyById(unit?.property)?.name||'')],
+    ['Monthly Rent', ls.length?fmt(ls[0].rent):'—', '#27ae60', ls[0]?ls[0].status:''],
+    ['Outstanding', fmt(due.reduce((s2,v)=>s2+v.net,0)), due.length?'#e74c3c':'#27ae60', due.length?due.length+' invoice(s)':'All clear'],
+    ['My Tickets', myTix.length, '#9b59b6', myTix.filter(t=>t.status!=='Closed').length+' open']
+  ]);
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card"><div class="card-header">🏠 My Lease</div><div class="card-body" style="font-size:11.5px;line-height:1.9">
+      ${ls.length?ls.map(l=>`<div><b>${l.id}</b> · ${l.start} → ${l.end}<br>Rent <b>${fmt(l.rent)}</b>/mo · Advance ${fmt(l.advance)} · ${badge(l.status)}</div>`).join(''):'No lease found'}
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="mini-btn" onclick="nav('invoices')">🧾 My invoices</button>
+        <button class="mini-btn" onclick="nav('payments')">💳 Pay rent</button>
+        <button class="mini-btn" onclick="nav('maintenance')">🔧 Report issue</button>
+      </div></div></div>
+    <div class="card"><div class="card-header">💬 AI Tenant Assistant</div><div class="card-body" style="font-size:11px;color:#667;line-height:1.7">
+      Ask KR about your lease, PRCA rights (advance cap, eviction protection), or maintenance liability. Limited to tenant scope.
+      <div style="margin-top:8px"><button class="action-btn primary" style="width:100%" onclick="nav('ai')">🤖 Ask KR</button></div></div></div>
+  </div>`;
+  dashShell('Tenant Portal', esc(me?.name||'')+' — '+roleOf().tag+' · you see only your own unit & lease', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button>`, h);
+}
+function renderDPartner(){
+  const s = currentUser.scope || {};
+  const p = DB.partners.find(x=>x.id===s.partner);
+  const works = visibleTickets();
+  const active = works.filter(t=>t.status!=='Closed');
+  const myInvs = DB.invoices.filter(v=>v.lease && leaseById(v.lease)); // partner billing placeholder
+  let h = statCards([
+    ['My Rating', p?p.rating.toFixed(1)+' ★':'—', '#e67e22', p?p.jobs+' completed jobs':''],
+    ['Active Works', active.length, '#2F80ED', works.filter(t=>t.status==='Open').length+' awaiting start'],
+    ['Awaiting QC', works.filter(t=>t.status==='Awaiting Payment'||t.status==='In Progress').length, '#9b59b6', 'Service Manager review'],
+    ['This Month Billing', fmt(works.filter(t=>t.cost>0).reduce((s2,t)=>s2+t.cost,0)), '#27ae60', 'net of platform fee']
+  ]);
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card"><div class="card-header">🛠️ My Works</div><div class="card-body">${works.length?works.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f4f6f9;font-size:11px">
+      <span><b>${t.id}</b> · ${esc(t.desc.slice(0,42))}<div style="font-size:9.5px;color:#8895a7">${esc(unitLabel(unitById(t.unit)))} · ${t.contractor}</div></span>
+      <span style="text-align:right">${badge(t.status)}<div style="font-size:9.5px">${t.cost?fmt(t.cost):'—'}</div></span></div>`).join(''):emptyState('No works assigned')}
+      <div style="margin-top:8px"><button class="mini-btn" onclick="nav('maintenance')">Open all works →</button></div></div></div>
+    <div class="card"><div class="card-header">📋 Partner Tools</div><div class="card-body" style="font-size:11px;line-height:2.2">
+      <div>📦 <b>Services catalog</b> — Structural & Steel (${p?esc(p.trade):''})</div>
+      <div>📝 <b>Quotations</b> — send quote on new work orders</div>
+      <div>🧾 <b>Billing & payouts</b> — net of 10% platform fee, TDS applied</div>
+      <div>👥 <b>My team</b> — 3 members · manage access</div>
+      <div style="margin-top:6px"><button class="mini-btn" onclick="toast('Partner portal — Phase 4 backend','success')">Manage profile</button></div>
+    </div></div>
+  </div>`;
+  dashShell('Partner Workspace', esc(p?.name||'')+' — '+roleOf().tag+' · B2B contractor', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button>`, h);
+}
+function renderDSvcMgr(){
+  const all = DB.tickets;
+  const qc = all.filter(t=>t.status==='In Progress'||t.status==='Awaiting Payment');
+  const open = all.filter(t=>t.status==='Open');
+  let h = statCards([
+    ['Open Work Orders', open.length, '#e67e22', 'to route to partners'],
+    ['In QC Queue', qc.length, '#2F80ED', 'inspection & sign-off'],
+    ['Completed (all-time)', all.filter(t=>t.status==='Closed').length, '#27ae60', ''],
+    ['Partners Active', DB.partners.filter(p=>p.status==='Active').length, '#9b59b6', DB.partners.length+' total']
+  ]);
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card"><div class="card-header">🔍 QC Inspection Queue</div><div class="card-body">${qc.length?qc.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f4f6f9;font-size:11px">
+      <span><b>${t.id}</b> · ${esc(t.desc.slice(0,40))}<div style="font-size:9.5px;color:#8895a7">${esc(unitLabel(unitById(t.unit)))} · ${t.contractor||'unassigned'}</div></span>
+      ${badge(t.status)}</div>`).join(''):emptyState('QC queue clear ✓')}
+      <div style="margin-top:8px"><button class="mini-btn" onclick="nav('maintenance')">Open inspections →</button></div></div></div>
+    <div class="card"><div class="card-header">📊 Partner Performance</div><div class="card-body">${DB.partners.map(p=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f4f6f9;font-size:11px"><span>${esc(p.name)} · <span style="color:#8895a7;font-size:10px">${esc(p.trade)}</span></span><b>${p.rating.toFixed(1)} ★ <span style="color:#8895a7;font-weight:400">${p.jobs} jobs</span></b></div>`).join('')}</div></div>
+  </div>`;
+  dashShell('QC Command', 'Service Manager — '+roleOf().tag+' · inspect & QC partner works platform-wide', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button>`, h);
+}
+function renderDLegal(){
+  const pendingReg = DB.leases.filter(l=>l.status==='Pending Registration');
+  const evict = DB.tenants.map(t=>({t, e:evictionEligible(t.id)})).filter(x=>x.e.eligible);
+  let h = statCards([
+    ['Leases Pending Registration', pendingReg.length, pendingReg.length?'#e74c3c':'#27ae60', 'TPA 1882 §107'],
+    ['Active Eviction Grounds', evict.length, evict.length?'#e67e22':'#27ae60', 'PRCA §18'],
+    ['Registered Instruments', DB.leases.filter(l=>l.regMeta).length, '#2F80ED', 'verified'],
+    ['Statutory Deadlines', 3, '#9b59b6', 'this quarter']
+  ]);
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card"><div class="card-header">⚖️ Case Docket</div><div class="card-body">
+      <div style="font-size:11px;line-height:1.9">
+      ${pendingReg.map(l=>`<div>📄 <b>${l.id}</b> — ${esc(unitLabel(unitById(l.unit)))} · ${leaseMonths(l)} mo · <a href="javascript:nav('leases'); openLeaseDetail('${l.id}')" style="color:#2F80ED">review</a></div>`).join('')}
+      ${evict.map(x=>`<div>⚡ <b>${esc(x.t.name)}</b> — ${x.e.months} mo unpaid · <a href="javascript:generateEvictionNotice('${x.t.id}')" style="color:#2F80ED">generate §114A notice</a></div>`).join('')}
+      ${!pendingReg.length&&!evict.length?'No active cases ✓':''}
+      </div></div></div>
+    <div class="card"><div class="card-header">🗓 Statutory Calendar</div><div class="card-body" style="font-size:11px;line-height:2">
+      <div>🗓 Holding tax return — <b>Jun 30</b></div><div>🗓 TDS PSR — <b>monthly by 7th</b></div>
+      <div>🗓 Surcharge declaration — <b>Nov 30</b></div><div>🗓 Income tax — <b>Nov 30</b></div>
+      <div style="margin-top:6px"><button class="mini-btn" onclick="nav('compliance')">Open compliance engine →</button></div>
+    </div></div>
+  </div>`;
+  dashShell('Legal & Compliance', 'Legal Team — '+roleOf().tag+' · staff counsel or B2B firm', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button>`, h);
+}
+function renderDCrm(){
+  const tickets = DB.supportTickets;
+  const open = tickets.filter(t=>t.status==='Open');
+  const prog = tickets.filter(t=>t.status==='In Progress');
+  const resolved = tickets.filter(t=>t.status==='Resolved');
+  let h = statCards([
+    ['Open Tickets', open.length, open.length?'#e74c3c':'#27ae60', 'SLA: 4h response'],
+    ['In Progress', prog.length, '#e67e22', 'assigned'],
+    ['Resolved (7d)', resolved.length, '#27ae60', 'CSAT '+DB.platform.csat+'/5'],
+    ['Subscribers', DB.platform.subscribers, '#2F80ED', 'care coverage']
+  ]);
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card"><div class="card-header">🎧 Support Queue</div><div class="card-body">${tickets.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f4f6f9;font-size:11px">
+      <span style="min-width:0;flex:1"><b>${t.id}</b> · ${esc(t.subject.slice(0,46))}<div style="font-size:9.5px;color:#8895a7">${esc(t.from)} · ${t.age}${t.assignee?' · '+esc(t.assignee):''}</div></span>
+      <span style="text-align:right">${badge(t.status)}<div style="font-size:9px;color:${t.prio==='High'?'#e74c3c':'#e67e22'};font-weight:600">${t.prio}</div></span></div>`).join('')}</div></div>
+    <div class="card"><div class="card-header">🤝 CRM Notes</div><div class="card-body" style="font-size:11px;line-height:1.9">
+      <div>✅ Onboarding call — <b>Orbit Textiles</b> (tenant) done</div>
+      <div>✅ Follow-up — <b>Bengal Agro Foods</b> VAT invoice (SUP-006)</div>
+      <div>⏳ Trial conversion — <b>Gulshan Lakeside Plot</b> ends Jun 28</div>
+      <div style="margin-top:6px"><button class="mini-btn" onclick="toast('Ticket actions — Phase 2 backend','success')">Create ticket</button></div>
+    </div></div>
+  </div>`;
+  dashShell('Help Desk & CRM', 'CRM & Help Desk — '+roleOf().tag+' · support ticketing platform-wide', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button>`, h);
+}
+function renderDAcct(){
+  const pf = DB.platform;
+  const net = pf.finance.reduce((s,f)=>s+f.amount,0);
+  let h = statCards([
+    ['Platform Revenue (Jun)', fmt(pf.mrr), '#27ae60', 'MRR '+fmt(pf.arr)+' ARR'],
+    ['Net (Jun)', fmt(net), '#2F80ED', 'after fees & payouts'],
+    ['Subscriptions', pf.subscriptions.length, '#9b59b6', pf.subscriptions.filter(s=>s.status==='Active').length+' active'],
+    ['TDS Payable', fmt(152000), '#e67e22', 'NBR compliance']
+  ]);
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card"><div class="card-header">🧾 Platform Finance Ledger (Jun 2026)</div><div class="card-body">${pf.finance.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f4f6f9;font-size:11px"><span>${esc(f.type)} · <span style="color:#8895a7">${f.month}</span></span><b style="color:${f.amount<0?'#e74c3c':'#27ae60'}">${f.amount<0?'−':'+'}${fmt(Math.abs(f.amount))}</b></div>`).join('')}<div style="display:flex;justify-content:space-between;padding-top:7px;font-weight:700"><span>Net</span><span>${fmt(net)}</span></div></div></div>
+    <div class="card"><div class="card-header">💳 Subscription Billing</div><div class="card-body">${pf.subscriptions.map(s=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f4f6f9;font-size:11px"><span>${esc(s.org)} · ${s.plan}</span><span>${fmt(s.mrr)}/mo · ${s.status}</span></div>`).join('')}<div style="margin-top:6px"><button class="mini-btn" onclick="nav('invoices')">Tenant invoices →</button></div></div></div>
+  </div>`;
+  dashShell('Platform Finance', 'Accountant — '+roleOf().tag+' · MRR, settlements, payouts, TDS', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button>`, h);
+}
+function renderDHr(){
+  const staff = DB.staff;
+  let h = statCards([
+    ['Staff', staff.length, '#2F80ED', staff.filter(s=>s.status==='Active').length+' active'],
+    ['Departments', [...new Set(staff.map(s=>s.dept))].length, '#9b59b6', 'Ops · Support · Finance · Admin · Legal'],
+    ['Probation', staff.filter(s=>s.status==='Probation').length, '#e67e22', 'review pending'],
+    ['Open Roles', 3, '#27ae60', 'Service Mgr · CRM · Legal']
+  ]);
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card"><div class="card-header">🗂️ Staff Directory</div><div class="card-body">${staff.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f4f6f9;font-size:11px"><span><b>${esc(s.name)}</b><div style="font-size:9.5px;color:#8895a7">${esc(s.role)} · ${esc(s.dept)}</div></span>${badge(s.status)}</div>`).join('')}<div style="margin-top:6px"><button class="mini-btn" onclick="toast('HR tools — Phase 2 backend','success')">＋ Onboard staff</button></div></div></div>
+    <div class="card"><div class="card-header">⚙️ Admin Ops</div><div class="card-body" style="font-size:11px;line-height:2">
+      <div>🖥 IT & access — 10 role accounts provisioned</div>
+      <div>📁 Document vault — org policies, NDA, compliance files</div>
+      <div>🏢 Office ops — payroll inputs for 8 staff</div>
+      <div>🔐 Audit — role-based access reviewed monthly</div>
+    </div></div>
+  </div>`;
+  dashShell('HR & Admin', 'HR & Admin — '+roleOf().tag+' · staff & platform operations', `<button class="action-btn ghost" onclick="openRoleSwitcher()">🔀 Switch role</button>`, h);
 }
 
 // ---------- properties ----------
@@ -1462,7 +1867,7 @@ function renderProperties(){
       {k:'value', label:'Value', sortable:true, sort:r=>r.value, render:r=>fmt(r.value)},
       {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
     ],
-    rows: DB.properties,
+    rows: visibleProperties(),
     filters:['Flat','Plot','Commercial','Industrial'],
     filterMatch:(r,f)=>r.type===f,
     search:(r,q)=>((r.name+' '+r.holding+' '+r.jurisdiction+' '+r.id).toLowerCase().includes(q)),
@@ -1546,7 +1951,7 @@ function renderUnits(){
       {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)},
       {k:'lease', label:'Lease(s)', sortable:false, render:r=>leasesForUnit(r.id).map(l=>l.id).join(', ')||'—'}
     ],
-    rows: DB.units,
+    rows: visibleUnits(),
     filters:['Leased','Vacant','Maintenance'],
     filterMatch:(r,f)=>r.status===f,
     search:(r,q)=>((r.name+' '+r.id+' '+(propertyById(r.property)?.name||'')).toLowerCase().includes(q)),
@@ -1577,7 +1982,7 @@ function openUnitDetail(id){
 function openUnitForm(){
   openModal('Add Unit',
     `<div class="form-grid">
-      <div class="form-group"><div class="form-label">Property</div><select class="form-input" id="uf_prop">${DB.properties.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div>
+      <div class="form-group"><div class="form-label">Property</div><select class="form-input" id="uf_prop">${visibleProperties().map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div>
       <div class="form-group"><div class="form-label">Unit name</div><input class="form-input" id="uf_name" placeholder="Flat 6A"></div>
       <div class="form-group"><div class="form-label">Floor</div><input class="form-input" id="uf_floor" placeholder="6th"></div>
       <div class="form-group"><div class="form-label">Sqft</div><input class="form-input" id="uf_sqft" placeholder="1450"></div>
@@ -1606,7 +2011,7 @@ function renderTenants(){
       {k:'leases', label:'Leases', sortable:true, sort:r=>DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).length, render:r=>DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).map(l=>l.id).join(', ')||'—'},
       {k:'rent', label:'Rent Roll', sortable:true, sort:r=>DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0), render:r=>{const m=DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0); return m?fmt(m)+'/mo':'—';}}
     ],
-    rows: DB.tenants,
+    rows: visibleTenants(),
     filters:['Individual','Corporate'],
     filterMatch:(r,f)=>r.kind===f,
     search:(r,q)=>((r.name+' '+r.nid+' '+r.phone+' '+r.email).toLowerCase().includes(q)),
@@ -1719,7 +2124,7 @@ function renderLeases(){
       {k:'months', label:'Length', sortable:true, sort:r=>leaseMonths(r), render:r=>leaseMonths(r)+' mo'},
       {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
     ],
-    rows: DB.leases,
+    rows: visibleLeases(),
     filters:['Active','Pending Registration','Expired','Terminated'],
     filterMatch:(r,f)=>r.status===f,
     search:(r,q)=>((r.id+' '+unitLabel(unitById(r.unit))+' '+(tenantById(r.tenant)?.name||'')).toLowerCase().includes(q)),
@@ -1833,7 +2238,7 @@ function renderInvoices(){
       {k:'net', label:'Net', sortable:true, sort:r=>r.net, render:r=>`<b>${fmt(r.net)}</b>`},
       {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
     ],
-    rows: DB.invoices,
+    rows: visibleInvoices(),
     filters:['Paid','Unpaid','Overdue'],
     filterMatch:(r,f)=>r.status===f,
     search:(r,q)=>((r.id+' '+r.lease+' '+r.month).toLowerCase().includes(q)),
@@ -1952,7 +2357,7 @@ function renderReceipts(){
       {k:'sig', label:'Signature', sortable:false, render:r=>`<span class="mono">${r.sig}</span>`},
       {k:'act', label:'', sortable:false, render:r=>`<button class="mini-btn" onclick="event.stopPropagation(); printReceipt('${r.id}')">🖨 Print</button>`}
     ],
-    rows: DB.receipts,
+    rows: visibleReceipts(),
     filters:[],
     filterMatch:(r,f)=>true,
     search:(r,q)=>((r.id+' '+r.invoice+' '+r.method+' '+r.sig).toLowerCase().includes(q)),
@@ -1997,7 +2402,7 @@ function renderMaintenance(){
       {k:'cost', label:'Cost', sortable:true, sort:r=>r.cost, render:r=>r.cost?fmt(r.cost):'—'},
       {k:'act', label:'', sortable:false, render:r=>`<button class="mini-btn" onclick="event.stopPropagation(); openTicketDetail('${r.id}')">View</button>`}
     ],
-    rows: DB.tickets,
+    rows: visibleTickets(),
     filters:['Open','In Progress','Awaiting Payment','Closed'],
     filterMatch:(r,f)=>r.status===f,
     search:(r,q)=>((r.id+' '+r.desc+' '+r.contractor+' '+unitLabel(unitById(r.unit))).toLowerCase().includes(q)),
@@ -2191,7 +2596,7 @@ function renderPayments(){
       {k:'date', label:'Date', sortable:true, sort:r=>r.date, render:r=>r.date},
       {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
     ],
-    rows: DB.payments,
+    rows: visiblePayments(),
     filters:['Success'],
     filterMatch:(r,f)=>r.status===f,
     search:(r,q)=>((r.id+' '+r.invoice+' '+r.method+' '+r.ref).toLowerCase().includes(q)),
@@ -2246,6 +2651,10 @@ function sendChatText(text){
 }
 function aiAnswer(q){
   const s = q.toLowerCase();
+  const role = currentUser.role;
+  if((role==='tenant'||role==='partner'||role==='crm'||role==='hr'||role==='accountant') && /generat.*invoice|create.*invoice|issue.*invoice|evict/.test(s)){
+    return {text:'🔒 Permission denied — your role ('+roleOf().label+') cannot perform this action. Ask about your lease, PRCA rights, maintenance liability, or tax questions instead.', tools:['permission_check()']};
+  }
   const L = DB.leases, I = DB.invoices, P = DB.properties;
   let m = s.match(/invoice\s+(for\s+)?(l-\d+)/i);
   if(m && /generat|create|make|issue|bill/.test(s)){

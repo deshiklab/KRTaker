@@ -68,6 +68,62 @@ const SEED = {
     { id:'PAY-002', invoice:'INV-2026-003', amount:405000, method:'bKash', ref:'BK-91cd', date:'2026-06-10', status:'Success' },
     { id:'PAY-003', invoice:'INV-2026-007', amount:40000, method:'Nagad', ref:'NG-33ab', date:'2026-06-12', status:'Success' }
   ],
+  users: [
+    { id:'USR-ADM', role:'superadmin', name:'Kabir (Platform)', avatar:'KB', scope:{} },
+    { id:'USR-OWN', role:'owner', name:'Rofiqul Islam', avatar:'RI', scope:{} },
+    { id:'USR-MGR', role:'manager', name:'Shakil Ahmed', avatar:'SA', scope:{properties:['P-001','P-005']} },
+    { id:'USR-TEN', role:'tenant', name:'Sultana Rahman', avatar:'SR', scope:{tenant:'T-002', unit:'U-010'} },
+    { id:'USR-PAR', role:'partner', name:'Rahim Steel Works', avatar:'RS', scope:{partner:'SP-01'} },
+    { id:'USR-SVM', role:'svc_mgr', name:'Arif Chowdhury', avatar:'AC', scope:{} },
+    { id:'USR-LEG', role:'legal', name:'Barrister Naima', avatar:'BN', scope:{} },
+    { id:'USR-CRM', role:'crm', name:'Mithila Rahman', avatar:'MR', scope:{} },
+    { id:'USR-ACC', role:'accountant', name:'Sohel Rana', avatar:'SR', scope:{} },
+    { id:'USR-HR', role:'hr', name:'Nusrat Jahan', avatar:'NJ', scope:{} }
+  ],
+  staff: [
+    { id:'ST-01', name:'Arif Chowdhury', role:'Service Manager', dept:'Operations', status:'Active' },
+    { id:'ST-02', name:'Mithila Rahman', role:'CRM & Help Desk', dept:'Support', status:'Active' },
+    { id:'ST-03', name:'Sohel Rana', role:'Accountant', dept:'Finance', status:'Active' },
+    { id:'ST-04', name:'Nusrat Jahan', role:'HR & Admin', dept:'Admin', status:'Active' },
+    { id:'ST-05', name:'Barrister Naima Karim', role:'Legal Counsel', dept:'Legal', status:'Active' },
+    { id:'ST-06', name:'Tanvir Hasan', role:'Service Manager (Jr)', dept:'Operations', status:'Active' },
+    { id:'ST-07', name:'Farzana Akter', role:'CRM Executive', dept:'Support', status:'Probation' },
+    { id:'ST-08', name:'Mahmudul Islam', role:'Finance Officer', dept:'Finance', status:'Active' }
+  ],
+  partners: [
+    { id:'SP-01', name:'Rahim Steel Works', trade:'Structural & Steel', rating:4.8, jobs:24, status:'Active' },
+    { id:'SP-02', name:'Kazi Plumbing', trade:'Plumbing & Sanitary', rating:4.5, jobs:41, status:'Active' },
+    { id:'SP-03', name:'Meghna Builders', trade:'Interior & Renovation', rating:4.2, jobs:17, status:'Active' },
+    { id:'SP-04', name:'SecureLine Security', trade:'Security Services', rating:4.9, jobs:33, status:'Active' },
+    { id:'SP-05', name:'CleanPro BD', trade:'Cleaning & Facility', rating:4.0, jobs:52, status:'Onboarding' }
+  ],
+  supportTickets: [
+    { id:'SUP-001', from:'Rofiqul Islam (Owner)', subject:'Cannot upload registration deed for L-004', status:'Open', prio:'High', age:'2h', assignee:'' },
+    { id:'SUP-002', from:'Orbit Textiles (Tenant)', subject:'TDS certificate not received for June', status:'Open', prio:'Medium', age:'5h', assignee:'' },
+    { id:'SUP-003', from:'Sultana Rahman (Tenant)', subject:'How to submit repair invoice for deduction?', status:'In Progress', prio:'Low', age:'1d', assignee:'Mithila' },
+    { id:'SUP-004', from:'Rahim Steel Works (Partner)', subject:'QC feedback on MT-001 — photos uploaded', status:'In Progress', prio:'Medium', age:'1d', assignee:'Arif' },
+    { id:'SUP-005', from:'Dr. Nadia Karim (Tenant)', subject:'Payment failed — bKash timeout', status:'Resolved', prio:'High', age:'2d', assignee:'Sohel' },
+    { id:'SUP-006', from:'Bengal Agro Foods (Tenant)', subject:'Need invoice re-issue with VAT', status:'Open', prio:'Medium', age:'3h', assignee:'' }
+  ],
+  platform: {
+    subscribers: 128, mrr: 2480000, partners: 45, staff: 8, csat: 4.6,
+    subsTrend: '+12 this month', arr: 29760000,
+    subscriptions: [
+      { id:'SUB-001', org:'Green View Residency', plan:'Business', seats:3, mrr:15000, status:'Active', next:'2026-07-01' },
+      { id:'SUB-002', org:'Banani Commercial Tower', plan:'Enterprise', seats:10, mrr:45000, status:'Active', next:'2026-07-05' },
+      { id:'SUB-003', org:'Chattogram Industrial Shed', plan:'Business', seats:2, mrr:15000, status:'Active', next:'2026-07-12' },
+      { id:'SUB-004', org:'Dhanmondi Apartment', plan:'Starter', seats:1, mrr:5000, status:'Active', next:'2026-07-20' },
+      { id:'SUB-005', org:'Gulshan Lakeside Plot', plan:'Starter', seats:1, mrr:5000, status:'Trial', next:'2026-06-28' }
+    ],
+    finance: [
+      { id:'FIN-001', type:'Subscription revenue', month:'Jun 2026', amount:2480000, status:'Settled' },
+      { id:'FIN-002', type:'Partner payout', month:'Jun 2026', amount:-420000, status:'Paid' },
+      { id:'FIN-003', type:'Gateway fees (bKash/SSL)', month:'Jun 2026', amount:-96250, status:'Settled' },
+      { id:'FIN-004', type:'TDS collected (platform)', month:'Jun 2026', amount:152000, status:'Payable' },
+      { id:'FIN-005', type:'Legal add-on revenue', month:'Jun 2026', amount:180000, status:'Invoiced' },
+      { id:'FIN-006', type:'Hosting & infra', month:'Jun 2026', amount:-78000, status:'Paid' }
+    ]
+  },
   ai_log: [
     { role:'ai', text:'Hello 👋 I\'m KR — your AI property caretaker. Ask me about leases, taxes, PRCA compliance, or say "generate invoice for L-003" and I\'ll take action.', ts:'2026-06-30 09:00' }
   ]
