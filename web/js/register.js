@@ -47,7 +47,7 @@
     try {
       const res = await fetch(API + 'register', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, org: $('rOrg').value.trim(), email, phone: $('rPhone').value.trim(), role: state.role })
+        body: JSON.stringify({ name, org: $('rOrg').value.trim(), email, phone: $('rPhone').value.trim(), role: state.role, pass })
       });
       const data = await res.json();
       if (data.ok) {

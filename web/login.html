@@ -27,7 +27,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.0">
+<link rel="stylesheet" href="css/style.css?v=3.1">
 <!-- KRTaker analytics: replace G-XXXXXXXXXX with your GA4 Measurement ID (or swap for Plausible) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
@@ -121,20 +121,21 @@ gtag('config', 'G-XXXXXXXXXX');
       <form id="loginForm">
         <div class="form-group">
           <label data-i18n="login.email">Email address</label>
-          <input type="email" placeholder="you@example.com" required>
+          <input type="email" id="loginEmail" placeholder="you@example.com" required>
         </div>
         <div class="form-group">
           <label data-i18n="login.pass">Password</label>
-          <input type="password" placeholder="••••••••" required>
+          <input type="password" id="loginPass" placeholder="••••••••" required>
         </div>
+        <div class="form-err" id="loginErr" style="display:none;color:var(--danger);font-size:12.5px;margin-bottom:10px"></div>
         <button type="submit" data-i18n="login.btn" class="btn btn-primary btn-block btn-lg">Log in</button>
         <p class="terms-note"><a href="forgot-password.html">Forgot password?</a></p>
       </form>
       <div class="auth-footer">
         <p><span data-i18n="login.noacct">New to KRTaker?</span> <a href="register.html"><span data-i18n="login.signup">Create an account</span></a></p>
       </div>
-      <div class="auth-feats">
-        <span>Demo: any credentials → workspace</span>
+      <div class="auth-feats" style="font-size:12px;color:var(--text-mute);line-height:1.7">
+        <span>Demo accounts — owner@krtaker.com / demo123 · sultana@krtaker.com / demo123 · kabir@krtaker.com / demo123</span>
       </div>
     </div>
   </div>
@@ -264,11 +265,43 @@ gtag('config', 'G-XXXXXXXXXX');
 </div>
 <!-- Back to top -->
 <button class="btt-btn" aria-label="Back to top">↑</button>
-<script src="i18n/i18n-dict.js?v=3.0"></script>
-<script src="js/i18n.js?v=3.0"></script>
-<script src="js/main.js?v=3.0"></script>
-<script src="js/chat.js?v=3.0"></script>
+<script src="i18n/i18n-dict.js?v=3.1"></script>
+<script src="js/i18n.js?v=3.1"></script>
+<script src="js/main.js?v=3.1"></script>
+<script src="js/chat.js?v=3.1"></script>
 <script>
+/* Phase 2: real login → dashboard workspace */
+(function () {
+  const form = document.getElementById('loginForm');
+  const errEl = document.getElementById('loginErr');
+  const btn = form.querySelector('button[type="submit"]');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const password = document.getElementById('loginPass').value;
+    errEl.style.display = 'none';
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    try {
+      const res = await fetch('../api/app-login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.ok && data.token) {
+        try { localStorage.setItem('krtaker_dash_token', data.token); } catch (x) {}
+        window.location.href = 'dashboard-v2.html';
+      } else {
+        errEl.textContent = data.error || 'Login failed — try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Log in';
+      }
+    } catch (err) {
+      errEl.textContent = 'Network error — please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Log in';
+    }
+  });
+})();
 if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 </script>
 </body>
