@@ -249,6 +249,42 @@ td .c-sub{font-size:11px;color:var(--text-mute)}
 .mob-bar .mb .mi{font-size:17px}
 .mob-bar .mb.active{color:var(--primary);background:var(--primary-light)}
 
+/* ── V2.1: Global search ── */
+.tb-search{position:relative}
+.search-panel{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 24px 60px rgba(10,25,50,.18);overflow:hidden;display:none;max-height:min(480px,70vh);overflow-y:auto;z-index:80}
+.search-panel.open{display:block}
+.search-group{padding:8px 0;border-bottom:1px solid var(--border)}
+.search-group:last-child{border-bottom:none}
+.sg-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-mute);padding:4px 16px 6px}
+.sr-item{display:flex;align-items:center;gap:11px;padding:9px 16px;cursor:pointer;transition:background .12s}
+.sr-item:hover,.sr-item.sel{background:var(--primary-light)}
+.sr-ic{width:32px;height:32px;border-radius:9px;background:var(--bg-alt);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sr-b{min-width:0}
+.sr-t{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sr-s{font-size:11px;color:var(--text-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-search-btn{display:none}
+
+/* ── V2.1: Mobile sidebar backdrop ── */
+.sb-backdrop{position:fixed;inset:0;background:rgba(10,20,40,.45);backdrop-filter:blur(3px);z-index:58;opacity:0;pointer-events:none;transition:opacity .2s}
+.sb-backdrop.show{opacity:1;pointer-events:auto}
+
+/* ── V2.1: Row focus highlight (search jump) ── */
+tr.focus{animation:focusFlash 2.4s ease}
+.panel.focus{animation:focusFlash 2.4s ease}
+@keyframes focusFlash{0%,55%{background:rgba(47,128,237,.16);box-shadow:0 0 0 2px var(--primary)}100%{background:transparent;box-shadow:none}}
+
+/* ── V2.1: Desktop sticky footer (fullscreen · zoom · credits · breadcrumb) ── */
+.app-footer{display:none;position:fixed;bottom:0;left:0;right:0;z-index:55;height:46px;align-items:center;gap:16px;padding:0 24px;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--border);font-size:12px}
+[data-theme="dark"] .app-footer{background:rgba(14,22,38,.94)}
+.app-footer .crumb{display:flex;align-items:center;gap:7px;font-weight:600;color:var(--text-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-footer .crumb b{color:var(--text)}
+.app-footer .crumb .sep{opacity:.4}
+.app-footer .f-copy{margin-left:auto;color:var(--text-mute);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.f-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.f-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text-soft);font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.f-btn:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-1px)}
+.f-zoom{font-size:11px;font-weight:700;min-width:40px;text-align:center;color:var(--text-soft);font-variant-numeric:tabular-nums}
+
 /* ── Responsive ── */
 @media(max-width:1080px){
   .grid-4{grid-template-columns:repeat(2,1fr)}
@@ -262,7 +298,14 @@ td .c-sub{font-size:11px;color:var(--text-mute)}
   .topbar{padding:0 16px}
   .grid-2,.grid-2eq{grid-template-columns:1fr}
   .mob-bar{display:grid}
-  .tb-search{display:none}
+  .tb-search{display:none;position:absolute;top:100%;left:0;right:0;border-radius:0;border-left:none;border-right:none;border-top:none;background:var(--card);padding:10px 16px;z-index:55;box-shadow:0 18px 30px rgba(0,0,0,.1)}
+  .topbar.search-open .tb-search{display:flex}
+  .tb-search-btn{display:inline-flex;align-items:center;justify-content:center}
+  .search-panel{top:calc(100% + 4px);border-radius:12px}
+}
+@media(min-width:861px){
+  .app-footer{display:flex}
+  .content{padding-bottom:104px}
 }
 @media(max-width:520px){
   .stats{grid-template-columns:1fr 1fr;gap:12px}
@@ -302,8 +345,9 @@ td .c-sub{font-size:11px;color:var(--text-mute)}
     <header class="topbar">
       <div class="topbar-in">
         <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-        <div class="tb-search"><span>🔍</span><input id="globalSearch" placeholder="Search units, tenants, invoices…" oninput="doSearch(this.value)"></div>
+        <div class="tb-search"><span>🔍</span><input id="globalSearch" placeholder="Search units, tenants, invoices…" oninput="doSearch(this.value)" onkeydown="searchKey(event)" autocomplete="off"><div class="search-panel" id="searchPanel"></div></div>
         <div class="tb-actions">
+          <button class="icon-btn tb-search-btn" onclick="toggleMobSearch()" aria-label="Search">🔍</button>
           <button class="icon-btn" id="langBtn" onclick="toggleLang()">বাংলা</button>
           <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
           <div class="tb-bell" onclick="toast('3 new notifications — 2 tickets escalated, 1 invoice overdue')">🔔<span class="dot"></span></div>
@@ -321,6 +365,21 @@ td .c-sub{font-size:11px;color:var(--text-mute)}
     <main class="content" id="viewRoot"></main>
   </div>
 </div>
+
+<!-- ═══ Mobile sidebar backdrop ═══ -->
+<div class="sb-backdrop" id="sbBackdrop" onclick="closeSidebar()"></div>
+
+<!-- ═══ Desktop sticky footer ═══ -->
+<footer class="app-footer">
+  <div class="crumb" id="crumb"></div>
+  <div class="f-copy">© 2026 KRTaker — Key Responsibility Taker · All rights reserved · Made with ❤️ in Dhaka 🇧🇩</div>
+  <div class="f-actions">
+    <button class="f-btn" onclick="setZoom(-0.1)" title="Zoom out">−</button>
+    <span class="f-zoom" id="zoomPct">100%</span>
+    <button class="f-btn" onclick="setZoom(0.1)" title="Zoom in">＋</button>
+    <button class="f-btn" id="fsBtn" onclick="toggleFS()" title="Toggle fullscreen">⛶</button>
+  </div>
+</footer>
 
 <!-- ═══ KR widget ═══ -->
 <div class="kr-widget">
@@ -546,16 +605,16 @@ function renderMobBar(){
   const items=[['dashboard','📊'],['properties','🏢'],['invoices','🧾'],['maintenance','🔧'],['ai','🤖']].filter(i=>can(i[0]));
   $('mobBar')||(function(){const d=document.createElement('div');d.className='mob-bar';d.id='mobBar';document.body.appendChild(d)})();
   $('mobBar').innerHTML=items.map(i=>`<div class="mb ${state.view===i[0]?'active':''}" onclick="nav('${i[0]}')"><span class="mi">${i[1]}</span>${t(MOD_TITLE[i[0]],BN[MOD_TITLE[i[0]]])}</div>`).join('');
-  $('mobBar').style.display='grid';
 }
 
 /* ═══ Navigation ═══ */
 function nav(view){
   if(!can(view)){toast('Not available for '+role().role+' role');return}
   state.view=view;
-  $('sidebar').classList.remove('open');
+  closeSidebar();
   renderNav();
   render();
+  updateCrumb();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function render(){
@@ -580,9 +639,89 @@ function setRole(id){
 /* ═══ Theme / lang / misc ═══ */
 function toggleTheme(){state.theme=state.theme==='dark'?'light':'dark';applyTheme();toast(state.theme==='dark'?'Dark mode on':'Light mode on')}
 function applyTheme(){document.documentElement.setAttribute('data-theme',state.theme);localStorage.setItem('krtaker_dash_theme',state.theme);$('themeBtn').textContent=state.theme==='dark'?'☀️ Light':'🌙 Dark'}
-function toggleLang(){state.lang=state.lang==='en'?'bn':'en';localStorage.setItem('krtaker_dash_lang',state.lang);$('langBtn').textContent=state.lang==='en'?'বাংলা':'EN';renderNav();render();toast(state.lang==='bn'?'বাংলা ভাষা নির্বাচিত':'Language: English')}
-function toggleSidebar(){$('sidebar').classList.toggle('open')}
-function doSearch(q){if(!q.trim())return;toast('Search: '+q+' — wired to backend in Phase 2')}
+function toggleLang(){state.lang=state.lang==='en'?'bn':'en';localStorage.setItem('krtaker_dash_lang',state.lang);$('langBtn').textContent=state.lang==='en'?'বাংলা':'EN';renderNav();render();updateCrumb();toast(state.lang==='bn'?'বাংলা ভাষা নির্বাচিত':'Language: English')}
+function toggleSidebar(){const sb=$('sidebar');const open=sb.classList.toggle('open');$('sbBackdrop').classList.toggle('show',open)}
+function closeSidebar(){$('sidebar').classList.remove('open');$('sbBackdrop').classList.remove('show')}
+function toggleMobSearch(){const tb=document.querySelector('.topbar');const open=!tb.classList.contains('search-open');tb.classList.toggle('search-open',open);if(open)setTimeout(()=>$('globalSearch').focus(),60);else closeSearch()}
+
+/* ── Global search (units, tenants, leases, invoices, receipts, payments, tickets, partners, staff, support) ── */
+let searchList=[],searchSel=0;
+function searchIndex(){
+  const idx=[];
+  DB.properties.forEach(p=>idx.push({mod:'properties',id:p.id,ic:'🏢',t:p.name,s:p.type+' · '+p.jur+' · '+p.holding}));
+  DB.units.forEach(u=>idx.push({mod:'units',id:u.id,ic:'🚪',t:u.name,s:(propById(u.p)?.name||'')+' · '+u.sqft.toLocaleString()+' sqft · '+u.status}));
+  DB.tenants.forEach(x=>idx.push({mod:'tenants',id:x.id,ic:'👤',t:x.name,s:x.kind+' · '+(x.nrb?'NRB 🇺🇸':'Local 🇧🇩')+' · '+x.phone}));
+  DB.leases.forEach(l=>idx.push({mod:'leases',id:l.id,ic:'📄',t:l.id+' — '+(unitById(l.u)?.name||''),s:(tenantById(l.t)?.name||'')+' · '+money(l.rent)+'/mo · '+l.status}));
+  DB.invoices.forEach(i=>idx.push({mod:'invoices',id:i.id,ic:'🧾',t:i.id+' · '+i.m,s:((leaseById(i.l)?unitById(leaseById(i.l).u)?.name:'')||'')+' · '+money(i.net)+' · '+i.status}));
+  DB.receipts.forEach(r=>idx.push({mod:'receipts',id:r.id,ic:'📎',t:r.id,s:r.method+' · '+r.date+' · '+money(r.amount)}));
+  DB.payments.forEach(p=>idx.push({mod:'payments',id:p.id,ic:'💳',t:p.id+' · '+p.method,s:p.ref+' · '+money(p.amount)+' · '+p.date}));
+  DB.tickets.forEach(x=>idx.push({mod:'maintenance',id:x.id,ic:'🔧',t:x.desc,s:(unitById(x.u)?.name||'')+' · '+x.status+' · '+x.liab+' liability'}));
+  DB.partners.forEach(p=>idx.push({mod:'maintenance',id:p.id,ic:'🤝',t:p.name,s:p.trade+' · ★'+p.rating+' · '+p.jobs+' jobs'}));
+  DB.staff.forEach(s=>idx.push({mod:'ai',id:s.id,ic:'👥',t:s.name,s:s.role+' · '+s.dept+' · '+s.status}));
+  DB.support.forEach(x=>idx.push({mod:'ai',id:x.id,ic:'🎧',t:x.subject,s:x.from+' · '+x.status}));
+  return idx;
+}
+function doSearch(q){
+  const panel=$('searchPanel');q=(q||'').trim().toLowerCase();
+  if(!q){panel.classList.remove('open');return}
+  const all=searchIndex();
+  searchList=all.filter(x=>can(x.mod)&&(x.t.toLowerCase().includes(q)||(x.s||'').toLowerCase().includes(q))).slice(0,20);
+  searchSel=0;
+  if(!searchList.length){panel.innerHTML=`<div style="padding:20px;text-align:center;color:var(--text-mute);font-size:12.5px">No matches for “${esc(q)}”</div>`;panel.classList.add('open');return}
+  const groups={};
+  searchList.forEach(x=>{groups[x.mod]=groups[x.mod]||[];groups[x.mod].push(x)});
+  panel.innerHTML=Object.keys(groups).map(m=>`<div class="search-group"><div class="sg-label">${MOD_ICON[m]||''} ${esc(t(MOD_TITLE[m],BN[MOD_TITLE[m]]))} · ${groups[m].length}</div>${groups[m].map(x=>`<div class="sr-item" data-mod="${x.mod}" data-id="${esc(x.id)}" onclick="goResult('${x.mod}','${esc(x.id)}')" onmouseenter="searchSel=${searchList.indexOf(x)};markSel()"><span class="sr-ic">${x.ic}</span><div class="sr-b"><div class="sr-t">${esc(x.t)}</div><div class="sr-s">${esc(x.s||'')}</div></div></div>`).join('')}</div>`).join('');
+  markSel();panel.classList.add('open');
+}
+function markSel(){
+  const items=document.querySelectorAll('.sr-item');
+  items.forEach((el,i)=>el.classList.toggle('sel',i===searchSel));
+  const cur=items[searchSel];if(cur)cur.scrollIntoView({block:'nearest'});
+}
+function searchKey(e){
+  if(!searchList.length)return;
+  if(e.key==='ArrowDown'){e.preventDefault();searchSel=Math.min(searchSel+1,searchList.length-1);markSel()}
+  else if(e.key==='ArrowUp'){e.preventDefault();searchSel=Math.max(searchSel-1,0);markSel()}
+  else if(e.key==='Enter'){e.preventDefault();const x=searchList[searchSel];if(x)goResult(x.mod,x.id)}
+  else if(e.key==='Escape'){closeSearch()}
+}
+function goResult(mod,id){
+  closeSearch();
+  nav(mod);
+  setTimeout(()=>{
+    const el=document.querySelector(`#viewRoot [data-id="${id}"]`);
+    if(el){el.classList.add('focus');el.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>el.classList.remove('focus'),2500)}
+  },80);
+}
+function closeSearch(){
+  const panel=$('searchPanel');if(panel){panel.classList.remove('open');panel.innerHTML=''}
+  document.querySelector('.topbar')?.classList.remove('search-open');
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.tb-search')&&!e.target.closest('.tb-search-btn'))closeSearch()});
+
+/* ── Zoom + fullscreen (desktop footer) ── */
+let zoom=1;
+function setZoom(d){
+  zoom=Math.min(1.5,Math.max(0.6,+(zoom+d).toFixed(2)));
+  document.body.style.zoom=zoom;
+  $('zoomPct').textContent=Math.round(zoom*100)+'%';
+}
+function toggleFS(){
+  if(!document.fullscreenElement){document.documentElement.requestFullscreen?.().catch(()=>toast('Fullscreen blocked by browser'))}
+  else{document.exitFullscreen?.()}
+  setTimeout(syncFS,250);
+}
+function syncFS(){$('fsBtn').textContent=document.fullscreenElement?'⤡':'⛶'}
+document.addEventListener('fullscreenchange',syncFS);
+
+/* ── Breadcrumb ── */
+function updateCrumb(){
+  let g='';
+  for(const gr of GROUPS){if(gr.items.some(i=>i[0]===state.view)){g=gr.label;break}}
+  const home=t('Home','হোম');
+  const gL=g?`<span>${t(g,g)}</span><span class="sep">/</span>`:'';
+  $('crumb').innerHTML=`<span>🏠</span><span>${home}</span><span class="sep">/</span>${gL}<b>${esc(t(MOD_TITLE[state.view]||state.view,BN[MOD_TITLE[state.view]]||''))}</b>`;
+}
 function toggleKR(){$('krPanel').classList.toggle('open');if($('krPanel').classList.contains('open'))krBoot()}
 function krSend(){
   const inp=$('krIn');const q=inp.value.trim();if(!q)return;inp.value='';
@@ -927,7 +1066,7 @@ const renderers={
   dashboard:renderDashboard,
   properties(){
     let h=pageHead(t('Properties','সম্পত্তি'),t('Your portfolio across Dhaka & Chattogram.','ঢাকা ও চট্টগ্রামে আপনার পোর্টফোলিও।'),`<button class="btn-primary" onclick="toast('Add property — Phase 2')">＋ ${t('Add property','সম্পত্তি যোগ করুন')}</button>`);
-    h+=`<div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${DB.properties.map(p=>{const u=DB.units.filter(x=>x.p===p.id);const lc=u.filter(x=>x.status==='Leased').length;const pct=u.length?Math.round(lc/u.length*100):0;const rent=DB.leases.filter(l=>u.some(x=>x.id===l.u)&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0);return `<div class="panel"><div class="panel-b">
+    h+=`<div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${DB.properties.map(p=>{const u=DB.units.filter(x=>x.p===p.id);const lc=u.filter(x=>x.status==='Leased').length;const pct=u.length?Math.round(lc/u.length*100):0;const rent=DB.leases.filter(l=>u.some(x=>x.id===l.u)&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0);return `<div class="panel" data-id="${p.id}"><div class="panel-b">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div class="role-ava" style="width:44px;height:44px;font-size:18px;border-radius:12px">${p.type==='Flat'?'🏢':p.type==='Commercial'?'🏬':p.type==='Industrial'?'🏭':'🌳'}</div><div><div style="font-weight:700;font-size:14.5px">${esc(p.name)}</div><div style="font-size:11.5px;color:var(--text-mute)">${p.type} · ${p.jur}</div></div>${badge(p.status)}</div>
       <div class="kv"><span class="k">Holding</span><span class="v">${esc(p.holding)}</span></div>
       <div class="kv"><span class="k">Value</span><span class="v">${moneyC(p.value)}</span></div>
@@ -939,32 +1078,32 @@ const renderers={
   },
   units(){
     let h=pageHead(t('Units','ইউনিট'),t('Every flat, floor, shed and plot.','প্রতিটি ফ্ল্যাট, ফ্লোর, শেড ও প্লট।'),`<button class="btn-primary" onclick="toast('Add unit — Phase 2')">＋ ${t('Add unit','ইউনিট যোগ করুন')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Unit</th><th>Property</th><th>Floor</th><th>Size</th><th>Tenant</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.units.map(u=>{const l=DB.leases.find(x=>x.u===u.id&&(x.status==='Active'||x.status==='Pending Registration'));const ten=l?tenantById(l.t):null;return `<tr><td><span class="c-name">${esc(u.name)}</span><div class="c-sub">${u.id}</div></td><td>${esc(propById(u.p)?.name||'—')}</td><td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td>${ten?esc(ten.name):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${badge(u.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Unit</th><th>Property</th><th>Floor</th><th>Size</th><th>Tenant</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.units.map(u=>{const l=DB.leases.find(x=>x.u===u.id&&(x.status==='Active'||x.status==='Pending Registration'));const ten=l?tenantById(l.t):null;return `<tr data-id="${u.id}"><td><span class="c-name">${esc(u.name)}</span><div class="c-sub">${u.id}</div></td><td>${esc(propById(u.p)?.name||'—')}</td><td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td>${ten?esc(ten.name):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${badge(u.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   tenants(){
     let h=pageHead(t('Tenants','ভাড়াটিয়া'),t('Individuals, corporates and NRB tenants.','ব্যক্তি, কর্পোরেট ও এনআরবি ভাড়াটিয়া।'),`<button class="btn-primary" onclick="toast('Add tenant — Phase 2')">＋ ${t('Add tenant','ভাড়াটিয়া যোগ করুন')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr><td><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr data-id="${te.id}"><td><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td></tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   leases(){
     let h=pageHead(t('Leases','লিজ'),t('Tenancy agreements with legal gates applied automatically.','আইনি গেটসহ টেন্যান্সি চুক্তি।'),`<button class="btn-primary" onclick="toast('New lease — Phase 2')">＋ ${t('New lease','নতুন লিজ')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th></tr></thead><tbody>${DB.leases.map(l=>`<tr><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th></tr></thead><tbody>${DB.leases.map(l=>`<tr data-id="${l.id}"><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
   invoices(){
     let h=pageHead(t('Invoices','ইনভয়েস'),t('Monthly rent invoices with TDS computed where applicable.','প্রযোজ্য ক্ষেত্রে টিডিএসসহ মাসিক ভাড়ার ইনভয়েস।'),`<button class="btn-primary" onclick="toast('Generate invoice — Phase 2')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Unit</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${DB.invoices.map(i=>{const l=leaseById(i.l);return `<tr><td><span class="c-name">${i.id}</span></td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td>${i.m}</td><td>${money(i.gross)}</td><td>${i.tds?money(i.tds):'—'}</td><td class="t-amount">${money(i.net)}</td><td>${badge(i.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Unit</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${DB.invoices.map(i=>{const l=leaseById(i.l);return `<tr data-id="${i.id}"><td><span class="c-name">${i.id}</span></td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td>${i.m}</td><td>${money(i.gross)}</td><td>${i.tds?money(i.tds):'—'}</td><td class="t-amount">${money(i.net)}</td><td>${badge(i.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   receipts(){
     let h=pageHead(t('Receipts','রসিদ'),t('Digitally signed receipts for every payment.','প্রতিটি পেমেন্টের ডিজিটাল সই করা রসিদ।'));
-    h+=`<div class="grid grid-2eq">${DB.receipts.map(r=>`<div class="panel"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div class="c-name" style="font-size:14px;font-weight:700">${r.id}</div><div class="c-sub">${r.date} · ${r.method}</div></div>${badge('Paid')}</div><div class="t-amount" style="font-size:20px">${money(r.amount)}</div><div class="c-sub" style="margin-top:8px">${invLbl(r.inv)}</div><div style="margin-top:12px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-mute);font-family:monospace">${r.sig} — verified ✓</div></div></div>`).join('')}</div>`;
+    h+=`<div class="grid grid-2eq">${DB.receipts.map(r=>`<div class="panel" data-id="${r.id}"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div class="c-name" style="font-size:14px;font-weight:700">${r.id}</div><div class="c-sub">${r.date} · ${r.method}</div></div>${badge('Paid')}</div><div class="t-amount" style="font-size:20px">${money(r.amount)}</div><div class="c-sub" style="margin-top:8px">${invLbl(r.inv)}</div><div style="margin-top:12px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-mute);font-family:monospace">${r.sig} — verified ✓</div></div></div>`).join('')}</div>`;
     return h;
   },
   payments(){
     let h=pageHead(t('Payments','পেমেন্ট'),t('bKash, Nagad, bank and cheque — reconciled automatically.','বিকাশ, নগদ, ব্যাংক ও চেক — স্বয়ংক্রিয়ভাবে রিকনসাইলড।'),`<button class="btn-primary" onclick="toast('Record payment — Phase 2')">＋ ${t('Record payment','পেমেন্ট রেকর্ড')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Payment</th><th>Invoice</th><th>Method</th><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>${DB.payments.map(p=>`<tr><td><span class="c-name">${p.id}</span></td><td>${esc(p.inv||'—')}</td><td>${p.method==='bKash'?'📱 bKash':p.method==='Nagad'?'📱 Nagad':'🏦 Bank'}</td><td>${esc(p.ref)}</td><td>${p.date}</td><td class="t-pos">+${money(p.amount)}</td><td>${badge(p.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Payment</th><th>Invoice</th><th>Method</th><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>${DB.payments.map(p=>`<tr data-id="${p.id}"><td><span class="c-name">${p.id}</span></td><td>${esc(p.inv||'—')}</td><td>${p.method==='bKash'?'📱 bKash':p.method==='Nagad'?'📱 Nagad':'🏦 Bank'}</td><td>${esc(p.ref)}</td><td>${p.date}</td><td class="t-pos">+${money(p.amount)}</td><td>${badge(p.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
   taxes(){
@@ -981,7 +1120,7 @@ const renderers={
   },
   maintenance(){
     let h=pageHead(t('Maintenance','রক্ষণাবেক্ষণ'),t('Tickets with landlord/tenant liability resolved by law.','আইন অনুযায়ী মালিক/ভাড়াটিয়া দায় নির্ধারিত টিকিট।'),`<button class="btn-primary" onclick="toast('New ticket — Phase 2')">＋ ${t('New ticket','নতুন টিকিট')}</button>`);
-    h+=`<div class="grid grid-2">${DB.tickets.map(x=>`<div class="panel"><div class="panel-b">
+    h+=`<div class="grid grid-2">${DB.tickets.map(x=>`<div class="panel" data-id="${x.id}"><div class="panel-b">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="c-name" style="font-weight:700">${x.id} · ${esc(x.desc)}</div>${badge(x.status)}</div>
       <div class="kv"><span class="k">Unit</span><span class="v">${esc(unitById(x.u)?.name||'—')}</span></div>
       <div class="kv"><span class="k">Liability</span><span class="v">${x.liab}</span></div>
@@ -1035,6 +1174,8 @@ applyTheme();
 $('langBtn').textContent = state.lang==='en' ? 'বাংলা' : 'EN';
 renderNav();
 render();
+updateCrumb();
+syncFS();
 </script>
 </body>
 </html>
