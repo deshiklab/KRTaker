@@ -96,10 +96,12 @@ Core groups (v1 — ~20 modules):
 - All Add buttons activated: payments record (invoice picker), rent-roll report, TDS challan, capital-gains estimator, partner quote, assign job, legal cases CRUD (`cases` table), staff invite/directory, support tickets, superadmin quick-add + ops tiles.
 - Go-live: paste real bKash App Secret / SSLCommerz Store Password in `GATEWAYS()` → sandbox=false.
 
-### Phase 5 — AI Agent (chat + function calling)
-- Chat UI in PWA; backend `/api/ai/chat` → LLM API (DeepSeek/OpenAI-compatible) with tool definitions: `generate_invoice`, `create_ticket`, `check_lease_liability`, `calc_holding_tax`, `send_reminder`.
-- **Permission inheritance** (doc): tool calls execute as the authenticated user; tenant-role agent cannot touch lease terms (backend RBAC enforces).
-- RAG: ingest PRCA 1991 / TPA 1882 / Income Tax Act 2023 (public texts) → chunk + embed → SQLite FTS + vector table; `ask_legal()` tool.
+### Phase 5 — AI Agent (chat + function calling) ✅ LIVE
+- KR widget wired to `app-ai-chat` (RBAC-gated, permission inheritance — tools run AS the calling user).
+- **Dual mode**: DeepSeek function-calling when `KRT_DS_KEY` is set (6 tools: generate_invoice, create_ticket, check_lease_liability, calc_holding_tax, send_reminder, ask_legal); **offline mode** otherwise — rule-based intents (EN + বাংলা) + legal knowledge base, fully functional demo.
+- RAG-lite: `legal_docs` + FTS5 (LIKE fallback) seeded with 18 curated entries (PRCA 1991 §10/§13/§18/§23, TPA §107/§108, IT Act 2023 §109/§128, holding tax GAR→NAV, khatian/e-porcha, NRB NRTA/NITA).
+- Chat UI: suggestion chips, typing indicator, mode badge, `**bold**` markdown rendering, auto-refresh after actions; `ai_log` audit table.
+- Go live: `export KRT_DS_KEY=sk-...` on the host (or paste in `AI_CONFIG()`) → KR upgrades to DeepSeek automatically.
 
 ### Phase 6 — Multi-tenant Hardening (PostgreSQL + RLS)
 - Migrate SQLite → PostgreSQL; `ENABLE ROW LEVEL SECURITY` on all tenant tables; `app.current_tenant` session var from JWT; ORM injects explicit `WHERE tenant_id = X` (doc: RLS as backstop, not primary filter).

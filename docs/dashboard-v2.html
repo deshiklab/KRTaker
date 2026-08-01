@@ -217,6 +217,14 @@ td .c-sub{font-size:11px;color:var(--text-mute)}
 .kr-msg.me{background:var(--grad);color:#fff;border-top-right-radius:4px;align-self:flex-end}
 .kr-input{display:flex;gap:8px;padding:11px 13px;border-top:1px solid var(--border)}
 .kr-input input{flex:1;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:12.5px;background:var(--bg-alt);color:var(--text);outline:none}
+.kr-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 4px}
+.kr-chip{font-family:inherit;font-size:11px;font-weight:600;color:var(--primary);background:var(--primary-light);border:1px solid transparent;border-radius:999px;padding:5px 11px;cursor:pointer;transition:all .15s}
+.kr-chip:hover{border-color:var(--primary)}
+.kr-typing{display:flex;gap:4px;align-items:center;padding:13px 14px}
+.kr-typing span{width:6px;height:6px;border-radius:50%;background:var(--text-mute);animation:krBlink 1.2s infinite}
+.kr-typing span:nth-child(2){animation-delay:.2s}
+.kr-typing span:nth-child(3){animation-delay:.4s}
+@keyframes krBlink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
 .kr-input input:focus{border-color:var(--primary)}
 .kr-input button{background:var(--grad);color:#fff;border:none;border-radius:10px;padding:0 14px;font-size:14px}
 
@@ -1161,25 +1169,35 @@ function updateCrumb(){
   $('crumb').innerHTML=`<span>🏠</span><span>${home}</span><span class="sep">/</span>${gL}<b>${esc(t(MOD_TITLE[state.view]||state.view,BN[MOD_TITLE[state.view]]||''))}</b>`;
 }
 function toggleKR(){$('krPanel').classList.toggle('open');if($('krPanel').classList.contains('open'))krBoot()}
+function fmtKR(text){
+  return esc(String(text||'')).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/```([\s\S]*?)```/g,'<pre>$1</pre>').replace(/\n/g,'<br>');
+}
+function krQuick(q){ const inp=$('krIn'); inp.value=q; krSend(); }
 function krSend(){
   const inp=$('krIn');const q=inp.value.trim();if(!q)return;inp.value='';
+  if(!window.krHist)window.krHist=[];
+  window.krHist.push({role:'user',content:q});
   $('krBody').insertAdjacentHTML('beforeend',`<div class="kr-msg me">${esc(q)}</div>`);
-  setTimeout(()=>{const a=krAnswer(q);$('krBody').insertAdjacentHTML('beforeend',`<div class="kr-msg ai">${a}</div>`);$('krBody').scrollTop=$('krBody').scrollHeight},420);
-  $('krBody').scrollTop=$('krBody').scrollHeight;
-}
-function krAnswer(q){
-  const s=q.toLowerCase();
-  if(s.includes('invoice')||s.includes('rent due'))return 'You have <b>1 overdue invoice</b> (INV-2026-008, ৳3,42,000) and <b>2 unpaid</b> for June. Want me to send payment reminders to Bengal Agro Foods?';
-  if(s.includes('tds')||s.includes('tax'))return 'TDS on commercial leases is <b>10%</b> (IT Act 2023 §109/§128). L-003 net of TDS = ৳4,05,000. June TDS collected: ৳1,52,000. I can file the challan summary for you.';
-  if(s.includes('prca')||s.includes('rent hike'))return 'PRCA 1991: rent can rise max <b>5% every 3 years</b> for residential. Advance capped at <b>2 months</b> residential / 3 months commercial (§10/§23). I flagged nothing in breach today.';
-  if(s.includes('maintenance')||s.includes('ticket'))return 'MT-003 (water pump) is In Progress with Kazi Plumbing — cost ৳8,500. MT-004 needs <b>tenant payment approval</b> (৳42,000, liability: Tenant). Want me to draft the deduction letter?';
-  if(s.includes('lease')||s.includes('registration'))return 'L-004 and L-010 are <b>Pending Registration</b> (>12 months, TPA §107). I can prepare the deed checklist and Sub-Registry appointment for both.';
-  if(s.includes('occupancy'))return 'Portfolio occupancy is <b>70%</b> — 7 of 10 units leased, 2 vacant (U-003, U-007), 1 in maintenance (U-009).';
-  return 'I can help with leases, registration gates, TDS/holding tax, PRCA rules, maintenance tickets and payments. Try "generate invoice for L-004" — I take actions in Phase 2.';
+  const typing=document.createElement('div');typing.className='kr-msg ai kr-typing';typing.innerHTML='<span></span><span></span><span></span>';
+  $('krBody').appendChild(typing);$('krBody').scrollTop=$('krBody').scrollHeight;
+  apiCall('app-ai-chat',{messages:window.krHist}).then(d=>{
+    typing.remove();
+    const reply=d&&d.ok?d.reply:'KR could not reach the caretaker service — try again.';
+    window.krHist.push({role:'assistant',content:reply});
+    $('krBody').insertAdjacentHTML('beforeend',`<div class="kr-msg ai">${fmtKR(reply)}</div>`);
+    $('krBody').scrollTop=$('krBody').scrollHeight;
+    if(d&&d.ok&&d.actions&&d.actions.some(a=>a==='refresh'||a.ok)){ refreshData(); }
+  }).catch(()=>{
+    typing.remove();
+    $('krBody').insertAdjacentHTML('beforeend',`<div class="kr-msg ai">Network error — please try again.</div>`);
+  });
 }
 function krBoot(){
-  if($('krBody').children.length)return;
-  $('krBody').innerHTML=`<div class="kr-msg ai">Hello 👋 I'm <b>KR</b> — your AI property caretaker. Ask me about leases, taxes, PRCA compliance, or say "generate invoice for L-003" and I'll take action.<br><span style="font-size:10px;color:var(--text-mute)">Jun 30, 2026 · 09:00</span></div>`;
+  if(!$('krBody').children.length){
+    $('krBody').innerHTML=`<div class="kr-msg ai">Hello 👋 I'm <b>KR</b> — your AI property caretaker. I can take actions (invoices, tickets, reminders) and answer Bangladeshi property law — try one below or type anything.<br><span style="font-size:10px;color:var(--text-mute)">${new Date().toLocaleDateString()} · ${window.krMode||''}</span></div>
+    <div class="kr-chips">${['Generate invoice for L-003','Who pays for a leaking roof?','Holding tax for P-001','Is my advance legal?','Send reminder for INV-2026-008','What is occupancy?'].map(c=>`<button class="kr-chip" onclick="krQuick('${esc(c)}')">${esc(c)}</button>`).join('')}</div>`;
+  }
+  apiCall('app-ai-meta').then(d=>{ if(d&&d.ok){ window.krMode=d.mode==='llm'?'KR · DeepSeek (function-calling)':'KR · Offline mode (legal KB)'; const ks=document.querySelector('.kr-head .ks'); if(ks)ks.textContent=window.krMode+' · 24/7'; } }).catch(()=>{});
 }
 
 /* ════════════════════════════════════════════════════════════
