@@ -88,9 +88,13 @@ Core groups (v1 — ~20 modules):
 - TDS ledger: auto-split, PSR tracking, +50% TDS rate if docs missing (doc mandate).
 - Wealth surcharge bracket calculator (4Cr–50Cr+ table from doc).
 
-### Phase 4 — Payment Gateways (sandbox first)
-- bKash Tokenized Checkout: grant → create → execute → query flow (reuse REM bKash adapter, rewire to `tokenized.sandbox.bka.sh`), Redis-less token cache (in-DB).
-- SSLCommerz GWPROCESS + IPN validation (Phase 2 of doc; can be stub + live-ready seams).
+### Phase 4 — Payment Gateways (sandbox first) ✅ LIVE
+- `GATEWAYS()` config in `api/index.php` (bKash / SSLCommerz / Nagad, sandbox=true, placeholder live creds with swap instructions).
+- New endpoints: `app-gateways`, `app-payment-init` (creates `gateway_tx` session), `app-payment-confirm` (atomic payment+receipt+invoice ripple via shared `record_payment()`), `app-payment-cancel`.
+- In-dashboard simulated merchant checkout (sandbox page) → confirm → signed receipt; tenant scope enforced (own invoices only); partial-payment aware (due = net − paid).
+- Dashboard "Pay online / Pay rent / Pay now" wired; billing history shows payments + gateway sessions.
+- All Add buttons activated: payments record (invoice picker), rent-roll report, TDS challan, capital-gains estimator, partner quote, assign job, legal cases CRUD (`cases` table), staff invite/directory, support tickets, superadmin quick-add + ops tiles.
+- Go-live: paste real bKash App Secret / SSLCommerz Store Password in `GATEWAYS()` → sandbox=false.
 
 ### Phase 5 — AI Agent (chat + function calling)
 - Chat UI in PWA; backend `/api/ai/chat` → LLM API (DeepSeek/OpenAI-compatible) with tool definitions: `generate_invoice`, `create_ticket`, `check_lease_liability`, `calc_holding_tax`, `send_reminder`.

@@ -363,6 +363,23 @@ thead th.kr-hide-col,tbody td.kr-hide-col{display:none}
 tbody tr.kr-hide{display:none}
 tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-size:12.5px}
 .kr-pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--primary-light);color:var(--primary);white-space:nowrap}
+/* ── Phase 4: gateway + mini-table + action drawers ── */
+.gw-sum{background:var(--bg-alt);border:1px solid var(--border);border-radius:13px;padding:14px 16px}
+.gw-merchant{text-align:center;padding:6px 4px}
+.gm-logo{font-size:26px;font-weight:800;color:var(--primary);margin-bottom:10px}
+.gm-sandbox{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.8px;background:#FFF4E5;color:#B25E09;border:1px solid #FFE1B8;border-radius:999px;padding:4px 12px;margin-bottom:14px}
+[data-theme="dark"] .gm-sandbox{background:#2A220F;color:#FFC47A;border-color:#4A3A15}
+.gm-order{max-width:340px;margin:0 auto 12px;background:var(--bg-alt);border:1px solid var(--border);border-radius:13px;padding:13px 16px;text-align:left}
+.gm-note{font-size:11.5px;color:var(--text-mute);line-height:1.6;max-width:340px;margin:0 auto}
+.kr-mini{width:100%;border-collapse:collapse;font-size:12.5px}
+.kr-mini thead th{text-align:left;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text-mute);padding:8px 10px;border-bottom:1px solid var(--border);background:var(--bg-alt);white-space:nowrap}
+.kr-mini tbody td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text)}
+.kr-mini tr.kr-total td{border-top:2px solid var(--border);font-weight:700;background:var(--bg-alt)}
+.qa-item{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px;cursor:pointer;transition:all .15s;text-align:center}
+.qa-item:hover{border-color:var(--primary);box-shadow:0 8px 22px rgba(47,128,237,.12);transform:translateY(-2px)}
+.qa-item .ti{font-size:22px}
+.qa-item .tt{font-size:12px;font-weight:700;margin-top:6px}
+.cg-box{background:var(--bg-alt);border:1px solid var(--border);border-radius:13px;padding:14px 16px}
 @media(max-width:860px){.kr-toolbar{padding:10px 12px}.kr-toolbar .kr-search{max-width:none}.kr-btn .kr-lbl{display:none}.kr-tfoot{padding:9px 12px}}
 .plan-card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(47,128,237,.15)}
 .plan-card.current{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary),0 18px 40px rgba(47,128,237,.18)}
@@ -1181,7 +1198,7 @@ superadmin(){
   const openT=DB.support.filter(x=>x.status==='Open').length;
   const trials=pf.subscriptions.filter(s=>s.status==='Trial').length;
   const net=pf.finance.reduce((s,f)=>s+f.amount,0);
-  let h=pageHead(t('Platform Command Center','প্ল্যাটফর্ম কমান্ড সেন্টার'),t('Super Admin — subscriptions, billing, partners, finance, HR across the whole platform','সুপার অ্যাডমিন — পুরো প্ল্যাটফর্মের সাবস্ক্রিপশন, বিলিং, পার্টনার, ফাইন্যান্স, এইচআর'),`<button class="btn-primary" onclick="openRoles()">🔀 ${t('Switch role','রোল পরিবর্তন')}</button><button class="btn-outline" onclick="toast('Quick add — Phase 2 backend')">＋ ${t('Quick add','দ্রুত যোগ')}</button>`);
+  let h=pageHead(t('Platform Command Center','প্ল্যাটফর্ম কমান্ড সেন্টার'),t('Super Admin — subscriptions, billing, partners, finance, HR across the whole platform','সুপার অ্যাডমিন — পুরো প্ল্যাটফর্মের সাবস্ক্রিপশন, বিলিং, পার্টনার, ফাইন্যান্স, এইচআর'),`<button class="btn-primary" onclick="openRoles()">🔀 ${t('Switch role','রোল পরিবর্তন')}</button><button class="btn-outline" onclick="quickAdd()">＋ ${t('Quick add','দ্রুত যোগ')}</button>`);
   h+=statsRow([
     stat(t('Subscribers','সাবস্ক্রাইবার'),pf.subscribers,pf.subsTrend,'up','🏢'),
     stat(t('MRR / ARR','মাসিক/বার্ষিক আয়'),moneyC(pf.mrr)+' / '+moneyC(pf.arr),'SaaS revenue','','💳'),
@@ -1200,7 +1217,7 @@ superadmin(){
     ['👥','HR & Admin',pf.staff+' staff · onboarding']
   ];
   h+=`<div class="grid grid-2" style="grid-template-columns:1fr 1.4fr">
-    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🛠️</span>${t('Platform Operations','প্ল্যাটফর্ম অপারেশন')}</div></div><div class="panel-b"><div class="tiles">${ops.map(o=>`<div class="tile" onclick="toast('${esc(o[0])} '+('${esc(o[1])}')+' — Phase 2')"><div class="ti">${o[0]}</div><div class="tt">${o[1]}</div><div class="ts">${o[2]}</div></div>`).join('')}</div></div></div>
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🛠️</span>${t('Platform Operations','প্ল্যাটফর্ম অপারেশন')}</div></div><div class="panel-b"><div class="tiles">${ops.map((o,i)=>`<div class="tile" onclick="opsTile(${i})"><div class="ti">${o[0]}</div><div class="tt">${o[1]}</div><div class="ts">${o[2]}</div></div>`).join('')}</div></div></div>
     <div>
       <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📈</span>${t('Platform Revenue (2026)','প্ল্যাটফর্ম আয়')}</div><span class="tagline">MRR ${moneyC(pf.mrr)}</span></div><div class="panel-b">${barChart(RENT_SERIES.map(x=>x*100000),RENT_LABELS)}</div></div>
       <div class="grid grid-2eq">
@@ -1222,7 +1239,7 @@ owner(){
   const unpaid=DB.invoices.filter(i=>i.status!=='Paid');
   const unpaidSum=unpaid.reduce((s,i)=>s+i.net,0);
   const coll=Math.round((DB.invoices.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.net,0)/DB.invoices.reduce((s,i)=>s+i.net,0))*100);
-  let h=pageHead(t('My Portfolio','আমার পোর্টফোলিও'),t('Everything across your buildings — one calm screen.','আপনার সব ভবনের সবকিছু — এক শান্ত স্ক্রিনে।'),`<button class="btn-primary" onclick="toast('Add property — Phase 2 backend')">＋ ${t('Add property','সম্পত্তি যোগ করুন')}</button><button class="btn-outline" onclick="toast('Rent collection report')">📥 ${t('Report','রিপোর্ট')}</button>`);
+  let h=pageHead(t('My Portfolio','আমার পোর্টফোলিও'),t('Everything across your buildings — one calm screen.','আপনার সব ভবনের সবকিছু — এক শান্ত স্ক্রিনে।'),`<button class="btn-primary" onclick="openNew('properties')">＋ ${t('Add property','সম্পত্তি যোগ করুন')}</button><button class="btn-outline" onclick="rentRollReport()">📥 ${t('Report','রিপোর্ট')}</button>`);
   h+=statsRow([
     stat(t('Portfolio value','পোর্টফোলিও মূল্য'),moneyC(DB.properties.reduce((s,p)=>s+p.value,0)),'5 buildings','','🏢'),
     stat(t('Monthly rent roll','মাসিক ভাড়া'),money(rentRoll),'across active leases','up','💵'),
@@ -1284,7 +1301,7 @@ tenant(){
   const paid=myInvs.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.net,0);
   const due=myInvs.filter(i=>i.status!=='Paid').reduce((s,i)=>s+i.net,0);
   const myTickets=DB.tickets.filter(x=>x.u==='U-010');
-  let h=pageHead(t('Tenant Portal','টেন্যান্ট পোর্টাল'),t('Sultana — Apartment 7B, Dhanmondi Apartment.','সুলতানা — অ্যাপার্টমেন্ট ৭বি, ধানমন্ডি অ্যাপার্টমেন্ট।'),`<button class="btn-primary" onclick="toast('Pay with bKash — Phase 4 gateway')">💳 ${t('Pay rent','ভাড়া পরিশোধ করুন')}</button><button class="btn-outline" onclick="openNew('tickets')">＋ ${t('Report issue','সমস্যা জানান')}</button>`);
+  let h=pageHead(t('Tenant Portal','টেন্যান্ট পোর্টাল'),t('Sultana — Apartment 7B, Dhanmondi Apartment.','সুলতানা — অ্যাপার্টমেন্ট ৭বি, ধানমন্ডি অ্যাপার্টমেন্ট।'),`<button class="btn-primary" onclick="gatewayPayTenant()">💳 ${t('Pay rent','ভাড়া পরিশোধ করুন')}</button><button class="btn-outline" onclick="openNew('tickets')">＋ ${t('Report issue','সমস্যা জানান')}</button>`);
   h+=statsRow([
     stat(t('Rent due','বকেয়া ভাড়া'),money(due),due?'this month':'All settled',due?'down':'up','💳'),
     stat(t('Paid (Jun)','পরিশোধিত (জুন)'),money(paid),'2 invoices cleared','up','✅'),
@@ -1293,7 +1310,7 @@ tenant(){
   ]);
   h+=`<div class="grid grid-2">
     <div>
-      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('My invoices','আমার ইনভয়েস')}</div></div><div class="panel-b">${myInvs.map(i=>rowItem('🧾',i.id+' · '+i.m,leaseById(i.l)?unitById(leaseById(i.l).u)?.name:'—',`<div class="t-amount">${money(i.net)}</div>${i.status==='Paid'?badge('Paid'):`<button class="btn-primary" style="padding:6px 12px;font-size:11px" onclick="toast('bKash checkout — Phase 4')">Pay now</button>`}`)).join('')}</div></div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('My invoices','আমার ইনভয়েস')}</div></div><div class="panel-b">${myInvs.map(i=>rowItem('🧾',i.id+' · '+i.m,leaseById(i.l)?unitById(leaseById(i.l).u)?.name:'—',`<div class="t-amount">${money(i.net)}</div>${i.status==='Paid'?badge('Paid'):`<button class="btn-primary" style="padding:6px 12px;font-size:11px" onclick="gatewayPay('${i.id}')">Pay now</button>`}`)).join('')}</div></div>
       <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📎</span>${t('Payment history','পেমেন্ট ইতিহাস')}</div></div><div class="panel-b">${DB.payments.filter(p=>myInvs.some(i=>i.id===p.inv)).map(p=>rowItem('💳',p.ref+' · '+p.method,esc(p.date),`<span class="t-pos">+${money(p.amount)}</span>`)).join('')||'<div class="empty">No payments yet</div>'}</div></div>
     </div>
     <div>
@@ -1310,7 +1327,7 @@ partner(){
   const done=myJobs.filter(x=>x.status==='Awaiting Payment'||x.status==='Closed').length;
   const earnings=myJobs.reduce((s,x)=>s+x.cost,0);
   const qc=DB.tickets.filter(x=>x.status==='Open'&&x.liab==='Landlord').length;
-  let h=pageHead(t('Partner Works','পার্টনার ওয়ার্কস'),t('Rahim Steel Works — jobs, QC feedback and payouts.','রহিম স্টিল ওয়ার্কস — কাজ, কিউসি ফিডব্যাক ও পেমেন্ট।'),`<button class="btn-primary" onclick="toast('Submit quote — Phase 2')">＋ ${t('New quote','নতুন কোটেশন')}</button>`);
+  let h=pageHead(t('Partner Works','পার্টনার ওয়ার্কস'),t('Rahim Steel Works — jobs, QC feedback and payouts.','রহিম স্টিল ওয়ার্কস — কাজ, কিউসি ফিডব্যাক ও পেমেন্ট।'),`<button class="btn-primary" onclick="quoteForm()">＋ ${t('New quote','নতুন কোটেশন')}</button>`);
   h+=statsRow([
     stat(t('Active jobs','চলমান কাজ'),myJobs.length,'assigned to you','','🛠️'),
     stat(t('Awaiting QC','কিউসি অপেক্ষায়'),DB.tickets.filter(x=>x.status==='In Progress').length,'in review','warn','✅'),
@@ -1335,7 +1352,7 @@ svc_mgr(){
   const open=DB.tickets.filter(x=>x.status==='Open'||x.status==='In Progress');
   const awaiting=DB.tickets.filter(x=>x.status==='Awaiting Payment');
   const overdue=DB.tickets.filter(x=>x.status==='Open'&&(new Date('2026-06-28')-new Date(x.reported))/86400000>7);
-  let h=pageHead(t('QC & Service Management','কিউসি ও সার্ভিস ম্যানেজমেন্ট'),t('Arif — quality control, SLAs and partner performance.','আরিফ — কোয়ালিটি কন্ট্রোল, এসএলএ ও পার্টনার পারফরম্যান্স।'),`<button class="btn-primary" onclick="toast('Assign job — Phase 2')">＋ ${t('Assign job','কাজ বরাদ্দ')}</button>`);
+  let h=pageHead(t('QC & Service Management','কিউসি ও সার্ভিস ম্যানেজমেন্ট'),t('Arif — quality control, SLAs and partner performance.','আরিফ — কোয়ালিটি কন্ট্রোল, এসএলএ ও পার্টনার পারফরম্যান্স।'),`<button class="btn-primary" onclick="assignForm()">＋ ${t('Assign job','কাজ বরাদ্দ')}</button>`);
   h+=statsRow([
     stat(t('Open jobs','চলমান কাজ'),open.length,'across partners','','🛠️'),
     stat(t('Awaiting QC','কিউসি অপেক্ষায়'),awaiting.length,'approve or reject','warn','✅'),
@@ -1361,7 +1378,7 @@ svc_mgr(){
 legal(){
   const pendReg=DB.leases.filter(l=>l.status==='Pending Registration');
   const active12=DB.leases.filter(l=>l.status==='Active'&&l.res===false);
-  let h=pageHead(t('Legal & Compliance','লিগ্যাল ও কমপ্লায়েন্স'),t('Barrister Naima — registrations, PRCA cases and the compliance calendar.','ব্যারিস্টার নাইমা — রেজিস্ট্রেশন, পিআরসিএ কেস ও কমপ্লায়েন্স ক্যালেন্ডার।'),`<button class="btn-primary" onclick="toast('New case — Phase 2')">＋ ${t('New case','নতুন মামলা')}</button>`);
+  let h=pageHead(t('Legal & Compliance','লিগ্যাল ও কমপ্লায়েন্স'),t('Barrister Naima — registrations, PRCA cases and the compliance calendar.','ব্যারিস্টার নাইমা — রেজিস্ট্রেশন, পিআরসিএ কেস ও কমপ্লায়েন্স ক্যালেন্ডার।'),`<button class="btn-primary" onclick="openNew('cases')">＋ ${t('New case','নতুন মামলা')}</button>`);
   h+=statsRow([
     stat(t('Pending registration','রেজিস্ট্রেশন বাকি'),pendReg.length,'TPA §107 gate','warn','📄'),
     stat(t('Commercial leases','কমার্শিয়াল লিজ'),active12.length,'> 12 months','','🏬'),
@@ -1395,7 +1412,7 @@ crm(){
   const openC=open.filter(x=>x.status==='Open').length;
   const resolved=DB.support.filter(x=>x.status==='Resolved').length;
   const high=DB.support.filter(x=>x.prio==='High'&&x.status!=='Resolved').length;
-  let h=pageHead(t('CRM & Help Desk','সিআরএম ও হেল্প ডেস্ক'),t('Mithila — tickets, CSAT and tenant onboarding.','মিথিলা — টিকিট, সিএসএটি ও টেন্যান্ট অনবোর্ডিং।'),`<button class="btn-primary" onclick="toast('New ticket — Phase 2')">＋ ${t('New ticket','নতুন টিকিট')}</button>`);
+  let h=pageHead(t('CRM & Help Desk','সিআরএম ও হেল্প ডেস্ক'),t('Mithila — tickets, CSAT and tenant onboarding.','মিথিলা — টিকিট, সিএসএটি ও টেন্যান্ট অনবোর্ডিং।'),`<button class="btn-primary" onclick="openNew('tickets')">＋ ${t('New ticket','নতুন টিকিট')}</button>`);
   h+=statsRow([
     stat(t('Open tickets','খোলা টিকিট'),openC,openC?'2 escalated':'All clear',openC?'warn':'up','🎧'),
     stat(t('In progress','চলমান'),open.filter(x=>x.status==='In Progress').length,'assigned to team','','✍️'),
@@ -1425,7 +1442,7 @@ accountant(){
   const tds=invs.reduce((s,i)=>s+i.tds,0);
   const over=invs.filter(i=>i.status==='Overdue').length;
   const cashIn=[18.2,19.5,21.0,22.4,24.1,25.7];
-  let h=pageHead(t('Finance & Accounts','ফাইন্যান্স ও অ্যাকাউন্টস'),t('Sohel — cash flow, TDS, invoices and receivables.','সোহেল — নগদ প্রবাহ, টিডিএস, ইনভয়েস ও প্রাপ্য।'),`<button class="btn-primary" onclick="toast('Generate invoice — Phase 2')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button><button class="btn-outline" onclick="toast('TDS challan summary — Phase 2')">🏛️ ${t('TDS challan','টিডিএস চালান')}</button>`);
+  let h=pageHead(t('Finance & Accounts','ফাইন্যান্স ও অ্যাকাউন্টস'),t('Sohel — cash flow, TDS, invoices and receivables.','সোহেল — নগদ প্রবাহ, টিডিএস, ইনভয়েস ও প্রাপ্য।'),`<button class="btn-primary" onclick="openNew('invoices')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button><button class="btn-outline" onclick="tdsChallan()">🏛️ ${t('TDS challan','টিডিএস চালান')}</button>`);
   h+=statsRow([
     stat(t('Cash in (Jun)','জুনে নগদ প্রবেশ'),moneyC(paid),'collected rent','up','📥'),
     stat(t('Receivables','প্রাপ্য'),moneyC(unpaid),unpaid?'follow up needed':'clear','down','⏳'),
@@ -1452,7 +1469,7 @@ accountant(){
 hr(){
   const staff=DB.staff;const active=staff.filter(s=>s.status==='Active').length;
   const probation=staff.filter(s=>s.status==='Probation');
-  let h=pageHead(t('HR & Admin','এইচআর ও অ্যাডমিন'),t('Nusrat — staff, onboarding and organisation admin.','নুসরাত — স্টাফ, অনবোর্ডিং ও অর্গানাইজেশন অ্যাডমিন।'),`<button class="btn-primary" onclick="toast('Invite staff — Phase 2')">＋ ${t('Invite staff','স্টাফ আমন্ত্রণ')}</button>`);
+  let h=pageHead(t('HR & Admin','এইচআর ও অ্যাডমিন'),t('Nusrat — staff, onboarding and organisation admin.','নুসরাত — স্টাফ, অনবোর্ডিং ও অর্গানাইজেশন অ্যাডমিন।'),`<button class="btn-primary" onclick="openNew('staff')">＋ ${t('Invite staff','স্টাফ আমন্ত্রণ')}</button>`);
   h+=statsRow([
     stat(t('Total staff','মোট স্টাফ'),staff.length,'across 5 departments','','👥'),
     stat(t('Active','সক্রিয়'),active,'full time','up','✅'),
@@ -1461,7 +1478,7 @@ hr(){
   ]);
   h+=`<div class="grid grid-2">
     <div>
-      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">👥</span>${t('Staff directory','স্টাফ ডিরেক্টরি')}</div><span class="link" onclick="toast('Full directory — Phase 2')">${t('All','সব')} →</span></div><div class="panel-b">${staff.map(s=>rowItem(s.role.includes('Service')?'🛠️':s.role.includes('CRM')?'🎧':s.role.includes('Account')?'💰':s.role.includes('HR')?'👥':s.role.includes('Legal')?'⚖️':'🗂️',s.name,s.role+' · '+s.dept,badge(s.status))).join('')}</div></div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">👥</span>${t('Staff directory','স্টাফ ডিরেক্টরি')}</div><span class="link" onclick="staffDirectory()">${t('All','সব')} →</span></div><div class="panel-b">${staff.map(s=>rowItem(s.role.includes('Service')?'🛠️':s.role.includes('CRM')?'🎧':s.role.includes('Account')?'💰':s.role.includes('HR')?'👥':s.role.includes('Legal')?'⚖️':'🗂️',s.name,s.role+' · '+s.dept,badge(s.status))).join('')}</div></div>
       <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🚀</span>${t('Onboarding checklist','অনবোর্ডিং চেকলিস্ট')}</div></div><div class="panel-b">${[
         ['Farzana Akter','CRM Executive — tools access','70','orange'],
         ['Mahmudul Islam','Finance Officer — banking perms','40','blue'],
@@ -1523,7 +1540,7 @@ const renderers={
     return h;
   },
   payments(){
-    let h=pageHead(t('Payments','পেমেন্ট'),t('bKash, Nagad, bank and cheque — reconciled automatically.','বিকাশ, নগদ, ব্যাংক ও চেক — স্বয়ংক্রিয়ভাবে রিকনসাইলড।'),`<button class="btn-primary" onclick="toast('Record payment — Phase 2')">＋ ${t('Record payment','পেমেন্ট রেকর্ড')}</button>`);
+    let h=pageHead(t('Payments','পেমেন্ট'),t('bKash, Nagad, bank and cheque — reconciled automatically.','বিকাশ, নগদ, ব্যাংক ও চেক — স্বয়ংক্রিয়ভাবে রিকনসাইলড।'),`<button class="btn-primary" onclick="paymentsForm()">＋ ${t('Record payment','পেমেন্ট রেকর্ড')}</button>`);
     h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Payment</th><th>Invoice</th><th>Method</th><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>${DB.payments.map(p=>`<tr data-id="${p.id}"><td><span class="c-name">${p.id}</span></td><td>${esc(p.inv||'—')}</td><td>${p.method==='bKash'?'📱 bKash':p.method==='Nagad'?'📱 Nagad':'🏦 Bank'}</td><td>${esc(p.ref)}</td><td>${p.date}</td><td class="t-pos">+${money(p.amount)}</td><td>${badge(p.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
@@ -1534,7 +1551,7 @@ const renderers={
       <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏠</span>${t('Holding tax schedule','হোল্ডিং ট্যাক্স তালিকা')}</div></div><div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>Property</th><th>City</th><th>Amount</th><th>Status</th></tr></thead><tbody>${holding.map(x=>`<tr><td><span class="c-name">${x[0]}</span><div class="c-sub">${x[1]}</div></td><td>${x[1]}</td><td class="t-amount">${x[2]}</td><td><span class="badge ${x[4]}">${x[3]}</span></td></tr>`).join('')}</tbody></table></div></div>
       <div>
         <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🏛️</span>${t('TDS ledger','টিডিএস লেজার')}</div></div><div class="panel-b">${DB.invoices.filter(i=>i.tds).map(i=>kv(i.id+' · '+i.m,'−'+money(i.tds),'neg')).join('')}${kv('<b>Total withheld</b>','<span class="t-pos">'+money(DB.invoices.reduce((s,i)=>s+i.tds,0))+'</span>')}</div></div>
-        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚖️</span>${t('Capital gains estimator','ক্যাপিটাল গেইন এস্টিমেটর')}</div></div><div class="panel-b" style="font-size:12.5px;color:var(--text-soft);line-height:1.65">Sell P-005 (Dhanmondi) at ৳2.4Cr vs cost ৳1.85Cr → estimated gain <b>৳55L</b>. KR computed minimum tax & wealth surcharge brackets per IT Act 2023. <span class="link" onclick="toast('Full report — Phase 2')">Open estimator →</span></div></div>
+        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚖️</span>${t('Capital gains estimator','ক্যাপিটাল গেইন এস্টিমেটর')}</div></div><div class="panel-b" style="font-size:12.5px;color:var(--text-soft);line-height:1.65">Sell P-005 (Dhanmondi) at ৳2.4Cr vs cost ৳1.85Cr → estimated gain <b>৳55L</b>. KR computed minimum tax & wealth surcharge brackets per IT Act 2023. <span class="link" onclick="capitalGainsForm()">Open estimator →</span></div></div>
       </div>
     </div>`;
     return h;
@@ -1595,7 +1612,7 @@ const renderers={
     const curPlan = catalog.find(p => p.code === cur) || null;
     const price = curPlan ? curPlan.price : 0;
     const isStaff = LIVE.user ? !!LIVE.user.is_staff : false;
-    let h=pageHead(t('Subscriptions','সাবস্ক্রিপশন'),t('Manage your plan — change or upgrade anytime, no lock-in.','আপনার প্ল্যান ম্যানেজ করুন — যেকোনো সময় বদল বা আপগ্রেড করুন।'),`<button class="btn-outline" onclick="toast('Invoice & payment history — Phase 4 gateway (bKash/SSLCommerz)')">🧾 ${t('Billing history','বিলিং ইতিহাস')}</button>`);
+    let h=pageHead(t('Subscriptions','সাবস্ক্রিপশন'),t('Manage your plan — change or upgrade anytime, no lock-in.','আপনার প্ল্যান ম্যানেজ করুন — যেকোনো সময় বদল বা আপগ্রেড করুন।'),`<button class="btn-outline" onclick="billingHistory()">🧾 ${t('Billing history','বিলিং ইতিহাস')}</button>`);
     h+=`<div class="sub-hero">
       <div class="sh-ic">${cur==='trial'?'🎁':cur==='starter'?'🌱':cur==='business'?'🚀':'🏆'}</div>
       <div>
@@ -1698,17 +1715,46 @@ const SCHEMAS = {
     {k:'status',l:'Status',t:'select',o:['Open','In Progress','Awaiting Payment','Closed']},
     {k:'con',l:'Contractor',t:'select',src:'partners',key:'name',val:'name'},
     {k:'cost',l:'Cost (৳)',t:'number'}
+  ]},
+  partners: { icon:'🤝', label:'Partner', fields:[
+    {k:'name',l:'Company name',t:'text',req:true},
+    {k:'trade',l:'Trade',t:'text'},
+    {k:'rating',l:'Rating (0–5)',t:'number'},
+    {k:'jobs',l:'Jobs completed',t:'number'},
+    {k:'status',l:'Status',t:'select',o:['Active','Onboarding','Suspended']},
+    {k:'sub_email',l:'Login email',t:'email'}
+  ]},
+  staff: { icon:'👥', label:'Staff', fields:[
+    {k:'name',l:'Full name',t:'text',req:true},
+    {k:'role',l:'Role',t:'select',o:['Manager','Service Manager','Legal','CRM & Support','Accountant','HR & Admin','Super Admin']},
+    {k:'dept',l:'Department',t:'text'},
+    {k:'status',l:'Status',t:'select',o:['Active','On Leave','Inactive']}
+  ]},
+  support: { icon:'🎧', label:'Support ticket', fields:[
+    {k:'from_t',l:'From',t:'text',req:true},
+    {k:'subject',l:'Subject',t:'text',req:true},
+    {k:'prio',l:'Priority',t:'select',o:['Low','Medium','High','Urgent']},
+    {k:'status',l:'Status',t:'select',o:['Open','In Progress','Resolved','Closed']},
+    {k:'age',l:'Age (days)',t:'number'}
+  ]},
+  cases: { icon:'⚖️', label:'Legal case', fields:[
+    {k:'title',l:'Case title',t:'text',req:true,full:true},
+    {k:'ref_lease',l:'Related lease',t:'select',src:'leases',key:'id',val:'id'},
+    {k:'type',l:'Type',t:'select',o:['Registration (TPA §107)','PRCA dispute','Eviction notice','TDS dispute','Holding tax appeal','Other']},
+    {k:'status',l:'Status',t:'select',o:['Open','In Review','Resolved','Closed']},
+    {k:'opened',l:'Opened date',t:'date'},
+    {k:'notes',l:'Notes',t:'textarea',full:true}
   ]}
 };
 const CRUD_ACCESS = {
   superadmin:true,
-  owner:['properties','units','tenants','leases','invoices','tickets'],
+  owner:['properties','units','tenants','leases','invoices','tickets','partners'],
   manager:['properties','units','tenants','leases','invoices','tickets'],
   accountant:['invoices','tickets'],
-  svc_mgr:['tickets'],
-  crm:['tickets'],
-  legal:['leases'],
-  hr:[], tenant:[], partner:[]
+  svc_mgr:['tickets','partners'],
+  crm:['tickets','support'],
+  legal:['leases','cases'],
+  hr:['staff'], tenant:[], partner:[]
 };
 function canCrud(c){ const a=CRUD_ACCESS[(LIVE.user?LIVE.user.role:'owner')]||[]; return a===true||a.includes(c); }
 function openDrawer(title, body, foot, sub){
@@ -1770,7 +1816,7 @@ function openDetail(collection, id){
   const canEdit=canCrud(collection);
   let foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button>`;
   if(collection==='tickets' && !(LIVE.user && LIVE.user.role==='tenant')){ foot+=`<button class="btn-outline" onclick="ticketStatusForm('${row.id}')">🔧 Update status</button>`; }
-  if(collection==='invoices' && row.status!=='Paid'){ foot+=`<button class="btn-primary" onclick="payForm('${row.id}')">💳 Record payment</button>`; }
+  if(collection==='invoices' && row.status!=='Paid'){ foot+=`<button class="btn-outline" onclick="gatewayPay('${row.id}')">🔐 ${t('Pay online','অনলাইনে পরিশোধ')}</button><button class="btn-primary" onclick="payForm('${row.id}')">💳 Record payment</button>`; }
   if(canEdit){ foot+=`<button class="btn-outline" onclick="openForm('${collection}','${row.id}')">✏️ Edit</button><button class="btn-danger" onclick="deleteRow('${collection}','${row.id}')">🗑 Delete</button>`; }
   foot+='</div>';
   openDrawer(`${s.icon} ${s.label} — ${row.id}`, `<div class="dr-kv">${kvRows}</div>${related}`, foot);
@@ -1858,6 +1904,258 @@ async function saveTicketStatus(id){
   const d=await apiCall('app-ticket-status',{id,status,cost});
   if(d.ok){ toast('Ticket '+id+' → '+status); await refreshData(); closeDrawer(); }
   else toast(d.error||'Update failed');
+}
+
+/* ═══ Phase 4: payment gateways + activated actions ═══ */
+let GW_CONFIG=null;
+async function gwConfig(){ if(!GW_CONFIG){ const d=await apiCall('app-gateways'); if(d.ok) GW_CONFIG=d.gateways; } return GW_CONFIG||[]; }
+
+/* Payments module ＋ Record payment (pick invoice) */
+function paymentsForm(){
+  const unpaid=DB.invoices.filter(i=>i.status!=='Paid');
+  if(!unpaid.length){toast('No unpaid invoices');return}
+  openDrawer('💳 Record payment',
+    `<div class="form-grid">
+      <div class="form-field full"><label>Invoice *</label><select id="pfInv">${unpaid.map(i=>{const l=leaseById(i.l);return `<option value="${i.id}">${i.id} · ${l?esc(unitById(l.u)?.name||''):''} · ${i.m} — ${money(i.net)}</option>`}).join('')}</select></div>
+      <div class="form-field"><label>Amount (৳) *</label><input type="number" id="pfAmt" value="${unpaid[0].net}"></div>
+      <div class="form-field"><label>Method</label><select id="pfMethod"><option>bKash</option><option>Nagad</option><option>Bank</option><option>Cheque</option><option>Cash</option></select></div>
+      <div class="form-field"><label>Date</label><input type="date" id="pfDate" value="${new Date().toISOString().slice(0,10)}"></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="recordPaymentFromForm()">✓ Record</button></div>`);
+  const invSel=document.getElementById('pfInv');
+  invSel.addEventListener('change',()=>{const i=invoiceById(invSel.value); if(i)document.getElementById('pfAmt').value=i.net;});
+}
+async function recordPaymentFromForm(){
+  const inv=document.getElementById('pfInv').value;
+  const amount=parseInt(document.getElementById('pfAmt').value,10)||0;
+  const method=document.getElementById('pfMethod').value;
+  const date=document.getElementById('pfDate').value||new Date().toISOString().slice(0,10);
+  if(amount<=0){toast('Enter a valid amount');return}
+  const d=await apiCall('app-payment',{invoice_id:inv,amount,method,date});
+  if(d.ok){ toast('Payment '+d.payment+' · receipt '+d.receipt); await refreshData(); closeDrawer(); }
+  else toast(d.error||'Payment failed');
+}
+
+/* Gateway checkout */
+function gatewayPay(invId){
+  const inv=invoiceById(invId); if(!inv){toast('Not found');return}
+  const l=leaseById(inv.l);
+  const paid=(DB.payments||[]).filter(p=>p.inv===invId).reduce((s,p)=>s+p.amount,0);
+  const due=Math.max(0,inv.net-paid);
+  if(due<=0){toast('Invoice already fully paid');return}
+  openDrawer('💳 Pay online — '+invId,
+    `<div class="gw-sum">
+      <div class="kv"><span class="k">Invoice</span><span class="v">${invId} · ${esc(inv.m)}</span></div>
+      <div class="kv"><span class="k">Unit</span><span class="v">${l?esc(unitById(l.u)?.name||'—'):'—'}</span></div>
+      <div class="kv"><span class="k">Amount due</span><span class="v t-amount" style="font-size:18px">${money(due)}</span></div>
+    </div>
+    <div class="form-field" style="margin-top:14px"><label>Payment method</label><select id="gwMethod">
+      <option value="bkash">📱 bKash</option><option value="nagad">📱 Nagad</option><option value="sslcommerz">💳 SSLCommerz (cards / internet banking)</option>
+    </select></div>
+    <div id="gwSandbox" style="margin-top:10px"></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="gatewayInit('${invId}')">Continue →</button></div>`);
+  gwConfig().then(gws=>{
+    const sb=document.getElementById('gwSandbox'); if(!sb)return;
+    const sandbox=gws.filter(g=>g.sandbox).map(g=>g.name);
+    if(sandbox.length) sb.innerHTML=`<span class="kr-pill">🧪 Sandbox — ${sandbox.join(', ')}</span><small class="f-hint" style="display:block;margin-top:6px">Demo checkout — no real money moves. Live keys swap in at go-live.</small>`;
+  });
+}
+async function gatewayInit(invId){
+  const method=document.getElementById('gwMethod').value;
+  const d=await apiCall('app-payment-init',{invoice_id:invId,method});
+  if(!d.ok){toast(d.error||'Checkout failed');return}
+  openDrawer('🔐 '+d.gateway+' checkout',
+    `<div class="gw-merchant">
+      <div class="gm-logo">${d.gateway==='bKash'?'💗':d.gateway==='Nagad'?'🟠':'🔒'} ${esc(d.gateway)}</div>
+      ${d.sandbox?'<div class="gm-sandbox">🧪 SANDBOX MERCHANT PAGE — simulated</div>':''}
+      <div class="gm-order"><div class="kv"><span class="k">Order</span><span class="v">${esc(d.checkout.order_id)}</span></div>
+      <div class="kv"><span class="k">Amount</span><span class="v">${money(d.amount)} BDT</span></div>
+      <div class="kv"><span class="k">Currency</span><span class="v">BDT</span></div></div>
+      <div class="gm-note">In production this redirects to ${esc(d.gateway)}'s secure checkout. In sandbox, confirm to simulate a successful payment.</div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="gatewayCancel('${d.session_id}')">Cancel</button><button class="btn-primary" onclick="gatewayConfirm('${d.session_id}',${d.amount})">✅ Pay ${money(d.amount)}</button></div>`);
+}
+async function gatewayConfirm(sid,amount){
+  const d=await apiCall('app-payment-confirm',{session_id:sid});
+  if(d.ok){
+    openDrawer('✅ Payment successful',
+      `<div style="text-align:center;padding:18px 6px">
+        <div style="font-size:44px">🎉</div>
+        <h3 style="margin:10px 0 4px">${money(amount)} paid via ${esc(d.gateway||'')}</h3>
+        <div style="font-size:13px;color:var(--text-mute);margin-bottom:16px">Payment <b>${esc(d.payment)}</b> · Receipt <b>${esc(d.receipt)}</b> issued (PRCA §13 signed)</div>
+        <div class="c-sub">Reference confirmed · receipt emailed</div>
+      </div>`,
+      `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer(); refreshData();">Done</button></div>`);
+    toast('Payment '+d.payment+' recorded · receipt '+d.receipt);
+  } else toast(d.error||'Payment failed');
+}
+async function gatewayCancel(sid){ await apiCall('app-payment-cancel',{session_id:sid}); closeDrawer(); toast('Checkout cancelled'); }
+function gatewayPayTenant(){
+  const mine=DB.invoices.filter(i=>i.status!=='Paid');
+  if(!mine.length){toast('No outstanding invoices — you are all clear 🎉');return}
+  gatewayPay(mine[0].id);
+}
+function gwIntegrations(){
+  gwConfig().then(gws=>{
+    openDrawer('🔌 Payment integrations',
+      `${gws.map(g=>`<div class="row-item"><div class="ri-ic">${g.name==='bKash'?'💗':g.name==='Nagad'?'🟠':'🔒'}</div><div class="ri-body"><div class="ri-t">${esc(g.name)}</div><div class="ri-s">${g.sandbox?'Sandbox mode — simulated checkout':'Live — real payments'}</div></div><div class="ri-r">${g.sandbox?'<span class="kr-pill">🧪 sandbox</span>':badge('Live')}</div></div>`).join('')}
+      <small class="f-hint" style="display:block;margin-top:12px">Live credentials (bKash App Secret, SSLCommerz Store Password) plug into <code style="font-size:11px">api/index.php → GATEWAYS()</code> — then set sandbox=false.</small>`,
+      `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Close</button></div>`);
+  });
+}
+
+/* Owner dashboard — rent collection report */
+function rentRollReport(){
+  const rows=DB.properties.map(p=>{
+    const us=DB.units.filter(u=>u.p===p.id);
+    const ls=DB.leases.filter(l=>us.some(u=>u.id===l.u)&&(l.status==='Active'||l.status==='Pending Registration'));
+    const roll=ls.reduce((s,l)=>s+l.rent,0);
+    const invs=DB.invoices.filter(i=>ls.some(l=>l.id===i.l));
+    const coll=invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.net,0);
+    const due=invs.filter(i=>i.status!=='Paid').reduce((s,i)=>s+i.net,0);
+    return [p,us,ls,roll,coll,due];
+  });
+  const tRoll=rows.reduce((s,r)=>s+r[3],0), tColl=rows.reduce((s,r)=>s+r[4],0), tDue=rows.reduce((s,r)=>s+r[5],0);
+  openDrawer('📥 Rent collection report',
+    `<div style="font-size:12.5px;color:var(--text-mute);margin-bottom:12px">Rent roll vs collection, per property — ${new Date().toLocaleDateString()}</div>
+    <table class="kr-mini"><thead><tr><th>Property</th><th>Leased</th><th>Rent roll</th><th>Collected</th><th>Outstanding</th><th>%</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td><span class="c-name">${esc(r[0].name)}</span><div class="c-sub">${esc(r[0].jur)}</div></td><td>${r[2].length}/${r[1].length}</td><td class="t-amount">${money(r[3])}</td><td class="t-pos">${money(r[4])}</td><td class="t-amount ${r[5]?'warn':''}">${money(r[5])}</td><td>${r[3]?Math.round(r[4]/r[3]*100):0}%</td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--text-mute)">No properties yet</td></tr>'}
+    <tr class="kr-total"><td><b>Total</b></td><td></td><td class="t-amount"><b>${money(tRoll)}</b></td><td class="t-pos"><b>${money(tColl)}</b></td><td class="t-amount"><b>${money(tDue)}</b></td><td><b>${tRoll?Math.round(tColl/tRoll*100):0}%</b></td></tr></tbody></table>
+    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn-outline" style="padding:8px 14px;font-size:12px" onclick="exportTableCSV()">⬇ Export CSV</button><button class="btn-outline" style="padding:8px 14px;font-size:12px" onclick="window.print()">🖨️ Print</button></div>`,
+    `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Close</button></div>`);
+}
+function exportTableCSV(){
+  const tbl=document.querySelector('.kr-mini'); if(!tbl)return;
+  const lines=[];
+  tbl.querySelectorAll('tr').forEach(r=>lines.push([...r.children].map(td=>'"'+td.textContent.trim().replace(/"/g,'""')+'"').join(',')));
+  const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='krtaker-'+(state.view||'report')+'.csv'; a.click(); URL.revokeObjectURL(a.href);
+  toast('Report exported');
+}
+
+/* Partner — submit quote */
+function quoteForm(){
+  const open=DB.tickets.filter(x=>x.status==='Open'||x.status==='Awaiting Payment');
+  if(!open.length){toast('No open jobs to quote');return}
+  openDrawer('📝 Submit quote',
+    `<div class="form-grid">
+      <div class="form-field full"><label>Job (ticket) *</label><select id="qJob">${open.map(x=>`<option value="${x.id}">${x.id} · ${esc(x.desc.slice(0,44))} · ${unitById(x.u)?esc(unitById(x.u).name):''}</option>`).join('')}</select></div>
+      <div class="form-field"><label>Quote amount (৳) *</label><input type="number" id="qAmt"></div>
+      <div class="form-field"><label>Estimated days</label><input type="number" id="qDays" value="3"></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="saveQuote()">✓ Submit quote</button></div>`);
+}
+async function saveQuote(){
+  const id=document.getElementById('qJob').value;
+  const cost=parseInt(document.getElementById('qAmt').value,10)||0;
+  if(cost<=0){toast('Enter a quote amount');return}
+  const d=await crud('update','tickets',id,{cost,status:'Awaiting Payment'});
+  if(d&&d.ok){ toast('Quote submitted for '+id); }
+}
+
+/* Service Manager — assign job */
+function assignForm(){
+  const open=DB.tickets.filter(x=>x.status==='Open');
+  const partners=DB.partners.filter(p=>p.status==='Active');
+  if(!open.length){toast('No open tickets to assign');return}
+  openDrawer('🛠️ Assign job',
+    `<div class="form-grid">
+      <div class="form-field full"><label>Ticket *</label><select id="ajJob">${open.map(x=>`<option value="${x.id}">${x.id} · ${esc(x.desc.slice(0,44))}</option>`).join('')}</select></div>
+      <div class="form-field full"><label>Partner *</label><select id="ajPart">${partners.map(p=>`<option>${esc(p.name)}</option>`).join('')}</select></div>
+      <div class="form-field"><label>SLA (days)</label><input type="number" id="ajSla" value="3"></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="saveAssign()">✓ Assign</button></div>`);
+}
+async function saveAssign(){
+  const id=document.getElementById('ajJob').value;
+  const con=document.getElementById('ajPart').value;
+  const d=await crud('update','tickets',id,{con,status:'In Progress'});
+  if(d&&d.ok) toast('Assigned '+id+' → '+con);
+}
+
+/* Accountant — TDS challan summary */
+function tdsChallan(){
+  const rows=DB.invoices.filter(i=>i.tds);
+  const total=rows.reduce((s,i)=>s+i.tds,0);
+  openDrawer('🏛️ TDS challan — summary',
+    `<div style="font-size:12.5px;color:var(--text-mute);margin-bottom:12px">Withholding per IT Act 2023 §109 — ${rows.length} invoices</div>
+    <table class="kr-mini"><thead><tr><th>Invoice</th><th>Month</th><th>Gross</th><th>TDS</th></tr></thead>
+    <tbody>${rows.map(i=>`<tr><td><span class="c-name">${i.id}</span></td><td>${esc(i.m)}</td><td class="t-amount">${money(i.gross)}</td><td class="t-amount">${money(i.tds)}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--text-mute)">No TDS on file</td></tr>'}</tbody>
+    <tfoot><tr class="kr-total"><td colspan="3">Total withholding</td><td class="t-amount"><b>${money(total)}</b></td></tr></tfoot></table>
+    <div style="margin-top:12px"><button class="btn-outline" style="padding:8px 14px;font-size:12px" onclick="exportTableCSV()">⬇ Export CSV</button></div>`,
+    `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Close</button></div>`);
+}
+
+/* HR — staff directory */
+function staffDirectory(){
+  openDrawer('👥 Staff directory',
+    `<table class="kr-mini"><thead><tr><th>Name</th><th>Role</th><th>Dept</th><th>Status</th></tr></thead>
+    <tbody>${DB.staff.map(s=>`<tr><td><span class="c-name">${esc(s.name)}</span></td><td>${esc(s.role)}</td><td>${esc(s.dept)}</td><td>${badge(s.status)}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--text-mute)">No staff yet</td></tr>'}</tbody></table>
+    <div style="margin-top:12px"><button class="btn-outline" style="padding:8px 14px;font-size:12px" onclick="exportTableCSV()">⬇ Export CSV</button></div>`,
+    `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Close</button></div>`);
+}
+
+/* Super Admin — quick add picker */
+function quickAdd(){
+  const items=[['properties','🏢','Property'],['units','🚪','Unit'],['tenants','👤','Tenant'],['leases','📄','Lease'],['invoices','🧾','Invoice'],['tickets','🔧','Ticket'],['partners','🤝','Partner'],['staff','👥','Staff'],['support','🎧','Support ticket'],['cases','⚖️','Legal case']];
+  openDrawer('＋ Quick add',
+    `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${items.map(x=>`<div class="qa-item" onclick="openNew('${x[0]}')"><div class="ti">${x[1]}</div><div class="tt">${t('Add '+x[2],x[2]+' যোগ করুন')}</div></div>`).join('')}</div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button></div>`);
+}
+function opsTile(i){
+  switch(i){
+    case 0: case 1: nav('subscriptions'); break;
+    case 2: gwIntegrations(); break;
+    case 3: window.open('https://krtaker.com','_blank'); break;
+    case 4: nav('maintenance'); break;
+    case 5: nav('compliance'); break;
+    case 6: nav('payments'); break;
+    case 7: staffDirectory(); break;
+  }
+}
+
+/* Subscriptions — billing history */
+function billingHistory(){
+  const pays=DB.payments||[], recs=DB.receipts||[], gws=DB.gateway_tx||[];
+  const total=pays.reduce((s,p)=>s+p.amount,0);
+  openDrawer('🧾 Billing history',
+    `<div style="font-size:12.5px;color:var(--text-mute);margin-bottom:12px">${pays.length} payment${pays.length===1?'':'s'} · ${total?money(total):'৳0'} total · receipts PRCA §13 signed</div>
+    ${pays.length?`<table class="kr-mini"><thead><tr><th>Payment</th><th>Invoice</th><th>Method</th><th>Date</th><th>Amount</th></tr></thead>
+    <tbody>${pays.map(p=>`<tr><td><span class="c-name">${p.id}</span><div class="c-sub">${esc(p.ref||'')}</div></td><td>${esc(p.inv)}</td><td>${esc(p.method)}</td><td>${esc(p.date)}</td><td class="t-pos">+${money(p.amount)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No payments yet</div>'}
+    ${gws.length?`<div style="margin-top:14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-mute)">Gateway transactions</div>
+    ${gws.map(g=>`<div class="row-item"><div class="ri-ic">🔐</div><div class="ri-body"><div class="ri-t">${esc(g.id)} · ${esc(g.method)}</div><div class="ri-s">${esc(g.invoice_id)} · ${esc(g.ref||'')}</div></div><div class="ri-r">${money(g.amount)} ${badge(g.status==='paid'?'Paid':g.status==='pending'?'Pending':'Failed')}</div></div>`).join('')}`:''}
+    <div style="margin-top:14px"><button class="btn-outline" style="padding:8px 14px;font-size:12px" onclick="exportTableCSV()">⬇ Export CSV</button></div>`,
+    `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Close</button></div>`);
+}
+
+/* Taxes — capital gains estimator */
+function capitalGainsForm(){
+  openDrawer('⚖️ Capital gains estimator',
+    `<div class="form-grid">
+      <div class="form-field full"><label>Property</label><select id="cgProp">${DB.properties.map(p=>`<option value="${p.value}">${esc(p.name)} — acquired ${moneyC(p.value)}</option>`).join('')}</select></div>
+      <div class="form-field"><label>Expected sale price (৳) *</label><input type="number" id="cgSell"></div>
+      <div class="form-field"><label>Holding period (years)</label><input type="number" id="cgYears" value="5"></div>
+    </div>
+    <div id="cgOut" style="margin-top:14px"></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="calcCapitalGain()">⚖️ Compute</button></div>`);
+}
+function calcCapitalGain(){
+  const cost=parseInt(document.getElementById('cgProp').value,10)||0;
+  const sell=parseInt(document.getElementById('cgSell').value,10)||0;
+  if(sell<=0){toast('Enter a sale price');return}
+  const gain=Math.max(0,sell-cost);
+  const baseTax=Math.round(gain*0.15);                       /* property transfer: 15% bracket (IT Act 2023 §128) */
+  const surcharge=gain>20000000?Math.round(gain*0.10):gain>10000000?Math.round(gain*0.05):0;  /* wealth surcharge brackets */
+  const est=baseTax+surcharge, net=gain-est;
+  document.getElementById('cgOut').innerHTML=`
+    <div class="cg-box">
+      <div class="kv"><span class="k">Cost basis</span><span class="v">${money(cost)}</span></div>
+      <div class="kv"><span class="k">Sale price</span><span class="v">${money(sell)}</span></div>
+      <div class="kv"><span class="k">Capital gain</span><span class="v pos">${money(gain)}</span></div>
+      <div class="kv"><span class="k">Tax (15% + surcharge)</span><span class="v neg">−${money(est)}</span></div>
+      <div class="kv" style="border-top:1px solid var(--border);padding-top:9px"><span class="k">Net proceeds</span><span class="v t-pos" style="font-size:17px">${money(net)}</span></div>
+      <small class="f-hint" style="display:block;margin-top:10px">Estimate per IT Act 2023 §128 (15% on property gains) + wealth surcharge brackets. Verify with your accountant before filing.</small>
+    </div>`;
 }
 
 /* ═══ Boot ═══ */
