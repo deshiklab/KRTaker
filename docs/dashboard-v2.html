@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2F80ED">
+<meta name="description" content="KRTaker Dashboard V2 — redesigned subscriber dashboards in the landing design system.">
+<title>KRTaker — Dashboard V2</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232F80ED'/><text x='32' y='42' font-size='28' font-weight='800' fill='white' text-anchor='middle' font-family='Arial'>KR</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   KRTaker Dashboard V2 — design system inherited from the
+   KRTaker landing page (web/css/style.css) · same tokens, same flow
+   ============================================================ */
+:root{
+  --primary:#2F80ED; --primary-dark:#1E5EB8; --primary-light:#E8F1FD;
+  --accent:#27AE60; --warn:#E67E22; --danger:#E74C3C;
+  --bg:#FFFFFF; --bg-alt:#F6F9FE; --bg-dark:#0F1B2D;
+  --text:#1A2433; --text-soft:#5B6B83; --text-mute:#8A97AB;
+  --border:#E4EAF3; --card:#FFFFFF;
+  --grad:linear-gradient(135deg,#2F80ED 0%,#1E5EB8 100%);
+  --shadow:0 10px 30px rgba(47,128,237,.10);
+  --radius:14px;
+  --font:'Inter','Hind Siliguri',system-ui,-apple-system,sans-serif;
+  --sidebar-w:250px;
+}
+[data-theme="dark"]{
+  --bg:#0E1626; --bg-alt:#121C30; --card:#16203A;
+  --text:#E8EEF9; --text-soft:#A8B6CF; --text-mute:#7483A0;
+  --border:#243350;
+  --primary-light:rgba(47,128,237,.16);
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
+a{color:var(--primary);text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+img{max-width:100%}
+
+/* ── App shell ── */
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--bg-alt);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:60;transition:transform .22s ease}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.content{padding:26px 30px 90px;max-width:1180px;width:100%;margin:0 auto}
+
+/* ── Sidebar ── */
+.sb-logo{display:flex;align-items:center;gap:11px;padding:18px 20px 14px}
+.sb-logo .logo-mark{width:38px;height:38px;border-radius:12px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;box-shadow:0 6px 16px rgba(47,128,237,.35)}
+.sb-logo .brand{font-weight:800;font-size:17px;letter-spacing:-.3px;line-height:1.1}
+.sb-logo .brand small{display:block;font-weight:500;font-size:10.5px;color:var(--text-mute);letter-spacing:.4px}
+.sb-scroll{flex:1;overflow-y:auto;padding:6px 12px 14px}
+.sb-group{font-size:10.5px;font-weight:700;letter-spacing:1.2px;color:var(--text-mute);text-transform:uppercase;padding:16px 10px 7px}
+.sb-item{display:flex;align-items:center;gap:11px;padding:9.5px 12px;border-radius:10px;color:var(--text-soft);font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:2px;position:relative;border:1px solid transparent}
+.sb-item .ic{font-size:15px;width:20px;text-align:center}
+.sb-item:hover{background:var(--primary-light);color:var(--primary)}
+.sb-item.active{background:var(--primary-light);color:var(--primary);font-weight:600;border-color:rgba(47,128,237,.18)}
+.sb-item.active::before{content:'';position:absolute;left:-12px;top:8px;bottom:8px;width:3.5px;border-radius:0 4px 4px 0;background:var(--grad)}
+.sb-item .chip{margin-left:auto;font-size:10px;font-weight:700;background:var(--danger);color:#fff;border-radius:999px;padding:1px 7px}
+.sb-bottom{padding:12px;border-top:1px solid var(--border)}
+.role-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 12px;box-shadow:var(--shadow)}
+.role-card .rc-top{display:flex;align-items:center;gap:10px}
+.role-ava{width:36px;height:36px;border-radius:10px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.role-card .rc-name{font-size:12.5px;font-weight:700;line-height:1.2}
+.role-card .rc-role{font-size:11px;color:var(--text-mute)}
+.role-switch-btn{margin-top:9px;width:100%;background:var(--primary-light);color:var(--primary-dark);border:1px solid rgba(47,128,237,.2);border-radius:9px;padding:6.5px;font-size:12px;font-weight:600;transition:all .15s}
+.role-switch-btn:hover{background:var(--grad);color:#fff}
+[data-theme="dark"] .role-switch-btn{color:#7EB3F5}
+
+/* ── Top bar ── */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 30px}
+[data-theme="dark"] .topbar{background:rgba(14,22,38,.92)}
+.topbar-in{display:flex;align-items:center;gap:14px;height:64px;max-width:1180px;margin:0 auto}
+.tb-search{flex:1;max-width:420px;display:flex;align-items:center;gap:9px;background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;padding:8px 13px;color:var(--text-mute);font-size:13px}
+.tb-search input{flex:1;border:none;outline:none;background:transparent;font-family:inherit;font-size:13px;color:var(--text)}
+.tb-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.icon-btn{background:var(--primary-light);border:1px solid var(--border);color:var(--primary-dark);border-radius:9px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;line-height:1;display:inline-flex;align-items:center;gap:6px}
+.icon-btn:hover{border-color:var(--primary);transform:translateY(-1px)}
+[data-theme="dark"] .icon-btn{color:#7EB3F5}
+.tb-bell{position:relative;width:38px;height:38px;border-radius:10px;background:var(--primary-light);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all .15s}
+.tb-bell:hover{border-color:var(--primary)}
+.tb-bell .dot{position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--danger);border:2px solid var(--bg)}
+.tb-user{display:flex;align-items:center;gap:10px;padding:5px 8px 5px 5px;border-radius:12px;border:1px solid var(--border);background:var(--card);cursor:pointer;transition:all .15s}
+.tb-user:hover{border-color:var(--primary)}
+.tb-user .u-name{font-size:12.5px;font-weight:700;line-height:1.15}
+.tb-user .u-role{font-size:10.5px;color:var(--text-mute)}
+.menu-toggle{display:none;background:none;border:1px solid var(--border);border-radius:9px;width:38px;height:38px;font-size:16px;color:var(--text)}
+
+/* ── Page header ── */
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.page-head h1{font-size:23px;font-weight:800;letter-spacing:-.4px;line-height:1.2}
+.page-head .sub{font-size:13px;color:var(--text-mute);margin-top:3px}
+.head-actions{display:flex;gap:9px;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:7px;background:var(--grad);color:#fff;border:none;border-radius:10px;padding:10px 17px;font-size:13px;font-weight:600;box-shadow:0 8px 22px rgba(47,128,237,.30);transition:all .15s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(47,128,237,.38)}
+.btn-outline{display:inline-flex;align-items:center;gap:7px;border:1px solid #C9D8EE;color:var(--primary);background:var(--card);border-radius:10px;padding:10px 17px;font-size:13px;font-weight:600;transition:all .15s}
+.btn-outline:hover{background:var(--primary-light);border-color:var(--primary)}
+[data-theme="dark"] .btn-outline{background:transparent;border-color:var(--border)}
+.btn-ghost{display:inline-flex;align-items:center;gap:7px;background:none;border:none;color:var(--text-soft);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600}
+.btn-ghost:hover{color:var(--primary);background:var(--primary-light)}
+
+/* ── Stat cards ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:22px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:17px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease}
+.stat:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(47,128,237,.14)}
+.stat::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);opacity:0;transition:opacity .18s}
+.stat:hover::after{opacity:1}
+.stat .s-label{font-size:11.5px;font-weight:600;color:var(--text-mute);letter-spacing:.2px;display:flex;align-items:center;gap:7px}
+.stat .s-ico{width:26px;height:26px;border-radius:8px;background:var(--primary-light);display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.stat .s-value{font-size:23px;font-weight:800;letter-spacing:-.5px;margin-top:7px;line-height:1.15}
+.stat .s-trend{font-size:11px;font-weight:600;margin-top:5px;color:var(--text-mute);display:flex;align-items:center;gap:4px}
+.stat .s-trend.up{color:var(--accent)}
+.stat .s-trend.down{color:var(--danger)}
+.stat .s-trend.warn{color:var(--warn)}
+
+/* ── Panels / cards ── */
+.grid{display:grid;gap:18px}
+.grid-2{grid-template-columns:1.6fr 1fr}
+.grid-2eq{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 18px;border-bottom:1px solid var(--border)}
+.panel-h .t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.panel-h .t .pi{width:26px;height:26px;border-radius:8px;background:var(--primary-light);display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.panel-h .link{font-size:12px;font-weight:600;color:var(--primary);cursor:pointer}
+.panel-b{padding:16px 18px}
+.panel-b.flush{padding:0}
+
+/* ── Lists ── */
+.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--text-soft)}
+.kv .v{font-weight:700}
+.kv .v.pos{color:var(--accent)}
+.kv .v.neg{color:var(--danger)}
+.kv .v.warn{color:var(--warn)}
+.row-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px}
+.row-item:last-child{border-bottom:none}
+.row-item .ri-ic{width:34px;height:34px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.row-item .ri-body{flex:1;min-width:0}
+.row-item .ri-t{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-item .ri-s{font-size:11.5px;color:var(--text-mute)}
+.row-item .ri-r{text-align:right;flex-shrink:0}
+
+/* ── Badges ── */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 10px;letter-spacing:.2px;white-space:nowrap}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.b-green{background:rgba(39,174,96,.12);color:#1E8A4C}
+.b-blue{background:var(--primary-light);color:var(--primary-dark)}
+.b-orange{background:rgba(230,126,34,.13);color:#C05F12}
+.b-red{background:rgba(231,76,60,.12);color:#C0392B}
+.b-gray{background:rgba(138,151,171,.14);color:var(--text-soft)}
+.b-purple{background:rgba(155,89,182,.12);color:#8E44AD}
+[data-theme="dark"] .b-green{color:#4CD68A}
+[data-theme="dark"] .b-blue{color:#7EB3F5}
+[data-theme="dark"] .b-orange{color:#F5A25D}
+[data-theme="dark"] .b-red{color:#F07B6E}
+[data-theme="dark"] .b-purple{color:#C39BD3}
+
+/* ── Tables ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+thead th{text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-mute);padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg-alt);white-space:nowrap}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text-soft);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .12s}
+tbody tr:hover{background:var(--bg-alt)}
+td .c-name{font-weight:600;color:var(--text);font-size:13px}
+td .c-sub{font-size:11px;color:var(--text-mute)}
+.t-amount{font-weight:700;color:var(--text);white-space:nowrap}
+.t-pos{color:var(--accent);font-weight:700}
+.t-neg{color:var(--danger);font-weight:700}
+
+/* ── Progress bars ── */
+.prog{height:8px;border-radius:999px;background:var(--bg-alt);border:1px solid var(--border);overflow:hidden;min-width:90px}
+.prog > i{display:block;height:100%;border-radius:999px;background:var(--grad)}
+.prog.green > i{background:linear-gradient(135deg,#27AE60,#1E8A4C)}
+.prog.orange > i{background:linear-gradient(135deg,#E67E22,#C05F12)}
+.prog.red > i{background:linear-gradient(135deg,#E74C3C,#C0392B)}
+.prog-l{display:flex;justify-content:space-between;font-size:11px;color:var(--text-mute);margin-top:4px}
+
+/* ── Quick tiles ── */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.tile{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px;cursor:pointer;transition:all .18s;box-shadow:var(--shadow)}
+.tile:hover{transform:translateY(-3px);border-color:var(--primary);box-shadow:0 14px 30px rgba(47,128,237,.16)}
+.tile .ti{font-size:20px}
+.tile .tt{font-size:13px;font-weight:700;margin-top:8px}
+.tile .ts{font-size:11px;color:var(--text-mute);margin-top:2px}
+
+/* ── Charts (pure SVG) ── */
+.chart{width:100%;height:auto;display:block}
+.chart-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-mute);padding:0 4px;margin-top:4px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--text-soft);margin-top:10px}
+.legend .lg{display:flex;align-items:center;gap:6px}
+.legend .sw{width:10px;height:10px;border-radius:3px}
+
+/* ── KR AI widget ── */
+.kr-widget{position:fixed;bottom:22px;right:22px;z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.kr-fab{width:56px;height:56px;border-radius:16px;background:var(--grad);color:#fff;font-size:20px;border:none;box-shadow:0 10px 26px rgba(47,128,237,.4);display:flex;align-items:center;justify-content:center;transition:transform .18s}
+.kr-fab:hover{transform:translateY(-3px) scale(1.04)}
+.kr-panel{width:330px;max-width:calc(100vw - 40px);background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 24px 60px rgba(10,25,50,.2);overflow:hidden;display:none}
+.kr-panel.open{display:flex;flex-direction:column}
+.kr-head{background:var(--grad);color:#fff;padding:13px 16px;display:flex;align-items:center;gap:10px}
+.kr-head .kra{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
+.kr-head .kt{font-size:13.5px;font-weight:700;line-height:1.15}
+.kr-head .ks{font-size:10.5px;opacity:.85}
+.kr-close{margin-left:auto;background:none;border:none;color:#fff;font-size:15px;opacity:.85}
+.kr-body{height:300px;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:9px;font-size:12.5px}
+.kr-msg{max-width:82%;padding:9px 12px;border-radius:13px;line-height:1.5}
+.kr-msg.ai{background:var(--bg-alt);border:1px solid var(--border);border-top-left-radius:4px;align-self:flex-start}
+.kr-msg.me{background:var(--grad);color:#fff;border-top-right-radius:4px;align-self:flex-end}
+.kr-input{display:flex;gap:8px;padding:11px 13px;border-top:1px solid var(--border)}
+.kr-input input{flex:1;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:12.5px;background:var(--bg-alt);color:var(--text);outline:none}
+.kr-input input:focus{border-color:var(--primary)}
+.kr-input button{background:var(--grad);color:#fff;border:none;border-radius:10px;padding:0 14px;font-size:14px}
+
+/* ── Role switcher modal ── */
+.overlay{position:fixed;inset:0;background:rgba(10,20,40,.5);backdrop-filter:blur(4px);z-index:90;display:none;align-items:flex-start;justify-content:center;padding:6vh 18px;overflow-y:auto}
+.overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:18px;width:100%;max-width:760px;box-shadow:0 30px 80px rgba(10,25,50,.3);animation:pop .2s ease}
+@keyframes pop{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.modal-h{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.modal-h .t{font-size:16px;font-weight:800}
+.modal-h .close{margin-left:auto;background:none;border:none;font-size:17px;color:var(--text-mute)}
+.role-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:20px 22px 24px}
+.role-opt{border:1px solid var(--border);border-radius:13px;padding:14px;cursor:pointer;transition:all .15s;background:var(--card)}
+.role-opt:hover{border-color:var(--primary);box-shadow:var(--shadow)}
+.role-opt.active{background:var(--primary-light);border-color:var(--primary)}
+.role-opt .ro-ic{font-size:20px}
+.role-opt .ro-t{font-size:13.5px;font-weight:700;margin-top:7px}
+.role-opt .ro-d{font-size:11px;color:var(--text-mute);margin-top:2px;line-height:1.45}
+
+/* ── Toast ── */
+.toast-wrap{position:fixed;top:76px;right:22px;z-index:99;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--text);color:var(--bg);font-size:12.5px;font-weight:600;padding:11px 16px;border-radius:11px;box-shadow:0 12px 30px rgba(0,0,0,.25);animation:pop .2s ease;max-width:320px}
+[data-theme="dark"] .toast{background:#E8EEF9;color:#0E1626}
+
+/* ── Empty / misc ── */
+.empty{padding:36px;text-align:center;color:var(--text-mute);font-size:13px}
+.tagline{font-size:11px;color:var(--text-mute);background:var(--bg-alt);border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-weight:600}
+
+/* ── Mobile bottom bar ── */
+.mob-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);z-index:65;padding:6px 8px calc(6px + env(safe-area-inset-bottom));grid-template-columns:repeat(5,1fr);gap:4px}
+.mob-bar .mb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:10px;font-size:9.5px;font-weight:600;color:var(--text-mute);cursor:pointer}
+.mob-bar .mb .mi{font-size:17px}
+.mob-bar .mb.active{color:var(--primary);background:var(--primary-light)}
+
+/* ── Responsive ── */
+@media(max-width:1080px){
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:860px){
+  .sidebar{position:fixed;left:0;top:0;transform:translateX(-105%);box-shadow:0 0 50px rgba(0,0,0,.2)}
+  .sidebar.open{transform:none}
+  .menu-toggle{display:flex;align-items:center;justify-content:center}
+  .content{padding:20px 16px 96px}
+  .topbar{padding:0 16px}
+  .grid-2,.grid-2eq{grid-template-columns:1fr}
+  .mob-bar{display:grid}
+  .tb-search{display:none}
+}
+@media(max-width:520px){
+  .stats{grid-template-columns:1fr 1fr;gap:12px}
+  .stat .s-value{font-size:19px}
+  .grid-3,.grid-4{grid-template-columns:1fr 1fr}
+  .page-head h1{font-size:19px}
+  .tb-user .u-name,.tb-user .u-role{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══ Sidebar ═══ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="logo-mark">KR</div>
+      <div class="brand">KRTaker<small>Key Responsibility Taker</small></div>
+    </div>
+    <div class="sb-scroll" id="sbNav"></div>
+    <div class="sb-bottom">
+      <div class="role-card">
+        <div class="rc-top">
+          <div class="role-ava" id="rcAva">–</div>
+          <div>
+            <div class="rc-name" id="rcName">–</div>
+            <div class="rc-role" id="rcRole">–</div>
+          </div>
+        </div>
+        <button class="role-switch-btn" onclick="openRoles()">🔀 Switch role</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ Main ═══ -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-in">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="tb-search"><span>🔍</span><input id="globalSearch" placeholder="Search units, tenants, invoices…" oninput="doSearch(this.value)"></div>
+        <div class="tb-actions">
+          <button class="icon-btn" id="langBtn" onclick="toggleLang()">বাংলা</button>
+          <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
+          <div class="tb-bell" onclick="toast('3 new notifications — 2 tickets escalated, 1 invoice overdue')">🔔<span class="dot"></span></div>
+          <div class="tb-user" onclick="openRoles()">
+            <div class="role-ava" id="tbAva" style="width:34px;height:34px;font-size:12px">–</div>
+            <div>
+              <div class="u-name" id="tbName">–</div>
+              <div class="u-role" id="tbRole">–</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content" id="viewRoot"></main>
+  </div>
+</div>
+
+<!-- ═══ KR widget ═══ -->
+<div class="kr-widget">
+  <div class="kr-panel" id="krPanel">
+    <div class="kr-head">
+      <div class="kra">KR</div>
+      <div>
+        <div class="kt">AI Caretaker · KR</div>
+        <div class="ks">Online — 24/7 · DeepSeek-powered (Phase 5)</div>
+      </div>
+      <button class="kr-close" onclick="toggleKR()">✕</button>
+    </div>
+    <div class="kr-body" id="krBody"></div>
+    <div class="kr-input">
+      <input id="krIn" placeholder="Ask about leases, tax, PRCA…" onkeydown="if(event.key==='Enter')krSend()">
+      <button onclick="krSend()">➤</button>
+    </div>
+  </div>
+  <button class="kr-fab" onclick="toggleKR()">🤖</button>
+</div>
+
+<!-- ═══ Role switcher ═══ -->
+<div class="overlay" id="roleOverlay" onclick="if(event.target===this)closeRoles()">
+  <div class="modal">
+    <div class="modal-h"><span class="t">🔀 Switch role — preview any subscriber dashboard</span><button class="close" onclick="closeRoles()">✕</button></div>
+    <div class="role-grid" id="roleGrid"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   KRTaker Dashboard V2 — demo data (mirrors V1 SEED)
+   ════════════════════════════════════════════════════════════ */
+const SEED = {
+  properties:[
+    {id:'P-001',name:'Green View Residency',type:'Flat',jur:'Dhaka North',holding:'12/5, Mirpur-10',sqft:18000,value:82000000,status:'Active'},
+    {id:'P-002',name:'Banani Commercial Tower',type:'Commercial',jur:'Dhaka North',holding:'32/K, Banani C/A',sqft:45000,value:320000000,status:'Active'},
+    {id:'P-003',name:'Gulshan Lakeside Plot',type:'Plot',jur:'Dhaka North',holding:'Plot 7, Block SE(D)',sqft:3600,value:150000000,status:'Active'},
+    {id:'P-004',name:'Chattogram Industrial Shed',type:'Industrial',jur:'Chattogram',holding:'KEPZ Plot 18, Patenga',sqft:30000,value:175000000,status:'Active'},
+    {id:'P-005',name:'Dhanmondi Apartment',type:'Flat',jur:'Dhaka South',holding:'Road 9/A, Dhanmondi',sqft:2450,value:18500000,status:'Active'}
+  ],
+  units:[
+    {id:'U-001',p:'P-001',name:'Flat 3B',floor:'3rd',sqft:1450,status:'Leased'},
+    {id:'U-002',p:'P-001',name:'Flat 4A',floor:'4th',sqft:1650,status:'Leased'},
+    {id:'U-003',p:'P-001',name:'Flat 5C',floor:'5th',sqft:1200,status:'Vacant'},
+    {id:'U-004',p:'P-002',name:'Floor 1 (Retail)',floor:'1st',sqft:6000,status:'Leased'},
+    {id:'U-005',p:'P-002',name:'Floor 2 (Office)',floor:'2nd',sqft:5200,status:'Leased'},
+    {id:'U-006',p:'P-002',name:'Floor 3 (Office)',floor:'3rd',sqft:5200,status:'Leased'},
+    {id:'U-007',p:'P-003',name:'Plot 7 (SE(D))',floor:'—',sqft:3600,status:'Vacant'},
+    {id:'U-008',p:'P-004',name:'Shed A',floor:'Ground',sqft:18000,status:'Leased'},
+    {id:'U-009',p:'P-004',name:'Shed B',floor:'Ground',sqft:12000,status:'Maintenance'},
+    {id:'U-010',p:'P-005',name:'Apartment 7B',floor:'7th',sqft:2450,status:'Leased'}
+  ],
+  tenants:[
+    {id:'T-001',name:'Rafiqul Islam',phone:'01711-223344',nid:'1990123456789',nrb:false,kind:'Individual'},
+    {id:'T-002',name:'Sultana Rahman',phone:'01712-445566',nid:'1985112233445',nrb:false,kind:'Individual'},
+    {id:'T-003',name:'Orbit Textiles Ltd',phone:'01711-778899',nid:'BIN-004512367',nrb:false,kind:'Corporate'},
+    {id:'T-004',name:'Dr. Nadia Karim',phone:'01713-556677',nid:'1988889900112',nrb:true,kind:'Individual'},
+    {id:'T-005',name:'Bengal Agro Foods',phone:'01713-889900',nid:'BIN-006734512',nrb:false,kind:'Corporate'},
+    {id:'T-006',name:'Tanvir Hossain',phone:'01714-223344',nid:'1993223445566',nrb:false,kind:'Individual'},
+    {id:'T-007',name:'Maria Chowdhury (NRB)',phone:'+1 646-555-0182',nid:'1975123456780',nrb:true,kind:'Individual'},
+    {id:'T-008',name:'Ahmed & Sons Traders',phone:'01715-990011',nid:'BIN-009812345',nrb:false,kind:'Corporate'}
+  ],
+  leases:[
+    {id:'L-001',u:'U-001',t:'T-001',start:'2026-01-01',end:'2026-12-31',rent:25000,adv:25000,res:true,reg:null,status:'Active'},
+    {id:'L-002',u:'U-002',t:'T-004',start:'2025-11-01',end:'2027-10-31',rent:32000,adv:32000,res:true,reg:{office:'Sub-Registry Mirpur',deed:'DL-4521/2025'},status:'Active'},
+    {id:'L-003',u:'U-004',t:'T-003',start:'2025-06-01',end:'2027-05-31',rent:450000,adv:450000,res:false,reg:{office:'Sub-Registry Gulshan',deed:'DL-3877/2025'},status:'Active'},
+    {id:'L-004',u:'U-005',t:'T-005',start:'2026-03-01',end:'2027-02-28',rent:380000,adv:380000,res:false,reg:null,status:'Pending Registration'},
+    {id:'L-005',u:'U-006',t:'T-008',start:'2024-07-01',end:'2026-06-30',rent:350000,adv:700000,res:false,reg:{office:'Sub-Registry Gulshan',deed:'DL-2110/2024'},status:'Active'},
+    {id:'L-006',u:'U-008',t:'T-006',start:'2026-02-01',end:'2026-10-31',rent:210000,adv:210000,res:false,reg:null,status:'Active'},
+    {id:'L-007',u:'U-010',t:'T-002',start:'2026-01-15',end:'2026-12-14',rent:40000,adv:40000,res:true,reg:null,status:'Active'},
+    {id:'L-008',u:'U-002',t:'T-007',start:'2023-03-01',end:'2024-02-29',rent:28000,adv:56000,res:true,reg:{office:'Sub-Registry Dhanmondi',deed:'DL-1108/2023'},status:'Expired'},
+    {id:'L-009',u:'U-009',t:'T-005',start:'2025-09-01',end:'2026-08-31',rent:180000,adv:180000,res:false,reg:null,status:'Terminated'},
+    {id:'L-010',u:'U-001',t:'T-006',start:'2026-06-01',end:'2028-05-31',rent:28000,adv:56000,res:true,reg:null,status:'Pending Registration'}
+  ],
+  invoices:[
+    {id:'INV-2026-001',l:'L-001',m:'2026-06',gross:25000,tds:0,net:25000,status:'Paid'},
+    {id:'INV-2026-002',l:'L-002',m:'2026-06',gross:32000,tds:0,net:32000,status:'Paid'},
+    {id:'INV-2026-003',l:'L-003',m:'2026-06',gross:450000,tds:45000,net:405000,status:'Paid'},
+    {id:'INV-2026-004',l:'L-004',m:'2026-06',gross:380000,tds:38000,net:342000,status:'Unpaid'},
+    {id:'INV-2026-005',l:'L-005',m:'2026-06',gross:350000,tds:35000,net:315000,status:'Unpaid'},
+    {id:'INV-2026-006',l:'L-006',m:'2026-06',gross:210000,tds:0,net:210000,status:'Overdue'},
+    {id:'INV-2026-007',l:'L-007',m:'2026-06',gross:40000,tds:0,net:40000,status:'Paid'},
+    {id:'INV-2026-008',l:'L-004',m:'2026-07',gross:380000,tds:38000,net:342000,status:'Overdue'}
+  ],
+  receipts:[
+    {id:'RCP-0001',inv:'INV-2026-001',amount:25000,date:'2026-06-05',method:'bKash',sig:'SIG-9f3a21c8'},
+    {id:'RCP-0002',inv:'INV-2026-002',amount:32000,date:'2026-06-08',method:'Bank',sig:'SIG-4b71d90e'},
+    {id:'RCP-0003',inv:'INV-2026-003',amount:405000,date:'2026-06-10',method:'bKash',sig:'SIG-c2e58a77'},
+    {id:'RCP-0004',inv:'INV-2026-007',amount:40000,date:'2026-06-12',method:'Nagad',sig:'SIG-77d21f0a'}
+  ],
+  tickets:[
+    {id:'MT-001',u:'U-008',desc:'Roof structural crack over Shed A',reported:'2026-06-18',liab:'Landlord',status:'Open',con:'Rahim Steel Works',cost:0},
+    {id:'MT-002',u:'U-001',desc:'Kitchen sink leakage',reported:'2026-06-21',liab:'Tenant',status:'Open',con:'',cost:0},
+    {id:'MT-003',u:'U-010',desc:'Water pump failure (common line)',reported:'2026-06-24',liab:'Landlord',status:'In Progress',con:'Kazi Plumbing',cost:8500},
+    {id:'MT-004',u:'U-009',desc:'Flooring damage from tenant forklift',reported:'2026-06-27',liab:'Tenant',status:'Awaiting Payment',con:'Meghna Builders',cost:42000}
+  ],
+  payments:[
+    {id:'PAY-001',inv:'INV-2026-001',amount:25000,method:'bKash',ref:'BK-7f2a',date:'2026-06-05',status:'Success'},
+    {id:'PAY-002',inv:'INV-2026-003',amount:405000,method:'bKash',ref:'BK-91cd',date:'2026-06-10',status:'Success'},
+    {id:'PAY-003',inv:'INV-2026-007',amount:40000,method:'Nagad',ref:'NG-33ab',date:'2026-06-12',status:'Success'}
+  ],
+  partners:[
+    {id:'SP-01',name:'Rahim Steel Works',trade:'Structural & Steel',rating:4.8,jobs:24,status:'Active'},
+    {id:'SP-02',name:'Kazi Plumbing',trade:'Plumbing & Sanitary',rating:4.5,jobs:41,status:'Active'},
+    {id:'SP-03',name:'Meghna Builders',trade:'Interior & Renovation',rating:4.2,jobs:17,status:'Active'},
+    {id:'SP-04',name:'SecureLine Security',trade:'Security Services',rating:4.9,jobs:33,status:'Active'},
+    {id:'SP-05',name:'CleanPro BD',trade:'Cleaning & Facility',rating:4.0,jobs:52,status:'Onboarding'}
+  ],
+  support:[
+    {id:'SUP-001',from:'Rofiqul Islam (Owner)',subject:'Cannot upload registration deed for L-004',status:'Open',prio:'High',age:'2h'},
+    {id:'SUP-002',from:'Orbit Textiles (Tenant)',subject:'TDS certificate not received for June',status:'Open',prio:'Medium',age:'5h'},
+    {id:'SUP-003',from:'Sultana Rahman (Tenant)',subject:'How to submit repair invoice for deduction?',status:'In Progress',prio:'Low',age:'1d'},
+    {id:'SUP-004',from:'Rahim Steel Works (Partner)',subject:'QC feedback on MT-001 — photos uploaded',status:'In Progress',prio:'Medium',age:'1d'},
+    {id:'SUP-005',from:'Dr. Nadia Karim (Tenant)',subject:'Payment failed — bKash timeout',status:'Resolved',prio:'High',age:'2d'},
+    {id:'SUP-006',from:'Bengal Agro Foods (Tenant)',subject:'Need invoice re-issue with VAT',status:'Open',prio:'Medium',age:'3h'}
+  ],
+  staff:[
+    {id:'ST-01',name:'Arif Chowdhury',role:'Service Manager',dept:'Operations',status:'Active'},
+    {id:'ST-02',name:'Mithila Rahman',role:'CRM & Help Desk',dept:'Support',status:'Active'},
+    {id:'ST-03',name:'Sohel Rana',role:'Accountant',dept:'Finance',status:'Active'},
+    {id:'ST-04',name:'Nusrat Jahan',role:'HR & Admin',dept:'Admin',status:'Active'},
+    {id:'ST-05',name:'Barrister Naima Karim',role:'Legal Counsel',dept:'Legal',status:'Active'},
+    {id:'ST-06',name:'Tanvir Hasan',role:'Service Manager (Jr)',dept:'Operations',status:'Active'},
+    {id:'ST-07',name:'Farzana Akter',role:'CRM Executive',dept:'Support',status:'Probation'},
+    {id:'ST-08',name:'Mahmudul Islam',role:'Finance Officer',dept:'Finance',status:'Active'}
+  ],
+  platform:{subscribers:128,mrr:2480000,arr:29760000,partners:45,staff:8,csat:4.6,subsTrend:'+12 this month',
+    subscriptions:[
+      {id:'SUB-001',org:'Green View Residency',plan:'Business',seats:3,mrr:15000,status:'Active'},
+      {id:'SUB-002',org:'Banani Commercial Tower',plan:'Enterprise',seats:10,mrr:45000,status:'Active'},
+      {id:'SUB-003',org:'Chattogram Industrial Shed',plan:'Business',seats:2,mrr:15000,status:'Active'},
+      {id:'SUB-004',org:'Dhanmondi Apartment',plan:'Starter',seats:1,mrr:5000,status:'Active'},
+      {id:'SUB-005',org:'Gulshan Lakeside Plot',plan:'Starter',seats:1,mrr:5000,status:'Trial'}
+    ],
+    finance:[
+      {type:'Subscription revenue',amount:2480000,status:'Settled'},
+      {type:'Partner payout',amount:-420000,status:'Paid'},
+      {type:'Gateway fees (bKash/SSL)',amount:-96250,status:'Settled'},
+      {type:'TDS collected (platform)',amount:152000,status:'Payable'},
+      {type:'Legal add-on revenue',amount:180000,status:'Invoiced'},
+      {type:'Hosting & infra',amount:-78000,status:'Paid'}
+    ]}
+};
+
+/* ═══ Roles & modules ═══ */
+const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai'];
+const ROLES = [
+  {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:ALL},
+  {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:ALL},
+  {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:ALL},
+  {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','maintenance','ai']},
+  {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','invoices','payments','ai']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai']},
+  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai']},
+  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding',mods:['dashboard','maintenance','ai']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','ai']},
+  {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai']}
+];
+const GROUPS = [
+  {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases']]},
+  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes']]},
+  {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['compliance','⚖️','Compliance']]},
+  {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]}
+];
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','ai':'🤖'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','ai':'AI Caretaker'};
+const BN = {
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','AI Caretaker':'এআই কেয়ারটেকার',
+  'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা',
+  'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
+};
+
+/* ═══ State ═══ */
+let state = {role:'owner', view:'dashboard', theme:localStorage.getItem('krtaker_dash_theme')||'light', lang:localStorage.getItem('krtaker_dash_lang')||'en'};
+let DB = JSON.parse(JSON.stringify(SEED));
+
+/* ═══ Helpers ═══ */
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const t = (en,bn) => state.lang==='bn' ? (bn||en) : en;
+const money = n => '৳' + Math.round(n).toLocaleString('en-IN');
+const moneyC = n => { const a=Math.abs(n); let s = a>=10000000 ? (a/10000000).toFixed(2)+'Cr' : a>=100000 ? (a/100000).toFixed(1)+'L' : Math.round(a).toLocaleString('en-IN'); return (n<0?'−':'')+'৳'+s; };
+function propById(id){return DB.properties.find(p=>p.id===id)}
+function unitById(id){return DB.units.find(u=>u.id===id)}
+function tenantById(id){return DB.tenants.find(x=>x.id===id)}
+function leaseById(id){return DB.leases.find(x=>x.id===id)}
+function invoiceById(id){return DB.invoices.find(x=>x.id===id)}
+function can(mod){const r=ROLES.find(x=>x.id===state.role);return r.mods.includes(mod)}
+function role(){return ROLES.find(r=>r.id===state.role)}
+function user(){return role()}
+function badge(st){const map={'Paid':'b-green','Active':'b-green','Success':'b-green','Leased':'b-green','Open':'b-red','Unpaid':'b-orange','Overdue':'b-red','In Progress':'b-blue','Awaiting Payment':'b-orange','Pending Registration':'b-orange','Vacant':'b-gray','Expired':'b-gray','Terminated':'b-red','Maintenance':'b-purple','Onboarding':'b-purple','Trial':'b-purple','Resolved':'b-green','Probation':'b-orange'};return `<span class="badge ${map[st]||'b-gray'}">${esc(st)}</span>`}
+function stat(label,value,trend,cls,ico){return `<div class="stat"><div class="s-label"><span class="s-ico">${ico||''}</span>${esc(label)}</div><div class="s-value">${value}</div>${trend?`<div class="s-trend ${cls||''}">${trend}</div>`:''}</div>`}
+function panel(title,body,ico,link){return `<div class="panel"><div class="panel-h"><div class="t"><span class="pi">${ico||''}</span>${title}</div>${link?`<span class="link" onclick="nav('${link}')">${t('View all','সব দেখুন')} →</span>`:''}</div><div class="panel-b">${body}</div></div>`}
+function kv(k,v,cls){return `<div class="kv"><span class="k">${k}</span><span class="v ${cls||''}">${v}</span></div>`}
+function rowItem(ic,title,sub,right){return `<div class="row-item"><div class="ri-ic">${ic}</div><div class="ri-body"><div class="ri-t">${title}</div><div class="ri-s">${sub}</div></div><div class="ri-r">${right}</div></div>`}
+function toast(msg,type){const d=document.createElement('div');d.className='toast '+(type||'');d.textContent=msg;$('toastWrap').appendChild(d);setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),300)},2600)}
+function pageHead(title,sub,actions){return `<div class="page-head"><div><h1>${title}</h1><div class="sub">${sub}</div></div><div class="head-actions">${actions||''}</div></div>`}
+function statsRow(list){return `<div class="stats">${list.join('')}</div>`}
+function barChart(data,labels,color){const w=560,h=150,pad=26;const max=Math.max(...data)*1.15;const bw=(w-pad*2)/data.length;const bars=data.map((v,i)=>{const bh=(v/max)*(h-pad*2);const x=pad+i*bw+bw*.18;const y=h-pad-bh;return `<rect x="${x}" y="${y}" width="${bw*.64}" height="${bh}" rx="5" fill="${color||'url(#gBar)'}"><title>${labels[i]}: ${money(v)}</title></rect>`}).join('');
+  const gx=[];data.forEach((_,i)=>{gx.push(`<text x="${pad+i*bw+bw*.5}" y="${h-8}" font-size="10" fill="var(--text-mute)" text-anchor="middle">${labels[i]}</text>`)});
+  return `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img"><defs><linearGradient id="gBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F80ED"/><stop offset="1" stop-color="#1E5EB8"/></linearGradient></defs><line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="var(--border)" stroke-width="1"/>${bars}${gx.join('')}</svg>`;
+}
+function donut(pct,color,label,sub){const r=34,c=2*Math.PI*r,off=c*(1-pct/100);return `<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><svg width="104" height="104" viewBox="0 0 104 104"><circle cx="52" cy="52" r="${r}" fill="none" stroke="var(--bg-alt)" stroke-width="13"/><circle cx="52" cy="52" r="${r}" fill="none" stroke="${color}" stroke-width="13" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 52 52)"/><text x="52" y="50" text-anchor="middle" font-size="16" font-weight="800" fill="var(--text)">${pct}%</text><text x="52" y="64" text-anchor="middle" font-size="8.5" fill="var(--text-mute)">${label||''}</text></svg><div style="font-size:12.5px;color:var(--text-soft)">${sub||''}</div></div>`}
+
+/* ═══ Nav & shell ═══ */
+function renderNav(){
+  const h=[];const active=state.view;
+  GROUPS.forEach(g=>{
+    const items=g.items.filter(i=>can(i[0]));
+    if(!items.length)return;
+    h.push(`<div class="sb-group">${t(g.label,g.label)}</div>`);
+    items.forEach(i=>{const dot=i[0]==='dashboard'&&DB.tickets.filter(x=>x.status==='Open').length?`<span class="chip">${DB.tickets.filter(x=>x.status==='Open').length}</span>`:'';h.push(`<div class="sb-item ${active===i[0]?'active':''}" onclick="nav('${i[0]}')"><span class="ic">${i[1]}</span>${t(i[2],BN[i[2]])}${dot}</div>`)});
+  });
+  $('sbNav').innerHTML=h.join('');
+  $('rcAva').textContent=role().ava;$('rcName').textContent=user().name;$('rcRole').textContent=t(role().role,role().role);
+  $('tbAva').textContent=role().ava;$('tbName').textContent=user().name;$('tbRole').textContent=t(role().role,role().role);
+  renderMobBar();
+}
+function renderMobBar(){
+  const items=[['dashboard','📊'],['properties','🏢'],['invoices','🧾'],['maintenance','🔧'],['ai','🤖']].filter(i=>can(i[0]));
+  $('mobBar')||(function(){const d=document.createElement('div');d.className='mob-bar';d.id='mobBar';document.body.appendChild(d)})();
+  $('mobBar').innerHTML=items.map(i=>`<div class="mb ${state.view===i[0]?'active':''}" onclick="nav('${i[0]}')"><span class="mi">${i[1]}</span>${t(MOD_TITLE[i[0]],BN[MOD_TITLE[i[0]]])}</div>`).join('');
+  $('mobBar').style.display='grid';
+}
+
+/* ═══ Navigation ═══ */
+function nav(view){
+  if(!can(view)){toast('Not available for '+role().role+' role');return}
+  state.view=view;
+  $('sidebar').classList.remove('open');
+  renderNav();
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function render(){
+  const R = renderers[state.view] || renderDashboard;
+  $('viewRoot').innerHTML=R();
+}
+
+/* ═══ Role switcher ═══ */
+function openRoles(){
+  $('roleGrid').innerHTML=ROLES.map(r=>`<div class="role-opt ${r.id===state.role?'active':''}" onclick="setRole('${r.id}')"><div class="ro-ic">${r.ico}</div><div class="ro-t">${r.role}</div><div class="ro-d">${r.desc}</div></div>`).join('');
+  $('roleOverlay').classList.add('open');
+}
+function closeRoles(){$('roleOverlay').classList.remove('open')}
+function setRole(id){
+  state.role=id;
+  const r=ROLES.find(x=>x.id===id);
+  toast('Switched to '+r.role);
+  if(!can(state.view))state.view='dashboard';
+  closeRoles();renderNav();render();
+}
+
+/* ═══ Theme / lang / misc ═══ */
+function toggleTheme(){state.theme=state.theme==='dark'?'light':'dark';applyTheme();toast(state.theme==='dark'?'Dark mode on':'Light mode on')}
+function applyTheme(){document.documentElement.setAttribute('data-theme',state.theme);localStorage.setItem('krtaker_dash_theme',state.theme);$('themeBtn').textContent=state.theme==='dark'?'☀️ Light':'🌙 Dark'}
+function toggleLang(){state.lang=state.lang==='en'?'bn':'en';localStorage.setItem('krtaker_dash_lang',state.lang);$('langBtn').textContent=state.lang==='en'?'বাংলা':'EN';renderNav();render();toast(state.lang==='bn'?'বাংলা ভাষা নির্বাচিত':'Language: English')}
+function toggleSidebar(){$('sidebar').classList.toggle('open')}
+function doSearch(q){if(!q.trim())return;toast('Search: '+q+' — wired to backend in Phase 2')}
+function toggleKR(){$('krPanel').classList.toggle('open');if($('krPanel').classList.contains('open'))krBoot()}
+function krSend(){
+  const inp=$('krIn');const q=inp.value.trim();if(!q)return;inp.value='';
+  $('krBody').insertAdjacentHTML('beforeend',`<div class="kr-msg me">${esc(q)}</div>`);
+  setTimeout(()=>{const a=krAnswer(q);$('krBody').insertAdjacentHTML('beforeend',`<div class="kr-msg ai">${a}</div>`);$('krBody').scrollTop=$('krBody').scrollHeight},420);
+  $('krBody').scrollTop=$('krBody').scrollHeight;
+}
+function krAnswer(q){
+  const s=q.toLowerCase();
+  if(s.includes('invoice')||s.includes('rent due'))return 'You have <b>1 overdue invoice</b> (INV-2026-008, ৳3,42,000) and <b>2 unpaid</b> for June. Want me to send payment reminders to Bengal Agro Foods?';
+  if(s.includes('tds')||s.includes('tax'))return 'TDS on commercial leases is <b>10%</b> (IT Act 2023 §109/§128). L-003 net of TDS = ৳4,05,000. June TDS collected: ৳1,52,000. I can file the challan summary for you.';
+  if(s.includes('prca')||s.includes('rent hike'))return 'PRCA 1991: rent can rise max <b>5% every 3 years</b> for residential. Advance capped at <b>2 months</b> residential / 3 months commercial (§10/§23). I flagged nothing in breach today.';
+  if(s.includes('maintenance')||s.includes('ticket'))return 'MT-003 (water pump) is In Progress with Kazi Plumbing — cost ৳8,500. MT-004 needs <b>tenant payment approval</b> (৳42,000, liability: Tenant). Want me to draft the deduction letter?';
+  if(s.includes('lease')||s.includes('registration'))return 'L-004 and L-010 are <b>Pending Registration</b> (>12 months, TPA §107). I can prepare the deed checklist and Sub-Registry appointment for both.';
+  if(s.includes('occupancy'))return 'Portfolio occupancy is <b>70%</b> — 7 of 10 units leased, 2 vacant (U-003, U-007), 1 in maintenance (U-009).';
+  return 'I can help with leases, registration gates, TDS/holding tax, PRCA rules, maintenance tickets and payments. Try "generate invoice for L-004" — I take actions in Phase 2.';
+}
+function krBoot(){
+  if($('krBody').children.length)return;
+  $('krBody').innerHTML=`<div class="kr-msg ai">Hello 👋 I'm <b>KR</b> — your AI property caretaker. Ask me about leases, taxes, PRCA compliance, or say "generate invoice for L-003" and I'll take action.<br><span style="font-size:10px;color:var(--text-mute)">Jun 30, 2026 · 09:00</span></div>`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DASHBOARD VIEWS (per subscriber role)
+   ════════════════════════════════════════════════════════════ */
+const RENT_SERIES=[21.4,22.1,21.8,23.6,24.9,25.7]; // ৳L Jan–Jun
+const RENT_LABELS=['Jan','Feb','Mar','Apr','May','Jun'];
+
+function renderDashboard(){return (DASH[state.role]||DASH.owner)()}
+
+const DASH={
+
+/* ── Super Admin · Platform Command Center ── */
+superadmin(){
+  const pf=DB.platform;
+  const openT=DB.support.filter(x=>x.status==='Open').length;
+  const trials=pf.subscriptions.filter(s=>s.status==='Trial').length;
+  const net=pf.finance.reduce((s,f)=>s+f.amount,0);
+  let h=pageHead(t('Platform Command Center','প্ল্যাটফর্ম কমান্ড সেন্টার'),t('Super Admin — subscriptions, billing, partners, finance, HR across the whole platform','সুপার অ্যাডমিন — পুরো প্ল্যাটফর্মের সাবস্ক্রিপশন, বিলিং, পার্টনার, ফাইন্যান্স, এইচআর'),`<button class="btn-primary" onclick="openRoles()">🔀 ${t('Switch role','রোল পরিবর্তন')}</button><button class="btn-outline" onclick="toast('Quick add — Phase 2 backend')">＋ ${t('Quick add','দ্রুত যোগ')}</button>`);
+  h+=statsRow([
+    stat(t('Subscribers','সাবস্ক্রাইবার'),pf.subscribers,pf.subsTrend,'up','🏢'),
+    stat(t('MRR / ARR','মাসিক/বার্ষিক আয়'),moneyC(pf.mrr)+' / '+moneyC(pf.arr),'SaaS revenue','','💳'),
+    stat(t('Service Partners','সার্ভিস পার্টনার'),pf.partners,'B2B orgs','','🛠️'),
+    stat(t('Open Tickets','খোলা টিকিট'),openT,openT?'SLA monitor':'All clear',openT?'down':'up','🎧'),
+    stat(t('Platform Net (Jun)','জুন মাসের নিট'),moneyC(net),'after fees & payouts','','💰')
+  ]);
+  const ops=[
+    ['💳','Subscriptions & Plans',pf.subscriptions.length+' active · '+trials+' trial'],
+    ['📦','Packages','Starter · Business · Enterprise'],
+    ['🔌','Integrations','bKash · SSLCommerz · e-Porcha'],
+    ['🌐','Web CMS','Marketing site & landing pages'],
+    ['🛠️','Service Partners',pf.partners+' orgs · '+DB.partners.filter(p=>p.status==='Onboarding').length+' onboarding'],
+    ['⚖️','Legal Team','Staff + B2B firms · cases docket'],
+    ['💰','Accounts & Finance','MRR · settlements · payouts'],
+    ['👥','HR & Admin',pf.staff+' staff · onboarding']
+  ];
+  h+=`<div class="grid grid-2" style="grid-template-columns:1fr 1.4fr">
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🛠️</span>${t('Platform Operations','প্ল্যাটফর্ম অপারেশন')}</div></div><div class="panel-b"><div class="tiles">${ops.map(o=>`<div class="tile" onclick="toast('${esc(o[0])} '+('${esc(o[1])}')+' — Phase 2')"><div class="ti">${o[0]}</div><div class="tt">${o[1]}</div><div class="ts">${o[2]}</div></div>`).join('')}</div></div></div>
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📈</span>${t('Platform Revenue (2026)','প্ল্যাটফর্ম আয়')}</div><span class="tagline">MRR ${moneyC(pf.mrr)}</span></div><div class="panel-b">${barChart(RENT_SERIES.map(x=>x*100000),RENT_LABELS)}</div></div>
+      <div class="grid grid-2eq">
+        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Subscriptions','সাবস্ক্রিপশন')}</div></div><div class="panel-b">${pf.subscriptions.map(s=>`<div class="row-item" style="padding:8px 0"><div class="ri-ic">🏢</div><div class="ri-body"><div class="ri-t">${esc(s.org)}</div><div class="ri-s">${s.plan} · ${s.seats} seat(s)</div></div><div class="ri-r"><div class="t-amount" style="font-size:12px">${money(s.mrr)}<span style="font-size:10px">/mo</span></div>${badge(s.status)}</div></div>`).join('')}</div></div>
+        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Platform Finance','প্ল্যাটফর্ম ফাইন্যান্স')}</div></div><div class="panel-b">${pf.finance.map(f=>kv(esc(f.type),moneyC(f.amount),f.amount<0?'neg':'pos')).join('')}${kv('<b>Net</b>',moneyC(net),'')}</div></div>
+      </div>
+    </div>
+  </div>`;
+  return h;
+},
+
+/* ── Owner · My Portfolio ── */
+owner(){
+  const leases=DB.leases.filter(l=>l.status==='Active'||l.status==='Pending Registration');
+  const rentRoll=leases.reduce((s,l)=>s+l.rent,0);
+  const units=DB.units;const leased=units.filter(u=>u.status==='Leased').length;
+  const occ=Math.round(leased/units.length*100);
+  const openT=DB.tickets.filter(x=>x.status==='Open'||x.status==='In Progress').length;
+  const unpaid=DB.invoices.filter(i=>i.status!=='Paid');
+  const unpaidSum=unpaid.reduce((s,i)=>s+i.net,0);
+  const coll=Math.round((DB.invoices.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.net,0)/DB.invoices.reduce((s,i)=>s+i.net,0))*100);
+  let h=pageHead(t('My Portfolio','আমার পোর্টফোলিও'),t('Everything across your buildings — one calm screen.','আপনার সব ভবনের সবকিছু — এক শান্ত স্ক্রিনে।'),`<button class="btn-primary" onclick="toast('Add property — Phase 2 backend')">＋ ${t('Add property','সম্পত্তি যোগ করুন')}</button><button class="btn-outline" onclick="toast('Rent collection report')">📥 ${t('Report','রিপোর্ট')}</button>`);
+  h+=statsRow([
+    stat(t('Portfolio value','পোর্টফোলিও মূল্য'),moneyC(DB.properties.reduce((s,p)=>s+p.value,0)),'5 buildings','','🏢'),
+    stat(t('Monthly rent roll','মাসিক ভাড়া'),money(rentRoll),'across active leases','up','💵'),
+    stat(t('Occupancy','অকুপেন্সি'),occ+'%',leased+' of '+units.length+' units','up','📊'),
+    stat(t('Open maintenance','চলমান মেরামত'),openT,openT?'needs attention':'All clear',openT?'warn':'up','🔧'),
+    stat(t('Unpaid invoices','অপরিশোধিত ইনভয়েস'),unpaid.length,moneyC(unpaidSum)+' outstanding',unpaid.length?'down':'up','🧾')
+  ]);
+  h+=`<div class="grid grid-2">
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📈</span>${t('Rent collected (Jun)','জুন মাসে ভাড়া আদায়')}</div><span class="tagline">${coll}% collected</span></div><div class="panel-b">${barChart(RENT_SERIES,RENT_LABELS)}<div class="legend"><span class="lg"><span class="sw" style="background:var(--grad)"></span>${t('Collected rent','আদায়কৃত ভাড়া')} (৳L)</span></div></div></div>
+      <div class="grid grid-2eq">
+        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔔</span>${t('Due soon','শীঘ্রই বাকি')}</div><span class="link" onclick="nav('invoices')">${t('All','সব')} →</span></div><div class="panel-b">${unpaid.slice(0,4).map(i=>rowItem('🧾',invoiceById(i.l)?leaseById(i.l).id:'—',(tenantById(leaseById(i.l)?.t)?.name||'')+' · '+i.m,`<div class="t-amount">${money(i.net)}</div>${badge(i.status)}`)).join('')||'<div class="empty">All paid 🎉</div>'}</div></div>
+        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🛠️</span>${t('Maintenance','রক্ষণাবেক্ষণ')}</div><span class="link" onclick="nav('maintenance')">${t('All','সব')} →</span></div><div class="panel-b">${DB.tickets.slice(0,4).map(x=>rowItem('🔧',x.desc,unitById(x.u)?.name+' · '+x.status,badge(x.status))).join('')}</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🏢</span>${t('Properties','সম্পত্তি')}</div><span class="link" onclick="nav('properties')">${t('All','সব')} →</span></div><div class="panel-b">${DB.properties.map(p=>{const u=DB.units.filter(x=>x.p===p.id);const lc=u.filter(x=>x.status==='Leased').length;const pct=u.length?Math.round(lc/u.length*100):0;return `<div style="margin-bottom:13px"><div class="row-item" style="padding:7px 0;border:none"><div class="ri-ic">${p.type==='Flat'?'🏢':p.type==='Commercial'?'🏬':p.type==='Industrial'?'🏭':'🌳'}</div><div class="ri-body"><div class="ri-t">${esc(p.name)}</div><div class="ri-s">${p.jur} · ${moneyC(p.value)}</div></div><div class="ri-r" style="font-size:11px;color:var(--text-mute)">${lc}/${u.length} leased</div></div><div class="prog ${pct<50?'orange':''}"><i style="width:${pct}%"></i></div></div>`}).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Recent receipts','সাম্প্রতিক রসিদ')}</div><span class="link" onclick="nav('receipts')">${t('All','সব')} →</span></div><div class="panel-b">${DB.receipts.slice(0,4).map(r=>rowItem('📎',r.id,invLbl(r.inv)+' · '+r.method,money(r.amount)+'<br><span style="font-size:10px;color:var(--text-mute)">'+r.date+'</span>')).join('')}</div></div>
+    </div>
+  </div>`;
+  return h;
+},
+
+/* ── Manager · Assigned ── */
+manager(){
+  const assigned=['P-001','P-005'];
+  const units=DB.units.filter(u=>assigned.includes(u.p));
+  const leased=units.filter(u=>u.status==='Leased').length;
+  const occ=units.length?Math.round(leased/units.length*100):0;
+  const openT=DB.tickets.filter(x=>x.status==='Open'||x.status==='In Progress');
+  const rentRoll=DB.leases.filter(l=>l.status==='Active'||l.status==='Pending Registration').reduce((s,l)=>s+l.rent,0);
+  let h=pageHead(t('Assigned Properties','অর্পিত সম্পত্তি'),t('Shakil — day-to-day operations on Green View Residency & Dhanmondi Apartment.','শাকিল — গ্রিন ভিউ রেসিডেন্সি ও ধানমন্ডি অ্যাপার্টমেন্টের দৈনন্দিন কার্যক্রম।'),`<button class="btn-primary" onclick="nav('maintenance')">＋ ${t('New ticket','নতুন টিকিট')}</button>`);
+  h+=statsRow([
+    stat(t('Assigned properties','অর্পিত সম্পত্তি'),assigned.length,'2 buildings','','🏢'),
+    stat(t('Occupancy','অকুপেন্সি'),occ+'%',leased+' of '+units.length+' units','up','📊'),
+    stat(t('Open tickets','খোলা টিকিট'),openT.length,openT.length?'resolve queue':'All clear',openT.length?'warn':'up','🔧'),
+    stat(t('Rent roll (assigned)','অর্পিত ভাড়া'),moneyC(rentRoll),'monthly','up','💵')
+  ]);
+  h+=`<div class="grid grid-2">
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🎯</span>${t('Today’s focus','আজকের কাজ')}</div><span class="tagline">${openT.length} open</span></div><div class="panel-b">${openT.map(x=>rowItem('🔧',x.desc,unitById(x.u)?.name+' · '+x.liab+' liability',badge(x.status)+'<br><span style="font-size:10px;color:var(--text-mute)">'+x.reported+'</span>')).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Upcoming renewals','আসন্ন রিনিউয়াল')}</div><span class="link" onclick="nav('leases')">${t('All','সব')} →</span></div><div class="panel-b">${DB.leases.filter(l=>l.status==='Active'||l.status==='Pending Registration').sort((a,b)=>a.end.localeCompare(b.end)).slice(0,4).map(l=>rowItem('📄',l.id+' · '+unitById(l.u)?.name,tenantById(l.t)?.name+' · ends '+l.end,`<span class="badge ${l.status==='Pending Registration'?'b-orange':'b-blue'}">${l.status}</span>`)).join('')}</div></div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📊</span>${t('Occupancy by building','ভবন অনুযায়ী অকুপেন্সি')}</div></div><div class="panel-b">${assigned.map(pid=>{const p=propById(pid);const u=DB.units.filter(x=>x.p===pid);const lc=u.filter(x=>x.status==='Leased').length;const pct=u.length?Math.round(lc/u.length*100):0;return `<div style="margin-bottom:15px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px"><span>${esc(p.name)}</span><span>${pct}%</span></div><div class="prog"><i style="width:${pct}%"></i></div><div class="prog-l"><span>${lc} leased</span><span>${u.length-lc} open</span></div></div>`}).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🤖</span>${t('KR suggestions','কেআর পরামর্শ')}</div></div><div class="panel-b">${[
+        ['⚡','U-003 has been vacant 21 days — KR suggests a rent review to match Mirpur-10 market.'],
+        ['📄','L-010 (Flat 3B) needs Sub-Registry registration before 30 Sep to avoid TPA §107 penalty.'],
+        ['🔧','MT-003 water pump quote ৳8,500 is 12% below last year — approve to close.']].map(x=>`<div class="row-item"><div class="ri-ic">${x[0]}</div><div class="ri-body" style="font-size:12.5px;color:var(--text-soft)">${x[1]}</div></div>`).join('')}</div></div>
+    </div>
+  </div>`;
+  return h;
+},
+
+/* ── Tenant · Tenant Portal ── */
+tenant(){
+  const myLeases=DB.leases.filter(l=>l.t==='T-002'&&l.status==='Active');
+  const myInvs=DB.invoices.filter(i=>myLeases.some(l=>l.id===i.l));
+  const paid=myInvs.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.net,0);
+  const due=myInvs.filter(i=>i.status!=='Paid').reduce((s,i)=>s+i.net,0);
+  const myTickets=DB.tickets.filter(x=>x.u==='U-010');
+  let h=pageHead(t('Tenant Portal','টেন্যান্ট পোর্টাল'),t('Sultana — Apartment 7B, Dhanmondi Apartment.','সুলতানা — অ্যাপার্টমেন্ট ৭বি, ধানমন্ডি অ্যাপার্টমেন্ট।'),`<button class="btn-primary" onclick="toast('Pay with bKash — Phase 4 gateway')">💳 ${t('Pay rent','ভাড়া পরিশোধ করুন')}</button><button class="btn-outline" onclick="toast('New maintenance request — Phase 2')">＋ ${t('Report issue','সমস্যা জানান')}</button>`);
+  h+=statsRow([
+    stat(t('Rent due','বকেয়া ভাড়া'),money(due),due?'this month':'All settled',due?'down':'up','💳'),
+    stat(t('Paid (Jun)','পরিশোধিত (জুন)'),money(paid),'2 invoices cleared','up','✅'),
+    stat(t('Next due','পরবর্তী বকেয়া'),'Jul 01','৳40,000 / month','','📅'),
+    stat(t('My tickets','আমার টিকিট'),myTickets.length,'repairs & requests','','🔧')
+  ]);
+  h+=`<div class="grid grid-2">
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('My invoices','আমার ইনভয়েস')}</div></div><div class="panel-b">${myInvs.map(i=>rowItem('🧾',i.id+' · '+i.m,leaseById(i.l)?unitById(leaseById(i.l).u)?.name:'—',`<div class="t-amount">${money(i.net)}</div>${i.status==='Paid'?badge('Paid'):`<button class="btn-primary" style="padding:6px 12px;font-size:11px" onclick="toast('bKash checkout — Phase 4')">Pay now</button>`}`)).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📎</span>${t('Payment history','পেমেন্ট ইতিহাস')}</div></div><div class="panel-b">${DB.payments.filter(p=>myInvs.some(i=>i.id===p.inv)).map(p=>rowItem('💳',p.ref+' · '+p.method,esc(p.date),`<span class="t-pos">+${money(p.amount)}</span>`)).join('')||'<div class="empty">No payments yet</div>'}</div></div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My maintenance requests','আমার মেরামত অনুরোধ')}</div><span class="link" onclick="nav('maintenance')">${t('All','সব')} →</span></div><div class="panel-b">${myTickets.map(x=>rowItem('🔧',x.desc,unitById(x.u)?.name+' · reported '+x.reported,badge(x.status))).join('')||'<div class="empty">No open requests — all quiet 🎉</div>'}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📄</span>${t('My lease','আমার লিজ')}</div></div><div class="panel-b">${myLeases.map(l=>`${kv('Lease',l.id)}${kv('Unit',unitById(l.u)?.name)}${kv('Rent',money(l.rent)+'/month')}${kv('Advance',money(l.adv))}${kv('Term',l.start+' → '+l.end)}${kv('Status',badge(l.status),'')}`).join('')}</div></div>
+    </div>
+  </div>`;
+  return h;
+},
+
+/* ── Partner · Partner Works ── */
+partner(){
+  const myJobs=DB.tickets.filter(x=>x.con==='Rahim Steel Works');
+  const done=myJobs.filter(x=>x.status==='Awaiting Payment'||x.status==='Closed').length;
+  const earnings=myJobs.reduce((s,x)=>s+x.cost,0);
+  const qc=DB.tickets.filter(x=>x.status==='Open'&&x.liab==='Landlord').length;
+  let h=pageHead(t('Partner Works','পার্টনার ওয়ার্কস'),t('Rahim Steel Works — jobs, QC feedback and payouts.','রহিম স্টিল ওয়ার্কস — কাজ, কিউসি ফিডব্যাক ও পেমেন্ট।'),`<button class="btn-primary" onclick="toast('Submit quote — Phase 2')">＋ ${t('New quote','নতুন কোটেশন')}</button>`);
+  h+=statsRow([
+    stat(t('Active jobs','চলমান কাজ'),myJobs.length,'assigned to you','','🛠️'),
+    stat(t('Awaiting QC','কিউসি অপেক্ষায়'),DB.tickets.filter(x=>x.status==='In Progress').length,'in review','warn','✅'),
+    stat(t('Earnings (Jun)','জুনের আয়'),money(earnings),'approved work','up','💰'),
+    stat(t('Rating','রেটিং'),'★ 4.8',myJobs.length+' completed jobs','up','⭐')
+  ]);
+  h+=`<div class="grid grid-2">
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My jobs','আমার কাজ')}</div></div><div class="panel-b">${DB.tickets.filter(x=>x.con==='Rahim Steel Works'||x.liab==='Landlord').map(x=>rowItem('🏗️',x.desc,unitById(x.u)?.name+' · '+x.reported,`<div class="t-amount" style="font-size:12px">${x.cost?money(x.cost):'Quote'}</div>${badge(x.status)}`)).join('')||'<div class="empty">No jobs assigned</div>'}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📋</span>${t('QC checklist','কিউসি চেকলিস্ট')}</div></div><div class="panel-b">${['Material & workmanship photos','Safety compliance (BFSCD)','Invoice & VAT challan','Site cleanliness'].map((c,i)=>`<div class="kv"><span>${i+1}. ${c}</span><span class="badge b-gray" style="cursor:pointer" onclick="toast('Marked done — demo')">☐ Mark</span></div>`).join('')}</div></div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">💰</span>${t('Payout summary','পেআউট সারাংশ')}</div></div><div class="panel-b">${kv('This month',money(earnings),'pos')}${kv('Last month','৳1,24,000','')}${kv('Pending approval','৳42,000','warn')}${kv('Next payout','Jul 05','')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💬</span>${t('KR brief','কেআর ব্রিফ')}</div></div><div class="panel-b" style="font-size:12.5px;color:var(--text-soft);line-height:1.65">⚡ New structural inspection on <b>Shed A (U-008)</b> matched your trade. Quote window closes <b>Jul 02</b>. KR pre-filled 3 comparable quotes from your history to save you time.</div></div>
+    </div>
+  </div>`;
+  return h;
+},
+
+/* ── Service Manager · QC ── */
+svc_mgr(){
+  const open=DB.tickets.filter(x=>x.status==='Open'||x.status==='In Progress');
+  const awaiting=DB.tickets.filter(x=>x.status==='Awaiting Payment');
+  const overdue=DB.tickets.filter(x=>x.status==='Open'&&(new Date('2026-06-28')-new Date(x.reported))/86400000>7);
+  let h=pageHead(t('QC & Service Management','কিউসি ও সার্ভিস ম্যানেজমেন্ট'),t('Arif — quality control, SLAs and partner performance.','আরিফ — কোয়ালিটি কন্ট্রোল, এসএলএ ও পার্টনার পারফরম্যান্স।'),`<button class="btn-primary" onclick="toast('Assign job — Phase 2')">＋ ${t('Assign job','কাজ বরাদ্দ')}</button>`);
+  h+=statsRow([
+    stat(t('Open jobs','চলমান কাজ'),open.length,'across partners','','🛠️'),
+    stat(t('Awaiting QC','কিউসি অপেক্ষায়'),awaiting.length,'approve or reject','warn','✅'),
+    stat(t('SLA overdue','এসএলএ অতিবাহিত'),overdue.length,overdue.length?'> 7 days old':'within SLA',overdue.length?'down':'up','⏱️'),
+    stat(t('Avg partner rating','গড় পার্টনার রেটিং'),'★ 4.48','5 partners','','⭐')
+  ]);
+  h+=`<div class="grid grid-2">
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧰</span>${t('QC queue','কিউসি কিউ')}</div><span class="tagline">${open.length} pending</span></div><div class="panel-b">${open.map(x=>rowItem('🔧',x.desc,unitById(x.u)?.name+' · '+x.con+' · '+(x.cost?money(x.cost):'—'),`<div style="display:flex;gap:6px"><button class="btn-primary" style="padding:5px 10px;font-size:10.5px" onclick="toast('Approved '+('${esc(x.id)}')+' — demo')">✓ Approve</button><button class="btn-outline" style="padding:5px 10px;font-size:10.5px" onclick="toast('Rejected '+('${esc(x.id)}')+' — demo')">✕</button></div>`)).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⏱️</span>${t('SLA monitor','এসএলএ মনিটর')}</div></div><div class="panel-b">${[
+        ['MT-001','Rahim Steel Works','4d','72h SLA','red'],
+        ['MT-003','Kazi Plumbing','1d','48h SLA','green'],
+        ['SUP-001','Support queue','2h','4h SLA','orange']].map(x=>`<div class="row-item"><div class="ri-ic">⏱️</div><div class="ri-body"><div class="ri-t">${x[0]} · ${x[1]}</div><div class="ri-s">${x[2]} elapsed</div></div><div class="ri-r"><span class="badge ${x[4]==='red'?'b-red':x[4]==='orange'?'b-orange':'b-green'}">${x[3]}</span></div></div>`).join('')}</div></div>
+    </div>
+    <div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🤝</span>${t('Partner performance','পার্টনার পারফরম্যান্স')}</div></div><div class="panel-b">${DB.partners.map(p=>{const jobs=p.jobs||0;const pct=Math.min(100,jobs*2);return `<div style="margin-bottom:13px"><div class="row-item" style="padding:6px 0;border:none"><div class="ri-ic">🏗️</div><div class="ri-body"><div class="ri-t">${esc(p.name)}</div><div class="ri-s">${p.trade} · ${p.jobs} jobs</div></div><div class="ri-r" style="font-size:12px;font-weight:700">★ ${p.rating}</div></div><div class="prog ${p.rating<4.3?'orange':''}"><i style="width:${pct}%"></i></div></div>`}).join('')}</div></div>
+    </div>
+  </div>`;
+  return h;
+},
+
+/* ── Legal ── */
+legal(){
+  const pendReg=DB.leases.filter(l=>l.status==='Pending Registration');
+  const active12=DB.leases.filter(l=>l.status==='Active'&&l.res===false);
+  let h=pageHead(t('Legal & Compliance','লিগ্যাল ও কমপ্লায়েন্স'),t('Barrister Naima — registrations, PRCA cases and the compliance calendar.','ব্যারিস্টার নাইমা — রেজিস্ট্রেশন, পিআরসিএ কেস ও কমপ্লায়েন্স ক্যালেন্ডার।'),`<button class="btn-primary" onclick="toast('New case — Phase 2')">＋ ${t('New case','নতুন মামলা')}</button>`);
+  h+=statsRow([
+    stat(t('Pending registration','রেজিস্ট্রেশন বাকি'),pendReg.length,'TPA §107 gate','warn','📄'),
+    stat(t('Commercial leases','কমার্শিয়াল লিজ'),active12.length,'> 12 months','','🏬'),
+    stat(t('PRCA alerts','পিআরসিএ অ্যালার্ট'),0,'all within limits','up','⚖️'),
+    stat(t('TDS disputes','টিডিএস বিরোধ'),1,'L-004 challan pending','warn','🏛️')
+  ]);
+  h+=`<div class="grid grid-2">
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📄</span>${t('Registration tracker','রেজিস্ট্রেশন ট্র্যাকার')}</div><span class="link" onclick="nav('compliance')">${t('All','সব')} →</span></div><div class="panel-b">${DB.leases.filter(l=>l.status==='Pending Registration'||l.reg).map(l=>rowItem('📄',l.id+' · '+unitById(l.u)?.name,(l.reg?('Registered · '+l.reg.office):'Needs deed → Sub-Registry')+' · '+(tenantById(l.t)?.name||''),l.reg?badge('Active'):badge('Pending Registration'))).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚖️</span>${t('PRCA compliance check','পিআরসিএ কমপ্লায়েন্স চেক')}</div></div><div class="panel-b">${[
+        ['Rent hikes ≤ 5% / 3yr','Pass','b-green'],
+        ['Residential advance ≤ 2 months','Pass','b-green'],
+        ['Commercial advance ≤ 3 months','L-004: 1 month ✓','b-green'],
+        ['Eviction notice periods','Pass','b-green']].map(x=>kv(x[0],`<span class="badge ${x[2]}">${x[1]}</span>`)).join('')}</div></div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Compliance calendar','কমপ্লায়েন্স ক্যালেন্ডার')}</div></div><div class="panel-b">${[
+        ['Jul 05','L-004 deed registration — Sub-Registry Gulshan','b-orange'],
+        ['Jul 15','June TDS challan filing (all commercial)','b-blue'],
+        ['Jul 31','Holding tax installment — Dhaka North','b-blue'],
+        ['Aug 01','Fire safety inspection — Banani Tower (BFSCD)','b-red']].map(x=>`<div class="row-item"><div class="ri-ic">📅</div><div class="ri-body"><div class="ri-t">${x[0]} — ${x[1]}</div></div><div class="ri-r"><span class="badge ${x[2]}">Due</span></div></div>`).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🤖</span>${t('KR legal brief','কেআর লিগ্যাল ব্রিফ')}</div></div><div class="panel-b" style="font-size:12.5px;color:var(--text-soft);line-height:1.65">⚖️ TPA §107 requires registration for leases > 12 months. <b>L-004</b> and <b>L-010</b> are flagged — KR drafted the deed checklist and booked Sub-Registry slots. Deed stamp duty estimate: ৳1,14,000 + 3% registration.</div></div>
+    </div>
+  </div>`;
+  return h;
+},
+
+/* ── CRM / Support ── */
+crm(){
+  const open=DB.support.filter(x=>x.status!=='Resolved');
+  const openC=open.filter(x=>x.status==='Open').length;
+  const resolved=DB.support.filter(x=>x.status==='Resolved').length;
+  const high=DB.support.filter(x=>x.prio==='High'&&x.status!=='Resolved').length;
+  let h=pageHead(t('CRM & Help Desk','সিআরএম ও হেল্প ডেস্ক'),t('Mithila — tickets, CSAT and tenant onboarding.','মিথিলা — টিকিট, সিএসএটি ও টেন্যান্ট অনবোর্ডিং।'),`<button class="btn-primary" onclick="toast('New ticket — Phase 2')">＋ ${t('New ticket','নতুন টিকিট')}</button>`);
+  h+=statsRow([
+    stat(t('Open tickets','খোলা টিকিট'),openC,openC?'2 escalated':'All clear',openC?'warn':'up','🎧'),
+    stat(t('In progress','চলমান'),open.filter(x=>x.status==='In Progress').length,'assigned to team','','✍️'),
+    stat(t('High priority','উচ্চ অগ্রাধিকার'),high,'needs fast response','down','🚨'),
+    stat(t('CSAT','সিএসএটি'),'★ 4.6','last 30 days','up','😊')
+  ]);
+  h+=`<div class="grid grid-2">
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🎧</span>${t('Ticket queue','টিকিট কিউ')}</div><span class="tagline">${open.length} active</span></div><div class="panel-b">${open.map(x=>rowItem('🎧',x.subject,esc(x.from)+' · '+x.age,`<span class="badge ${x.prio==='High'?'b-red':x.prio==='Medium'?'b-orange':'b-gray'}">${x.prio}</span> ${badge(x.status)}`)).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🚀</span>${t('Tenant onboarding','টেন্যান্ট অনবোর্ডিং')}</div></div><div class="panel-b">${[
+        ['T-006','Tanvir Hossain · Shed A','85','green'],
+        ['T-009','New lead — Gulshan 3B','40','blue'],
+        ['T-010','NRB inquiry · Jolshiri','15','orange']].map(x=>`<div style="margin-bottom:12px"><div class="row-item" style="padding:6px 0;border:none"><div class="ri-ic">🚀</div><div class="ri-body"><div class="ri-t">${x[0]} · ${x[1]}</div></div><div class="ri-r" style="font-size:12px;font-weight:700">${x[2].replace('%','')}%</div></div><div class="prog ${x[3]==='green'?'':x[3]==='orange'?'orange':'blue'}"><i style="width:${x[2]}%"></i></div></div>`).join('')}</div></div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">😊</span>${t('CSAT trend','সিএসএটি প্রবণতা')}</div></div><div class="panel-b">${barChart([4.1,4.2,4.4,4.5,4.4,4.6],['Jan','Feb','Mar','Apr','May','Jun'],'url(#gBar)')}<div class="legend"><span class="lg"><span class="sw" style="background:var(--grad)"></span>${t('Avg rating (★)','গড় রেটিং')}</span></div></div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💬</span>${t('Common questions','সাধারণ প্রশ্ন')}</div></div><div class="panel-b" style="font-size:12.5px;color:var(--text-soft)">🔍 Top: <b>TDS certificate</b> (12×), <b>invoice re-issue</b> (9×), <b>bKash timeout</b> (7×). KR auto-answered 34% before escalation — add these to the FAQ to push that to 50%.</div></div>
+    </div>
+  </div>`;
+  return h;
+},
+
+/* ── Accountant ── */
+accountant(){
+  const invs=DB.invoices;const paid=invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.net,0);
+  const unpaid=invs.filter(i=>i.status!=='Paid').reduce((s,i)=>s+i.net,0);
+  const tds=invs.reduce((s,i)=>s+i.tds,0);
+  const over=invs.filter(i=>i.status==='Overdue').length;
+  const cashIn=[18.2,19.5,21.0,22.4,24.1,25.7];
+  let h=pageHead(t('Finance & Accounts','ফাইন্যান্স ও অ্যাকাউন্টস'),t('Sohel — cash flow, TDS, invoices and receivables.','সোহেল — নগদ প্রবাহ, টিডিএস, ইনভয়েস ও প্রাপ্য।'),`<button class="btn-primary" onclick="toast('Generate invoice — Phase 2')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button><button class="btn-outline" onclick="toast('TDS challan summary — Phase 2')">🏛️ ${t('TDS challan','টিডিএস চালান')}</button>`);
+  h+=statsRow([
+    stat(t('Cash in (Jun)','জুনে নগদ প্রবেশ'),moneyC(paid),'collected rent','up','📥'),
+    stat(t('Receivables','প্রাপ্য'),moneyC(unpaid),unpaid?'follow up needed':'clear','down','⏳'),
+    stat(t('TDS collected','টিডিএস সংগ্রহ'),money(tds),'commercial leases','','🏛️'),
+    stat(t('Overdue invoices','অতিদের ইনভয়েস'),over,over?'aging tracked':'none','down','🚨')
+  ]);
+  h+=`<div class="grid grid-2">
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📈</span>${t('Cash flow (2026)','নগদ প্রবাহ (২০২৬)')}</div><span class="tagline">৳L / month</span></div><div class="panel-b">${barChart(cashIn,RENT_LABELS)}<div class="legend"><span class="lg"><span class="sw" style="background:var(--grad)"></span>${t('Rent collected','আদায়কৃত ভাড়া')}</span><span class="lg"><span class="sw" style="background:var(--accent)"></span>${t('On track','ট্র্যাক অনুযায়ী')} 96%</span></div></div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Receivables aging','প্রাপ্য বয়স')}</div></div><div class="panel-b">${[
+        ['Current (0–30d)','৳3,57,000','b-blue'],
+        ['31–60 days','৳2,10,000','b-orange'],
+        ['60+ days','৳3,42,000','b-red']].map(x=>kv(x[0],`<span class="t-amount" style="font-size:13px">${x[1]}</span> <span class="badge ${x[2]}">${x[2]}</span>`)).join('')}</div></div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🏛️</span>${t('TDS summary (Jun)','টিডিএস সারাংশ (জুন)')}</div></div><div class="panel-b">${kv('Commercial TDS @10%',money(tds),'pos')}${kv('Residential (exempt)','৳0','')}${kv('Challan filed','Jun 15','')}${kv('Next filing','Jul 15','')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Recent payments','সাম্প্রতিক পেমেন্ট')}</div><span class="link" onclick="nav('payments')">${t('All','সব')} →</span></div><div class="panel-b">${DB.payments.map(p=>rowItem(p.method==='bKash'?'📱':'🏦',p.ref+' · '+p.method,invLbl(p.inv)+' · '+p.date,`<span class="t-pos">+${money(p.amount)}</span>`)).join('')}</div></div>
+    </div>
+  </div>`;
+  return h;
+},
+
+/* ── HR & Admin ── */
+hr(){
+  const staff=DB.staff;const active=staff.filter(s=>s.status==='Active').length;
+  const probation=staff.filter(s=>s.status==='Probation');
+  let h=pageHead(t('HR & Admin','এইচআর ও অ্যাডমিন'),t('Nusrat — staff, onboarding and organisation admin.','নুসরাত — স্টাফ, অনবোর্ডিং ও অর্গানাইজেশন অ্যাডমিন।'),`<button class="btn-primary" onclick="toast('Invite staff — Phase 2')">＋ ${t('Invite staff','স্টাফ আমন্ত্রণ')}</button>`);
+  h+=statsRow([
+    stat(t('Total staff','মোট স্টাফ'),staff.length,'across 5 departments','','👥'),
+    stat(t('Active','সক্রিয়'),active,'full time','up','✅'),
+    stat(t('On probation','প্রবেশন'),probation.length,'review pending','warn','⏳'),
+    stat(t('Departments','বিভাগ'),5,'operations → finance','','🏢')
+  ]);
+  h+=`<div class="grid grid-2">
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">👥</span>${t('Staff directory','স্টাফ ডিরেক্টরি')}</div><span class="link" onclick="toast('Full directory — Phase 2')">${t('All','সব')} →</span></div><div class="panel-b">${staff.map(s=>rowItem(s.role.includes('Service')?'🛠️':s.role.includes('CRM')?'🎧':s.role.includes('Account')?'💰':s.role.includes('HR')?'👥':s.role.includes('Legal')?'⚖️':'🗂️',s.name,s.role+' · '+s.dept,badge(s.status))).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🚀</span>${t('Onboarding checklist','অনবোর্ডিং চেকলিস্ট')}</div></div><div class="panel-b">${[
+        ['Farzana Akter','CRM Executive — tools access','70','orange'],
+        ['Mahmudul Islam','Finance Officer — banking perms','40','blue'],
+        ['New hire (QC)','Offer sent — awaiting acceptance','15','red']].map(x=>`<div style="margin-bottom:12px"><div class="row-item" style="padding:6px 0;border:none"><div class="ri-ic">🚀</div><div class="ri-body"><div class="ri-t">${x[0]}</div><div class="ri-s">${x[1]}</div></div><div class="ri-r" style="font-size:12px;font-weight:700">${x[2].replace('%','')}%</div></div><div class="prog ${x[3]==='orange'?'orange':x[3]==='red'?'red':'blue'}"><i style="width:${x[2]}%"></i></div></div>`).join('')}</div></div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Leave & attendance','ছুটি ও উপস্থিতি')}</div></div><div class="panel-b">${kv('On leave today','2','')}${kv('Leave requests pending','1','warn')}${kv('Attendance today','7/8','pos')}${kv('Late arrivals (week)','1','')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📦</span>${t('Org admin','অর্গ অ্যাডমিন')}</div></div><div class="panel-b">${[
+        ['Role & permissions','RBAC matrix · 10 roles'],
+        ['Billing & seats','Business plan · 3 seats'],
+        ['Audit trail','Last: Sohel exported TDS report'],
+        ['Settings','Branding · language · backup']].map(x=>rowItem('⚙️',x[0],x[1],'<span style="color:var(--text-mute)">→</span>')).join('')}</div></div>
+    </div>
+  </div>`;
+  return h;
+}
+};
+
+/* ═══ MODULE VIEWS ═══ */
+function invLbl(invId){const inv=invoiceById(invId);if(!inv)return '—';const l=leaseById(inv.l);return (l?unitById(l.u)?.name+' · ':'')+inv.m}
+
+const renderers={
+  dashboard:renderDashboard,
+  properties(){
+    let h=pageHead(t('Properties','সম্পত্তি'),t('Your portfolio across Dhaka & Chattogram.','ঢাকা ও চট্টগ্রামে আপনার পোর্টফোলিও।'),`<button class="btn-primary" onclick="toast('Add property — Phase 2')">＋ ${t('Add property','সম্পত্তি যোগ করুন')}</button>`);
+    h+=`<div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${DB.properties.map(p=>{const u=DB.units.filter(x=>x.p===p.id);const lc=u.filter(x=>x.status==='Leased').length;const pct=u.length?Math.round(lc/u.length*100):0;const rent=DB.leases.filter(l=>u.some(x=>x.id===l.u)&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0);return `<div class="panel"><div class="panel-b">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div class="role-ava" style="width:44px;height:44px;font-size:18px;border-radius:12px">${p.type==='Flat'?'🏢':p.type==='Commercial'?'🏬':p.type==='Industrial'?'🏭':'🌳'}</div><div><div style="font-weight:700;font-size:14.5px">${esc(p.name)}</div><div style="font-size:11.5px;color:var(--text-mute)">${p.type} · ${p.jur}</div></div>${badge(p.status)}</div>
+      <div class="kv"><span class="k">Holding</span><span class="v">${esc(p.holding)}</span></div>
+      <div class="kv"><span class="k">Value</span><span class="v">${moneyC(p.value)}</span></div>
+      <div class="kv"><span class="k">Rent roll</span><span class="v pos">${money(rent)}/mo</span></div>
+      <div class="kv"><span class="k">Units</span><span class="v">${lc}/${u.length} leased</span></div>
+      <div style="margin-top:8px"><div class="prog ${pct<50?'orange':''}"><i style="width:${pct}%"></i></div></div>
+      </div></div>`}).join('')}</div>`;
+    return h;
+  },
+  units(){
+    let h=pageHead(t('Units','ইউনিট'),t('Every flat, floor, shed and plot.','প্রতিটি ফ্ল্যাট, ফ্লোর, শেড ও প্লট।'),`<button class="btn-primary" onclick="toast('Add unit — Phase 2')">＋ ${t('Add unit','ইউনিট যোগ করুন')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Unit</th><th>Property</th><th>Floor</th><th>Size</th><th>Tenant</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.units.map(u=>{const l=DB.leases.find(x=>x.u===u.id&&(x.status==='Active'||x.status==='Pending Registration'));const ten=l?tenantById(l.t):null;return `<tr><td><span class="c-name">${esc(u.name)}</span><div class="c-sub">${u.id}</div></td><td>${esc(propById(u.p)?.name||'—')}</td><td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td>${ten?esc(ten.name):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${badge(u.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    return h;
+  },
+  tenants(){
+    let h=pageHead(t('Tenants','ভাড়াটিয়া'),t('Individuals, corporates and NRB tenants.','ব্যক্তি, কর্পোরেট ও এনআরবি ভাড়াটিয়া।'),`<button class="btn-primary" onclick="toast('Add tenant — Phase 2')">＋ ${t('Add tenant','ভাড়াটিয়া যোগ করুন')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr><td><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    return h;
+  },
+  leases(){
+    let h=pageHead(t('Leases','লিজ'),t('Tenancy agreements with legal gates applied automatically.','আইনি গেটসহ টেন্যান্সি চুক্তি।'),`<button class="btn-primary" onclick="toast('New lease — Phase 2')">＋ ${t('New lease','নতুন লিজ')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th></tr></thead><tbody>${DB.leases.map(l=>`<tr><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+    return h;
+  },
+  invoices(){
+    let h=pageHead(t('Invoices','ইনভয়েস'),t('Monthly rent invoices with TDS computed where applicable.','প্রযোজ্য ক্ষেত্রে টিডিএসসহ মাসিক ভাড়ার ইনভয়েস।'),`<button class="btn-primary" onclick="toast('Generate invoice — Phase 2')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Unit</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${DB.invoices.map(i=>{const l=leaseById(i.l);return `<tr><td><span class="c-name">${i.id}</span></td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td>${i.m}</td><td>${money(i.gross)}</td><td>${i.tds?money(i.tds):'—'}</td><td class="t-amount">${money(i.net)}</td><td>${badge(i.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    return h;
+  },
+  receipts(){
+    let h=pageHead(t('Receipts','রসিদ'),t('Digitally signed receipts for every payment.','প্রতিটি পেমেন্টের ডিজিটাল সই করা রসিদ।'));
+    h+=`<div class="grid grid-2eq">${DB.receipts.map(r=>`<div class="panel"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div class="c-name" style="font-size:14px;font-weight:700">${r.id}</div><div class="c-sub">${r.date} · ${r.method}</div></div>${badge('Paid')}</div><div class="t-amount" style="font-size:20px">${money(r.amount)}</div><div class="c-sub" style="margin-top:8px">${invLbl(r.inv)}</div><div style="margin-top:12px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-mute);font-family:monospace">${r.sig} — verified ✓</div></div></div>`).join('')}</div>`;
+    return h;
+  },
+  payments(){
+    let h=pageHead(t('Payments','পেমেন্ট'),t('bKash, Nagad, bank and cheque — reconciled automatically.','বিকাশ, নগদ, ব্যাংক ও চেক — স্বয়ংক্রিয়ভাবে রিকনসাইলড।'),`<button class="btn-primary" onclick="toast('Record payment — Phase 2')">＋ ${t('Record payment','পেমেন্ট রেকর্ড')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Payment</th><th>Invoice</th><th>Method</th><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>${DB.payments.map(p=>`<tr><td><span class="c-name">${p.id}</span></td><td>${esc(p.inv||'—')}</td><td>${p.method==='bKash'?'📱 bKash':p.method==='Nagad'?'📱 Nagad':'🏦 Bank'}</td><td>${esc(p.ref)}</td><td>${p.date}</td><td class="t-pos">+${money(p.amount)}</td><td>${badge(p.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+    return h;
+  },
+  taxes(){
+    let h=pageHead(t('Taxes','কর'),t('Holding tax, TDS and capital-gain engines — Bangladeshi law encoded.','হোল্ডিং ট্যাক্স, টিডিএস ও ক্যাপিটাল গেইন ইঞ্জিন — বাংলাদেশি আইন সম্বলিত।'));
+    const holding=[['P-001','Dhaka North','৳82,000','Paid','b-green'],['P-002','Dhaka North','৳3,20,000','Due Jul','b-orange'],['P-003','Dhaka North','৳1,50,000','Paid','b-green'],['P-004','Chattogram','৳1,75,000','Due Aug','b-blue'],['P-005','Dhaka South','৳18,500','Paid','b-green']];
+    h+=`<div class="grid grid-2">
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏠</span>${t('Holding tax schedule','হোল্ডিং ট্যাক্স তালিকা')}</div></div><div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>Property</th><th>City</th><th>Amount</th><th>Status</th></tr></thead><tbody>${holding.map(x=>`<tr><td><span class="c-name">${x[0]}</span><div class="c-sub">${x[1]}</div></td><td>${x[1]}</td><td class="t-amount">${x[2]}</td><td><span class="badge ${x[4]}">${x[3]}</span></td></tr>`).join('')}</tbody></table></div></div>
+      <div>
+        <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🏛️</span>${t('TDS ledger','টিডিএস লেজার')}</div></div><div class="panel-b">${DB.invoices.filter(i=>i.tds).map(i=>kv(i.id+' · '+i.m,'−'+money(i.tds),'neg')).join('')}${kv('<b>Total withheld</b>','<span class="t-pos">'+money(DB.invoices.reduce((s,i)=>s+i.tds,0))+'</span>')}</div></div>
+        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚖️</span>${t('Capital gains estimator','ক্যাপিটাল গেইন এস্টিমেটর')}</div></div><div class="panel-b" style="font-size:12.5px;color:var(--text-soft);line-height:1.65">Sell P-005 (Dhanmondi) at ৳2.4Cr vs cost ৳1.85Cr → estimated gain <b>৳55L</b>. KR computed minimum tax & wealth surcharge brackets per IT Act 2023. <span class="link" onclick="toast('Full report — Phase 2')">Open estimator →</span></div></div>
+      </div>
+    </div>`;
+    return h;
+  },
+  maintenance(){
+    let h=pageHead(t('Maintenance','রক্ষণাবেক্ষণ'),t('Tickets with landlord/tenant liability resolved by law.','আইন অনুযায়ী মালিক/ভাড়াটিয়া দায় নির্ধারিত টিকিট।'),`<button class="btn-primary" onclick="toast('New ticket — Phase 2')">＋ ${t('New ticket','নতুন টিকিট')}</button>`);
+    h+=`<div class="grid grid-2">${DB.tickets.map(x=>`<div class="panel"><div class="panel-b">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="c-name" style="font-weight:700">${x.id} · ${esc(x.desc)}</div>${badge(x.status)}</div>
+      <div class="kv"><span class="k">Unit</span><span class="v">${esc(unitById(x.u)?.name||'—')}</span></div>
+      <div class="kv"><span class="k">Liability</span><span class="v">${x.liab}</span></div>
+      <div class="kv"><span class="k">Contractor</span><span class="v">${x.con?esc(x.con):'Unassigned'}</span></div>
+      <div class="kv"><span class="k">Reported</span><span class="v">${x.reported}</span></div>
+      <div class="kv"><span class="k">Cost</span><span class="v ${x.cost?'warn':''}">${x.cost?money(x.cost):'Quote pending'}</span></div>
+      </div></div>`).join('')}</div>`;
+    return h;
+  },
+  compliance(){
+    let h=pageHead(t('Compliance','কমপ্লায়েন্স'),t('Registration gates, PRCA limits and the statutory calendar.','রেজিস্ট্রেশন গেট, পিআরসিএ সীমা ও বিধিবদ্ধ ক্যালেন্ডার।'));
+    h+=`<div class="grid grid-2">
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📄</span>${t('Registration gate (TPA §107)','রেজিস্ট্রেশন গেট')}</div></div><div class="panel-b">${DB.leases.filter(l=>l.res===false).map(l=>rowItem('📄',l.id+' · '+unitById(l.u)?.name,(tenantById(l.t)?.name||'')+' · '+(l.reg?('Deed '+l.reg.deed):'Needs registration'),l.reg?badge('Active'):badge('Pending Registration'))).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚖️</span>${t('PRCA checks','পিআরসিএ চেক')}</div></div><div class="panel-b">${[
+        ['Advance cap (residential ≤ 2mo)','All leases pass','b-green'],
+        ['Advance cap (commercial ≤ 3mo)','All leases pass','b-green'],
+        ['Rent hike ≤ 5% / 3 years','No hikes flagged','b-green'],
+        ['Eviction protection','No unlawful eviction','b-green']].map(x=>kv(x[0],`<span class="badge ${x[2]}">${x[1]}</span>`)).join('')}</div></div>
+      <div class="panel" style="grid-column:1/-1"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Statutory calendar','বিধিবদ্ধ ক্যালেন্ডার')}</div></div><div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>Date</th><th>Obligation</th><th>Owner</th><th>Status</th></tr></thead><tbody>${[
+        ['Jul 05','L-004 deed registration','Legal','b-orange'],
+        ['Jul 15','TDS challan — June','Accountant','b-blue'],
+        ['Jul 31','Holding tax — Dhaka North','Accountant','b-blue'],
+        ['Aug 01','Fire safety inspection — BFSCD','Service Mgr','b-red'],
+        ['Aug 15','e-TIN verification — all tenants','Legal','b-gray']].map(x=>`<tr><td><span class="c-name">${x[0]}</span></td><td>${x[1]}</td><td>${x[2]}</td><td><span class="badge ${x[3]}">Scheduled</span></td></tr>`).join('')}</tbody></table></div></div>
+    </div>`;
+    return h;
+  },
+  ai(){
+    let h=pageHead(t('AI Caretaker (KR)','এআই কেয়ারটেকার (কেআর)'),t('Ask anything about your portfolio — KR takes actions.','আপনার পোর্টফোলিও সম্পর্কে যেকোনো প্রশ্ন করুন — কেআর কাজ করে দেবে।'));
+    h+=`<div class="grid grid-2">
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🤖</span>${t('Capabilities','ক্ষমতা')}</div></div><div class="panel-b">${[
+        ['📄','Lease Q&A','“Which leases need registration?”'],
+        ['🏛️','Tax answers','“TDS on L-003?”'],
+        ['⚖️','PRCA checker','“Is my advance legal?”'],
+        ['🔧','Maintenance actions','“Raise ticket for pump”'],
+        ['🧾','Invoice generation','“Generate invoice for L-003”'],
+        ['🌐','Bengali & English','“জুনের ভাড়া কত?”']].map(x=>`<div class="row-item"><div class="ri-ic">${x[0]}</div><div class="ri-body"><div class="ri-t">${x[1]}</div><div class="ri-s">${x[2]}</div></div></div>`).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📜</span>${t('Legal engines loaded','আইনি ইঞ্জিন লোড')}</div></div><div class="panel-b">${[
+        ['TPA 1882 §107','Registration gate','b-blue'],
+        ['PRCA 1991 §10/§23/§18','Advance & eviction','b-green'],
+        ['IT Act 2023 §109/§128','TDS schedules','b-green'],
+        ['Holding tax NAV','Net annual value','b-purple'],
+        ['e-Porcha / khatian','Title verification','b-orange']].map(x=>`<div class="row-item"><div class="ri-ic">⚖️</div><div class="ri-body"><div class="ri-t">${x[0]}</div><div class="ri-s">${x[1]}</div></div><div class="ri-r"><span class="badge ${x[2]}">Loaded</span></div></div>`).join('')}</div></div>
+    </div>`;
+    return h;
+  }
+};
+
+/* ═══ Boot ═══ */
+applyTheme();
+$('langBtn').textContent = state.lang==='en' ? 'বাংলা' : 'EN';
+renderNav();
+render();
+</script>
+</body>
+</html>
