@@ -23,15 +23,15 @@
     {
       k: ['holding tax', 'property tax', 'nav', 'city corporation', 'assessment', 'হোল্ডিং ট্যাক্স', 'প্রপার্টি ট্যাক্স', 'সিটি কর্পোরেশন'],
       a: {
-        en: 'Holding tax is calculated from Net Annual Value (NAV):\nGross Annual Rent → − 2-month maintenance allowance (≈16.67%) → − mortgage interest → NAV.\nCity corporations then apply their rate (e.g. 8% in Dhaka North).\nTry our calculator: /landing/tools.html — it walks you through each step. And check our blog post "Holding tax in 4 steps" for a worked example.',
-        bn: 'হোল্ডিং ট্যাক্স নেট বার্ষিক মূল্য (NAV) থেকে হিসাব করা হয়:\nমোট বার্ষিক ভাড়া → − ২ মাসের রক্ষণাবেক্ষণ ভাতা (≈১৬.৬৭%) → − বন্ধকী সুদ → NAV।\nতারপর সিটি কর্পোরেশন তাদের হার প্রয়োগ করে (যেমন ঢাকা উত্তরে ৮%)।\nআমাদের ক্যালকুলেটর দেখুন: /landing/tools.html — প্রতিটি ধাপে গাইড করবে। কাজের উদাহরণের জন্য ব্লগ পোস্ট "হোল্ডিং ট্যাক্স ইন ৪ স্টেপস" দেখুন।'
+        en: 'Holding tax is calculated from Net Annual Value (NAV):\nGross Annual Rent → − 2-month maintenance allowance (≈16.67%) → − mortgage interest → NAV.\nCity corporations then apply their rate (e.g. 8% in Dhaka North).\nTry our calculator: /tools.html — it walks you through each step. And check our blog post "Holding tax in 4 steps" for a worked example.',
+        bn: 'হোল্ডিং ট্যাক্স নেট বার্ষিক মূল্য (NAV) থেকে হিসাব করা হয়:\nমোট বার্ষিক ভাড়া → − ২ মাসের রক্ষণাবেক্ষণ ভাতা (≈১৬.৬৭%) → − বন্ধকী সুদ → NAV।\nতারপর সিটি কর্পোরেশন তাদের হার প্রয়োগ করে (যেমন ঢাকা উত্তরে ৮%)।\nআমাদের ক্যালকুলেটর দেখুন: /tools.html — প্রতিটি ধাপে গাইড করবে। কাজের উদাহরণের জন্য ব্লগ পোস্ট "হোল্ডিং ট্যাক্স ইন ৪ স্টেপস" দেখুন।'
       }
     },
     {
       k: ['tds', 'tax deducted', 'withholding', 'section 128', 'section 109', 'টিডিএস'],
       a: {
-        en: 'TDS (Tax Deducted at Source) on rent under the Income Tax Act 2023:\n• Commercial rent — 4% deducted by the tenant (§128)\n• Residential rent — 10% when annual rent exceeds ৳36,00,000 (§109)\nThe tenant deposits it and gives the landlord a certificate. KRTaker generates the exact monthly figures per tenant automatically. Use the TDS calculator at /landing/tools.html.',
-        bn: 'আয়কর আইন ২০২৩ অনুযায়ী ভাড়ার টিডিএস (উৎসে কর কর্তন):\n• বাণিজ্যিক ভাড়া — ভাড়াটিয়া ৪% কর্তন করে (§১২৮)\n• আবাসিক ভাড়া — বার্ষিক ভাড়া ৳৩৬,০০,০০০-এর বেশি হলে ১০% (§১০৯)\nভাড়াটিয়া জমা দেয় এবং মালিককে সার্টিফিকেট দেয়। কেআরটেকার প্রতি ভাড়াটিয়ার জন্য মাসিক সঠিক হিসাব অটো তৈরি করে। ক্যালকুলেটর: /landing/tools.html'
+        en: 'TDS (Tax Deducted at Source) on rent under the Income Tax Act 2023:\n• Commercial rent — 4% deducted by the tenant (§128)\n• Residential rent — 10% when annual rent exceeds ৳36,00,000 (§109)\nThe tenant deposits it and gives the landlord a certificate. KRTaker generates the exact monthly figures per tenant automatically. Use the TDS calculator at /tools.html.',
+        bn: 'আয়কর আইন ২০২৩ অনুযায়ী ভাড়ার টিডিএস (উৎসে কর কর্তন):\n• বাণিজ্যিক ভাড়া — ভাড়াটিয়া ৪% কর্তন করে (§১২৮)\n• আবাসিক ভাড়া — বার্ষিক ভাড়া ৳৩৬,০০,০০০-এর বেশি হলে ১০% (§১০৯)\nভাড়াটিয়া জমা দেয় এবং মালিককে সার্টিফিকেট দেয়। কেআরটেকার প্রতি ভাড়াটিয়ার জন্য মাসিক সঠিক হিসাব অটো তৈরি করে। ক্যালকুলেটর: /tools.html'
       }
     },
     {
@@ -44,8 +44,8 @@
     {
       k: ['eviction', 'prca', 'tenant evict', 'rent control', 'evict', 'উচ্ছেদ', 'ভাড়াটিয়া সরানো'],
       a: {
-        en: 'Eviction in Bangladesh is governed by the Premises Rent Control Act 1991. Key points:\n• Grounds: 2+ months arrears, subletting without consent, material breach, bona fide owner requirement\n• A written 30-day notice must be served and COMPLETE before any suit\n• Only a Rent Controller\'s order authorizes eviction — self-help (changing locks, cutting utilities) is illegal\nTimeline: notice → petition → hearing → decree (~4–9 months). KRTaker flags arrears at the 2-month threshold and generates the demand notice. Full walkthrough: /landing/blog-eviction.html',
-        bn: 'বাংলাদেশে উচ্ছেদ প্রিমাইসেস রেন্ট কন্ট্রোল অ্যাক্ট ১৯৯১ দ্বারা নিয়ন্ত্রিত। মূল বিষয়:\n• ভিত্তি: ২+ মাস বকেয়া, অনুমতি ছাড়া সাবলেট, চুক্তি ভঙ্গ, মালিকের প্রকৃত প্রয়োজন\n• লিখিত ৩০ দিনের নোটিশ দিতে হবে এবং মামলার আগে তা সম্পূর্ণ হতে হবে\n• শুধুমাত্র রেন্ট কন্ট্রোলারের আদেশে উচ্ছেদ বৈধ — নিজে উদ্যোগ (তালা বদল, ইউটিলিটি কাটা) বেআইনি\nসময়রেখা: নোটিশ → পিটিশন → শুনানি → ডিক্রি (~৪-৯ মাস)। কেআরটেকার ২ মাস বকেয়ার থ্রেশহোল্ডে ফ্ল্যাগ করে এবং ডিমান্ড নোটিশ তৈরি করে। বিস্তারিত: /landing/blog-eviction.html'
+        en: 'Eviction in Bangladesh is governed by the Premises Rent Control Act 1991. Key points:\n• Grounds: 2+ months arrears, subletting without consent, material breach, bona fide owner requirement\n• A written 30-day notice must be served and COMPLETE before any suit\n• Only a Rent Controller\'s order authorizes eviction — self-help (changing locks, cutting utilities) is illegal\nTimeline: notice → petition → hearing → decree (~4–9 months). KRTaker flags arrears at the 2-month threshold and generates the demand notice. Full walkthrough: /blog-eviction.html',
+        bn: 'বাংলাদেশে উচ্ছেদ প্রিমাইসেস রেন্ট কন্ট্রোল অ্যাক্ট ১৯৯১ দ্বারা নিয়ন্ত্রিত। মূল বিষয়:\n• ভিত্তি: ২+ মাস বকেয়া, অনুমতি ছাড়া সাবলেট, চুক্তি ভঙ্গ, মালিকের প্রকৃত প্রয়োজন\n• লিখিত ৩০ দিনের নোটিশ দিতে হবে এবং মামলার আগে তা সম্পূর্ণ হতে হবে\n• শুধুমাত্র রেন্ট কন্ট্রোলারের আদেশে উচ্ছেদ বৈধ — নিজে উদ্যোগ (তালা বদল, ইউটিলিটি কাটা) বেআইনি\nসময়রেখা: নোটিশ → পিটিশন → শুনানি → ডিক্রি (~৪-৯ মাস)। কেআরটেকার ২ মাস বকেয়ার থ্রেশহোল্ডে ফ্ল্যাগ করে এবং ডিমান্ড নোটিশ তৈরি করে। বিস্তারিত: /blog-eviction.html'
       }
     },
     {
@@ -93,8 +93,8 @@
   ];
 
   const FALLBACK = {
-    en: 'Sorry, I don\'t have an answer for that yet. 😅 Try asking about pricing, registration, holding tax, TDS or leases — or tap a suggestion below. You can also reach a human at /landing/contact.html',
-    bn: 'দুঃখিত, এ বিষয়ে আমার এখনো উত্তর নেই। 😅 মূল্য, রেজিস্ট্রেশন, হোল্ডিং ট্যাক্স, টিডিএস বা লিজ নিয়ে জিজ্ঞেস করুন — অথবা নিচের সাজেশনগুলো চাপুন। মানুষজনকে /landing/contact.html-এও পাবেন।'
+    en: 'Sorry, I don\'t have an answer for that yet. 😅 Try asking about pricing, registration, holding tax, TDS or leases — or tap a suggestion below. You can also reach a human at /contact.html',
+    bn: 'দুঃখিত, এ বিষয়ে আমার এখনো উত্তর নেই। 😅 মূল্য, রেজিস্ট্রেশন, হোল্ডিং ট্যাক্স, টিডিএস বা লিজ নিয়ে জিজ্ঞেস করুন — অথবা নিচের সাজেশনগুলো চাপুন। মানুষজনকে /contact.html-এও পাবেন।'
   };
 
   function lang() { return (window.KR_I18N && window.krLang) ? window.krLang() : 'en'; }
@@ -173,7 +173,7 @@
       const m = d.createElement('div');
       m.className = 'chat-msg ' + who;
       // allow links in bot messages
-      m.innerHTML = who === 'bot' ? text.replace(/(https?:\/\/[^\s]+|\/landing\/[^\s]+)/g, m => {
+      m.innerHTML = who === 'bot' ? text.replace(/(https?:\/\/[^\s]+|\/[a-z0-9-]+\.html)/g, m => {
         const href = m.startsWith('/') ? m : m;
         return '<a href="' + href + '" target="_blank" rel="noopener">' + m + '</a>';
       }) : escapeHtml(text);
