@@ -1,44 +1,24 @@
-/* KRTaker landing — register wizard (multi-step + OTP via landing API) */
+/* KRTaker landing — register wizard (role → account → OTP → done, plan chosen later in dashboard) */
 (function () {
   const API = '../api/';
-  let state = { plan: 'Starter', bill: 'monthly', role: 'owner', email: '', timer: null, resendIn: 0 };
+  let state = { role: 'owner', email: '', timer: null, resendIn: 0 };
 
   const $ = (id) => document.getElementById(id);
-  const steps = ['pane1', 'pane2', 'pane3', 'pane4', 'pane5'];
+  const steps = ['pane1', 'pane2', 'pane3', 'pane4'];
   const dict = () => (window.KR_I18N ? (KR_I18N[krLang()] || KR_I18N.en) : null);
 
   function go(n) {
     steps.forEach((p, i) => $(p).classList.toggle('active', i === n - 1));
-    [1, 2, 3, 4, 5].forEach(i => {
+    [1, 2, 3, 4].forEach(i => {
       const seg = $('seg' + i), lab = $('lab' + i);
+      if (!seg || !lab) return;
       seg.className = 'seg' + (i < n ? ' done' : i === n ? ' cur' : '');
       lab.classList.toggle('cur', i === n);
     });
-    if (n === 1) $('rName').focus();
+    if (n === 2) $('rName').focus();
   }
 
-  // Billing toggle → update prices
-  const PRICES = { Starter: [5000, 48000], Business: [15000, 144000], Enterprise: [45000, 432000] };
-  function renderPrices() {
-    document.querySelectorAll('.plan-card').forEach(card => {
-      const [mo, yr] = PRICES[card.dataset.plan];
-      const v = state.bill === 'monthly' ? mo : Math.round(yr / 12);
-      const per = state.bill === 'monthly' ? (dict() ? dict()['pricing.permo'] : '/mo') : (dict() ? dict()['pricing.peryr'] : '/yr');
-      const el = card.querySelector('[data-price]');
-      el.innerHTML = '৳' + v.toLocaleString('en-IN') + '<span>' + per + '</span>';
-    });
-  }
-  $('billMonthly').addEventListener('click', () => { state.bill = 'monthly'; $('billMonthly').classList.add('on'); $('billAnnual').classList.remove('on'); renderPrices(); });
-  $('billAnnual').addEventListener('click', () => { state.bill = 'annual'; $('billAnnual').classList.add('on'); $('billMonthly').classList.remove('on'); renderPrices(); });
-
-  // Plan + role selection
-  document.querySelectorAll('.plan-card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      state.plan = card.dataset.plan;
-    });
-  });
+  // Role selection
   document.querySelectorAll('.role-opt').forEach(opt => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'));
@@ -50,11 +30,9 @@
   // Navigation
   $('goStep2').addEventListener('click', () => go(2));
   $('backTo1').addEventListener('click', () => go(1));
-  $('goStep3').addEventListener('click', () => go(3));
   $('backTo2').addEventListener('click', () => go(2));
-  $('backTo3').addEventListener('click', () => go(3));
 
-  // Account submit → register API
+  // Account submit → register API (plan NOT collected — chosen later in dashboard)
   $('acctForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const d = dict() || {};
@@ -69,14 +47,14 @@
     try {
       const res = await fetch(API + 'register', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, org: $('rOrg').value.trim(), email, phone: $('rPhone').value.trim(), role: state.role, plan: state.plan })
+        body: JSON.stringify({ name, org: $('rOrg').value.trim(), email, phone: $('rPhone').value.trim(), role: state.role })
       });
       const data = await res.json();
       if (data.ok) {
         state.email = email;
         $('otpEmail').textContent = email;
         startTimer(60);
-        go(4);
+        go(3);
         $('otpRow').querySelector('input').focus();
       } else {
         krToast(data.error || (d['reg.err.server'] || 'Something went wrong.'));
@@ -144,7 +122,7 @@
       const data = await res.json();
       if (data.ok) {
         $('trialNote').textContent = (dict() ? dict()['reg.successSub'] : '') + ' ' + (data.trial_end || '');
-        go(5);
+        go(4);
       } else {
         $('errOtp').classList.add('show');
         otpInputs().forEach(i => { i.value = ''; });
@@ -153,7 +131,4 @@
     } catch (e) { $('errOtp').classList.add('show'); }
     btn.disabled = false; btn.textContent = (dict() && dict()['reg.otpBtn']) || 'Verify & activate trial';
   });
-
-  // Re-render dynamic bits on language switch
-  document.addEventListener('kri18n', () => { renderPrices(); });
 })();

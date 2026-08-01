@@ -27,7 +27,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=2.8">
+<link rel="stylesheet" href="css/style.css?v=2.10">
 <!-- KRTaker analytics: replace G-XXXXXXXXXX with your GA4 Measurement ID (or swap for Plausible) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
@@ -111,47 +111,17 @@ gtag('config', 'G-XXXXXXXXXX');
       </div>
 
       <div class="wiz-progress" aria-hidden="true">
-        <div class="seg" id="seg1"></div><div class="seg" id="seg2"></div><div class="seg" id="seg3"></div><div class="seg" id="seg4"></div><div class="seg" id="seg5"></div>
+        <div class="seg" id="seg1"></div><div class="seg" id="seg2"></div><div class="seg" id="seg3"></div><div class="seg" id="seg4"></div>
       </div>
       <div class="wiz-labels">
-        <span class="cur" id="lab1" data-i18n="reg.step1">Plan</span>
-        <span id="lab2" data-i18n="reg.step2">Role</span>
-        <span id="lab3" data-i18n="reg.step3">Account</span>
-        <span id="lab4" data-i18n="reg.step4">Verify</span>
-        <span id="lab5" data-i18n="reg.step5">Done</span>
+        <span class="cur" id="lab1" data-i18n="reg.step2">Role</span>
+        <span id="lab2" data-i18n="reg.step3">Account</span>
+        <span id="lab3" data-i18n="reg.step4">Verify</span>
+        <span id="lab4" data-i18n="reg.step5">Done</span>
       </div>
 
-      <!-- STEP 1: PLAN -->
+      <!-- STEP 1: ROLE -->
       <div class="wiz-pane active" id="pane1">
-        <h3 style="font-size:19px;margin-bottom:4px" data-i18n="reg.planTitle">Choose your plan</h3>
-        <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px" data-i18n="reg.planSub">Every plan includes the AI caretaker, all modules and unlimited units in trial.</p>
-        <div class="bill-toggle" role="tablist">
-          <button type="button" class="on" id="billMonthly" data-i18n="reg.monthly">Monthly</button>
-          <button type="button" id="billAnnual" data-i18n="reg.annual">Annual</button>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
-          <button type="button" class="plan-card selected" data-plan="Starter" data-mo="5000" data-yr="48000" style="position:relative">
-            <b data-i18n="reg.plan.starter">Starter</b>
-            <div class="pc-price" data-price>৳5,000<span data-i18n="pricing.permo">/mo</span></div>
-            <div class="pc-d" data-i18n="reg.plan.starterD">For 1 building · up to 20 units</div>
-          </button>
-          <button type="button" class="plan-card" data-plan="Business" data-mo="15000" data-yr="144000" style="position:relative">
-            <b data-i18n="reg.plan.business">Business</b>
-            <div class="pc-price" data-price>৳15,000<span data-i18n="pricing.permo">/mo</span></div>
-            <div class="pc-d" data-i18n="reg.plan.businessD">For growing portfolios · up to 200 units</div>
-            <span class="pc-badge">★</span>
-          </button>
-          <button type="button" class="plan-card" data-plan="Enterprise" data-mo="45000" data-yr="432000" style="position:relative">
-            <b data-i18n="reg.plan.enterprise">Enterprise</b>
-            <div class="pc-price" data-price>৳45,000<span data-i18n="pricing.permo">/mo</span></div>
-            <div class="pc-d" data-i18n="reg.plan.enterpriseD">Multi-entity, multi-role · unlimited</div>
-          </button>
-        </div>
-        <div class="wiz-actions"><button class="btn btn-primary btn-lg" id="goStep2" data-i18n="reg.next">Continue</button></div>
-      </div>
-
-      <!-- STEP 2: ROLE -->
-      <div class="wiz-pane" id="pane2">
         <h3 style="font-size:19px;margin-bottom:4px" data-i18n="reg.roleTitle">I am a…</h3>
         <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px" data-i18n="reg.roleSub">Pick the role that fits — you can change it later.</p>
         <button type="button" class="role-opt selected" data-role="owner">
@@ -170,13 +140,12 @@ gtag('config', 'G-XXXXXXXXXX');
           <span class="ro-ico">🌍</span><span><b data-i18n="reg.role.nrb">NRB Investor</b><span data-i18n="reg.roleDesc.nrb">Remote portfolio</span></span>
         </button>
         <div class="wiz-actions">
-          <button class="btn btn-outline" id="backTo1" data-i18n="reg.back">Back</button>
-          <button class="btn btn-primary btn-lg" id="goStep3" data-i18n="reg.next">Continue</button>
+          <button class="btn btn-primary btn-lg" id="goStep2" data-i18n="reg.next">Continue</button>
         </div>
       </div>
 
-      <!-- STEP 3: ACCOUNT -->
-      <div class="wiz-pane" id="pane3">
+      <!-- STEP 2: ACCOUNT -->
+      <div class="wiz-pane" id="pane2">
         <h3 style="font-size:19px;margin-bottom:4px" data-i18n="reg.acctTitle">Your account</h3>
         <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px" data-i18n="reg.acctSub">We'll send a one-time code to your email.</p>
         <form id="acctForm" novalidate>
@@ -208,14 +177,14 @@ gtag('config', 'G-XXXXXXXXXX');
           </div>
           <p class="terms-note" data-i18n="reg.terms">By registering you agree to our <a href="terms.html">Terms</a> &amp; <a href="privacy.html">Privacy Policy</a>.</p>
           <div class="wiz-actions">
-            <button type="button" class="btn btn-outline" id="backTo2" data-i18n="reg.back">Back</button>
+            <button type="button" class="btn btn-outline" id="backTo1" data-i18n="reg.back">Back</button>
             <button type="submit" class="btn btn-primary btn-lg" id="regSubmit" data-i18n="reg.next">Continue</button>
           </div>
         </form>
       </div>
 
-      <!-- STEP 4: OTP -->
-      <div class="wiz-pane" id="pane4">
+      <!-- STEP 3: OTP -->
+      <div class="wiz-pane" id="pane3">
         <h3 style="font-size:19px;margin-bottom:4px" data-i18n="reg.otpTitle">Verify your email</h3>
         <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px"><span data-i18n="reg.otpSub">Enter the 6-digit code we emailed to</span> <b id="otpEmail" style="color:var(--primary)"></b></p>
         <div class="otp-row" id="otpRow">
@@ -229,18 +198,19 @@ gtag('config', 'G-XXXXXXXXXX');
         <div class="form-err" id="errOtp" style="text-align:center" data-i18n="reg.err.otp">Invalid or expired code. Try again.</div>
         <div class="otp-timer" id="otpTimer">60s · <a id="otpResend" data-i18n="reg.otpResend">Resend code</a></div>
         <div class="wiz-actions">
-          <button class="btn btn-outline" id="backTo3" data-i18n="reg.back">Back</button>
+          <button class="btn btn-outline" id="backTo2" data-i18n="reg.back">Back</button>
           <button class="btn btn-primary btn-lg" id="otpVerify" data-i18n="reg.otpBtn">Verify &amp; activate trial</button>
         </div>
       </div>
 
-      <!-- STEP 5: SUCCESS -->
-      <div class="wiz-pane" id="pane5">
+      <!-- STEP 4: SUCCESS -->
+      <div class="wiz-pane" id="pane4">
         <div class="success-box">
           <div class="ok-ico">✓</div>
           <h2 data-i18n="reg.successTitle">Trial activated 🎉</h2>
           <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:6px" data-i18n="reg.successSub">Your 14-day free trial started. Welcome to KRTaker.</p>
           <p class="trial-note" id="trialNote"></p>
+          <p style="font-size:12.5px;color:var(--text-mute);margin:4px 0 14px" data-i18n="reg.successPlan">Pick a plan anytime from your dashboard — your trial is fully featured.</p>
           <a class="btn btn-primary btn-lg btn-block" href="../design-prototype.html" data-i18n="reg.successWorkspace">Open your workspace</a>
           <a class="btn btn-outline btn-block" href="index.html" style="margin-top:10px" data-i18n="reg.successHome">Back to home</a>
         </div>
@@ -248,7 +218,7 @@ gtag('config', 'G-XXXXXXXXXX');
     </div>
   </div>
 </div>
-<script src="js/register.js"></script>
+<script src="js/register.js?v=2.10"></script>
 
 <!-- ===== CTA SECTION ===== -->
 <section class="cta-section">
@@ -368,10 +338,10 @@ gtag('config', 'G-XXXXXXXXXX');
 </div>
 <!-- Back to top -->
 <button class="btt-btn" aria-label="Back to top">↑</button>
-<script src="i18n/i18n-dict.js?v=2.8"></script>
-<script src="js/i18n.js?v=2.8"></script>
-<script src="js/main.js?v=2.8"></script>
-<script src="js/chat.js?v=2.8"></script>
+<script src="i18n/i18n-dict.js?v=2.10"></script>
+<script src="js/i18n.js?v=2.10"></script>
+<script src="js/main.js?v=2.10"></script>
+<script src="js/chat.js?v=2.10"></script>
 <script>
 if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 </script>
