@@ -142,3 +142,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+/* ── Cookie consent banner (V2.4) ── */
+(function () {
+  try {
+    if (localStorage.getItem('krt_cookie_ok')) return;
+    const b = document.createElement('div');
+    b.className = 'cookie-bar';
+    b.innerHTML = '<span>We use cookies to improve your experience and measure traffic. <a href="privacy.html">Privacy policy</a></span><button class="cookie-ok">Got it</button>';
+    document.body.appendChild(b);
+    b.querySelector('.cookie-ok').addEventListener('click', function () {
+      localStorage.setItem('krt_cookie_ok', '1');
+      b.remove();
+    });
+  } catch (e) {}
+})();

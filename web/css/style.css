@@ -643,3 +643,24 @@ img{max-width:100%}
   .btt-btn{bottom:calc(84px + env(safe-area-inset-bottom))}
 }
 
+/* ── V2.4: WhatsApp float ── */
+.wa-fab{
+  position:fixed;left:22px;bottom:94px;z-index:95;width:52px;height:52px;border-radius:50%;
+  background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 26px rgba(37,211,102,.45);transition:all .25s ease;text-decoration:none;
+}
+.wa-fab:hover{transform:scale(1.07);color:#fff}
+.wa-fab svg{width:28px;height:28px}
+@media(max-width:480px){.wa-fab{left:14px;bottom:calc(154px + env(safe-area-inset-bottom))}}
+@media(max-width:768px) and (min-width:481px){.wa-fab{bottom:calc(154px + env(safe-area-inset-bottom))}}
+
+/* ── V2.4: Cookie consent bar ── */
+.cookie-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  gap:14px;flex-wrap:wrap;background:#0E1626;color:#E8EEF9;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  font-size:13px;box-shadow:0 -8px 24px rgba(0,0,0,.25);
+}
+.cookie-bar a{color:#7EB3F5;text-decoration:underline}
+.cookie-ok{background:var(--grad);color:#fff;border:none;padding:8px 18px;border-radius:999px;font-weight:700;cursor:pointer;font-size:13px}
+[data-theme="dark"] .cookie-bar{background:#1A2433}
+
