@@ -3,7 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mobile nav toggle
   const t = document.querySelector('.nav-toggle');
   const links = document.querySelector('.nav-links');
-  if (t && links) t.addEventListener('click', () => links.classList.toggle('open'));
+  if (t && links) {
+    t.addEventListener('click', () => links.classList.toggle('open'));
+    // close menu when a link is chosen
+    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+    // close on outside click
+    document.addEventListener('click', (e) => {
+      if (links.classList.contains('open') && !links.contains(e.target) && !t.contains(e.target)) {
+        links.classList.remove('open');
+      }
+    });
+  }
 
   // Dark mode toggle
   const THEME_KEY = 'krtaker_theme';
@@ -83,6 +93,30 @@ document.addEventListener('DOMContentLoaded', () => {
         else krToast(data.error || 'Something went wrong. Try again.');
       } catch (err) { krToast('Network error — please try again.'); }
       btn.disabled = false; btn.textContent = orig;
+    });
+  }
+
+  // Newsletter form → landing API
+  const nf = document.getElementById('newsletterForm');
+  if (nf) {
+    nf.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const em = document.getElementById('newsEmail');
+      const val = (em.value || '').trim();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val)) { krToast('Please enter a valid email.'); return; }
+      const btn = nf.querySelector('button');
+      btn.disabled = true;
+      try {
+        const res = await fetch('../api/newsletter', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: val })
+        });
+        const data = await res.json();
+        const d = (window.KR_I18N && KR_I18N[krLang()]) || {};
+        krToast(data.ok ? (d['footer.newsDone'] || 'Subscribed — check your inbox to confirm ✓') : (data.error || 'Try again.'));
+        if (data.ok) nf.reset();
+      } catch (err) { krToast('Network error — please try again.'); }
+      btn.disabled = false;
     });
   }
 });

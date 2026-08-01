@@ -134,11 +134,34 @@
 <!-- ===== FOOTER ===== -->
 <footer class="footer">
   <div class="container">
-    <div class="footer-grid">
+    <div class="footer-top">
       <div class="footer-brand">
         <div class="nav-logo"><span class="logo-mark">KR</span> KRTaker</div>
         <p data-i18n="footer.blurb">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
+        <div class="footer-socials">
+          <a href="#" class="soc" aria-label="Facebook">f</a>
+          <a href="#" class="soc" aria-label="LinkedIn">in</a>
+          <a href="#" class="soc" aria-label="X (Twitter)">𝕏</a>
+          <a href="#" class="soc" aria-label="YouTube">▶</a>
+          <a href="#" class="soc" aria-label="WhatsApp">✆</a>
+        </div>
       </div>
+      <div class="footer-news">
+        <h4 data-i18n="footer.newsTitle">Property insights, in Bengali &amp; English</h4>
+        <p data-i18n="footer.newsSub">Holding tax, TDS, PRCA updates and product news — once a month, no spam.</p>
+        <form class="news-form" id="newsletterForm" novalidate>
+          <input type="email" id="newsEmail" data-i18n-ph="footer.newsPh" placeholder="you@example.com" required>
+          <button type="submit" data-i18n="footer.newsBtn">Subscribe</button>
+        </form>
+        <div class="footer-pay">
+          <span>Pays with</span>
+          <span class="pay-chip">bKash</span>
+          <span class="pay-chip">Nagad</span>
+          <span class="pay-chip">SSLCommerz</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-grid">
       <div>
         <h4 data-i18n="footer.p1">Platform</h4>
         <ul>
@@ -171,7 +194,7 @@
       </div>
       <div>
         <h4 data-i18n="footer.p4">Get in touch</h4>
-        <ul>
+        <ul class="footer-contact">
           <li data-i18n="footer.c1">📧 hello@krtaker.com</li>
           <li data-i18n="footer.c2">📞 +880 1712-000000</li>
           <li data-i18n="footer.c3">📍 Dhaka, Bangladesh</li>
@@ -181,6 +204,7 @@
     </div>
     <div class="footer-bottom">
       <span data-i18n="footer.rights">© 2026 KRTaker. All rights reserved.</span>
+      <span class="footer-made" data-i18n="footer.madeIn">Made in Bangladesh 🇧🇩</span>
       <span><a href="terms.html" data-i18n="footer.terms">Terms</a> · <a href="privacy.html" data-i18n="footer.privacy">Privacy</a> · <a href="contact.html" data-i18n="footer.support">Support</a></span>
     </div>
   </div>

@@ -53,6 +53,9 @@ def db():
     con.execute('''CREATE TABLE IF NOT EXISTS contacts (
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, phone TEXT,
         subject TEXT, message TEXT, created_at TEXT DEFAULT (datetime('now')))''')
+    con.execute('''CREATE TABLE IF NOT EXISTS newsletter_emails (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE NOT NULL,
+        created_at TEXT DEFAULT (datetime('now')))''')
     return con
 
 # ---------- email ----------
@@ -172,6 +175,22 @@ def resend_otp():
     con.commit()
     ok = send_mail(email, 'Your KRTaker verification code', otp_email_html(otp, row['name']))
     return jsonify(ok=True, otp_sent=ok)
+
+@app.route('/api/newsletter', methods=['POST'])
+def newsletter():
+    d = request.get_json(silent=True) or {}
+    email = (d.get('email') or '').strip().lower()
+    if not re.match(r'[^@\s]+@[^@\s]+\.[^@\s]+', email):
+        return jsonify(ok=False, error='Invalid email.'), 400
+    con = db()
+    try:
+        con.execute('INSERT INTO newsletter_emails (email) VALUES (?)', (email,))
+        con.commit()
+    except sqlite3.IntegrityError:
+        return jsonify(ok=True, already=True)
+    send_mail(ADMIN_EMAIL, f'[KRTaker] Newsletter signup: {email}',
+              f'<p>New newsletter subscriber: <b>{html.escape(email)}</b></p>')
+    return jsonify(ok=True)
 
 @app.route('/api/contact', methods=['POST'])
 def contact():
