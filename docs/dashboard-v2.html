@@ -164,6 +164,8 @@ img{max-width:100%}
 /* ── Tables ── */
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+tbody tr{cursor:pointer}
+.panel[onclick],.tile{cursor:pointer}
 thead th{text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-mute);padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg-alt);white-space:nowrap}
 tbody td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text-soft);vertical-align:middle}
 tbody tr:last-child td{border-bottom:none}
@@ -343,6 +345,39 @@ tr.focus{animation:focusFlash 2.4s ease}
 .pc-btn.cur{background:var(--primary-light);color:var(--primary-dark);border:1px solid rgba(47,128,237,.3);cursor:default}
 [data-theme="dark"] .pc-btn.cur{color:#7EB3F5}
 
+/* ── Phase 3: Drawer sheet + CRUD forms ── */
+.drawer-overlay{position:fixed;inset:0;background:rgba(10,20,40,.45);backdrop-filter:blur(3px);z-index:120;display:flex;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity .22s}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{width:min(520px,100vw);height:100%;background:var(--card);border-left:1px solid var(--border);box-shadow:-18px 0 60px rgba(10,25,50,.28);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .24s ease}
+.drawer.open{transform:none}
+.drawer-h{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.drawer-h .dh-t{font-size:15px;font-weight:800;letter-spacing:-.2px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drawer-h .dh-sub{font-size:11px;color:var(--text-mute)}
+.drawer-h .close{background:none;border:none;font-size:16px;color:var(--text-mute);cursor:pointer;width:30px;height:30px;border-radius:9px}
+.drawer-h .close:hover{background:var(--primary-light);color:var(--primary)}
+.drawer-b{flex:1;overflow-y:auto;padding:18px 20px 26px}
+.drawer-f{padding:14px 20px;border-top:1px solid var(--border);background:var(--bg-alt)}
+.dr-kv{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:18px}
+.dr-kv .kv{background:var(--card);padding:10px 13px;border:none;display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+.dr-kv .k{font-size:10.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text-mute)}
+.dr-kv .v{font-size:13.5px;font-weight:700;color:var(--text);word-break:break-word}
+.dr-related h4{font-size:12px;font-weight:700;color:var(--text-mute);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px}
+.dr-related .row-item{cursor:pointer;border-radius:10px;padding:9px 10px;border:1px solid transparent}
+.dr-related .row-item:hover{background:var(--primary-light);border-color:rgba(47,128,237,.25)}
+.dr-actions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-grid .full{grid-column:1/-1}
+.form-field{display:flex;flex-direction:column;gap:6px}
+.form-field.check{flex-direction:row;align-items:center;gap:9px;padding-top:22px}
+.form-field label{font-size:11.5px;font-weight:600;color:var(--text-soft)}
+.form-field input,.form-field select,.form-field textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:9.5px 12px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--text);outline:none;transition:border .15s}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+.form-field input.bad{border-color:var(--danger);box-shadow:0 0 0 3px rgba(231,76,60,.15)}
+.form-field .f-hint{font-size:10.5px;color:var(--text-mute)}
+.btn-danger{display:inline-flex;align-items:center;gap:7px;background:rgba(231,76,60,.1);color:var(--danger);border:1px solid rgba(231,76,60,.3);border-radius:10px;padding:10px 15px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s}
+.btn-danger:hover{background:var(--danger);color:#fff}
+@media(max-width:520px){.form-grid{grid-template-columns:1fr}}
+
 /* ── Responsive ── */
 @media(max-width:1080px){
   .grid-4{grid-template-columns:repeat(2,1fr)}
@@ -457,6 +492,15 @@ tr.focus{animation:focusFlash 2.4s ease}
 
 <!-- ═══ Mobile sidebar backdrop ═══ -->
 <div class="sb-backdrop" id="sbBackdrop" onclick="closeSidebar()"></div>
+
+<!-- ═══ Phase 3: Drawer sheet ═══ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="if(event.target===this)closeDrawer()">
+  <div class="drawer" id="drawer">
+    <div class="drawer-h"><span class="dh-t" id="drawerTitle">Detail</span><span class="dh-sub" id="drawerSub"></span><button class="close" onclick="closeDrawer()">✕</button></div>
+    <div class="drawer-b" id="drawerBody"></div>
+    <div class="drawer-f" id="drawerFoot"></div>
+  </div>
+</div>
 
 <!-- ═══ Desktop sticky footer ═══ -->
 <footer class="app-footer">
@@ -673,7 +717,7 @@ async function initApp() {
     applyLive(d);
   } catch (e) { enterDemo(); }
 }
-function applyLive(d) {
+function applyLive(d, silent) {
   LIVE.user = d.user; LIVE.catalog = d.catalog || []; LIVE.subscription = d.subscription || null;
   const collections = d.collections || {};
   LIVE.db = JSON.parse(JSON.stringify(SEED));
@@ -689,7 +733,7 @@ function applyLive(d) {
   $('logoutBtn').style.display = 'block';
   hideAuth(); showDemoBanner(false);
   renderNav(); render(); updateCrumb();
-  toast('Signed in as ' + LIVE.user.name + ' — ' + LIVE.user.role);
+  if (!silent) toast('Signed in as ' + LIVE.user.name + ' — ' + LIVE.user.role);
 }
 async function doLogin() {
   const email = $('authEmail').value.trim().toLowerCase();
@@ -1045,7 +1089,7 @@ tenant(){
   const paid=myInvs.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.net,0);
   const due=myInvs.filter(i=>i.status!=='Paid').reduce((s,i)=>s+i.net,0);
   const myTickets=DB.tickets.filter(x=>x.u==='U-010');
-  let h=pageHead(t('Tenant Portal','টেন্যান্ট পোর্টাল'),t('Sultana — Apartment 7B, Dhanmondi Apartment.','সুলতানা — অ্যাপার্টমেন্ট ৭বি, ধানমন্ডি অ্যাপার্টমেন্ট।'),`<button class="btn-primary" onclick="toast('Pay with bKash — Phase 4 gateway')">💳 ${t('Pay rent','ভাড়া পরিশোধ করুন')}</button><button class="btn-outline" onclick="toast('New maintenance request — Phase 2')">＋ ${t('Report issue','সমস্যা জানান')}</button>`);
+  let h=pageHead(t('Tenant Portal','টেন্যান্ট পোর্টাল'),t('Sultana — Apartment 7B, Dhanmondi Apartment.','সুলতানা — অ্যাপার্টমেন্ট ৭বি, ধানমন্ডি অ্যাপার্টমেন্ট।'),`<button class="btn-primary" onclick="toast('Pay with bKash — Phase 4 gateway')">💳 ${t('Pay rent','ভাড়া পরিশোধ করুন')}</button><button class="btn-outline" onclick="openNew('tickets')">＋ ${t('Report issue','সমস্যা জানান')}</button>`);
   h+=statsRow([
     stat(t('Rent due','বকেয়া ভাড়া'),money(due),due?'this month':'All settled',due?'down':'up','💳'),
     stat(t('Paid (Jun)','পরিশোধিত (জুন)'),money(paid),'2 invoices cleared','up','✅'),
@@ -1247,8 +1291,8 @@ function invLbl(invId){const inv=invoiceById(invId);if(!inv)return '—';const l
 const renderers={
   dashboard:renderDashboard,
   properties(){
-    let h=pageHead(t('Properties','সম্পত্তি'),t('Your portfolio across Dhaka & Chattogram.','ঢাকা ও চট্টগ্রামে আপনার পোর্টফোলিও।'),`<button class="btn-primary" onclick="toast('Add property — Phase 2')">＋ ${t('Add property','সম্পত্তি যোগ করুন')}</button>`);
-    h+=`<div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${DB.properties.map(p=>{const u=DB.units.filter(x=>x.p===p.id);const lc=u.filter(x=>x.status==='Leased').length;const pct=u.length?Math.round(lc/u.length*100):0;const rent=DB.leases.filter(l=>u.some(x=>x.id===l.u)&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0);return `<div class="panel" data-id="${p.id}"><div class="panel-b">
+    let h=pageHead(t('Properties','সম্পত্তি'),t('Your portfolio across Dhaka & Chattogram.','ঢাকা ও চট্টগ্রামে আপনার পোর্টফোলিও।'),`<button class="btn-primary" onclick="openNew('properties')">＋ ${t('Add property','সম্পত্তি যোগ করুন')}</button>`);
+    h+=`<div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${DB.properties.map(p=>{const u=DB.units.filter(x=>x.p===p.id);const lc=u.filter(x=>x.status==='Leased').length;const pct=u.length?Math.round(lc/u.length*100):0;const rent=DB.leases.filter(l=>u.some(x=>x.id===l.u)&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0);return `<div class="panel" data-id="${p.id}" onclick="openDetail('properties','${p.id}')"><div class="panel-b">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div class="role-ava" style="width:44px;height:44px;font-size:18px;border-radius:12px">${p.type==='Flat'?'🏢':p.type==='Commercial'?'🏬':p.type==='Industrial'?'🏭':'🌳'}</div><div><div style="font-weight:700;font-size:14.5px">${esc(p.name)}</div><div style="font-size:11.5px;color:var(--text-mute)">${p.type} · ${p.jur}</div></div>${badge(p.status)}</div>
       <div class="kv"><span class="k">Holding</span><span class="v">${esc(p.holding)}</span></div>
       <div class="kv"><span class="k">Value</span><span class="v">${moneyC(p.value)}</span></div>
@@ -1259,23 +1303,23 @@ const renderers={
     return h;
   },
   units(){
-    let h=pageHead(t('Units','ইউনিট'),t('Every flat, floor, shed and plot.','প্রতিটি ফ্ল্যাট, ফ্লোর, শেড ও প্লট।'),`<button class="btn-primary" onclick="toast('Add unit — Phase 2')">＋ ${t('Add unit','ইউনিট যোগ করুন')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Unit</th><th>Property</th><th>Floor</th><th>Size</th><th>Tenant</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.units.map(u=>{const l=DB.leases.find(x=>x.u===u.id&&(x.status==='Active'||x.status==='Pending Registration'));const ten=l?tenantById(l.t):null;return `<tr data-id="${u.id}"><td><span class="c-name">${esc(u.name)}</span><div class="c-sub">${u.id}</div></td><td>${esc(propById(u.p)?.name||'—')}</td><td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td>${ten?esc(ten.name):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${badge(u.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    let h=pageHead(t('Units','ইউনিট'),t('Every flat, floor, shed and plot.','প্রতিটি ফ্ল্যাট, ফ্লোর, শেড ও প্লট।'),`<button class="btn-primary" onclick="openNew('units')">＋ ${t('Add unit','ইউনিট যোগ করুন')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Unit</th><th>Property</th><th>Floor</th><th>Size</th><th>Tenant</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.units.map(u=>{const l=DB.leases.find(x=>x.u===u.id&&(x.status==='Active'||x.status==='Pending Registration'));const ten=l?tenantById(l.t):null;return `<tr data-id="${u.id}" onclick="openDetail('units','${u.id}')"><td><span class="c-name">${esc(u.name)}</span><div class="c-sub">${u.id}</div></td><td>${esc(propById(u.p)?.name||'—')}</td><td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td>${ten?esc(ten.name):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${badge(u.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   tenants(){
-    let h=pageHead(t('Tenants','ভাড়াটিয়া'),t('Individuals, corporates and NRB tenants.','ব্যক্তি, কর্পোরেট ও এনআরবি ভাড়াটিয়া।'),`<button class="btn-primary" onclick="toast('Add tenant — Phase 2')">＋ ${t('Add tenant','ভাড়াটিয়া যোগ করুন')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr data-id="${te.id}"><td><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    let h=pageHead(t('Tenants','ভাড়াটিয়া'),t('Individuals, corporates and NRB tenants.','ব্যক্তি, কর্পোরেট ও এনআরবি ভাড়াটিয়া।'),`<button class="btn-primary" onclick="openNew('tenants')">＋ ${t('Add tenant','ভাড়াটিয়া যোগ করুন')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr data-id="${te.id}" onclick="openDetail('tenants','${te.id}')"><td><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td></tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   leases(){
-    let h=pageHead(t('Leases','লিজ'),t('Tenancy agreements with legal gates applied automatically.','আইনি গেটসহ টেন্যান্সি চুক্তি।'),`<button class="btn-primary" onclick="toast('New lease — Phase 2')">＋ ${t('New lease','নতুন লিজ')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th></tr></thead><tbody>${DB.leases.map(l=>`<tr data-id="${l.id}"><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+    let h=pageHead(t('Leases','লিজ'),t('Tenancy agreements with legal gates applied automatically.','আইনি গেটসহ টেন্যান্সি চুক্তি।'),`<button class="btn-primary" onclick="openNew('leases')">＋ ${t('New lease','নতুন লিজ')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th></tr></thead><tbody>${DB.leases.map(l=>`<tr data-id="${l.id}" onclick="openDetail('leases','${l.id}')"><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
   invoices(){
-    let h=pageHead(t('Invoices','ইনভয়েস'),t('Monthly rent invoices with TDS computed where applicable.','প্রযোজ্য ক্ষেত্রে টিডিএসসহ মাসিক ভাড়ার ইনভয়েস।'),`<button class="btn-primary" onclick="toast('Generate invoice — Phase 2')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Unit</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${DB.invoices.map(i=>{const l=leaseById(i.l);return `<tr data-id="${i.id}"><td><span class="c-name">${i.id}</span></td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td>${i.m}</td><td>${money(i.gross)}</td><td>${i.tds?money(i.tds):'—'}</td><td class="t-amount">${money(i.net)}</td><td>${badge(i.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    let h=pageHead(t('Invoices','ইনভয়েস'),t('Monthly rent invoices with TDS computed where applicable.','প্রযোজ্য ক্ষেত্রে টিডিএসসহ মাসিক ভাড়ার ইনভয়েস।'),`<button class="btn-primary" onclick="openNew('invoices')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Unit</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${DB.invoices.map(i=>{const l=leaseById(i.l);return `<tr data-id="${i.id}" onclick="openDetail('invoices','${i.id}')"><td><span class="c-name">${i.id}</span></td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td>${i.m}</td><td>${money(i.gross)}</td><td>${i.tds?money(i.tds):'—'}</td><td class="t-amount">${money(i.net)}</td><td>${badge(i.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   receipts(){
@@ -1301,8 +1345,8 @@ const renderers={
     return h;
   },
   maintenance(){
-    let h=pageHead(t('Maintenance','রক্ষণাবেক্ষণ'),t('Tickets with landlord/tenant liability resolved by law.','আইন অনুযায়ী মালিক/ভাড়াটিয়া দায় নির্ধারিত টিকিট।'),`<button class="btn-primary" onclick="toast('New ticket — Phase 2')">＋ ${t('New ticket','নতুন টিকিট')}</button>`);
-    h+=`<div class="grid grid-2">${DB.tickets.map(x=>`<div class="panel" data-id="${x.id}"><div class="panel-b">
+    let h=pageHead(t('Maintenance','রক্ষণাবেক্ষণ'),t('Tickets with landlord/tenant liability resolved by law.','আইন অনুযায়ী মালিক/ভাড়াটিয়া দায় নির্ধারিত টিকিট।'),`<button class="btn-primary" onclick="openNew('tickets')">＋ ${t('New ticket','নতুন টিকিট')}</button>`);
+    h+=`<div class="grid grid-2">${DB.tickets.map(x=>`<div class="panel" data-id="${x.id}" onclick="openDetail('tickets','${x.id}')"><div class="panel-b">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="c-name" style="font-weight:700">${x.id} · ${esc(x.desc)}</div>${badge(x.status)}</div>
       <div class="kv"><span class="k">Unit</span><span class="v">${esc(unitById(x.u)?.name||'—')}</span></div>
       <div class="kv"><span class="k">Liability</span><span class="v">${x.liab}</span></div>
@@ -1402,6 +1446,223 @@ async function changePlan(code){
   } else {
     toast((d.error || 'Plan change failed — try again.'));
   }
+}
+
+/* ═══ Phase 3: Drawer + CRUD engine ═══ */
+const SCHEMAS = {
+  properties: { icon:'🏢', label:'Property', fields:[
+    {k:'name',l:'Name',t:'text',req:true},
+    {k:'type',l:'Type',t:'select',o:['Flat','Commercial','Plot','Industrial']},
+    {k:'jur',l:'City corporation',t:'text'},
+    {k:'holding',l:'Holding address',t:'text'},
+    {k:'sqft',l:'Area (sqft)',t:'number'},
+    {k:'value',l:'Value (৳)',t:'number'},
+    {k:'status',l:'Status',t:'select',o:['Active','Inactive']}
+  ]},
+  units: { icon:'🚪', label:'Unit', fields:[
+    {k:'p',l:'Property',t:'select',src:'properties',key:'id',val:'name',req:true},
+    {k:'name',l:'Unit name',t:'text',req:true},
+    {k:'floor',l:'Floor',t:'text'},
+    {k:'sqft',l:'Area (sqft)',t:'number'},
+    {k:'status',l:'Status',t:'select',o:['Leased','Vacant','Maintenance']}
+  ]},
+  tenants: { icon:'👤', label:'Tenant', fields:[
+    {k:'name',l:'Full name',t:'text',req:true},
+    {k:'phone',l:'Phone',t:'text'},
+    {k:'email',l:'Email',t:'email'},
+    {k:'nid',l:'NID / BIN',t:'text'},
+    {k:'kind',l:'Kind',t:'select',o:['Individual','Corporate']},
+    {k:'nrb',l:'NRB (non-resident)',t:'check'},
+    {k:'sub_email',l:'Login email (optional)',t:'email'}
+  ]},
+  leases: { icon:'📄', label:'Lease', fields:[
+    {k:'u',l:'Unit',t:'select',src:'units',key:'id',val:'name',req:true},
+    {k:'t',l:'Tenant',t:'select',src:'tenants',key:'id',val:'name',req:true},
+    {k:'start',l:'Start date',t:'date'},
+    {k:'end',l:'End date',t:'date'},
+    {k:'rent',l:'Monthly rent (৳)',t:'number'},
+    {k:'adv',l:'Advance (৳)',t:'number'},
+    {k:'res',l:'Residential',t:'check'},
+    {k:'reg_office',l:'Sub-Registry office',t:'text'},
+    {k:'reg_deed',l:'Deed no.',t:'text'},
+    {k:'status',l:'Status',t:'select',o:['Active','Pending Registration','Expired','Terminated']}
+  ]},
+  invoices: { icon:'🧾', label:'Invoice', fields:[
+    {k:'l',l:'Lease',t:'select',src:'leases',key:'id',val:'id',req:true},
+    {k:'m',l:'Month (YYYY-MM)',t:'month',req:true},
+    {k:'gross',l:'Gross rent (৳)',t:'number'},
+    {k:'tds',l:'TDS (৳)',t:'number'},
+    {k:'net',l:'Net (auto)',t:'number',auto:true},
+    {k:'status',l:'Status',t:'select',o:['Paid','Unpaid','Overdue','Draft']}
+  ]},
+  tickets: { icon:'🔧', label:'Ticket', fields:[
+    {k:'u',l:'Unit',t:'select',src:'units',key:'id',val:'name',req:true},
+    {k:'desc',l:'Description',t:'textarea',req:true,full:true},
+    {k:'liab',l:'Liability',t:'select',o:['Landlord','Tenant','Shared']},
+    {k:'reported',l:'Reported date',t:'date'},
+    {k:'status',l:'Status',t:'select',o:['Open','In Progress','Awaiting Payment','Closed']},
+    {k:'con',l:'Contractor',t:'select',src:'partners',key:'name',val:'name'},
+    {k:'cost',l:'Cost (৳)',t:'number'}
+  ]}
+};
+const CRUD_ACCESS = {
+  superadmin:true,
+  owner:['properties','units','tenants','leases','invoices','tickets'],
+  manager:['properties','units','tenants','leases','invoices','tickets'],
+  accountant:['invoices','tickets'],
+  svc_mgr:['tickets'],
+  crm:['tickets'],
+  legal:['leases'],
+  hr:[], tenant:[], partner:[]
+};
+function canCrud(c){ const a=CRUD_ACCESS[(LIVE.user?LIVE.user.role:'owner')]||[]; return a===true||a.includes(c); }
+function openDrawer(title, body, foot, sub){
+  $('drawerTitle').textContent=title;
+  $('drawerSub').textContent=sub||'';
+  $('drawerBody').innerHTML=body;
+  $('drawerFoot').innerHTML=foot||'';
+  $('drawerOverlay').classList.add('open');
+  $('drawer').classList.add('open');
+}
+function closeDrawer(){ $('drawerOverlay').classList.remove('open'); $('drawer').classList.remove('open'); }
+function fmtDetail(f, v){
+  if(v==null||v==='') return '—';
+  if(['value','sqft','rent','adv','cost','gross','tds','net'].includes(f.k) && typeof v==='number') return money(v);
+  if(f.k==='nrb') return v? '🇺🇸 NRB (non-resident)':'🇧🇩 Local';
+  if(f.k==='res') return v? 'Yes':'No';
+  if(f.k==='u') return esc(unitById(v)?.name||v);
+  if(f.k==='t') return esc(tenantById(v)?.name||v);
+  if(f.k==='p') return esc(propById(v)?.name||v);
+  if(f.k==='l'){ const l=leaseById(v); return l? esc(l.id+' — '+(unitById(l.u)?.name||'')) : esc(v); }
+  if(f.k==='con' && v==='') return 'Unassigned';
+  return esc(String(v));
+}
+function relatedHtml(collection, row){
+  let h='';
+  if(collection==='properties'){
+    const us=DB.units.filter(u=>u.p===row.id);
+    if(us.length){ h+='<div class="dr-related"><h4>🏢 Units ('+us.length+')</h4>'+us.map(u=>rowItem('🚪',u.name,unitById(u.id)?.p?propById(u.p)?.name:'',badge(u.status))).join('')+'</div>'; }
+  }
+  if(collection==='units'){
+    const p=propById(row.p);
+    const l=DB.leases.find(x=>x.u===row.id&&(x.status==='Active'||x.status==='Pending Registration'));
+    h+='<div class="dr-related">'+(p?`<h4>🏢 Property</h4>${rowItem('🏢',p.name,p.jur+' · '+moneyC(p.value),'<span class="link" onclick="openDetail(\'properties\',\'${p.id}\')">Open →</span>')}`:'')+(l?`<h4>📄 Current lease</h4>${rowItem('📄',l.id,tenantById(l.t)?.name+' · '+money(l.rent)+'/mo',badge(l.status))}`:'')+'</div>';
+  }
+  if(collection==='tenants'){
+    const ls=DB.leases.filter(x=>x.t===row.id);
+    if(ls.length){ h+='<div class="dr-related"><h4>📄 Leases ('+ls.length+')</h4>'+ls.map(l=>rowItem('📄',l.id,unitById(l.u)?.name+' · '+money(l.rent)+'/mo',badge(l.status))).join('')+'</div>'; }
+  }
+  if(collection==='leases'){
+    const invs=DB.invoices.filter(i=>i.l===row.id);
+    h+='<div class="dr-related">'+(unitById(row.u)?`<h4>🚪 Unit</h4>${rowItem('🚪',unitById(row.u).name,'Floor '+unitById(row.u).floor+' · '+unitById(row.u).sqft+' sqft','<span class="link" onclick="openDetail(\'units\',\'${row.u}\')">Open →</span>')}`:'')+(tenantById(row.t)?`<h4>👤 Tenant</h4>${rowItem('👤',tenantById(row.t).name,tenantById(row.t).phone+' · '+(tenantById(row.t).nrb?'NRB':'Local'),'<span class="link" onclick="openDetail(\'tenants\',\'${row.t}\')">Open →</span>')}`:'')+(invs.length?`<h4>🧾 Invoices</h4>${invs.map(i=>rowItem('🧾',i.id+' · '+i.m,money(i.net),badge(i.status))).join('')}`:'')+'</div>';
+  }
+  if(collection==='invoices'){
+    const l=leaseById(row.l);
+    const paid=DB.payments.filter(p=>p.inv===row.id).reduce((s,p)=>s+p.amount,0);
+    h+='<div class="dr-related">'+(l?`<h4>📄 Lease</h4>${rowItem('📄',l.id,unitById(l.u)?.name+' · '+(tenantById(l.t)?.name||''),'<span class="link" onclick="openDetail(\'leases\',\'${l.id}\')">Open →</span>')}`:'')+`<h4>💳 Payment status</h4>${rowItem('💳',row.status==='Paid'?'Fully paid':'Balance due',money(Math.max(0,row.net-paid))+' paid '+money(paid),badge(row.status))}`+'</div>';
+  }
+  if(collection==='tickets'){
+    h+='<div class="dr-related">'+(unitById(row.u)?`<h4>🚪 Unit</h4>${rowItem('🚪',unitById(row.u).name,propById(unitById(row.u).p)?.name||'','<span class="link" onclick="openDetail(\'units\',\'${row.u}\')">Open →</span>')}`:'')+(row.con?`<h4>🤝 Contractor</h4>${rowItem('🤝',row.con,'assigned partner','')}`:'')+'</div>';
+  }
+  return h;
+}
+function openDetail(collection, id){
+  const row=(DB[collection]||[]).find(x=>String(x.id)===String(id));
+  if(!row){toast('Record not found');return}
+  const s=SCHEMAS[collection]; if(!s){toast('No detail view for '+collection);return}
+  const kvRows=s.fields.map(f=>`<div class="kv"><span class="k">${esc(f.l)}</span><span class="v">${fmtDetail(f,row[f.k])}</span></div>`).join('');
+  const related=relatedHtml(collection,row);
+  const canEdit=canCrud(collection);
+  let foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button>`;
+  if(collection==='tickets' && !(LIVE.user && LIVE.user.role==='tenant')){ foot+=`<button class="btn-outline" onclick="ticketStatusForm('${row.id}')">🔧 Update status</button>`; }
+  if(collection==='invoices' && row.status!=='Paid'){ foot+=`<button class="btn-primary" onclick="payForm('${row.id}')">💳 Record payment</button>`; }
+  if(canEdit){ foot+=`<button class="btn-outline" onclick="openForm('${collection}','${row.id}')">✏️ Edit</button><button class="btn-danger" onclick="deleteRow('${collection}','${row.id}')">🗑 Delete</button>`; }
+  foot+='</div>';
+  openDrawer(`${s.icon} ${s.label} — ${row.id}`, `<div class="dr-kv">${kvRows}</div>${related}`, foot);
+}
+function fieldHtml(f, data){
+  const val=data[f.k]!=null?data[f.k]:'';
+  let input='';
+  if(f.t==='select'){
+    const opts=(f.o?f.o.slice():DB[f.src]?DB[f.src].map(x=>x[f.key]):[]);
+    input=`<select id="f_${f.k}">${opts.map(o=>`<option value="${esc(o)}" ${String(o)===String(val)?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+  } else if(f.t==='textarea'){
+    input=`<textarea id="f_${f.k}" rows="3">${esc(val)}</textarea>`;
+  } else if(f.t==='check'){
+    input=`<input type="checkbox" id="f_${f.k}" ${val?'checked':''}>`;
+  } else {
+    const type=f.t==='number'?'number':f.t==='date'?'date':f.t==='month'?'month':f.t==='email'?'email':'text';
+    input=`<input type="${type}" id="f_${f.k}" value="${esc(val)}" ${f.req?'required':''} ${f.auto?'readonly style="background:var(--bg-alt);color:var(--text-mute)"':''}>`;
+  }
+  const cls='form-field'+(f.t==='check'?' check':'')+(f.full?' full':'');
+  return `<div class="${cls}"><label>${esc(f.l)}${f.req?' *':''}</label>${input}${f.auto?'<small class="f-hint">Auto-computed on save</small>':''}</div>`;
+}
+function openForm(collection, id, isNew){
+  const s=SCHEMAS[collection];
+  const row=isNew?{}:((DB[collection]||[]).find(x=>String(x.id)===String(id))||{});
+  if(isNew&&collection==='tickets'&&LIVE.user&&LIVE.user.role==='tenant'&&DB.units.length&&!row.u){row.u=DB.units[0].id;}
+  if(isNew&&collection==='tickets'&&!row.reported){row.reported=new Date().toISOString().slice(0,10);}
+  const body=`<div class="form-grid">${s.fields.map(f=>fieldHtml(f,row)).join('')}</div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="${isNew?'closeDrawer()':'openDetail(\''+collection+'\',\''+id+'\')'}">Cancel</button>`+(isNew?'':`<button class="btn-danger" onclick="deleteRow('${collection}','${id}')">🗑 Delete</button>`)+`<button class="btn-primary" onclick="saveForm('${collection}','${id||''}',${isNew?'true':'false'})">${isNew?'＋ Create':'✓ Save changes'}</button></div>`;
+  openDrawer(`${s.icon} ${isNew?'New '+s.label:'Edit '+s.label} ${isNew?'':'— '+id}`, body, foot);
+}
+function openNew(collection){ openForm(collection, null, true); }
+async function saveForm(collection, id, isNew){
+  const s=SCHEMAS[collection]; const data={}; let ok=true;
+  s.fields.forEach(f=>{
+    if(f.auto)return;
+    const el=document.getElementById('f_'+f.k); if(!el)return;
+    let v = f.t==='check'?(el.checked?1:0):(f.t==='number'?(el.value===''?0:parseInt(el.value,10)||0):el.value.trim());
+    if(f.req&&!String(v)){ok=false;el.classList.add('bad');}
+    data[f.k]=v;
+  });
+  if(!ok){toast('Please fill required fields');return}
+  const d=await crud(isNew?'create':'update', collection, isNew?null:id, data);
+  if(d&&d.ok){ closeDrawer(); toast((isNew?'Created ':'Saved ')+(d.id||id)); }
+}
+async function deleteRow(collection, id){
+  if(!confirm('Delete this '+SCHEMAS[collection].label+' ('+id+')? This cannot be undone.'))return;
+  const d=await crud('delete', collection, id, null);
+  if(d&&d.ok){ closeDrawer(); toast('Deleted '+id); }
+}
+async function crud(action, collection, id, data){
+  const d=await apiCall('app-crud',{action,collection,id,data});
+  if(!d.ok){ toast(d.error||'Operation failed'); return d; }
+  await refreshData();
+  return d;
+}
+async function refreshData(){
+  const b=await apiCall('app-bootstrap');
+  if(b.ok) applyLive(b, true);
+}
+function payForm(invId){
+  const inv=invoiceById(invId); if(!inv){toast('Not found');return}
+  openDrawer('💳 Record payment — '+invId,
+    `<div class="form-grid"><div class="form-field"><label>Amount (৳)</label><input type="number" id="payAmount" value="${inv.net}"></div>
+     <div class="form-field"><label>Method</label><select id="payMethod"><option>bKash</option><option>Nagad</option><option>Bank</option><option>Cheque</option><option>Cash</option></select></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="openDetail('invoices','${invId}')">Cancel</button><button class="btn-primary" onclick="recordPayment('${invId}')">✓ Record payment</button></div>`);
+}
+async function recordPayment(invId){
+  const amount=parseInt(document.getElementById('payAmount').value,10)||0;
+  const method=document.getElementById('payMethod').value;
+  if(amount<=0){toast('Enter a valid amount');return}
+  const d=await apiCall('app-payment',{invoice_id:invId,amount,method});
+  if(d.ok){ toast('Payment '+d.payment+' recorded · receipt '+d.receipt); await refreshData(); closeDrawer(); }
+  else toast(d.error||'Payment failed');
+}
+function ticketStatusForm(id){
+  const tk=(DB.tickets||[]).find(x=>x.id===id); if(!tk){toast('Not found');return}
+  openDrawer('🔧 Update ticket — '+id,
+    `<div class="form-grid"><div class="form-field"><label>Status</label><select id="tkStatus">${['Open','In Progress','Awaiting Payment','Closed'].map(s=>`<option ${tk.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+     <div class="form-field"><label>Cost (৳)</label><input type="number" id="tkCost" value="${tk.cost||0}"></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="openDetail('tickets','${id}')">Cancel</button><button class="btn-primary" onclick="saveTicketStatus('${id}')">✓ Update</button></div>`);
+}
+async function saveTicketStatus(id){
+  const status=document.getElementById('tkStatus').value;
+  const cost=parseInt(document.getElementById('tkCost').value,10)||0;
+  const d=await apiCall('app-ticket-status',{id,status,cost});
+  if(d.ok){ toast('Ticket '+id+' → '+status); await refreshData(); closeDrawer(); }
+  else toast(d.error||'Update failed');
 }
 
 /* ═══ Boot ═══ */
