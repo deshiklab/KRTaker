@@ -461,3 +461,56 @@ img{max-width:100%}
 [data-theme="dark"] .partner-chip.partner-cta{background:rgba(47,128,237,.1)}
 @media(max-width:760px){.partner-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:440px){.partner-grid{grid-template-columns:1fr}}
+
+/* ============================================================
+   Mega menu (Tanvir-blog style)
+   ============================================================ */
+.mega-li{position:relative}
+.mega-trigger{display:inline-flex;align-items:center;gap:5px}
+.mega-trigger .chev{font-size:9px;opacity:.65;transition:transform .2s}
+.mega-li:hover .chev,.mega-li.open .chev{transform:rotate(180deg)}
+.nav-links > li > a.active{color:var(--primary);font-weight:600}
+
+.mega-dropdown{
+  position:absolute;top:calc(100% + 10px);left:0;min-width:240px;
+  background:var(--card);border-radius:14px;box-shadow:0 22px 50px rgba(15,27,45,.16);
+  border:1px solid var(--border);opacity:0;visibility:hidden;transform:translateY(10px);
+  transition:all .22s ease;z-index:1000;padding:12px;
+}
+.mega-li:hover .mega-dropdown,.mega-li:focus-within .mega-dropdown,.mega-li.open .mega-dropdown{
+  opacity:1;visibility:visible;transform:translateY(0);
+}
+.mega-dropdown::before{content:'';position:absolute;top:-10px;left:0;right:0;height:10px}
+.mega-wide{width:520px;display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.mega-dropdown a{
+  display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;
+  color:var(--text-soft);font-size:13.5px;font-weight:500;transition:all .15s;
+}
+.mega-dropdown a:hover{background:var(--primary-light);color:var(--primary);transform:translateX(4px)}
+.mega-dropdown a .mega-ico{
+  width:30px;height:30px;border-radius:8px;background:var(--primary-light);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.mega-featured{
+  grid-column:1/-1;padding:15px 16px;background:var(--grad);border-radius:10px;color:#fff;margin-bottom:4px;
+}
+.mega-featured h4{color:#fff;font-size:15px;margin-bottom:3px}
+.mega-featured p{color:rgba(255,255,255,.85);font-size:12px}
+.mega-center{left:50%;transform:translateX(-50%) translateY(10px)}
+.mega-li:hover .mega-center,.mega-li:focus-within .mega-center,.mega-li.open .mega-center{transform:translateX(-50%) translateY(0)}
+[data-theme="dark"] .mega-dropdown{background:var(--card);border-color:var(--border);box-shadow:0 22px 50px rgba(0,0,0,.5)}
+[data-theme="dark"] .mega-dropdown a{color:var(--text-soft)}
+
+/* Mobile: mega dropdowns become accordion panels in the sheet */
+@media(max-width:960px){
+  .mega-dropdown{position:static;min-width:0;width:100%;opacity:1;visibility:visible;transform:none;
+    display:none;background:transparent;border:none;box-shadow:none;padding:2px 0 4px 10px;transition:none}
+  .mega-li.open .mega-dropdown{display:grid;grid-template-columns:1fr}
+  .mega-wide{width:100%}
+  .mega-featured{display:none}
+  .mega-center{left:auto;transform:none}
+  .mega-li.open .mega-center{transform:none}
+  .mega-dropdown a{padding:10px 12px;font-size:13.5px}
+  .mega-dropdown a:hover{transform:none}
+  .nav-links .mega-trigger{width:100%}
+}

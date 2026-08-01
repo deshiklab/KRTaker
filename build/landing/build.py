@@ -7,7 +7,18 @@ TPL = open(f'{ROOT}/build/landing/template.html').read()
 PAGES_DIR = f'{ROOT}/build/landing/pages'
 OUT = f'{ROOT}/web'
 
-NAV = { 'features':1, 'how-it-works':2, 'pricing':3, 'for-owners':4, 'for-partners':5, 'ai-caretaker':6, 'blog':7, 'about':8 }
+NAV = {
+  # placeholder → menu group for active-state injection
+  '__MP__': 'platform', '__MF__': 'for', '__MR__': 'resources',
+  '__FP__': 'pricing', '__FA__': 'ai',
+}
+MENU_OF = {
+  'features': 'platform', 'how-it-works': 'platform', 'legal-compliance': 'platform',
+  'for-owners': 'for', 'for-tenants': 'for', 'for-partners': 'for', 'for-nrb': 'for',
+  'blog': 'resources', 'blog-lease-registration': 'resources', 'blog-holding-tax': 'resources',
+  'blog-nrb-remittance': 'resources', 'faq': 'resources', 'about': 'resources', 'contact': 'resources',
+  'pricing': 'pricing', 'ai-caretaker': 'ai',
+}
 
 PAGES = {
   'index': ('KRTaker — AI Property Caretaker for Bangladesh', 'KRTaker (Key Responsibility Taker) — the AI-driven autonomous property management platform for Bangladesh. Leases, rent, taxes, compliance and maintenance, 24/7.', None),
@@ -41,8 +52,8 @@ for slug, (title, meta, active_nav) in PAGES.items():
     html = html.replace('__TITLE__', title)
     html = html.replace('__META__', meta.replace('"', '&quot;'))
     html = html.replace('__CONTENT__', content)
-    for i in range(1, 9):
-        html = html.replace(f'__F{i}__', 'class="active"' if active_nav and NAV[active_nav] == i else '')
+    for m in ('__MP__', '__MF__', '__MR__', '__FP__', '__FA__'):
+        html = html.replace(m, 'active' if MENU_OF.get(slug) == NAV[m] else '')
     out_path = f'{OUT}/{slug}.html'
     open(out_path, 'w').write(html)
     built.append((slug, len(html)//1024))

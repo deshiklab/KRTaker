@@ -3,10 +3,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mobile nav toggle
   const t = document.querySelector('.nav-toggle');
   const links = document.querySelector('.nav-links');
+  const isMobile = () => window.matchMedia('(max-width:960px)').matches;
   if (t && links) {
     t.addEventListener('click', () => links.classList.toggle('open'));
+    // mega triggers: on mobile, tap opens the accordion instead of navigating
+    links.querySelectorAll('.mega-trigger').forEach(a => {
+      a.addEventListener('click', (e) => {
+        if (isMobile()) {
+          e.preventDefault();
+          const li = a.closest('.mega-li');
+          const wasOpen = li.classList.contains('open');
+          links.querySelectorAll('.mega-li.open').forEach(x => x.classList.remove('open'));
+          if (!wasOpen) li.classList.add('open');
+        }
+      });
+    });
     // close menu when a link is chosen
-    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+    links.querySelectorAll('a:not(.mega-trigger)').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
     // close on outside click
     document.addEventListener('click', (e) => {
       if (links.classList.contains('open') && !links.contains(e.target) && !t.contains(e.target)) {
