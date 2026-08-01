@@ -328,6 +328,42 @@ tr.focus{animation:focusFlash 2.4s ease}
 .sub-hero .sh-price small{font-size:12px;font-weight:500;opacity:.85}
 .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
 .plan-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s}
+/* ── Table toolkit (search / filter / sort / paginate / export / columns) ── */
+.kr-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--card)}
+.kr-toolbar .kr-search{display:flex;align-items:center;gap:7px;background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;padding:7px 12px;color:var(--text-mute);font-size:12.5px;flex:1;min-width:170px;max-width:300px;transition:border .15s}
+.kr-toolbar .kr-search:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+.kr-toolbar .kr-search input{border:0;background:transparent;outline:none;font-family:inherit;font-size:12.5px;color:var(--text);width:100%}
+.kr-toolbar select{font-family:inherit;font-size:12px;font-weight:600;color:var(--text-soft);background:var(--bg-alt);border:1px solid var(--border);border-radius:9px;padding:7px 10px;cursor:pointer;outline:none;max-width:170px}
+.kr-toolbar select:focus{border-color:var(--primary)}
+.kr-count{font-size:11px;font-weight:700;color:var(--text-mute);background:var(--bg-alt);border:1px solid var(--border);border-radius:999px;padding:4px 11px;white-space:nowrap}
+.kr-spacer{flex:1}
+.kr-btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text-soft);background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 11px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.kr-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.kr-btn.active{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.kr-menu{position:relative}
+.kr-menu-panel{position:absolute;top:calc(100% + 6px);right:0;min-width:210px;max-height:320px;overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:13px;box-shadow:0 18px 44px rgba(10,25,50,.16);padding:7px;z-index:70;display:none}
+.kr-menu-panel.open{display:block;animation:pop .16s ease}
+.kr-menu-panel .kr-mlabel{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text-mute);padding:6px 9px 4px}
+.kr-menu-panel .kr-mitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--text);cursor:pointer;transition:background .12s}
+.kr-menu-panel .kr-mitem:hover{background:var(--bg-alt)}
+.kr-menu-panel .kr-mitem input{accent-color:var(--primary);width:14px;height:14px;cursor:pointer}
+.kr-menu-panel .kr-mitem.disabled{opacity:.45;pointer-events:none}
+.kr-tfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-mute)}
+.kr-tfoot .kr-info{font-weight:600}
+.kr-tfoot .kr-size{font-family:inherit;font-size:11.5px;font-weight:600;color:var(--text-soft);background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;padding:5px 8px;cursor:pointer;outline:none}
+.kr-pg{display:inline-flex;align-items:center;gap:5px}
+.kr-pg button{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text-soft);font-size:12.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.kr-pg button:hover:not(:disabled){border-color:var(--primary);color:var(--primary)}
+.kr-pg button:disabled{opacity:.38;cursor:not-allowed}
+.kr-pg .kr-page{min-width:34px;text-align:center;font-weight:700;font-size:11.5px;color:var(--text)}
+thead th.kr-sortable{cursor:pointer;user-select:none;transition:color .12s}
+thead th.kr-sortable:hover{color:var(--primary)}
+thead th.kr-sortable .kr-arrow{font-size:9px;margin-left:5px;opacity:.65;display:inline-block}
+thead th.kr-hide-col,tbody td.kr-hide-col{display:none}
+tbody tr.kr-hide{display:none}
+tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-size:12.5px}
+.kr-pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--primary-light);color:var(--primary);white-space:nowrap}
+@media(max-width:860px){.kr-toolbar{padding:10px 12px}.kr-toolbar .kr-search{max-width:none}.kr-btn .kr-lbl{display:none}.kr-tfoot{padding:9px 12px}}
 .plan-card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(47,128,237,.15)}
 .plan-card.current{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary),0 18px 40px rgba(47,128,237,.18)}
 .plan-card .pc-tag{position:absolute;top:-11px;left:18px;background:var(--grad);color:#fff;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;border-radius:999px;padding:4px 12px}
@@ -843,6 +879,165 @@ function nav(view){
 function render(){
   const R = renderers[state.view] || renderDashboard;
   $('viewRoot').innerHTML=R();
+  enhanceTables();
+}
+
+/* ═══ Table toolkit (REM-ERP style: search · status filter · sort · paginate · export · columns · refresh) ═══ */
+function enhanceTables(){
+  document.querySelectorAll('#viewRoot .tbl-wrap table').forEach(tbl=>{
+    if(tbl.dataset.krFx) return;
+    const thead=tbl.querySelector('thead'), tbody=tbl.querySelector('tbody');
+    if(!thead||!tbody) return;
+    const wrap=tbl.closest('.tbl-wrap'); if(!wrap) return;
+    const headers=[...thead.querySelectorAll('th')].map(th=>th.textContent.replace(/[▲▼]\s*$/,'').trim());
+    const rows=[...tbody.querySelectorAll('tr')];
+    if(!rows.length) return;
+    const badgeVals=[];
+    rows.forEach(r=>r.querySelectorAll('.badge').forEach(b=>{const v=b.textContent.trim(); if(v&&!badgeVals.includes(v))badgeVals.push(v)}));
+    const st={rows,page:0,size:10,q:'',status:'',sortCol:-1,sortDir:1,hidden:new Set()};
+    const t_=(en,bn)=>t(en,bn);
+
+    function cellText(row,i){ const c=row.children[i]; return c?c.textContent.trim():''; }
+    function cellNum(row,i){
+      const s=cellText(row,i).replace(/[৳,+\-−%]/g,'').trim();
+      const n=parseFloat(s);
+      return isNaN(n)?null:n;
+    }
+    function apply(){
+      let list=st.rows.slice();
+      if(st.q){ const q=st.q.toLowerCase(); list=list.filter(r=>r.textContent.toLowerCase().includes(q)); }
+      if(st.status){ list=list.filter(r=>[...r.querySelectorAll('.badge')].some(b=>b.textContent.trim()===st.status)); }
+      st.filtered=list;
+      if(st.sortCol>=0){
+        const i=st.sortCol, dir=st.sortDir;
+        list.sort((a,b)=>{
+          const na=cellNum(a,i), nb=cellNum(b,i);
+          if(na!==null&&nb!==null) return (na-nb)*dir;
+          return cellText(a,i).localeCompare(cellText(b,i))*dir;
+        });
+      }
+      const total=list.length;
+      const size=st.size, pages=Math.max(1,Math.ceil(total/size));
+      if(st.page>=pages) st.page=pages-1;
+      const start=st.page*size, slice=list.slice(start,start+size);
+      tbody.querySelectorAll('tr').forEach(r=>r.remove());
+      if(slice.length){
+        slice.forEach(r=>tbody.appendChild(r));
+      }else{
+        const tr=document.createElement('tr'); tr.className='kr-empty';
+        tr.innerHTML=`<td colspan="${headers.length}">🔍 ${t_('No matching records','কোনো মিলে যাওয়া রেকর্ড নেই')}</td>`;
+        tbody.appendChild(tr);
+      }
+      const countEl=bar.querySelector('.kr-count'); if(countEl) countEl.textContent=total+(total===1?' record':' records');
+      const info=foot.querySelector('.kr-info');
+      if(info) info.textContent=total?`${t_('Showing','দেখানো হচ্ছে')} ${start+1}–${Math.min(start+size,total)} ${t_('of','এর মধ্যে')} ${total}`:`${t_('No records','কোনো রেকর্ড নেই')}`;
+      const pg=foot.querySelector('.kr-pg'), pageLbl=pg?pg.querySelector('.kr-page'):null;
+      if(pg){ pg.querySelector('.kr-prev').disabled=st.page<=0; pg.querySelector('.kr-next').disabled=st.page>=pages-1; }
+      if(pageLbl) pageLbl.textContent=`${st.page+1} / ${pages}`;
+      headers.forEach((h,i)=>{
+        const th=thead.querySelectorAll('th')[i]; if(!th) return;
+        th.classList.toggle('kr-hide-col',st.hidden.has(i));
+        const arrow=th.querySelector('.kr-arrow');
+        if(arrow) arrow.textContent = st.sortCol===i ? (st.sortDir===1?'▲':'▼') : '↕';
+      });
+      st.rows.forEach(r=>[...r.children].forEach((td,i)=>td.classList.toggle('kr-hide-col',st.hidden.has(i))));
+    }
+    function exportCSV(){
+      const sep=',';
+      const escCsv=v=>{ const s=String(v==null?'':v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+      const lines=[headers.map(escCsv).join(sep)];
+      (st.filtered||st.rows).forEach(r=>lines.push([...r.children].map(td=>escCsv(td.textContent.trim())).join(sep)));
+      const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='krtaker-'+(state.view||'table')+'.csv'; a.click(); URL.revokeObjectURL(a.href);
+      toast('CSV '+t_('exported','এক্সপোর্ট হয়েছে'));
+    }
+    function exportExcel(){
+      const rowsHtml=st.filtered.map(r=>'<tr>'+[...r.children].map(td=>'<td>'+esc(td.textContent.trim())+'</td>').join('')+'</tr>').join('');
+      const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>th{background:#2F80ED;color:#fff;font-weight:700;padding:6px 10px}td{padding:5px 10px;border:1px solid #dbe3f0;mso-number-format:"\\@"}</style></head><body><table border="1"><thead><tr>'+headers.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rowsHtml+'</tbody></table></body></html>';
+      const blob=new Blob(['\uFEFF'+html],{type:'application/vnd.ms-excel'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='krtaker-'+(state.view||'table')+'.xls'; a.click(); URL.revokeObjectURL(a.href);
+      toast('Excel '+t_('exported','এক্সপোর্ট হয়েছে'));
+    }
+    function printTable(){
+      const w=window.open('','_blank','width=1100,height=800');
+      if(!w){toast('Popup '+t_('blocked','ব্লকড'));return}
+      w.document.write(`<html><head><title>${esc('KRTaker — '+(state.view||'table'))}</title><style>body{font-family:Inter,'Hind Siliguri',sans-serif;padding:24px;color:#111}table{width:100%;border-collapse:collapse;font-size:12px}th{background:#2F80ED;color:#fff;text-align:left;padding:8px 10px}td{padding:7px 10px;border-bottom:1px solid #e4eaf3}tr:nth-child(even){background:#f6f9fe}</style></head><body><h2 style="color:#2F80ED">KRTaker — ${esc((state.view||'table').toUpperCase())}</h2><table><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${st.filtered.map(r=>'<tr>'+[...r.children].map(td=>'<td>'+esc(td.textContent.trim())+'</td>').join('')+'</tr>').join('')}</tbody></table></body></html>`);
+      w.document.close(); w.focus(); setTimeout(()=>{try{w.print()}catch(e){}},350);
+    }
+    /* toolbar */
+    const bar=document.createElement('div'); bar.className='kr-toolbar';
+    bar.innerHTML=`
+      <div class="kr-search"><span>🔍</span><input type="text" placeholder="${t_('Search table…','টেবিলে খুঁজুন…')}"></div>
+      <select class="kr-status" ${badgeVals.length?'':'style="display:none"'}>
+        <option value="">${t_('All statuses','সব স্ট্যাটাস')}</option>
+        ${badgeVals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('')}
+      </select>
+      <span class="kr-count">${rows.length}</span>
+      <div class="kr-spacer"></div>
+      <div class="kr-menu">
+        <button class="kr-btn kr-cols-btn">▤ <span class="kr-lbl">${t_('Columns','কলাম')}</span> ▾</button>
+        <div class="kr-menu-panel kr-cols-panel">
+          <div class="kr-mlabel">${t_('Show columns','কলাম দেখান')}</div>
+          ${headers.map((h,i)=>`<label class="kr-mitem"><input type="checkbox" checked data-i="${i}"><span>${esc(h)}</span></label>`).join('')}
+        </div>
+      </div>
+      <div class="kr-menu">
+        <button class="kr-btn kr-export-btn">⬇ <span class="kr-lbl">${t_('Export','এক্সপোর্ট')}</span> ▾</button>
+        <div class="kr-menu-panel kr-export-panel">
+          <div class="kr-mlabel">${t_('Export current view','বর্তমান ভিউ এক্সপোর্ট')}</div>
+          <div class="kr-mitem" data-act="csv">📄 ${t_('CSV (Excel-compatible)','সিএসভি (এক্সেল-সামঞ্জস্যপূর্ণ)')}</div>
+          <div class="kr-mitem" data-act="xls">📊 ${t_('Excel (.xls)','এক্সেল (.xls)')}</div>
+          <div class="kr-mitem" data-act="print">🖨️ ${t_('Print','প্রিন্ট')}</div>
+        </div>
+      </div>
+      <button class="kr-btn kr-refresh" title="${t_('Refresh','রিফ্রেশ')}">⟳</button>`;
+    const foot=document.createElement('div'); foot.className='kr-tfoot';
+    foot.innerHTML=`
+      <div class="kr-info"></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <label style="display:flex;align-items:center;gap:6px">${t_('Rows','সারি')}:
+          <select class="kr-size"><option>5</option><option selected>10</option><option>25</option><option>50</option><option value="999999">${t_('All','সব')}</option></select>
+        </label>
+        <div class="kr-pg">
+          <button class="kr-prev" title="Prev">‹</button><span class="kr-page">1 / 1</span><button class="kr-next" title="Next">›</button>
+        </div>
+      </div>`;
+    wrap.parentNode.insertBefore(bar,wrap);
+    wrap.parentNode.insertBefore(foot,wrap.nextSibling);
+    tbl.dataset.krFx='1';
+    /* wire events */
+    bar.querySelector('.kr-search input').addEventListener('input',e=>{st.q=e.target.value; st.page=0; apply();});
+    const stSel=bar.querySelector('.kr-status');
+    if(stSel) stSel.addEventListener('change',e=>{st.status=e.target.value; st.page=0; apply();});
+    foot.querySelector('.kr-size').addEventListener('change',e=>{st.size=parseInt(e.target.value,10)||10; st.page=0; apply();});
+    foot.querySelector('.kr-prev').addEventListener('click',()=>{if(st.page>0){st.page--; apply();}});
+    foot.querySelector('.kr-next').addEventListener('click',()=>{if(st.page<Math.ceil((st.filtered||[]).length/st.size)-1){st.page++; apply();}});
+    bar.querySelector('.kr-refresh').addEventListener('click',()=>{render(); toast(t_('Table refreshed','টেবিল রিফ্রেশ হয়েছে'));});
+    [...thead.querySelectorAll('th')].forEach((th,i)=>{
+      th.classList.add('kr-sortable');
+      th.appendChild(Object.assign(document.createElement('span'),{className:'kr-arrow',textContent:'↕'}));
+      th.addEventListener('click',()=>{
+        if(st.sortCol===i) st.sortDir*=-1; else { st.sortCol=i; st.sortDir=1; }
+        apply();
+      });
+    });
+    const colsBtn=bar.querySelector('.kr-cols-btn'), colsPanel=bar.querySelector('.kr-cols-panel');
+    colsBtn.addEventListener('click',e=>{e.stopPropagation(); document.querySelectorAll('.kr-menu-panel').forEach(p=>{if(p!==colsPanel)p.classList.remove('open')}); colsPanel.classList.toggle('open');});
+    colsPanel.querySelectorAll('input').forEach(cb=>cb.addEventListener('change',()=>{
+      const i=parseInt(cb.dataset.i,10);
+      if(cb.checked) st.hidden.delete(i); else st.hidden.add(i);
+      apply();
+    }));
+    const expBtn=bar.querySelector('.kr-export-btn'), expPanel=bar.querySelector('.kr-export-panel');
+    expBtn.addEventListener('click',e=>{e.stopPropagation(); document.querySelectorAll('.kr-menu-panel').forEach(p=>{if(p!==expPanel)p.classList.remove('open')}); expPanel.classList.toggle('open');});
+    expPanel.querySelectorAll('.kr-mitem').forEach(m=>m.addEventListener('click',()=>{
+      const act=m.dataset.act;
+      if(act==='csv')exportCSV(); else if(act==='xls')exportExcel(); else if(act==='print')printTable();
+      expPanel.classList.remove('open');
+    }));
+    document.addEventListener('click',function krClose(e){ if(!e.target.closest('.kr-menu')){ document.querySelectorAll('.kr-menu-panel').forEach(p=>p.classList.remove('open')); document.removeEventListener('click',krClose); } });
+    apply();
+  });
 }
 
 /* ═══ Role switcher ═══ */
