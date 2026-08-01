@@ -1,0 +1,87 @@
+<div class="page-hero">
+  <div class="container">
+    <h1 data-i18n="tools.title">Property calculators</h1>
+    <p data-i18n="tools.sub">Holding tax, TDS and rent yield — the exact math city corporations and the tax office use, computed instantly.</p>
+  </div>
+</div>
+<div class="page-body">
+  <div class="container">
+    <div class="calc-grid">
+      <!-- HOLDING TAX -->
+      <div class="calc-card">
+        <div class="calc-head"><span class="calc-ico">🏦</span><div><h3 data-i18n="tools.holding.title">Holding tax calculator</h3><p data-i18n="tools.holding.sub">GAR → allowance → mortgage → NAV → city rate</p></div></div>
+        <div class="form-group">
+          <label for="htGar" data-i18n="tools.holding.gar">Gross Annual Rent (৳)</label>
+          <input type="number" id="htGar" placeholder="e.g. 5000000" min="0">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="htMort" data-i18n="tools.holding.mortgage">Monthly mortgage interest (৳)</label>
+            <input type="number" id="htMort" placeholder="0" min="0">
+          </div>
+          <div class="form-group">
+            <label for="htRate" data-i18n="tools.holding.rate">City corporation rate (%)</label>
+            <select id="htRate">
+              <option value="8">8% — Dhaka North</option>
+              <option value="7">7% — Dhaka South</option>
+              <option value="6.5">6.5%</option>
+              <option value="5">5%</option>
+              <option value="10">10%</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="htCalc" data-i18n="tools.calc">Calculate</button>
+        <div class="calc-result" id="htResult"></div>
+      </div>
+      <!-- TDS -->
+      <div class="calc-card">
+        <div class="calc-head"><span class="calc-ico">🧾</span><div><h3 data-i18n="tools.tds.title">TDS calculator</h3><p data-i18n="tools.tds.sub">Withholding on rent — Income Tax Act 2023</p></div></div>
+        <div class="form-group">
+          <label for="tdsRent" data-i18n="tools.tds.rent">Monthly rent (৳)</label>
+          <input type="number" id="tdsRent" placeholder="e.g. 150000" min="0">
+        </div>
+        <div class="form-group">
+          <label data-i18n="tools.tds.type">Tenancy type</label>
+          <div class="plan-pick" style="grid-template-columns:1fr 1fr">
+            <input type="radio" name="tdsType" id="tdsRes" value="0.10" checked>
+            <label for="tdsRes" data-i18n="tools.tds.res">Residential · 10%</label>
+            <input type="radio" name="tdsType" id="tdsCom" value="0.04">
+            <label for="tdsCom" data-i18n="tools.tds.com">Commercial · 4%</label>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="tdsCalc" data-i18n="tools.calc">Calculate</button>
+        <div class="calc-result" id="tdsResult"></div>
+      </div>
+      <!-- RENT YIELD -->
+      <div class="calc-card">
+        <div class="calc-head"><span class="calc-ico">📈</span><div><h3 data-i18n="tools.yield.title">Rent yield calculator</h3><p data-i18n="tools.yield.sub">Gross &amp; net return on your property</p></div></div>
+        <div class="form-group">
+          <label for="ylValue" data-i18n="tools.yield.value">Property value (৳)</label>
+          <input type="number" id="ylValue" placeholder="e.g. 80000000" min="0">
+        </div>
+        <div class="form-group">
+          <label for="ylRent" data-i18n="tools.yield.rent">Monthly rent (৳)</label>
+          <input type="number" id="ylRent" placeholder="e.g. 180000" min="0">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ylHt" data-i18n="tools.yield.ht">Monthly holding tax (৳)</label>
+            <input type="number" id="ylHt" placeholder="0" min="0">
+          </div>
+          <div class="form-group">
+            <label for="ylTds" data-i18n="tools.yield.tds">Monthly TDS (৳)</label>
+            <input type="number" id="ylTds" placeholder="0" min="0">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="ylCalc" data-i18n="tools.calc">Calculate</button>
+        <div class="calc-result" id="ylResult"></div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:36px">
+      <b data-i18n="tools.noteTitle">Already a KRTaker subscriber?</b>
+      <span data-i18n="tools.noteBody">KR computes these for every property automatically — NAV pipeline, TDS ledger and yield dashboards update live in your workspace. <a href="register.html" style="font-weight:700">Start the 14-day trial →</a></span>
+    </div>
+  </div>
+</div>
+<script src="js/tools.js"></script>
