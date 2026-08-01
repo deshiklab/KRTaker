@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#2F80ED">
-<meta name="description" content="Holding tax, TDS and rent yield calculators for Bangladeshi property — instant, bilingual, accurate.">
+<meta name="description" content="Holding tax, TDS, rent yield, home loan EMI and buying-cost calculators for Bangladeshi property — instant, bilingual, accurate.">
 <title>Calculators — KRTaker</title>
 <link rel="canonical" href="https://krtaker.com/tools.html">
 <meta property="og:type" content="website">
@@ -21,7 +21,8 @@
 <meta name="twitter:description" content="Holding tax, TDS and rent yield calculators for Bangladeshi property — instant, bilingual, accurate.">
 <meta name="twitter:image" content="https://krtaker.com/assets/og-default.png">
 <link rel="icon" href="../pwa/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../pwa/icon-192.png">
+<link rel="apple-touch-icon" href="pwa/icon-192.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" as="style">
@@ -177,6 +178,45 @@ gtag('config', 'G-XXXXXXXXXX');
         <button class="btn btn-primary btn-block" id="ylCalc" data-i18n="tools.calc">Calculate</button>
         <div class="calc-result" id="ylResult"></div>
       </div>
+      <!-- HOME LOAN EMI -->
+      <div class="calc-card">
+        <div class="calc-head"><span class="calc-ico">🏗️</span><div><h3 data-i18n="tools.emi.title">Home loan EMI calculator</h3><p data-i18n="tools.emi.sub">Monthly instalment on your property loan</p></div></div>
+        <div class="form-group">
+          <label for="emiAmt" data-i18n="tools.emi.amount">Loan amount (৳)</label>
+          <input type="number" id="emiAmt" placeholder="e.g. 50000000" min="0">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="emiRate" data-i18n="tools.emi.rate">Interest rate (%/yr)</label>
+            <input type="number" id="emiRate" placeholder="e.g. 9" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label for="emiYears" data-i18n="tools.emi.years">Tenure (years)</label>
+            <input type="number" id="emiYears" placeholder="e.g. 20" min="1">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="emiCalc" data-i18n="tools.calc">Calculate</button>
+        <div class="calc-result" id="emiResult"></div>
+      </div>
+      <!-- BUYING COST -->
+      <div class="calc-card">
+        <div class="calc-head"><span class="calc-ico">📜</span><div><h3 data-i18n="tools.buy.title">Buying cost calculator</h3><p data-i18n="tools.buy.sub">Stamp duty, registration &amp; VAT on your purchase</p></div></div>
+        <div class="form-group">
+          <label for="buyVal" data-i18n="tools.buy.value">Property value (৳)</label>
+          <input type="number" id="buyVal" placeholder="e.g. 80000000" min="0">
+        </div>
+        <div class="form-group">
+          <label for="buyStamp" data-i18n="tools.buy.stamp">Stamp duty rate</label>
+          <select id="buyStamp">
+            <option value="3">3% — Dhaka</option>
+            <option value="2">2% — Chattogram</option>
+            <option value="1">1% — Other districts</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-block" id="buyCalc" data-i18n="tools.calc">Calculate</button>
+        <div class="calc-result" id="buyResult"></div>
+        <p class="calc-note" data-i18n="tools.buy.note">Rates vary by district and are indicative — verify with your sub-registry office.</p>
+      </div>
     </div>
 
     <div class="callout" style="margin-top:36px">
@@ -309,5 +349,8 @@ gtag('config', 'G-XXXXXXXXXX');
 <script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 <script src="js/chat.js"></script>
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+</script>
 </body>
 </html>

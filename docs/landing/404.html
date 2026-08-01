@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Page not found — KRTaker</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .nf-wrap{min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+  .nf-code{font-size:clamp(72px,16vw,140px);font-weight:800;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .nf-title{font-size:24px;margin:8px 0 10px}
+  .nf-sub{color:var(--text-soft);font-size:15px;margin-bottom:28px;max-width:420px;margin-left:auto;margin-right:auto}
+  .nf-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+</style>
+<!-- KRTaker analytics: replace G-XXXXXXXXXX with your GA4 Measurement ID (or swap for Plausible) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<nav class="navbar">
+  <div class="container">
+    <a class="nav-logo" href="index.html"><span class="logo-mark">KR</span> KRTaker</a>
+    <div class="nav-cta">
+      <a href="login.html" class="btn btn-ghost nav-ghost">Log in</a>
+      <a href="register.html" class="btn btn-primary nav-primary">Get started</a>
+    </div>
+  </div>
+</nav>
+<div class="nf-wrap">
+  <div class="container">
+    <div class="nf-code">404</div>
+    <h1 class="nf-title">This page moved out.</h1>
+    <p class="nf-sub">Like a tenant at the end of a lease — it's gone. The link may be old, or the page may have been renamed. Let's get you back home.</p>
+    <div class="nf-actions">
+      <a href="index.html" class="btn btn-primary">← Back to home</a>
+      <a href="tools.html" class="btn btn-outline">Calculators</a>
+      <a href="contact.html" class="btn btn-outline">Contact us</a>
+    </div>
+  </div>
+</div>
+<script src="i18n/i18n-dict.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/main.js"></script>
+<script src="js/chat.js"></script>
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+</script>
+</body>
+</html>

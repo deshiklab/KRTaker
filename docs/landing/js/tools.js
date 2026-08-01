@@ -74,6 +74,49 @@
   const ylBtn = document.getElementById('ylCalc');
   if (ylBtn) ylBtn.addEventListener('click', yl);
 
+  // ---- Home loan EMI ----
+  const emi = () => {
+    const p = parseFloat(document.getElementById('emiAmt').value) || 0;
+    const rY = parseFloat(document.getElementById('emiRate').value) || 0;
+    const yrs = parseFloat(document.getElementById('emiYears').value) || 0;
+    const box = document.getElementById('emiResult');
+    if (p <= 0 || rY <= 0 || yrs <= 0) { box.innerHTML = '<p class="res-empty">—</p>'; return; }
+    const r = rY / 1200, n = yrs * 12;
+    const emiV = p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    const total = emiV * n, interest = total - p;
+    const d = dict();
+    box.innerHTML = resultBox([
+      [d['tools.res.emi'] || 'Monthly EMI', fmt(emiV)],
+      [d['tools.res.totalPay'] || 'Total payment', fmt(total)],
+      [d['tools.res.interest'] || 'Total interest', fmt(interest)],
+      [d['tools.res.interestPct'] || 'Interest share', fmtPct(interest / total * 100)],
+    ], 0);
+  };
+  const emiBtn = document.getElementById('emiCalc');
+  if (emiBtn) emiBtn.addEventListener('click', emi);
+
+  // ---- Buying cost (stamp + registration + VAT) ----
+  const buy = () => {
+    const val = parseFloat(document.getElementById('buyVal').value) || 0;
+    const stampPct = parseFloat(document.getElementById('buyStamp').value) || 1;
+    const box = document.getElementById('buyResult');
+    if (val <= 0) { box.innerHTML = '<p class="res-empty">—</p>'; return; }
+    const stamp = val * stampPct / 100;
+    const regFee = val * 0.01;                 // 1% registration fee
+    const vat = regFee * 0.15;                 // 15% VAT on registration fee
+    const total = stamp + regFee + vat;
+    const d = dict();
+    box.innerHTML = resultBox([
+      [d['tools.res.stamp'] || 'Stamp duty (' + stampPct + '%)', fmt(stamp)],
+      [d['tools.res.regFee'] || 'Registration fee (1%)', fmt(regFee)],
+      [d['tools.res.vat'] || 'VAT on fee (15%)', fmt(vat)],
+      [d['tools.res.totalCost'] || 'Total buying cost', fmt(total)],
+      [d['tools.res.totalCostPct'] || 'As % of value', fmtPct(total / val * 100)],
+    ], 3);
+  };
+  const buyBtn = document.getElementById('buyCalc');
+  if (buyBtn) buyBtn.addEventListener('click', buy);
+
   // live recalc on Enter
   document.querySelectorAll('.calc-card input').forEach(inp => {
     inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const b = inp.closest('.calc-card').querySelector('.btn'); if (b) b.click(); } });

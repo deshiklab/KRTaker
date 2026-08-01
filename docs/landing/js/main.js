@@ -157,3 +157,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   } catch (e) {}
 })();
+
+/* ── Exit-intent popup (V2.5) — once per session, desktop only ── */
+(function () {
+  try {
+    if (sessionStorage.getItem('krt_exit_shown')) return;
+    if (matchMedia('(pointer:coarse)').matches) return; // skip touch devices
+    const d = document;
+    const modal = d.createElement('div');
+    modal.className = 'exit-modal';
+    modal.innerHTML =
+      '<div class="exit-card">' +
+      '<button class="exit-close" aria-label="Close">✕</button>' +
+      '<span class="exit-badge">🎁 14-day free trial</span>' +
+      '<h3>Put your property on autopilot</h3>' +
+      '<p>Leases, rent, TDS, holding tax and maintenance — KR handles it all, 24/7. No credit card needed.</p>' +
+      '<a href="register.html" class="btn btn-primary btn-lg">Start free trial →</a>' +
+      '<a href="how-it-works.html" class="btn btn-outline">See how it works</a>' +
+      '<p class="exit-note">Join 128 subscribers managing ৳74.55 Cr in property</p>' +
+      '</div>';
+    d.body.appendChild(modal);
+    const close = () => { modal.classList.remove('show'); setTimeout(() => modal.remove(), 350); };
+    modal.querySelector('.exit-close').addEventListener('click', close);
+    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+    let armed = false;
+    d.addEventListener('mouseleave', (e) => {
+      if (!armed || e.clientY > 12) return;
+      armed = false;
+      sessionStorage.setItem('krt_exit_shown', '1');
+      modal.classList.add('show');
+    });
+    // arm only after the visitor has been on the page a little while
+    setTimeout(() => { armed = true; }, 12000);
+  } catch (e) {}
+})();

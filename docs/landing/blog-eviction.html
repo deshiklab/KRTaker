@@ -22,7 +22,8 @@
 <meta name="twitter:image" content="https://krtaker.com/assets/og-default.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Eviction in Bangladesh: the lawful walkthrough — KRTaker", "description": "PRCA 1991 grounds, the 30-day notice and why self-help eviction costs more than the rent.", "datePublished": "2026-07-14", "dateModified": "2026-07-14", "author": {"@type": "Organization", "name": "KRTaker"}, "publisher": {"@type": "Organization", "name": "KRTaker", "logo": {"@type": "ImageObject", "url": "https://krtaker.com/pwa/icon-192.png"}}, "mainEntityOfPage": "https://krtaker.com/blog-eviction.html"}</script>
 <link rel="icon" href="../pwa/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../pwa/icon-192.png">
+<link rel="apple-touch-icon" href="pwa/icon-192.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" as="style">
@@ -257,5 +258,8 @@ gtag('config', 'G-XXXXXXXXXX');
 <script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 <script src="js/chat.js"></script>
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+</script>
 </body>
 </html>
