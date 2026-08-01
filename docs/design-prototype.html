@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2F80ED">
+<meta name="description" content="KRTaker — AI-driven autonomous property management platform for Bangladesh. Key Responsibility Taker.">
+<title>KRTaker — Key Responsibility Taker</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./pwa/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./pwa/icon-192.png">
+<style>
+/* === KRTaker v1.0 — design system inherited from REM ERP V10 (reference) === */
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:var(--bg,#f8f9fa);color:var(--fg,#333);overflow:hidden;height:100vh}
+    :root{--bg:#f8f9fa;--fg:#333;--card-bg:#fff;--card-border:#e8e8e8;--sidebar-bg:#fff;--sidebar-border:#e8e8e8;--topbar-bg:#fff;--topbar-border:#e8e8e8;--hover-bg:#f0f4ff;--active-bg:#eef3ff;--primary:#2F80ED;--primary-hover:#2568c9;--success:#2e7d32;--danger:#c62828;--warning:#e65100;--muted:#888;--muted-bg:#f5f5f5;--table-header-bg:#fff;--table-border:#f0f0f0;--input-bg:#fff;--input-border:#e0e0e0;--tab-bg:#f5f5f5;--kanban-bg:#f8f9fa;--kanban-border:#e8e8e8;--footer-bg:#fff;--footer-border:#e8e8e8}
+    /* ═══ DARK THEMES — Glassmorphism Enhanced ═══ */
+    html.dark{--bg:#07080d;--fg:#e2e8f0;--card-bg:rgba(20,30,50,0.55);--card-border:rgba(255,255,255,0.08);--sidebar-bg:rgba(12,16,24,0.65);--sidebar-border:rgba(255,255,255,0.06);--topbar-bg:rgba(12,16,24,0.7);--topbar-border:rgba(255,255,255,0.06);--hover-bg:rgba(59,130,246,0.08);--active-bg:rgba(59,130,246,0.12);--primary:#60a5fa;--primary-hover:#3b82f6;--success:#34d399;--danger:#f87171;--warning:#fb923c;--muted:#94a3b8;--muted-bg:rgba(30,41,59,0.5);--table-header-bg:rgba(20,30,50,0.6);--table-border:rgba(255,255,255,0.05);--input-bg:rgba(30,41,59,0.5);--input-border:rgba(255,255,255,0.1);--tab-bg:rgba(30,41,59,0.4);--kanban-bg:rgba(12,16,24,0.4);--kanban-border:rgba(255,255,255,0.05);--footer-bg:rgba(12,16,24,0.75);--footer-border:rgba(255,255,255,0.06);--glass-edge:rgba(255,255,255,0.03);--glass-glow:rgba(96,165,250,0.06)}
+    /* Theme: Midnight Blue — glass dark */
+    html.theme-midnight{--bg:#0a0f1e;--fg:#e2e8f0;--card-bg:rgba(20,30,55,0.55);--card-border:rgba(255,255,255,0.07);--sidebar-bg:rgba(10,16,30,0.65);--sidebar-border:rgba(255,255,255,0.05);--topbar-bg:rgba(10,16,30,0.7);--topbar-border:rgba(255,255,255,0.05);--primary:#60a5fa;--primary-hover:#3b82f6;--success:#34d399;--danger:#f87171;--warning:#fb923c;--muted:#94a3b8;--muted-bg:rgba(30,41,70,0.5);--table-header-bg:rgba(20,30,55,0.6);--table-border:rgba(255,255,255,0.04);--input-bg:rgba(30,41,70,0.5);--input-border:rgba(255,255,255,0.08);--tab-bg:rgba(30,41,70,0.4);--kanban-bg:rgba(10,16,30,0.4);--kanban-border:rgba(255,255,255,0.04);--footer-bg:rgba(10,16,30,0.75);--footer-border:rgba(255,255,255,0.05);--hover-bg:rgba(96,165,250,0.08);--active-bg:rgba(96,165,250,0.12);--glass-edge:rgba(255,255,255,0.03);--glass-glow:rgba(96,165,250,0.07)}
+    /* Theme: Forest Green (light) */
+    html.theme-forest{--bg:#f0faf0;--fg:#1a3a1a;--card-bg:#fff;--card-border:#c8e6c9;--sidebar-bg:#e8f5e9;--sidebar-border:#c8e6c9;--topbar-bg:#fff;--topbar-border:#c8e6c9;--primary:#2e7d32;--primary-hover:#1b5e20;--success:#1b5e20;--danger:#c62828;--warning:#e65100;--muted:#558b2f;--muted-bg:#f1f8e9;--table-header-bg:#f1f8e9;--table-border:#c8e6c9;--input-bg:#fff;--input-border:#a5d6a7;--tab-bg:#e8f5e9;--kanban-bg:#f1f8e9;--kanban-border:#c8e6c9;--footer-bg:#fff;--footer-border:#c8e6c9;--hover-bg:#e8f5e9;--active-bg:#c8e6c9}
+    /* Theme: Forest Dark — glass */
+    html.dark.theme-forest{--bg:#071207;--fg:#a5d6a7;--card-bg:rgba(15,40,15,0.55);--card-border:rgba(102,187,106,0.1);--sidebar-bg:rgba(7,20,7,0.65);--sidebar-border:rgba(102,187,106,0.07);--topbar-bg:rgba(7,20,7,0.7);--topbar-border:rgba(102,187,106,0.07);--primary:#66bb6a;--primary-hover:#4caf50;--success:#81c784;--danger:#ef5350;--warning:#ffa726;--muted:#689f63;--muted-bg:rgba(20,45,20,0.5);--table-header-bg:rgba(15,40,15,0.6);--table-border:rgba(102,187,106,0.06);--input-bg:rgba(20,45,20,0.5);--input-border:rgba(102,187,106,0.1);--tab-bg:rgba(20,45,20,0.4);--kanban-bg:rgba(7,20,7,0.4);--kanban-border:rgba(102,187,106,0.05);--footer-bg:rgba(7,20,7,0.75);--footer-border:rgba(102,187,106,0.07);--hover-bg:rgba(102,187,106,0.08);--active-bg:rgba(102,187,106,0.12);--glass-edge:rgba(102,187,106,0.04);--glass-glow:rgba(102,187,106,0.07)}
+    /* Theme: Sunset Orange (light) */
+    html.theme-sunset{--bg:#fff5f0;--fg:#4a1a0a;--card-bg:#fff;--card-border:#ffccbc;--sidebar-bg:#fff3e0;--sidebar-border:#ffccbc;--topbar-bg:#fff;--topbar-border:#ffccbc;--primary:#e65100;--primary-hover:#bf360c;--success:#2e7d32;--danger:#c62828;--warning:#ff8f00;--muted:#bf6a4a;--muted-bg:#fff3e0;--table-header-bg:#fff3e0;--table-border:#ffccbc;--input-bg:#fff;--input-border:#ffab91;--tab-bg:#fff3e0;--kanban-bg:#fff5f0;--kanban-border:#ffccbc;--footer-bg:#fff;--footer-border:#ffccbc;--hover-bg:#fff3e0;--active-bg:#ffe0b2}
+    /* Theme: Sunset Dark — glass */
+    html.dark.theme-sunset{--bg:#0f0400;--fg:#ffccbc;--card-bg:rgba(45,15,5,0.55);--card-border:rgba(255,138,101,0.1);--sidebar-bg:rgba(15,5,0,0.65);--sidebar-border:rgba(255,138,101,0.07);--topbar-bg:rgba(15,5,0,0.7);--topbar-border:rgba(255,138,101,0.07);--primary:#ff8a65;--primary-hover:#ff7043;--success:#81c784;--danger:#ef5350;--warning:#ffb74d;--muted:#bf8a7a;--muted-bg:rgba(45,15,5,0.5);--table-header-bg:rgba(45,15,5,0.6);--table-border:rgba(255,138,101,0.06);--input-bg:rgba(45,15,5,0.5);--input-border:rgba(255,138,101,0.1);--tab-bg:rgba(45,15,5,0.4);--kanban-bg:rgba(15,5,0,0.4);--kanban-border:rgba(255,138,101,0.05);--footer-bg:rgba(15,5,0,0.75);--footer-border:rgba(255,138,101,0.07);--hover-bg:rgba(255,138,101,0.08);--active-bg:rgba(255,138,101,0.12);--glass-edge:rgba(255,138,101,0.04);--glass-glow:rgba(255,138,101,0.07)}
+    /* Theme: Ocean Blue (light) */
+    html.theme-ocean{--bg:#e3f2fd;--fg:#0d47a1;--card-bg:#fff;--card-border:#bbdefb;--sidebar-bg:#e3f2fd;--sidebar-border:#bbdefb;--topbar-bg:#fff;--topbar-border:#bbdefb;--primary:#1565c0;--primary-hover:#0d47a1;--success:#00695c;--danger:#c62828;--warning:#e65100;--muted:#5c6bc0;--muted-bg:#e8eaf6;--table-header-bg:#e3f2fd;--table-border:#bbdefb;--input-bg:#fff;--input-border:#90caf9;--tab-bg:#e3f2fd;--kanban-bg:#e3f2fd;--kanban-border:#bbdefb;--footer-bg:#fff;--footer-border:#bbdefb;--hover-bg:#e3f2fd;--active-bg:#bbdefb}
+    /* Theme: Ocean Dark — glass */
+    html.dark.theme-ocean{--bg:#060e18;--fg:#90caf9;--card-bg:rgba(13,30,55,0.55);--card-border:rgba(66,165,245,0.1);--sidebar-bg:rgba(6,14,24,0.65);--sidebar-border:rgba(66,165,245,0.07);--topbar-bg:rgba(6,14,24,0.7);--topbar-border:rgba(66,165,245,0.07);--primary:#42a5f5;--primary-hover:#1e88e5;--success:#4db6ac;--danger:#ef5350;--warning:#ffa726;--muted:#7c8fc0;--muted-bg:rgba(13,30,55,0.5);--table-header-bg:rgba(13,30,55,0.6);--table-border:rgba(66,165,245,0.06);--input-bg:rgba(13,30,55,0.5);--input-border:rgba(66,165,245,0.1);--tab-bg:rgba(13,30,55,0.4);--kanban-bg:rgba(6,14,24,0.4);--kanban-border:rgba(66,165,245,0.05);--footer-bg:rgba(6,14,24,0.75);--footer-border:rgba(66,165,245,0.07);--hover-bg:rgba(66,165,245,0.08);--active-bg:rgba(66,165,245,0.12);--glass-edge:rgba(66,165,245,0.04);--glass-glow:rgba(66,165,245,0.07)}
+    /* Theme: Purple Haze (light) */
+    html.theme-purple{--bg:#f5f0ff;--fg:#2a1a4a;--card-bg:#fff;--card-border:#e6d9ff;--sidebar-bg:#f0e8ff;--sidebar-border:#e6d9ff;--topbar-bg:#fff;--topbar-border:#e6d9ff;--primary:#7c4dff;--primary-hover:#5e35b1;--success:#2e7d32;--danger:#c62828;--warning:#e65100;--muted:#8e7cc3;--muted-bg:#f3edff;--table-header-bg:#f3edff;--table-border:#e6d9ff;--input-bg:#fff;--input-border:#d5c4ff;--tab-bg:#f0e8ff;--kanban-bg:#f5f0ff;--kanban-border:#e6d9ff;--footer-bg:#fff;--footer-border:#e6d9ff;--hover-bg:#f0e8ff;--active-bg:#e6d9ff}
+    /* Theme: Purple Haze Dark — glass */
+    html.dark.theme-purple{--bg:#120b1e;--fg:#d4c4ff;--card-bg:rgba(40,25,70,0.55);--card-border:rgba(179,136,255,0.1);--sidebar-bg:rgba(18,11,30,0.65);--sidebar-border:rgba(179,136,255,0.07);--topbar-bg:rgba(18,11,30,0.7);--topbar-border:rgba(179,136,255,0.07);--primary:#b388ff;--primary-hover:#9575cd;--success:#81c784;--danger:#ef5350;--warning:#ffa726;--muted:#9d8fc7;--muted-bg:rgba(40,25,70,0.5);--table-header-bg:rgba(40,25,70,0.6);--table-border:rgba(179,136,255,0.06);--input-bg:rgba(40,25,70,0.5);--input-border:rgba(179,136,255,0.1);--tab-bg:rgba(40,25,70,0.4);--kanban-bg:rgba(18,11,30,0.4);--kanban-border:rgba(179,136,255,0.05);--footer-bg:rgba(18,11,30,0.75);--footer-border:rgba(179,136,255,0.07);--hover-bg:rgba(179,136,255,0.08);--active-bg:rgba(179,136,255,0.12);--glass-edge:rgba(255,255,255,0.03);--glass-glow:rgba(179,136,255,0.07)}
+    /* Theme: Slate (light) */
+    html.theme-slate{--bg:#f1f5f9;--fg:#1e293b;--card-bg:#fff;--card-border:#cbd5e1;--sidebar-bg:#e8eef5;--sidebar-border:#cbd5e1;--topbar-bg:#fff;--topbar-border:#cbd5e1;--primary:#475569;--primary-hover:#334155;--success:#2e7d32;--danger:#c62828;--warning:#e65100;--muted:#64748b;--muted-bg:#e2e8f0;--table-header-bg:#e8eef5;--table-border:#cbd5e1;--input-bg:#fff;--input-border:#94a3b8;--tab-bg:#e8eef5;--kanban-bg:#f1f5f9;--kanban-border:#cbd5e1;--footer-bg:#fff;--footer-border:#cbd5e1;--hover-bg:#e8eef5;--active-bg:#dbe3ec}
+    /* Theme: Slate Dark — glass */
+    html.dark.theme-slate{--bg:#0b1120;--fg:#cbd5e1;--card-bg:rgba(30,41,59,0.55);--card-border:rgba(148,163,184,0.1);--sidebar-bg:rgba(11,17,32,0.65);--sidebar-border:rgba(148,163,184,0.07);--topbar-bg:rgba(11,17,32,0.7);--topbar-border:rgba(148,163,184,0.07);--primary:#94a3b8;--primary-hover:#64748b;--success:#34d399;--danger:#f87171;--warning:#fb923c;--muted:#7c8ba1;--muted-bg:rgba(30,41,59,0.5);--table-header-bg:rgba(30,41,59,0.6);--table-border:rgba(148,163,184,0.06);--input-bg:rgba(30,41,59,0.5);--input-border:rgba(148,163,184,0.1);--tab-bg:rgba(30,41,59,0.4);--kanban-bg:rgba(11,17,32,0.4);--kanban-border:rgba(148,163,184,0.05);--footer-bg:rgba(11,17,32,0.75);--footer-border:rgba(148,163,184,0.07);--hover-bg:rgba(148,163,184,0.08);--active-bg:rgba(148,163,184,0.12);--glass-edge:rgba(255,255,255,0.03);--glass-glow:rgba(148,163,184,0.07)}
+    /* Theme: Rose (light) */
+    html.theme-rose{--bg:#fff1f2;--fg:#4c0519;--card-bg:#fff;--card-border:#fecdd3;--sidebar-bg:#ffe4e6;--sidebar-border:#fecdd3;--topbar-bg:#fff;--topbar-border:#fecdd3;--primary:#e11d48;--primary-hover:#be123c;--success:#2e7d32;--danger:#c62828;--warning:#e65100;--muted:#be5f73;--muted-bg:#ffe4e6;--table-header-bg:#ffe4e6;--table-border:#fecdd3;--input-bg:#fff;--input-border:#fda4af;--tab-bg:#ffe4e6;--kanban-bg:#fff1f2;--kanban-border:#fecdd3;--footer-bg:#fff;--footer-border:#fecdd3;--hover-bg:#ffe4e6;--active-bg:#fecdd3}
+    /* Theme: Rose Dark — glass */
+    html.dark.theme-rose{--bg:#1c0a0f;--fg:#fda4af;--card-bg:rgba(60,15,30,0.55);--card-border:rgba(251,113,133,0.1);--sidebar-bg:rgba(28,10,15,0.65);--sidebar-border:rgba(251,113,133,0.07);--topbar-bg:rgba(28,10,15,0.7);--topbar-border:rgba(251,113,133,0.07);--primary:#fb7185;--primary-hover:#f43f5e;--success:#81c784;--danger:#ef5350;--warning:#ffa726;--muted:#c08a95;--muted-bg:rgba(60,15,30,0.5);--table-header-bg:rgba(60,15,30,0.6);--table-border:rgba(251,113,133,0.06);--input-bg:rgba(60,15,30,0.5);--input-border:rgba(251,113,133,0.1);--tab-bg:rgba(60,15,30,0.4);--kanban-bg:rgba(28,10,15,0.4);--kanban-border:rgba(251,113,133,0.05);--footer-bg:rgba(28,10,15,0.75);--footer-border:rgba(251,113,133,0.07);--hover-bg:rgba(251,113,133,0.08);--active-bg:rgba(251,113,133,0.12);--glass-edge:rgba(255,255,255,0.03);--glass-glow:rgba(251,113,133,0.07)}
+    /* Theme: Coffee (light) */
+    html.theme-coffee{--bg:#faf6f0;--fg:#3e2723;--card-bg:#fff;--card-border:#e0d3c3;--sidebar-bg:#f3ece1;--sidebar-border:#e0d3c3;--topbar-bg:#fff;--topbar-border:#e0d3c3;--primary:#8d6e63;--primary-hover:#6d4c41;--success:#2e7d32;--danger:#c62828;--warning:#e65100;--muted:#8d7b6b;--muted-bg:#f3ece1;--table-header-bg:#f3ece1;--table-border:#e0d3c3;--input-bg:#fff;--input-border:#cbb7a5;--tab-bg:#f3ece1;--kanban-bg:#faf6f0;--kanban-border:#e0d3c3;--footer-bg:#fff;--footer-border:#e0d3c3;--hover-bg:#f3ece1;--active-bg:#e8dccd}
+    /* Theme: Coffee Dark — glass */
+    html.dark.theme-coffee{--bg:#14100c;--fg:#d7ccc8;--card-bg:rgba(45,35,25,0.55);--card-border:rgba(161,136,127,0.1);--sidebar-bg:rgba(20,16,12,0.65);--sidebar-border:rgba(161,136,127,0.07);--topbar-bg:rgba(20,16,12,0.7);--topbar-border:rgba(161,136,127,0.07);--primary:#a1887f;--primary-hover:#8d6e63;--success:#81c784;--danger:#ef5350;--warning:#ffa726;--muted:#a3948c;--muted-bg:rgba(45,35,25,0.5);--table-header-bg:rgba(45,35,25,0.6);--table-border:rgba(161,136,127,0.06);--input-bg:rgba(45,35,25,0.5);--input-border:rgba(161,136,127,0.1);--tab-bg:rgba(45,35,25,0.4);--kanban-bg:rgba(20,16,12,0.4);--kanban-border:rgba(161,136,127,0.05);--footer-bg:rgba(20,16,12,0.75);--footer-border:rgba(161,136,127,0.07);--hover-bg:rgba(161,136,127,0.08);--active-bg:rgba(161,136,127,0.12);--glass-edge:rgba(255,255,255,0.03);--glass-glow:rgba(161,136,127,0.07)}
+    /* ═══ COMPACT DENSITY MODE ═══ */
+    .compact-mode .table-wrap td,.compact-mode .table-wrap th{padding:2px 6px!important;font-size:10.5px}
+    .compact-mode .stat-card{padding:6px 10px}
+    .compact-mode .card-body{padding:4px 8px}
+    .compact-mode .kanban-card{padding:4px 6px}
+    /* ═══ TOP-BAR THEME PALETTE ═══ */
+    .tp-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;transition:transform .12s,box-shadow .12s;flex-shrink:0}
+    .tp-dot:hover{transform:scale(1.15);box-shadow:0 2px 8px rgba(0,0,0,.25)}
+    .tp-dot.active{box-shadow:0 0 0 2px var(--card-bg,#fff),0 0 0 4px var(--primary,#2F80ED)}
+    /* ═══ GLASSMORPHISM — Dark Mode Enhanced ═══ */
+    html.dark .card,html.dark .slide-out .panel,html.dark .lead-panel,html.dark .tbl-toolbar,html.dark .kanban-col,html.dark .stat-card,html.dark .quick-card,html.dark .filter-panel,html.dark .lead-header,html.dark .lead-footer,html.dark .installment-item,html.dark .doc-item,html.dark .activity-item{background:var(--card-bg)!important;backdrop-filter:blur(12px) saturate(180%);-webkit-backdrop-filter:blur(12px) saturate(180%);border:1px solid var(--card-border);box-shadow:0 4px 20px rgba(0,0,0,.2),inset 0 1px 0 var(--glass-edge)}
+    html.dark .card:hover,html.dark .quick-card:hover,html.dark .group-card:hover,html.dark .installment-item:hover,html.dark .doc-item:hover,html.dark .activity-item:hover{box-shadow:0 6px 28px var(--glass-glow),inset 0 1px 0 var(--glass-edge)}
+    html.dark #sidebar,html.dark .top-bar,html.dark .content-footer,html.dark .sidebar-bottom{backdrop-filter:blur(16px) saturate(200%);-webkit-backdrop-filter:blur(16px) saturate(200%);background:var(--sidebar-bg)!important;border-color:var(--sidebar-border)}
+    html.dark .notification-panel,html.dark .notif-list{backdrop-filter:blur(12px) saturate(180%);-webkit-backdrop-filter:blur(12px) saturate(180%);background:var(--card-bg)!important}
+    html.dark .card-header{border-bottom-color:var(--glass-edge)!important}
+    html.dark .s-grp-sep{background:var(--glass-edge)}
+    html.dark .top-nav-item:hover{background:var(--hover-bg)!important}
+    html.dark .top-nav-item.active{background:var(--active-bg)!important;color:var(--primary)}
+    html.dark .sidebar-item:hover{background:var(--hover-bg)!important;color:var(--primary)}
+    html.dark .sidebar-item.active{background:var(--active-bg)!important;color:var(--primary)}
+    html.dark .toolbar .filter-btn,html.dark .toolbar .search-box,html.dark .form-input,html.dark select,html.dark .pagination .pg-btn{background:var(--input-bg)!important;border-color:var(--input-border);backdrop-filter:blur(8px) saturate(160%);-webkit-backdrop-filter:blur(8px) saturate(160%)}
+    html.dark .col-menu{background:var(--card-bg)!important;border-color:var(--card-border);backdrop-filter:blur(20px) saturate(200%);-webkit-backdrop-filter:blur(20px) saturate(200%)}
+    html.dark .group-card{background:var(--card-bg)!important;border-color:var(--card-border);backdrop-filter:blur(12px) saturate(180%);-webkit-backdrop-filter:blur(12px) saturate(180%)}
+    html.dark .lead-panel{box-shadow:-4px 0 30px rgba(0,0,0,.4)}
+    html.dark .slide-out .panel{box-shadow:-4px 0 30px rgba(0,0,0,.4)}
+    html.dark .notif-item:hover{background:var(--hover-bg)!important}
+    html.dark .notif-item.unread{background:var(--active-bg)!important}
+    html.dark .kanban-card{background:var(--card-bg)!important;border-color:var(--card-border);backdrop-filter:blur(8px) saturate(160%);-webkit-backdrop-filter:blur(8px) saturate(160%)}
+    html.dark .kanban-card:hover{border-color:var(--primary)!important;box-shadow:0 2px 12px var(--glass-glow)}
+    html.dark table thead th{background:var(--table-header-bg)!important;backdrop-filter:blur(8px) saturate(160%)}
+    html.dark tbody tr:hover{background:var(--hover-bg)!important}
+    html.dark .badge-active{background:rgba(76,175,80,.15)!important;color:var(--success)!important;backdrop-filter:blur(4px)}
+    html.dark .badge-pending{background:rgba(255,152,0,.15)!important;color:var(--warning)!important;backdrop-filter:blur(4px)}
+    html.dark .badge-closed{background:rgba(148,163,184,.15)!important;color:var(--muted)!important;backdrop-filter:blur(4px)}
+    html.dark .badge-reserved{background:rgba(66,165,245,.15)!important;color:var(--primary)!important;backdrop-filter:blur(4px)}
+    html.dark .badge-sold{background:rgba(239,83,80,.15)!important;color:var(--danger)!important;backdrop-filter:blur(4px)}
+    html.dark .tabs{background:rgba(30,41,59,0.3)!important;backdrop-filter:blur(8px)}
+    html.dark .tab.active{background:var(--card-bg)!important;backdrop-filter:blur(8px)}
+    html.dark .lead-tabs{background:var(--tab-bg)!important;backdrop-filter:blur(8px)}
+    html.dark .lead-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+    html.dark .notif-empty{color:var(--muted)}
+    html.dark .toast.success{background:rgba(52,211,153,.3)!important;backdrop-filter:blur(12px);border:1px solid rgba(52,211,153,.2)}
+    html.dark .toast.error{background:rgba(248,113,113,.3)!important;backdrop-filter:blur(12px);border:1px solid rgba(248,113,113,.2)}
+    html.dark .toast.info{background:rgba(96,165,250,.3)!important;backdrop-filter:blur(12px);border:1px solid rgba(96,165,250,.2)}
+    html.dark img:not(.no-invert),html.dark canvas,html.dark svg{filter:brightness(.9) contrast(1.1)}
+    ::-webkit-scrollbar{width:5px;height:5px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
+    html.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15)}
+    .app-shell{display:flex;height:100vh}
+    .app-footer{margin-top:auto}
+    html.fs-zoom body{overflow:auto!important;height:auto!important}
+    html.fs-zoom .app-shell{height:auto!important;min-height:100vh}
+    html.fs-zoom .content{overflow:visible!important;flex:none!important}
+    html.fs-zoom .settings-content{overflow:visible!important}
+    #sidebar{width:72px;min-width:72px;background:#fff;border-right:1px solid #e8e8e8;display:flex;flex-direction:column;z-index:50}
+    .sidebar-logo{height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-bottom:1px solid #f0f0f0;gap:2px}
+    .sidebar-logo svg{width:18px;height:18px;color:#2F80ED}
+    .sidebar-brand-text{font-size:9px;font-weight:600;color:#2F80ED;text-align:center;line-height:1}
+    .sidebar-brand-text .sb-version{font-weight:400;color:#999;font-size:8px}
+    .sidebar-scroll{flex:1;display:flex;flex-direction:column;align-items:center;padding:6px 0;overflow-y:auto;overflow-x:visible}
+    .s-grp-sep{width:28px;height:1px;background:#e8e8e8;margin:4px 0}
+    .sidebar-item{position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;cursor:pointer;color:#666;transition:all .15s;margin:1px 0;overflow:visible}
+    .sidebar-item:hover{background:#f0f4ff;color:#2F80ED}
+    .sidebar-item.active{background:#eef3ff;color:#2F80ED}
+    .sidebar-item.active::before{content:'';position:absolute;left:-4px;top:8px;bottom:8px;width:3px;background:#2F80ED;border-radius:0 3px 3px 0}
+    .sidebar-item svg{width:19px;height:19px;stroke-width:1.5}
+    .sidebar-item.has-children::after{content:'▸';position:absolute;right:3px;bottom:3px;font-size:7px;color:#999;line-height:1;opacity:.6}
+    .sidebar-item[data-tip]:hover::after{content:attr(data-tip);position:fixed;left:88px;top:auto;transform:none;background:#1f2937;color:#fff;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;white-space:nowrap;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.25);pointer-events:none}
+    .sidebar-bottom{padding:6px 0;border-top:1px solid #f0f0f0;display:flex;flex-direction:column;align-items:center;gap:1px}
+    .badge-dot{position:absolute;top:3px;right:3px;width:6px;height:6px;background:#e53935;border-radius:50%;border:1.5px solid #fff}
+    .main-area{flex:1;display:flex;flex-direction:column;min-width:0}
+    .top-bar{height:44px;min-height:44px;background:#fff;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;padding:0 16px;gap:16px}
+    .top-nav{display:flex;align-items:center;gap:0;flex:1;overflow-x:auto}
+    .top-nav-item{padding:5px 12px;font-size:12px;font-weight:500;color:#666;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all .15s;margin-right:1px}
+    .top-nav-item:hover{background:#f0f4ff;color:#2F80ED}
+    .top-nav-item.active{color:#2F80ED;background:#eef3ff}
+    .top-nav-item.badge-new::after{content:'NEW';font-size:8px;background:#e53935;color:#fff;padding:1px 4px;border-radius:4px;margin-left:4px;vertical-align:super;font-weight:700;letter-spacing:.3px}
+    .top-actions{display:flex;align-items:center;gap:6px}
+    .top-actions .icon-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:#666;transition:all .15s}
+    .top-actions .icon-btn:hover{background:#f0f0f0;color:#333}
+    .top-actions .icon-btn svg{width:16px;height:16px}
+    .top-actions .user-avatar{width:26px;height:26px;border-radius:6px;background:#2F80ED;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;cursor:pointer}
+    .content{flex:1;overflow-y:auto;padding:6px 10px;display:flex;flex-direction:column;gap:4px}
+    .toolbar{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+    .toolbar .filter-btn{padding:5px 10px;font-size:11px;font-weight:500;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#333;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:3px;white-space:nowrap}
+    .toolbar .filter-btn:hover{border-color:#2F80ED;color:#2F80ED}
+    .toolbar .filter-btn.active{background:#2F80ED;color:#fff;border-color:#2F80ED}
+    .toolbar .search-box{display:flex;align-items:center;border:1px solid #e0e0e0;border-radius:6px;padding:0 8px;background:#fff;flex:1;max-width:240px}
+    .toolbar .search-box input{border:none;outline:none;font-size:11px;padding:5px 6px;width:100%;background:transparent}
+    .toolbar .search-box input::placeholder{color:#999}
+    .toolbar .search-box svg{width:13px;height:13px}
+    .flt-bar{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:0 0 6px;padding:4px 6px;background:#f8faff;border:1px solid #e3ecff;border-radius:6px;min-height:24px}
+    .flt-count{font-size:9px;color:#555;font-weight:600;margin-right:2px;white-space:nowrap}
+    .flt-chip{display:inline-flex;align-items:center;gap:4px;background:#eef3ff;border:1px solid #cfe0ff;color:#1565c0;font-size:9px;font-weight:600;padding:2px 6px;border-radius:10px;white-space:nowrap}
+    .flt-x{cursor:pointer;color:#7b9ee0;font-weight:700;font-size:10px;padding:0 1px}
+    .flt-x:hover{color:#c62828}
+    .flt-chip.on{background:#2F80ED;border-color:#2F80ED;color:#fff}
+    .toolbar .spacer{flex:1}
+    .action-btn{display:inline-flex;align-items:center;gap:3px;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500;font-size:11px;padding:5px 12px}
+    .action-btn.primary{background:#2F80ED;color:#fff;border:none}
+    .action-btn.primary:hover{background:#2568c9}
+    .action-btn.secondary{background:#fff;color:#333;border:1px solid #e0e0e0}
+    .action-btn.secondary:hover{border-color:#2F80ED;color:#2F80ED}
+    .action-btn.danger{background:#fff;color:#c62828;border:1px solid #f5c6cb}
+    .action-btn.danger:hover{background:#fdecea;border-color:#e53935;color:#c62828}
+    html.dark .action-btn.secondary{background:rgba(255,255,255,.05)!important;border-color:#334155;color:#cbd5e1}
+    html.dark .action-btn.secondary:hover{border-color:var(--primary,#2F80ED);color:var(--primary,#2F80ED)}
+    html.dark .action-btn.danger{background:rgba(255,255,255,.05)!important;border-color:#7f1d1d;color:#fca5a5}
+    .toolbar .action-btn{padding:5px 12px;font-size:11px;font-weight:500;border-radius:6px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:3px;white-space:nowrap}
+    .toolbar .action-btn.primary{background:#2F80ED;color:#fff;border:none}
+    .toolbar .action-btn.primary:hover{background:#2568c9}
+    .toolbar .action-btn.secondary{background:#fff;color:#333;border:1px solid #e0e0e0}
+    .toolbar .action-btn.secondary:hover{border-color:#2F80ED;color:#2F80ED}
+    .toolbar .action-btn svg{width:13px;height:13px}
+    .toolbar select{padding:5px 26px 5px 8px;font-size:11px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#333;cursor:pointer}
+    .card{background:#fff;border-radius:8px;border:1px solid #e8e8e8;overflow:hidden}
+    .card-header{padding:4px 8px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+    .card-header h3{font-size:11px;font-weight:600;color:#333}
+    .card-body{padding:6px}
+    .card-body.p-0{padding:0}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    thead th{padding:4px 8px;text-align:left;font-weight:600;color:#555;border-bottom:1px solid #e0e0e0;white-space:nowrap;background:#fff;font-size:9px;text-transform:uppercase;letter-spacing:.2px}
+    tbody td{padding:3px 8px;border-bottom:1px solid #f2f2f2;color:#333;white-space:nowrap}
+    tbody tr:hover{background:#f8faff}
+    table .num{text-align:right}
+    .badge-status{padding:2px 7px;border-radius:10px;font-size:9px;font-weight:600;display:inline-block}
+    .badge-active{background:#e8f5e9;color:#2e7d32}
+    .badge-pending{background:#fff3e0;color:#e65100}
+    .badge-closed{background:#f5f5f5;color:#757575}
+    .badge-reserved{background:#e3f2fd;color:#1565c0}
+    .badge-sold{background:#fce4ec;color:#c62828}
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:3px}
+    .stat-card{background:#fff;border:1px solid #e8e8e8;border-radius:6px;padding:4px 8px}
+    .stat-card .label{font-size:9px;color:#888;font-weight:500}
+    .stat-card .value{font-size:15px;font-weight:700;color:#333;margin-top:1px}
+    .stat-card .trend{font-size:9px;color:#2e7d32;margin-top:1px}
+    .form-input{padding:6px 8px;font-size:11px;border:1px solid #e0e0e0;border-radius:6px;outline:none;width:100%;background:#fff}
+    .form-input:focus{border-color:#2F80ED;box-shadow:0 0 0 2px rgba(47,128,237,.1)}
+    .form-label{font-size:11px;font-weight:500;color:#555;margin-bottom:3px;display:block}
+    .form-group{margin-bottom:4px}
+    .toggle{width:26px;height:14px;border-radius:7px;background:#ddd;cursor:pointer;position:relative;transition:all .2s;display:inline-block}
+    .toggle.on{background:#2F80ED}
+    .toggle::after{content:'';width:10px;height:10px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+    .toggle.on::after{left:14px}
+    .page-title{font-size:12px;font-weight:700;color:#222;display:inline}
+    .page-subtitle{font-size:10px;color:#888;margin-bottom:0;display:inline;margin-left:6px}
+    #duesRemindersHost .page-title{font-size:13px;color:#333;display:block;margin:2px 0 4px}
+    #duesRemindersHost .page-subtitle{font-size:10px;color:#888;display:block;margin:0 0 8px}
+    .tabs{display:flex;gap:2px;background:#f5f5f5;border-radius:6px;padding:2px}
+    .tab{padding:4px 10px;font-size:10px;font-weight:500;border-radius:5px;cursor:pointer;color:#666;transition:all .15s}
+    .tab.active{background:#fff;color:#333;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .dashboard-quick{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:4px}
+    .quick-card{background:#fff;border:1px solid #e8e8e8;border-radius:6px;padding:5px 8px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+    .quick-card:hover{border-color:#2F80ED;box-shadow:0 2px 8px rgba(47,128,237,.08)}
+    .quick-card .icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .quick-card .icon svg{width:16px;height:16px}
+    .quick-card .info .title{font-size:11px;font-weight:600;color:#333}
+    .quick-card .info .count{font-size:9px;color:#888;margin-top:1px}
+    .plot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:2px}
+    .plot-cell{aspect-ratio:1;border-radius:3px;cursor:pointer;font-size:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600}
+    .plot-available{background:#4caf50}
+    .plot-sold{background:#e53935}
+    .plot-reserved{background:#1e88e5}
+    .plot-not-acquired{background:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 6px);border:1px dashed #ccc;color:#999}
+    .content-footer{margin-top:auto;padding:6px 0 0;border-top:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#888}
+    .content-footer .breadcrumb{display:flex;align-items:center;gap:3px;color:#999;font-size:10px}
+    .content-footer .breadcrumb span{color:#666}
+    .slide-out{position:fixed;inset:0;z-index:100;display:none}
+    .slide-out.active{display:flex}
+    .slide-out .backdrop{flex:1;background:rgba(0,0,0,.2)}
+    .slide-out .panel{width:380px;max-width:90vw;background:#fff;height:100%;box-shadow:-4px 0 20px rgba(0,0,0,.1);display:flex;flex-direction:column;animation:slideIn .25s ease-out}
+    @keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .fade-in{animation:fadeIn .2s ease-out}
+    .hidden{display:none!important}
+    .progress-bar{height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden}
+    .progress-bar .fill{height:100%;border-radius:2px;transition:width .3s}
+    .kanban-col{min-width:200px;flex:1;display:flex;flex-direction:column;background:#f8f9fa;border-radius:6px;border:1px solid #e8e8e8;overflow:hidden}
+    .kanban-col .kb-head{padding:7px 9px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+    .kanban-col .kb-count{background:rgba(255,255,255,.25);border-radius:10px;padding:0 7px;font-size:9px;font-weight:700;line-height:16px}
+    .kanban-col .kb-body{flex:1;overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:5px}
+    .kanban-card{padding:7px 9px;background:#fff;border:1px solid #e8e8e8;border-left:3px solid #b0bec5;border-radius:4px;margin-bottom:0;transition:box-shadow .12s,transform .12s}
+    .kanban-card:hover{border-color:#cfd8dc;box-shadow:0 2px 6px rgba(0,0,0,.08);transform:translateY(-1px)}
+    .kanban-card.pri-high{border-left-color:#e53935}
+    .kanban-card.pri-medium{border-left-color:#ff9800}
+    .kanban-card.pri-low{border-left-color:#90a4ae}
+    .kanban-card.dragging{opacity:.4;border-style:dashed}
+    .kanban-col.drag-over{background:#e8f0fe!important;border:2px dashed #2F80ED!important;border-radius:8px}
+    .kanban-col.drag-over .kanban-card{pointer-events:none}
+    .kanban-card{cursor:grab}
+    .kanban-card:active{cursor:grabbing}
+    .kanban-drag-over{outline:2px dashed #2F80ED;background:rgba(47,128,237,.06)}
+    .toast-container{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px}
+    .toast{padding:8px 14px;border-radius:8px;font-size:11px;font-weight:500;color:#fff;animation:fadeIn .2s ease-out}
+    .toast.success{background:#2e7d32}
+    .toast.error{background:#c62828}
+    .toast.info{background:#1565c0}
+    /* Dark mode via CSS variables */
+
+    .lead-panel{width:460px;max-width:95vw;background:#fff;height:100%;box-shadow:-4px 0 20px rgba(0,0,0,.1);display:flex;flex-direction:column;animation:slideIn .25s ease-out}
+    .lead-header{background:#fff;border-bottom:1px solid #e8e8e8}
+    .lead-info-row{display:flex;gap:5px;flex-wrap:wrap}
+    .lead-badge{padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;text-transform:uppercase}
+    .lead-tabs{display:flex;border-bottom:1px solid #e8e8e8;background:#fafafa;overflow-x:auto;overflow-y:hidden;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+    .lead-tab{padding:8px 14px;font-size:11px;font-weight:500;color:#666;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+    .lead-tab:hover{color:#2F80ED}
+    .lead-tab.active{color:#2F80ED;border-bottom-color:#2F80ED}
+    .lead-body{flex:1;overflow-y:auto;padding:14px;background:#f8f9fa}
+    .lead-footer{padding:10px 14px;border-top:1px solid #e8e8e8;background:#fff;display:flex;gap:6px}
+    .lead-foot-btn{flex:1;padding:7px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:3px;border:1px solid #e0e0e0;background:#fff;color:#333}
+    .lead-foot-btn:hover{border-color:#2F80ED;color:#2F80ED}
+    .lead-foot-btn.primary{background:#2F80ED;color:#fff;border-color:#2F80ED}
+    .lead-foot-btn.primary:hover{background:#2568c9}
+    .lead-foot-btn.success{background:#2e7d32;color:#fff;border-color:#2e7d32}
+    .lead-foot-btn.success:hover{background:#1b5e20}
+    .mini-btn{padding:4px 8px;background:#2F80ED;color:#fff;border:none;border-radius:4px;font-size:9px;font-weight:600;cursor:pointer;white-space:nowrap}
+    .mini-btn:hover{background:#2568c9}
+    .lead-foot-btn.danger{color:#c62828;border-color:#ffcdd2}
+    .installment-item{padding:8px 10px;background:#fff;border:1px solid #e8e8e8;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+    .installment-item:hover{border-color:#2F80ED}
+    .doc-item{padding:8px 10px;background:#fff;border:1px solid #e8e8e8;border-radius:6px;display:flex;align-items:center;gap:8px;margin-bottom:5px;cursor:pointer}
+    .doc-item:hover{border-color:#2F80ED}
+    .activity-item{padding:8px 10px;background:#fff;border:1px solid #e8e8e8;border-radius:6px;margin-bottom:5px}
+    .activity-item:hover{border-color:#2F80ED}
+    .verif-item{padding:6px 10px;border-radius:6px;font-size:11px;display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+    .lead-avatar{width:40px;height:40px;border-radius:50%;background:#eef3ff;color:#2F80ED;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+    .group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+    .group-card{padding:14px;background:#fff;border:1px solid #e8e8e8;border-radius:8px;cursor:pointer;transition:all .15s}
+    .group-card:hover{border-color:#2F80ED;box-shadow:0 2px 8px rgba(47,128,237,.08)}
+    .group-card h4{font-size:12px;font-weight:600;color:#222;margin-bottom:6px}
+    .group-card .g-mods{font-size:10px;color:#888}
+    .group-card .g-mods span{display:inline-block;padding:1px 6px;background:#f0f4ff;color:#1565c0;border-radius:4px;margin:2px;font-size:9px}
+    .tbl-toolbar{display:flex;align-items:center;gap:4px;padding:6px 10px;background:#fafbfc;border-bottom:1px solid #e8e8e8;flex-wrap:wrap}
+    .tbl-toolbar .tt-btn{padding:4px 8px;font-size:10px;font-weight:500;border:1px solid #e0e0e0;border-radius:5px;background:#fff;color:#555;cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:3px;white-space:nowrap}
+    .tbl-toolbar .tt-btn:hover{border-color:#2F80ED;color:#2F80ED;background:#f0f4ff}
+    .tbl-toolbar .tt-btn.active{background:#2F80ED;color:#fff;border-color:#2F80ED}
+    .tbl-toolbar .tt-spacer{flex:1}
+    .tbl-toolbar .tt-label{font-size:10px;color:#888;font-weight:500}
+    th.sortable{cursor:pointer;user-select:none;position:relative;padding-right:18px!important}
+    th.sortable:hover{background:#f0f4ff}
+    th.sortable .s-arrow{position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:8px;color:#bbb;line-height:1}
+    th.sortable .s-arrow.asc{color:#2F80ED}
+    th.sortable .s-arrow.desc{color:#2F80ED}
+    .col-menu{position:absolute;background:#fff;border:1px solid #e0e0e0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);padding:8px;z-index:200;min-width:170px;display:none}
+    .col-menu.active{display:block}
+    .col-menu label{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:4px;cursor:pointer;font-size:11px;color:#333;transition:all .1s}
+    .col-menu label:hover{background:#f0f4ff}
+    .col-menu input[type=checkbox]{accent-color:#2F80ED;width:13px;height:13px}
+    .filter-panel{padding:5px 8px;background:#f8f9fa;border-bottom:1px solid #e8e8e8;display:none;align-items:center;gap:4px;flex-wrap:wrap}
+    .filter-panel.active{display:flex}
+    .filter-panel select,.filter-panel input{padding:4px 8px;font-size:10px;border:1px solid #e0e0e0;border-radius:4px;outline:none;background:#fff}
+    .filter-panel select:focus,.filter-panel input:focus{border-color:#2F80ED}
+    .filter-panel .fp-label{font-size:10px;color:#888;font-weight:500}
+    .filter-panel .fp-btn{padding:4px 10px;font-size:10px;font-weight:500;border-radius:4px;cursor:pointer;transition:all .12s}
+    .filter-panel .fp-btn.primary{background:#2F80ED;color:#fff;border:none}
+    .filter-panel .fp-btn.primary:hover{background:#2568c9}
+    .filter-panel .fp-btn.secondary{background:#fff;color:#555;border:1px solid #e0e0e0}
+    .filter-panel .fp-btn.secondary:hover{border-color:#2F80ED;color:#2F80ED}
+    .table-wrap{overflow-x:auto;position:relative}
+    /* ═══ TABLE SCAFFOLD: table fills 100% of screen; title/toolbar/pagination pinned ═══ */
+    .content.table-view{overflow:hidden}
+    .content.table-view>.tbl-scaffold{display:flex;flex-direction:column;height:100%;min-height:0;width:100%}
+    .content.table-view>.tbl-scaffold>*{flex-shrink:0;min-width:0}
+    .content.table-view>.tbl-scaffold>.tbl-region{flex:1 1 auto;min-height:120px;display:flex;flex-direction:column;overflow:hidden}
+    .tbl-region>.card,.tbl-region .card{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+    .tbl-region>.card>.card-header,.tbl-region .card-header{flex-shrink:0}
+    .tbl-region>.card>.card-body,.tbl-region .card-body{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+    .tbl-region .table-wrap{flex:1;min-height:0;overflow:auto;position:relative;overscroll-behavior:contain}
+    .tbl-region .table-wrap thead th{position:sticky;top:0;z-index:2;box-shadow:0 1px 0 #e0e0e0}
+    .tbl-region>.pagination,.tbl-region .card-body>.pagination,.tbl-region .table-wrap .pagination{flex-shrink:0;margin:0;background:#fafbfc;border-top:1px solid #e0e0e0}
+    .tbl-region .table-wrap .pagination{position:sticky;bottom:0;z-index:3}
+    /* stats-row collapses away when the table scrolls */
+    .tbl-scaffold>.stats-row{max-height:300px;opacity:1;overflow:hidden;transition:max-height .22s ease,opacity .22s ease,margin .22s ease,padding .22s ease}
+    .tbl-scaffold.stats-collapsed>.stats-row{max-height:0!important;opacity:0!important;margin:0!important;padding:0!important}
+    .content.table-view>.tbl-scaffold>.kanban-scroll{flex:1 1 auto!important;min-height:0!important;max-height:none;display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;align-items:stretch}
+    .tbl-scaffold .kanban-scroll .kanban-col{min-width:240px;flex:0 0 auto;display:flex;flex-direction:column;min-height:0}
+    .tbl-scaffold .kanban-scroll .kb-body{flex:1;overflow-y:auto;min-height:0}
+    .tbl-scaffold>.card,.tbl-scaffold>.card+.card{flex-shrink:0}
+    .tbl-region table.has-row-menu th:last-child,.tbl-region table.has-row-menu .row-more-cell{position:sticky;right:0;background:#fff;z-index:4;box-shadow:-4px 0 8px rgba(0,0,0,.06)}
+    .tbl-region table.has-row-menu thead th:last-child{z-index:6}
+    html.dark .tbl-region .table-wrap thead th{box-shadow:0 1px 0 rgba(255,255,255,.08)}
+    html.dark .tbl-region .pagination{background:var(--card-bg,#0e1626);border-top-color:rgba(255,255,255,.08);backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%)}
+    html.dark .tbl-region table.has-row-menu th:last-child,html.dark .tbl-region table.has-row-menu .row-more-cell{background:var(--card-bg,#0e1626)!important}
+    /* Documents Vault list view (desktop): the table card sits inside .vault-wrap,
+       so extend the fixed-height scaffold chain — otherwise the table renders at
+       full content height and the pagination falls below the fold, under the footer. */
+    .content.table-view .vault-wrap{flex:1 1 auto!important;min-width:0!important;min-height:0!important;display:flex!important;align-items:stretch!important;overflow:hidden!important}
+    .content.table-view .vault-wrap>div[style]{flex:1!important;min-width:0!important;min-height:0!important;display:flex!important;flex-direction:column!important}
+    .content.table-view .vault-wrap .toolbar{flex-shrink:0!important}
+    .content.table-view .vault-wrap .card.tbl-region{flex:1!important;min-width:0!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+    .content.table-view .vault-wrap .card.tbl-region .card-body{flex:1!important;min-width:0!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+    .content.table-view .vault-wrap .table-wrap{flex:1!important;min-width:0!important;min-height:0!important}
+    col.hidden{visibility:collapse}
+    th.hidden{display:none}
+    td.hidden{display:none}
+    .pagination{display:flex;align-items:center;gap:3px;padding:6px 10px;border-top:1px solid #f0f0f0;flex-wrap:wrap;background:#fafbfc}
+    .pagination .pg-btn{padding:3px 9px;font-size:10px;font-weight:500;border:1px solid #e0e0e0;border-radius:4px;background:#fff;color:#555;cursor:pointer;transition:all .12s;min-width:26px;text-align:center;line-height:1.4;user-select:none}
+    .pagination .pg-btn:hover:not(:disabled){border-color:#2F80ED;color:#2F80ED;background:#f0f4ff}
+    .pagination .pg-btn:disabled{opacity:.4;cursor:default}
+    .pagination .pg-btn.pg-active{background:#2F80ED;color:#fff;border-color:#2F80ED;font-weight:600}
+    .pagination .pg-info{font-size:9px;color:#999;margin-left:auto;white-space:nowrap}
+    .pagination .pg-perpage{font-size:9px;padding:2px 4px;border:1px solid #e0e0e0;border-radius:3px;color:#555;background:#fff;outline:none;cursor:pointer;margin-left:4px}
+    /* ═══ TABLES & DATA INTERACTION UPGRADE ═══ */
+    .cell-edit{cursor:text}
+    .cell-edit:hover{outline:1px dashed var(--primary,#2F80ED);outline-offset:-1px}
+    .ie-inline{position:static;width:100%;min-width:70px;padding:1px 5px;border:1px solid #2F80ED;border-radius:4px;font-size:10px;font-family:inherit;background:#fff;outline:none;box-shadow:0 0 0 2px rgba(47,128,237,.12)}
+    html.dark .ie-inline{background:#1f2937;color:#e0e0e0;border-color:#4a6fa5}
+    .row-sel{accent-color:#2F80ED;width:13px;height:13px;cursor:pointer;vertical-align:middle}
+    .bulk-info{font-size:10px;font-weight:600;color:#2F80ED;padding:0 2px}
+    .view-chips{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:0 0 6px}
+    .view-chip-title{font-size:9px;color:#999;font-weight:600;margin-right:2px}
+    .view-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;font-size:9px;font-weight:600;border:1px solid #d7e3f7;background:#f0f4ff;color:#1565c0;border-radius:10px;cursor:pointer;transition:all .12s}
+    .view-chip:hover{border-color:#2F80ED;background:#e3edff}
+    .view-chip .vx{color:#90a4c4;font-weight:700;padding:0 1px;border-radius:50%}
+    .view-chip .vx:hover{color:#e53935}
+    .fav-strip{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:5px 10px;margin-bottom:8px;background:linear-gradient(90deg,#fff8e1,#fff3e0);border:1px solid #ffe0b2;border-radius:8px}
+    html.dark .fav-strip{background:rgba(255,183,77,.08);border-color:rgba(255,183,77,.3)}
+    .fav-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;font-size:10px;font-weight:600;border-radius:12px;background:#fff;border:1px solid #ffd54f;color:#e65100;cursor:pointer;transition:all .12s;box-shadow:0 1px 3px rgba(230,81,0,.08)}
+    .fav-chip:hover{border-color:#e65100;background:#fff8e1}
+    html.dark .fav-chip{background:rgba(255,255,255,.06);color:#ffcc80}
+    .fav-chip .fav-x{color:#c9a06a;font-weight:700;padding:0 1px}
+    .fav-chip .fav-x:hover{color:#e53935}
+    .fav-star{cursor:pointer;font-size:13px;color:#f9a825;margin-right:5px;display:inline-block;vertical-align:middle;text-shadow:0 1px 2px rgba(0,0,0,.08)}
+    .fav-star:hover{transform:scale(1.15)}
+    .colm-row{display:flex;align-items:center;gap:6px;padding:3px 4px;border-radius:5px}
+    .colm-row:hover{background:#f0f4ff}
+    .colm-row input[type=checkbox]{accent-color:#2F80ED;width:13px;height:13px;cursor:pointer}
+    .colm-row .cl-label{flex:1;font-size:11px;color:#333;cursor:pointer}
+    .colm-row .cl-btn{padding:1px 6px;font-size:10px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;color:#555;cursor:pointer}
+    .colm-row .cl-btn:hover:not(:disabled){border-color:#2F80ED;color:#2F80ED}
+    .colm-row .cl-btn:disabled{opacity:.35;cursor:default}
+    html.dark .colm-row .cl-label{color:#e2e8f0}
+    html.dark .colm-row:hover{background:rgba(59,130,246,.1)}
+    html.dark .colm-row .cl-btn{background:rgba(30,41,59,.5);color:#cbd5e1;border-color:#334155}
+    
+    @media(max-width:768px){
+      body{overflow:auto!important;height:auto!important}
+      .app-shell{flex-direction:column!important;height:auto!important;min-height:100vh!important;padding-bottom:96px}
+      #sidebar{width:100%!important;min-width:100%!important;flex-direction:row!important;height:auto!important;position:fixed!important;bottom:0!important;top:auto!important;left:0!important;z-index:999!important;border-right:none!important;border-top:1px solid #e8e8e8!important;background:#fff!important;overflow-x:auto!important;padding:0 4px!important}
+      .sidebar-logo{display:none!important}
+      .sidebar-scroll{flex-direction:row!important;padding:4px!important;gap:1px!important;overflow-x:auto!important;overflow-y:hidden!important;align-items:center!important;width:100%!important}
+      .sidebar-item{width:34px!important;min-width:24px!important;height:36px!important;margin:0!important;flex:0 1 34px!important;flex-shrink:1!important}
+      .sidebar-item.active::before{left:auto!important;top:auto!important;bottom:0!important;left:4px!important;right:4px!important;width:auto!important;height:2px!important}
+      .sidebar-item svg{width:16px!important;height:16px!important}
+      .sidebar-item[data-tip]:hover::after{display:none!important}
+      .sidebar-item.has-children::after{display:none!important}
+      .s-grp-sep{width:1px!important;height:20px!important;margin:0 1px!important;flex-shrink:0!important}
+      .sidebar-bottom{display:none!important}
+      .main-area{flex:none!important;height:auto!important}
+      .top-nav{display:none!important}
+      #mobileNavBtn{display:flex!important;flex-shrink:0!important}
+      .top-actions .icon-btn{display:none!important}
+      #moreBtn{display:flex!important}
+      .top-actions{flex:1!important;min-width:0!important;justify-content:flex-end!important;gap:4px!important}
+      #searchWrap{flex:1;min-width:0;max-width:calc(100vw - 120px)}
+      #searchBar{flex:1!important;min-width:0!important;width:auto!important;max-width:100%!important}
+      #searchBar:focus-within{width:auto!important}
+      .top-bar{overflow:hidden!important}
+      .app-footer{position:fixed!important;bottom:41px!important;left:0!important;right:0!important;z-index:998!important;height:28px!important;min-height:28px!important;box-shadow:0 -2px 10px rgba(0,0,0,.08)!important;border-top:1px solid #e8e8e8!important}
+      .app-footer .ft-textsize,.app-footer .ft-extra{display:none!important}
+      .top-bar{height:40px!important;min-height:40px!important;padding:0 8px!important;gap:8px!important;position:sticky!important;top:0!important;z-index:50!important}
+      .top-nav-item{padding:4px 8px!important;font-size:10px!important;white-space:nowrap!important;flex-shrink:0!important}
+      .top-nav-item.badge-new::after{font-size:7px!important;padding:0 3px!important}
+      .top-actions .icon-btn{width:26px!important;height:26px!important;flex-shrink:0!important}
+      .top-actions .icon-btn svg{width:14px!important;height:14px!important}
+      .top-actions .user-avatar{width:22px!important;height:22px!important;font-size:8px!important}
+      .content{padding:4px 6px!important;overflow-y:visible!important;height:auto!important}
+      #searchBar{width:100px!important}
+      #searchBar:focus-within{width:160px!important}
+      #searchDropdown{position:fixed!important;left:8px!important;right:8px!important;width:auto!important;top:50px!important;max-height:calc(100vh - 60px)!important;transform:none!important}
+      .dash-grid{grid-template-columns:1fr!important}
+      .stats-row{grid-template-columns:repeat(2,1fr)!important;gap:2px!important}
+      .stat-card{padding:3px 6px!important}
+      .stat-card .value{font-size:13px!important}
+      .card{border-radius:6px!important}
+      .card-header{padding:3px 6px!important}
+      .card-header h3{font-size:10px!important}
+      .card-body{padding:4px!important}
+      table{font-size:10px!important}
+      thead th{padding:3px 6px!important;font-size:8px!important}
+      tbody td{padding:2px 6px!important;white-space:nowrap!important}
+      .toolbar{gap:3px!important;flex-wrap:wrap!important}
+      .toolbar select{font-size:9px!important;padding:3px 20px 3px 6px!important}
+      .toolbar .search-box{max-width:140px!important;flex:0 1 auto!important}
+      .toolbar .action-btn{padding:3px 8px!important;font-size:9px!important}
+      .toolbar .filter-btn{padding:3px 6px!important;font-size:9px!important}
+      .page-title{font-size:11px!important}
+      .page-subtitle{font-size:9px!important;display:block!important;margin-left:0!important}
+      .tabs{gap:1px!important;overflow-x:auto!important;white-space:nowrap!important;-webkit-overflow-scrolling:touch!important;flex:0 0 auto!important;max-width:100vw!important}
+      .tab{padding:3px 6px!important;font-size:9px!important;flex-shrink:0!important}
+      .pagination{gap:2px!important;padding:4px 6px!important}
+      .pagination .pg-btn{padding:2px 6px!important;font-size:9px!important;min-width:22px!important}
+      .pagination .pg-info{font-size:8px!important}
+      .kanban-col{min-width:140px!important}
+      .kanban-card{padding:4px 6px!important}
+      .kanban-card .badge-status{font-size:7px!important}
+      .group-grid{grid-template-columns:repeat(2,1fr)!important;gap:6px!important}
+      .dashboard-quick{grid-template-columns:repeat(2,1fr)!important;gap:3px!important}
+      .plot-grid{grid-template-columns:repeat(5,1fr)!important}
+      .slide-out{z-index:9997!important}
+      .slide-out .panel{width:100vw!important;max-width:100vw!important;border-radius:0!important;animation:slideUp .25s ease-out!important}
+      .lead-panel{width:100vw!important;max-width:100vw!important}
+      .tbl-toolbar{padding:4px 6px!important}
+      .tbl-toolbar .tt-btn{padding:3px 6px!important;font-size:9px!important}
+      .filter-panel{padding:4px 6px!important}
+      .filter-panel select,.filter-panel input{font-size:9px!important;padding:3px 6px!important}
+      .content-footer .breadcrumb{font-size:9px!important}
+      .top-nav-item{user-select:none!important;-webkit-tap-highlight-color:transparent!important}
+      .sidebar-item{-webkit-tap-highlight-color:transparent!important}
+      .toast-container{bottom:70px!important;right:10px!important;left:10px!important}
+      .toast{font-size:10px!important;padding:6px 10px!important;text-align:center!important}
+      .lead-tab{padding:6px 10px!important;font-size:10px!important}
+      #quickAddDropdown .panel{max-width:100vw!important;width:100vw!important;height:100%!important;border-radius:0!important;animation:slideUp .25s ease-out!important}
+      #quickAddDropdown .backdrop{background:rgba(0,0,0,.5)!important;flex:0!important;height:0!important}
+      #qaGrid{max-height:calc(100vh - 160px)!important}
+      table.has-row-menu th:last-child,table.has-row-menu .row-more-cell{position:sticky!important;right:0!important;background:#fff!important;z-index:4!important;box-shadow:-4px 0 8px rgba(0,0,0,.08)!important}
+      table.has-row-menu thead th:last-child{z-index:6!important}
+      html.dark table.has-row-menu th:last-child,html.dark table.has-row-menu .row-more-cell,html.theme-midnight table.has-row-menu th:last-child,html.theme-midnight table.has-row-menu .row-more-cell{background:#0e1626!important;box-shadow:-4px 0 8px rgba(0,0,0,.4)!important}
+      html.dark.theme-forest table.has-row-menu th:last-child,html.dark.theme-forest table.has-row-menu .row-more-cell{background:#0d1f0d!important}
+      html.dark.theme-sunset table.has-row-menu th:last-child,html.dark.theme-sunset table.has-row-menu .row-more-cell{background:#200c04!important}
+      /* Settings: 180px sidebar → horizontal tab strip (tab-scroll-wrap pattern) */
+      .settings-wrap{flex-direction:column!important;height:auto!important;flex:none!important;gap:6px!important}
+      .settings-nav{width:100%!important;min-width:100%!important;max-width:100%!important;flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important;align-items:center!important;padding:4px!important;gap:4px!important;height:auto!important;max-height:none!important;background:#f5f5f5!important;border:1px solid #e8e8e8!important;border-radius:8px!important;scrollbar-width:none}
+      .settings-nav::-webkit-scrollbar{display:none}
+      .settings-nav-title,.settings-nav-actions{display:none!important}
+      .settings-nav-item{flex:0 0 auto!important;margin:0!important;white-space:nowrap!important;padding:5px 10px!important;border-radius:6px!important;gap:5px!important;background:transparent!important;color:#555!important;min-height:26px}
+      .settings-nav-item.on{background:#eef3ff!important;color:#2F80ED!important;font-weight:600!important}
+      .settings-nav-item>div>div:last-child{display:none!important}
+      .settings-content{flex:none!important;overflow:visible!important}
+      html.dark .settings-nav{background:rgba(30,41,59,.5)!important;border-color:#334155!important}
+      html.dark .settings-nav-item{color:#cbd5e1!important}
+      html.dark .settings-nav-item.on{background:rgba(59,130,246,.15)!important;color:#7ab7ff!important}
+      /* Table scaffold on mobile: shell fixed, title/toolbar/pagination pinned, table body scrolls */
+      .app-shell.table-view{height:100vh!important;height:100dvh!important;min-height:0!important;padding-bottom:69px!important;overflow:hidden!important}
+      .app-shell.table-view .main-area{flex:1!important;height:auto!important;min-height:0!important}
+      .app-shell.table-view .content{overflow:hidden!important;height:auto!important;flex:1!important;min-height:0!important}
+      .app-shell.table-view .content>.tbl-scaffold{height:100%!important}
+      .tbl-region .pagination{padding-bottom:2px!important}
+      /* Documents Vault list view: nested card must flex inside the fixed-height
+         table shell exactly like other pages (title/subtitle/toolbar pinned,
+         table region scrolls, pagination pinned below). */
+      .app-shell.table-view .vault-wrap{flex:1!important;min-width:0!important;min-height:0!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;overflow:hidden!important}
+      .app-shell.table-view .vault-wrap>div[style]{flex:1!important;min-width:0!important;min-height:0!important;display:flex!important;flex-direction:column!important;align-items:stretch!important}
+      .app-shell.table-view .vault-wrap .card.tbl-region{flex:1!important;min-width:0!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+      .app-shell.table-view .vault-wrap .card.tbl-region .card-body{flex:1!important;min-width:0!important;min-height:0!important;display:flex!important;flex-direction:column!important}
+      .app-shell.table-view .vault-wrap .table-wrap{flex:1!important;min-width:0!important;min-height:0!important}
+      /* Mobile: all search + filter controls collapse into a single Filters dropdown */
+      .toolbar{position:relative!important}
+      .toolbar .mob-filter-btn{flex-shrink:0!important}
+      .mob-filter-panel{position:absolute!important;top:calc(100% + 3px)!important;left:0!important;right:0!important;z-index:80!important;background:#fff!important;border:1px solid #e0e0e0!important;border-radius:8px!important;box-shadow:0 8px 24px rgba(0,0,0,.15)!important;padding:8px!important;display:none!important;max-height:55vh!important;overflow-y:auto!important}
+      .mob-filter-panel.open{display:block!important}
+      .mob-filter-panel input[id],.mob-filter-panel select[id]{display:block!important;width:100%!important;max-width:100%!important;flex:none!important;margin:0 0 6px!important;padding:7px 8px!important;font-size:11px!important;border:1px solid #e0e0e0!important;border-radius:6px!important;background:#fff!important;color:#333!important;box-sizing:border-box!important;outline:none!important}
+      .mob-filter-panel input[id]:focus,.mob-filter-panel select[id]:focus{border-color:#2F80ED!important}
+      html.dark .mob-filter-panel{background:#1e293b!important;border-color:#334155!important;box-shadow:0 8px 24px rgba(0,0,0,.5)!important}
+      html.dark .mob-filter-panel input[id],html.dark .mob-filter-panel select[id]{background:#0f172a!important;border-color:#334155!important;color:#e2e8f0!important}
+    }
+    @media(max-width:480px){
+      .stats-row{grid-template-columns:repeat(2,1fr)!important}
+      .group-grid{grid-template-columns:1fr!important}
+      .dashboard-quick{grid-template-columns:repeat(2,1fr)!important}
+      .sidebar-item{width:30px!important;min-width:24px!important;height:32px!important;margin:0!important;flex:0 1 30px!important;flex-shrink:1!important}
+      .sidebar-item svg{width:14px!important;height:14px!important}
+      .s-grp-sep{margin:0 1px!important}
+      #searchBar{width:70px!important}
+      #searchBar:focus-within{width:120px!important}
+      .top-actions{gap:3px!important}
+    }
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    @keyframes slideDown{from{transform:translateY(0)}to{transform:translateY(100%)}}
+    /* ═══ DRAWER (App Sheet) ═══ */
+    .drawer-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:9998;align-items:stretch;justify-content:flex-end;overflow:hidden}
+    .drawer-overlay.active{display:flex}
+    .drawer-sheet{background:#fff;border-radius:0;padding:0;width:720px;max-width:92vw;height:100%;max-height:100vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:-4px 0 30px rgba(0,0,0,.15);animation:slideIn .25s ease-out}
+    .drawer-sheet.closing{animation:slideOut .18s ease-in}
+    .drawer-sheet.dragging{transition:none!important}
+    @keyframes slideOut{from{transform:translateX(0)}to{transform:translateX(100%)}}
+    /* Long-press bottom-tab peek popup (mobile) */
+    .peek-popup{position:fixed;z-index:10000;background:#fff;border:1px solid #e0e0e0;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.22);padding:6px;min-width:175px;max-width:250px;opacity:0;transform:translateY(10px);transition:opacity .15s ease,transform .15s ease;pointer-events:auto}
+    .peek-popup.show{opacity:1;transform:translateY(0)}
+    .peek-title{font-size:11px;font-weight:700;color:#333;padding:6px 9px 5px;border-bottom:1px solid #f0f0f0;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+    .peek-item{display:flex;align-items:center;gap:7px;padding:8px 9px;font-size:11px;color:#444;border-radius:7px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .peek-item:active{background:#eef3ff;color:#2F80ED}
+    .peek-badge{background:#ff5252;color:#fff;font-size:7px;font-weight:700;padding:1px 5px;border-radius:7px;margin-left:auto;flex-shrink:0}
+    html.dark .peek-popup{background:var(--card-bg,#1a2234);border-color:var(--card-border,#334155)}
+    html.dark .peek-title{color:var(--fg,#e0e0e0);border-bottom-color:var(--glass-edge,#ffffff10)}
+    html.dark .peek-item{color:var(--muted,#94a3b8)}
+    html.dark .peek-item:active{background:var(--hover-bg,#1a2a4a);color:var(--primary,#7ab7ff)}
+    /* PWA install button pulse */
+    @keyframes pwaPulse{0%,100%{box-shadow:0 0 0 0 rgba(47,128,237,.35)}50%{box-shadow:0 0 0 6px rgba(47,128,237,0)}}
+    /* Mobile module dropdown (replaces top-nav on small screens) */
+    .mobile-mod-dropdown{display:none;position:fixed;top:46px;right:8px;left:8px;z-index:9990;background:#fff;border:1px solid #e0e0e0;border-radius:14px;box-shadow:0 14px 36px rgba(0,0,0,.2);padding:8px;max-height:68vh;overflow-y:auto;animation:ddIn .18s ease-out}
+    .mobile-mod-dropdown.open{display:block}
+    @keyframes ddIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    .mm-title{font-size:11px;font-weight:700;color:#333;padding:4px 6px 8px;border-bottom:1px solid #f0f0f0;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+    .mm-groups{display:flex;gap:4px;flex-wrap:wrap;padding:0 2px 8px;border-bottom:1px solid #f0f0f0;margin-bottom:6px}
+    .mm-grp{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;font-size:16px;cursor:pointer;background:#f5f5f5;border:1px solid transparent;-webkit-tap-highlight-color:transparent}
+    .mm-grp.active{background:#eef3ff;border-color:#2F80ED;box-shadow:0 0 0 1px #2F80ED}
+    .mm-mods{display:flex;flex-direction:column;gap:2px}
+    .mm-mod{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;font-size:12px;font-weight:500;color:#444;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative}
+    .mm-mod:active{background:#f0f4ff}
+    .mm-mod.active{background:#eef3ff;color:#2F80ED;font-weight:600}
+    .mm-badge{background:#ff5252;color:#fff;font-size:7px;font-weight:700;padding:1px 5px;border-radius:7px;margin-left:auto}
+    .mm-check{color:#2F80ED;font-weight:700;margin-left:auto;font-size:11px}
+    html.dark .mobile-mod-dropdown{background:var(--card-bg,#1a2234);border-color:var(--card-border,#334155)}
+    html.dark .mm-title{color:var(--fg,#e0e0e0);border-bottom-color:var(--glass-edge,#ffffff10)}
+    html.dark .mm-groups{border-bottom-color:var(--glass-edge,#ffffff10)}
+    html.dark .mm-grp{background:rgba(255,255,255,.05)}
+    html.dark .mm-grp.active{background:var(--hover-bg,#1a2a4a);border-color:var(--primary,#7ab7ff)}
+    html.dark .mm-mod{color:var(--muted,#94a3b8)}
+    html.dark .mm-mod.active{background:var(--hover-bg,#1a2a4a);color:var(--primary,#7ab7ff)}
+    /* More (⋯) menu — mobile top-actions grouping */
+    #moreBtn{font-size:16px;font-weight:700;letter-spacing:1px}
+    #moreBtn.on{background:#eef3ff;color:#2F80ED}
+    /* Mobile module menu — pill button + bottom sheet */
+    #mobileNavBtn{display:none;align-items:center;gap:5px;padding:5px 12px;border-radius:14px;background:#eef3ff;color:#2F80ED;font-size:11px;font-weight:600;cursor:pointer;max-width:150px;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+    #mobileNavBtn .mn-label{overflow:hidden;text-overflow:ellipsis}
+    html.dark #mobileNavBtn{background:var(--hover-bg,#1a2a4a);color:var(--primary,#7ab7ff)}
+    .mnav-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 10px;font-size:14px;font-weight:700;color:#333;border-bottom:1px solid #f0f0f0;flex-shrink:0}
+    .mnav-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:#999;font-size:14px}
+    .mnav-close:hover{background:#f0f0f0;color:#333}
+    .mnav-groups{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid #f0f0f0;overflow-x:auto;flex-shrink:0}
+    .mnav-grp{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:17px;cursor:pointer;background:#f5f5f5;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+    .mnav-grp.active{background:#eef3ff;box-shadow:0 0 0 1px #2F80ED}
+    .mnav-list{overflow-y:auto;max-height:52vh;padding:6px}
+    .mnav-item{display:flex;align-items:center;gap:8px;padding:12px 12px;border-radius:10px;font-size:13px;font-weight:500;color:#444;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .mnav-item.active{background:#eef3ff;color:#2F80ED;font-weight:600}
+    .mnav-check{margin-left:auto;color:#2F80ED;font-weight:700}
+    .mnav-empty{text-align:center;color:#999;font-size:12px;padding:24px}
+    html.dark .mnav-head{color:var(--fg,#e0e0e0);border-bottom-color:var(--glass-edge,#ffffff10)}
+    html.dark .mnav-close:hover{background:var(--hover-bg,#1a2a4a);color:var(--fg)}
+    html.dark .mnav-groups{border-bottom-color:var(--glass-edge,#ffffff10)}
+    html.dark .mnav-grp{background:rgba(255,255,255,.05)}
+    html.dark .mnav-grp.active{background:var(--hover-bg,#1a2a4a);box-shadow:0 0 0 1px var(--primary,#7ab7ff)}
+    html.dark .mnav-item{color:var(--muted,#94a3b8)}
+    html.dark .mnav-item.active{background:var(--hover-bg,#1a2a4a);color:var(--primary,#7ab7ff)}
+    /* Tab strip scroll arrows (mobile) */
+    .tab-scroll-wrap{position:relative}
+    .tab-arrow{position:absolute;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.94);border:1px solid #e0e0e0;box-shadow:0 2px 8px rgba(0,0,0,.16);color:#555;font-size:13px;font-weight:700;cursor:pointer;z-index:5;display:none;align-items:center;justify-content:center;line-height:1;-webkit-tap-highlight-color:transparent;user-select:none}
+    .tab-arrow.left{left:2px}
+    .tab-arrow.right{right:2px}
+    .tab-arrow:active{background:#2F80ED;color:#fff}
+    .tab-arrow.hidden{display:none!important}
+    html.dark .tab-arrow{background:rgba(26,34,52,.92);border-color:#334155;color:#94a3b8}
+    html.dark .tab-arrow:active{background:var(--primary,#7ab7ff);color:#fff}
+    .row-more{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;border:1px solid #e0e0e0;background:#fff;color:#555;font-size:14px;font-weight:700;cursor:pointer;line-height:1;padding:0;margin:0;-webkit-tap-highlight-color:transparent;flex-shrink:0;vertical-align:middle;transition:background .15s,color .15s}
+    .row-more:hover{background:#eef3ff;color:#2F80ED}
+    .row-more:active{background:#eef3ff;color:#2F80ED}
+    .row-more-cell{position:relative;text-align:right}
+    .row-menu{position:fixed;z-index:9996;background:#fff;border:1px solid #e0e0e0;border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.2);padding:4px;display:none;flex-direction:column;gap:2px;min-width:168px;max-width:78vw;max-height:60vh;overflow-y:auto}
+    .row-menu.open{display:flex}
+    .row-menu .rm-item{display:flex!important;align-items:center!important;gap:8px!important;width:100%!important;padding:8px 12px!important;font-size:12px!important;font-weight:500!important;border-radius:6px!important;border:none!important;background:transparent!important;color:#333!important;text-align:left!important;cursor:pointer!important;white-space:nowrap!important;margin:0!important;line-height:1.3!important;box-shadow:none!important;text-decoration:none!important}
+    .row-menu .rm-item:hover{background:#f0f4ff!important}
+    .row-menu .rm-item:active{background:#f0f4ff!important}
+    html.dark .row-more{background:rgba(26,34,52,.92);border-color:#334155;color:#94a3b8}
+    html.dark .row-more:hover{background:rgba(59,130,246,.15);color:#7ab7ff}
+    html.dark .row-more:active{background:rgba(59,130,246,.15);color:#7ab7ff}
+    html.dark .row-menu{background:rgba(23,31,48,.98);border-color:#334155;box-shadow:0 10px 28px rgba(0,0,0,.5)}
+    html.dark .row-menu .rm-item{color:#e2e8f0!important}
+    html.dark .row-menu .rm-item:hover{background:rgba(59,130,246,.12)!important}
+    html.dark .row-menu .rm-item:active{background:rgba(59,130,246,.12)!important}
+    /* ═══ MICRO-INTERACTIONS ═══ */
+    button,.action-btn,.icon-btn,.tt-btn,.pg-btn,.tab,.fav-chip,.filter-btn{transition:transform .12s ease,background .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease}
+    button:not(.no-press):active,.action-btn:active,.icon-btn:active,.tt-btn:active,.pg-btn:active,.tab:active,.fav-chip:active,.filter-btn:active{transform:scale(.94)}
+    .stat-card,.quick-card,.doc-item,.activity-item,.installment-item,.mm-mod{transition:transform .18s ease,box-shadow .18s ease}
+    .stat-card:hover,.quick-card:hover,.doc-item:hover,.activity-item:hover,.installment-item:hover,.mm-mod:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.09)}
+    .kanban-card{transition:transform .18s ease,box-shadow .18s ease}
+    .kanban-card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.09)}
+    .confetti{position:fixed;top:-14px;width:8px;height:14px;border-radius:2px;z-index:99999;pointer-events:none;opacity:1;animation:confettiFall 2.6s ease-in forwards}
+    @keyframes confettiFall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(720deg);opacity:.45}}
+    /* column resize */
+    th{position:relative}
+    .resizer{position:absolute;top:0;right:-3px;width:7px;height:100%;cursor:col-resize;z-index:6}
+    .resizer::after{content:'';position:absolute;right:3px;top:18%;height:64%;width:2px;background:#c8cdd6;border-radius:1px;opacity:0;transition:opacity .15s}
+    th:hover .resizer::after,.resizer.active::after{opacity:1}
+    .resizer.active::after{background:#2F80ED}
+    body.resizing{cursor:col-resize!important;user-select:none!important}
+    body.resizing *{cursor:col-resize!important}
+    html.dark .resizer::after{background:#3b4a63}
+    /* generic views menu */
+    .views-menu{position:fixed;z-index:9996;background:var(--card-bg,#fff);border:1px solid var(--card-border,#e0e0e0);border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.2);padding:6px;display:none;flex-direction:column;gap:2px;min-width:200px;max-width:78vw}
+    .views-menu.open{display:flex}
+    .views-menu .vm-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#999;padding:4px 8px 2px}
+    .views-menu .vm-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:11px;color:var(--fg,#333);white-space:nowrap}
+    .views-menu .vm-item:hover{background:var(--hover-bg,#eef3ff)}
+    .views-menu .vm-item .vx{margin-left:auto;color:#bbb;font-size:12px;padding:0 4px;border-radius:4px}
+    .views-menu .vm-item .vx:hover{color:#c62828;background:#fdecea}
+    .views-menu .vm-add{color:#2F80ED;font-weight:600}
+    .views-menu .vm-empty{padding:12px 10px;color:#999;font-size:10px;text-align:center}
+    html.dark .views-menu{background:rgba(23,31,48,.98);border-color:#334155}
+    html.dark .views-menu .vm-item{color:#e2e8f0}
+    html.dark .views-menu .vm-item:hover{background:rgba(59,130,246,.12)}
+    @media(max-width:768px){
+      .tab-arrow{display:flex}
+    }
+    .more-dropdown{display:none;position:fixed;top:46px;right:8px;left:8px;z-index:9991;background:#fff;border:1px solid #e0e0e0;border-radius:14px;box-shadow:0 14px 36px rgba(0,0,0,.2);padding:8px;max-height:72vh;overflow-y:auto;animation:ddIn .18s ease-out}
+    .more-dropdown.open{display:block}
+    .mm-sep{height:1px;background:#f0f0f0;margin:6px 2px}
+    html.dark .more-dropdown{background:var(--card-bg,#1a2234);border-color:var(--card-border,#334155)}
+    html.dark .mm-sep{background:var(--glass-edge,#ffffff10)}
+    .drawer-handle{display:none;width:36px;height:4px;border-radius:2px;background:#d1d5db;margin:10px auto 6px;flex-shrink:0}
+    .drawer-header{display:flex;justify-content:space-between;align-items:center;padding:4px 16px 10px;border-bottom:1px solid #f0f0f0;flex-shrink:0}
+    .drawer-header h3{font-size:14px;font-weight:700;color:#333;margin:0}
+    .drawer-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:#999;font-size:16px;transition:all .12s}
+    .drawer-close:hover{background:#f0f0f0;color:#333}
+    .drawer-body{flex:1;overflow-y:auto;padding:14px 18px 18px}
+    .drawer-footer{display:flex;gap:6px;padding:10px 16px 14px;border-top:1px solid #f0f0f0;justify-content:flex-end;flex-shrink:0}
+    .drawer-btn{padding:7px 16px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:4px}
+    .drawer-btn.primary{background:#2F80ED;color:#fff;border:none}
+    .drawer-btn.primary:hover{background:#2568c9}
+    .drawer-btn.secondary{background:#fff;color:#555;border:1px solid #e0e0e0}
+    .drawer-btn.secondary:hover{border-color:#2F80ED;color:#2F80ED}
+    html.dark .drawer-overlay{background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+    html.dark .drawer-sheet{background:var(--card-bg)!important;border-color:var(--card-border);backdrop-filter:blur(16px) saturate(200%);-webkit-backdrop-filter:blur(16px) saturate(200%)}
+    html.dark .drawer-handle{background:rgba(255,255,255,.2)}
+    html.dark .drawer-header{border-bottom-color:var(--glass-edge,#ffffff10)}
+    html.dark .drawer-header h3{color:var(--fg,#e0e0e0)}
+    html.dark .drawer-close:hover{background:var(--hover-bg,#1a2a4a);color:var(--fg)}
+    html.dark .drawer-footer{border-top-color:var(--glass-edge,#ffffff10)}
+    html.dark .drawer-btn.secondary{background:rgba(255,255,255,.05)!important;border-color:var(--input-border,#334155);color:var(--muted,#94a3b8)}
+    html.dark .drawer-btn.secondary:hover{border-color:var(--primary);color:var(--primary)}
+    @media print{body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:fixed;inset:0;background:#fff;padding:20px;overflow:auto;z-index:9999}#printArea table{font-size:10px}#printArea th{background:#f5f5f5!important;color:#333!important}}
+    @media(max-width:768px){
+      .drawer-overlay{align-items:flex-end!important;justify-content:center!important}
+      .drawer-sheet{max-width:100vw!important;width:100%!important;border-radius:14px 14px 0 0!important;max-height:92vh!important;height:auto!important;animation:slideUp .3s cubic-bezier(.32,.72,0,1)!important}
+      .drawer-sheet.closing{animation:slideDown .2s ease-in!important}
+      .drawer-handle{display:block!important;width:44px!important;height:5px!important;border-radius:3px!important;margin:10px auto 8px!important;cursor:grab}
+      .drawer-body{padding:10px 14px 14px!important}
+      .drawer-footer{padding:8px 14px 12px!important}
+      .drawer-header{padding:4px 14px 8px!important}
+    }
+  
+/* === KRTaker additions === */
+:root{--brand:#2F80ED}
+.sidebar-logo{background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.sidebar-brand-text b{display:block;font-size:14px;letter-spacing:.4px}
+.sidebar-brand-text small{font-size:8.5px;color:#9aa5b1;font-weight:500;letter-spacing:.3px}
+.sidebar-item .nav-ico{margin-right:8px;font-size:13px;width:18px;text-align:center;display:inline-block}
+.sidebar-item.has-children>.grp-label{font-size:9.5px;color:#9aa5b1;text-transform:uppercase;letter-spacing:.8px;padding:14px 12px 4px;font-weight:700}
+.mob-bottom-nav{display:none}
+@media (max-width:768px){
+  .mob-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eef0f3;z-index:90;padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
+  .mob-bottom-nav .mb-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;font-size:9px;color:#667;cursor:pointer;border-radius:8px}
+  .mob-bottom-nav .mb-item.active{color:var(--brand);font-weight:600}
+  .mob-bottom-nav .mb-item .mi{font-size:16px}
+  .main-area{padding-bottom:58px}
+}
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:420px}
+.chat-log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #eef0f3}
+.msg{max-width:78%;padding:8px 12px;border-radius:12px;font-size:12px;line-height:1.55;white-space:pre-wrap}
+.msg.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:3px}
+.msg.ai{align-self:flex-start;background:#fff;border:1px solid #e8ecf1;border-bottom-left-radius:3px}
+.msg.ai .tool-tag{display:inline-block;background:#eef6ff;color:#1e5eb8;font-size:9px;padding:1px 6px;border-radius:4px;margin:2px 4px 0 0}
+.chat-input-row{display:flex;gap:6px;margin-top:8px}
+.chat-input-row input{flex:1}
+.chat-sugg{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chat-sugg span{font-size:10px;background:#f0f4fa;border:1px solid #e3eaf3;color:#345;padding:4px 10px;border-radius:20px;cursor:pointer}
+.chat-sugg span:hover{background:#e3ecf8}
+.ai-status{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:#888;background:#f6f8fb;border:1px solid #eef0f3;padding:3px 10px;border-radius:20px}
+.ai-status .dot{width:7px;height:7px;border-radius:50%;background:#27ae60;display:inline-block}
+.compliance-flag{border-left:3px solid #e67e22;background:#fff8f0;padding:8px 12px;border-radius:6px;font-size:11px;margin:4px 0}
+.compliance-block{border-left:3px solid #e74c3c;background:#fef5f5;padding:8px 12px;border-radius:6px;font-size:11px;margin:4px 0}
+.tax-step{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #eef0f3;border-radius:8px;margin:4px 0;font-size:11.5px}
+.tax-step .ts-idx{width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.flow-4{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.flow-step{flex:1;min-width:130px;border:1px solid #e8ecf1;border-radius:8px;padding:8px;font-size:10.5px;background:#fff}
+.flow-step .fs-n{font-weight:700;color:var(--brand);font-size:10px;text-transform:uppercase;letter-spacing:.4px}
+.flow-step.ok{border-color:#b8e0c4;background:#f2fbf5}
+.flow-step.ok .fs-n{color:#27ae60}
+.kr-badge{display:inline-block;background:#eef6ff;color:#1e5eb8;font-size:9px;font-weight:600;padding:1px 7px;border-radius:10px;border:1px solid #d4e6fb;vertical-align:middle;margin-left:6px}
+.tbl-region td .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:#345}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div style="display:flex;align-items:center;gap:10px;padding:16px 14px 10px">
+      <div class="sidebar-logo" style="width:38px;height:38px">KR</div>
+      <div class="sidebar-brand-text">
+        <b>KRTaker</b>
+        <small>KEY RESPONSIBILITY TAKER</small>
+      </div>
+    </div>
+    <div class="sidebar-scroll" id="sidebarMenu"></div>
+    <div class="sidebar-bottom">
+      <div class="sb-version" id="sbVersion">v1.0 · PWA Prototype</div>
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <main class="main-area">
+    <div class="top-bar">
+      <button class="icon-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" style="display:none">☰</button>
+      <div style="flex:1;min-width:0">
+        <div class="page-title" id="pageTitle">Dashboard</div>
+        <div class="breadcrumb" id="breadcrumb">Home / Dashboard</div>
+      </div>
+      <div class="top-actions">
+        <div class="search-box" style="max-width:220px">
+          <input id="gsInput" placeholder="Search… (Ctrl+K)" oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()">
+        </div>
+        <button class="icon-btn" onclick="openQuickAdd()" title="Quick add">＋</button>
+        <div class="user-avatar" id="userAvatar" title="Owner — Kabir (demo)">KB</div>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+    <div class="content-footer">KRTaker v1.0 — AI-driven property caretaker · Prototype · <span id="swInfo" style="color:#9aa5b1">SW krtaker-v1-0</span></div>
+  </main>
+</div>
+
+<!-- ===== Mobile bottom nav ===== -->
+<div class="mob-bottom-nav" id="mobBottomNav"></div>
+
+<!-- ===== Global search dropdown ===== -->
+<div class="slide-out top-dropdown" id="gsDropdown" style="display:none">
+  <div class="backdrop" onclick="closeGlobalSearch()"></div>
+  <div class="panel" style="padding:10px;max-width:460px;max-height:60vh;overflow-y:auto">
+    <div style="font-size:11px;font-weight:600;color:#667;margin-bottom:6px">Search results</div>
+    <div id="gsResults" style="display:flex;flex-direction:column;gap:2px"></div>
+    <div id="gsEmpty" style="font-size:11px;color:#999;padding:8px;display:none">No matches — try a property, tenant, lease or module name.</div>
+  </div>
+</div>
+
+<!-- ===== Quick add ===== -->
+<div class="slide-out top-dropdown" id="qaDropdown" style="display:none">
+  <div class="backdrop" onclick="closeQuickAdd()"></div>
+  <div class="panel" style="padding:12px;max-width:420px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:13px;font-weight:600">Quick add</span>
+      <span onclick="closeQuickAdd()" style="cursor:pointer;color:#999;font-size:15px;padding:2px;width:28px;text-align:center">✕</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px" id="qaList"></div>
+  </div>
+</div>
+
+<!-- ===== Drawer modal ===== -->
+<div class="drawer-overlay" id="modalOverlay" style="display:none" onclick="closeModalOnBackdrop(event)">
+  <div class="drawer-sheet" id="modalSheet" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <span id="modalTitle">Title</span>
+      <span class="drawer-close" onclick="closeModal()">✕</span>
+    </div>
+    <div class="drawer-body" id="modalBody"></div>
+    <div class="drawer-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- ===== Toast ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// === KRTaker seed data (v1.0 demo) ===
+const SEED = {
+  properties: [
+    { id:'P-001', name:'Green View Residency', type:'Flat', jurisdiction:'Dhaka North', holding:'12/5, Mirpur-10', khatian:{cs:'CS 452', sa:'SA 1180', rs:'RS 2277', bs:'BS 3301'}, mortgage:{bank:'Islami Bank', interest:420000}, sqft:18000, value:82000000, status:'Active' },
+    { id:'P-002', name:'Banani Commercial Tower', type:'Commercial', jurisdiction:'Dhaka North', holding:'32/K, Banani C/A', khatian:{cs:'CS 88', sa:'SA 210', rs:'RS 990', bs:'BS 1402'}, mortgage:{bank:'BRAC Bank', interest:1800000}, sqft:45000, value:320000000, status:'Active' },
+    { id:'P-003', name:'Gulshan Lakeside Plot', type:'Plot', jurisdiction:'Dhaka North', holding:'Plot 7, Block SE(D)', khatian:{cs:'CS 1210', sa:'SA 3400', rs:'RS 501', bs:'BS 920'}, mortgage:null, sqft:0, value:150000000, status:'Active' },
+    { id:'P-004', name:'Chattogram Industrial Shed', type:'Industrial', jurisdiction:'Chattogram', holding:'KEPZ Plot 18, Patenga', khatian:{cs:'CS 77', sa:'SA 190', rs:'RS 305', bs:'BS 610'}, mortgage:{bank:'Agrani Bank', interest:950000}, sqft:30000, value:175000000, status:'Active' },
+    { id:'P-005', name:'Dhanmondi Apartment', type:'Flat', jurisdiction:'Dhaka South', holding:'Road 9/A, Dhanmondi', khatian:{cs:'CS 655', sa:'SA 1711', rs:'RS 2088', bs:'BS 3020'}, mortgage:null, sqft:2450, value:18500000, status:'Active' }
+  ],
+  units: [
+    { id:'U-001', property:'P-001', name:'Flat 3B', floor:'3rd', sqft:1450, status:'Leased' },
+    { id:'U-002', property:'P-001', name:'Flat 4A', floor:'4th', sqft:1650, status:'Leased' },
+    { id:'U-003', property:'P-001', name:'Flat 5C', floor:'5th', sqft:1200, status:'Vacant' },
+    { id:'U-004', property:'P-002', name:'Floor 1 (Retail)', floor:'1st', sqft:6000, status:'Leased' },
+    { id:'U-005', property:'P-002', name:'Floor 2 (Office)', floor:'2nd', sqft:5200, status:'Leased' },
+    { id:'U-006', property:'P-002', name:'Floor 3 (Office)', floor:'3rd', sqft:5200, status:'Leased' },
+    { id:'U-007', property:'P-003', name:'Plot 7 (SE(D))', floor:'—', sqft:3600, status:'Vacant' },
+    { id:'U-008', property:'P-004', name:'Shed A', floor:'Ground', sqft:18000, status:'Leased' },
+    { id:'U-009', property:'P-004', name:'Shed B', floor:'Ground', sqft:12000, status:'Maintenance' },
+    { id:'U-010', property:'P-005', name:'Apartment 7B', floor:'7th', sqft:2450, status:'Leased' }
+  ],
+  tenants: [
+    { id:'T-001', name:'Rafiqul Islam', phone:'+8801711-223344', nid:'1990123456789', nrb:false, email:'rafiqul@gmail.com', kind:'Individual' },
+    { id:'T-002', name:'Sultana Rahman', phone:'+8801812-445566', nid:'1985112233445', nrb:false, email:'sultana.r@yahoo.com', kind:'Individual' },
+    { id:'T-003', name:'Orbit Textiles Ltd', phone:'+8809611-778899', nid:'BIN-004512367', nrb:false, email:'accounts@orbittextiles.com', kind:'Corporate' },
+    { id:'T-004', name:'Dr. Nadia Karim', phone:'+8801913-556677', nid:'1988889900112', nrb:true, email:'nadia.karim@outlook.com', kind:'Individual' },
+    { id:'T-005', name:'Bengal Agro Foods', phone:'+8809613-889900', nid:'BIN-006734512', nrb:false, email:'finance@bengalagro.com', kind:'Corporate' },
+    { id:'T-006', name:'Tanvir Hossain', phone:'+8801614-223344', nid:'1993223445566', nrb:false, email:'tanvir.h@gmail.com', kind:'Individual' },
+    { id:'T-007', name:'Maria Chowdhury (NRB)', phone:'+1 646-555-0182', nid:'1975123456780', nrb:true, email:'maria.chowdhury@nyc.com', kind:'Individual' },
+    { id:'T-008', name:'Ahmed & Sons Traders', phone:'+8801715-990011', nid:'BIN-009812345', nrb:false, email:'ahmedsons@outlook.com', kind:'Corporate' }
+  ],
+  leases: [
+    { id:'L-001', unit:'U-001', tenant:'T-001', start:'2026-01-01', end:'2026-12-31', rent:25000, advance:25000, residential:true, regMeta:null, status:'Active' },
+    { id:'L-002', unit:'U-002', tenant:'T-004', start:'2025-11-01', end:'2027-10-31', rent:32000, advance:32000, residential:true, regMeta:{office:'Sub-Registry Mirpur', deed:'DL-4521/2025', date:'2025-11-12'}, status:'Active' },
+    { id:'L-003', unit:'U-004', tenant:'T-003', start:'2025-06-01', end:'2027-05-31', rent:450000, advance:450000, residential:false, regMeta:{office:'Sub-Registry Gulshan', deed:'DL-3877/2025', date:'2025-06-20'}, status:'Active' },
+    { id:'L-004', unit:'U-005', tenant:'T-005', start:'2026-03-01', end:'2027-02-28', rent:380000, advance:380000, residential:false, regMeta:null, status:'Pending Registration' },
+    { id:'L-005', unit:'U-006', tenant:'T-008', start:'2024-07-01', end:'2026-06-30', rent:350000, advance:700000, residential:false, regMeta:{office:'Sub-Registry Gulshan', deed:'DL-2110/2024', date:'2024-07-15'}, status:'Active' },
+    { id:'L-006', unit:'U-008', tenant:'T-006', start:'2026-02-01', end:'2026-10-31', rent:210000, advance:210000, residential:false, regMeta:null, status:'Active' },
+    { id:'L-007', unit:'U-010', tenant:'T-002', start:'2026-01-15', end:'2026-12-14', rent:40000, advance:40000, residential:true, regMeta:null, status:'Active' },
+    { id:'L-008', unit:'U-002', tenant:'T-007', start:'2023-03-01', end:'2024-02-29', rent:28000, advance:56000, residential:true, regMeta:{office:'Sub-Registry Dhanmondi', deed:'DL-1108/2023', date:'2023-03-20'}, status:'Expired' },
+    { id:'L-009', unit:'U-009', tenant:'T-005', start:'2025-09-01', end:'2026-08-31', rent:180000, advance:180000, residential:false, regMeta:null, status:'Terminated' },
+    { id:'L-010', unit:'U-001', tenant:'T-006', start:'2026-06-01', end:'2028-05-31', rent:28000, advance:56000, residential:true, regMeta:null, status:'Pending Registration' }
+  ],
+  invoices: [
+    { id:'INV-2026-001', lease:'L-001', month:'2026-06', gross:25000, tdsRate:0, tds:0, net:25000, status:'Paid' },
+    { id:'INV-2026-002', lease:'L-002', month:'2026-06', gross:32000, tdsRate:0, tds:0, net:32000, status:'Paid' },
+    { id:'INV-2026-003', lease:'L-003', month:'2026-06', gross:450000, tdsRate:0.10, tds:45000, net:405000, status:'Paid' },
+    { id:'INV-2026-004', lease:'L-004', month:'2026-06', gross:380000, tdsRate:0.10, tds:38000, net:342000, status:'Unpaid' },
+    { id:'INV-2026-005', lease:'L-005', month:'2026-06', gross:350000, tdsRate:0.10, tds:35000, net:315000, status:'Unpaid' },
+    { id:'INV-2026-006', lease:'L-006', month:'2026-06', gross:210000, tdsRate:0, tds:0, net:210000, status:'Overdue' },
+    { id:'INV-2026-007', lease:'L-007', month:'2026-06', gross:40000, tdsRate:0, tds:0, net:40000, status:'Paid' },
+    { id:'INV-2026-008', lease:'L-004', month:'2026-07', gross:380000, tdsRate:0.10, tds:38000, net:342000, status:'Overdue' }
+  ],
+  receipts: [
+    { id:'RCP-0001', invoice:'INV-2026-001', amount:25000, date:'2026-06-05', method:'bKash', sig:'SIG-9f3a21c8' },
+    { id:'RCP-0002', invoice:'INV-2026-002', amount:32000, date:'2026-06-08', method:'Bank', sig:'SIG-4b71d90e' },
+    { id:'RCP-0003', invoice:'INV-2026-003', amount:405000, date:'2026-06-10', method:'bKash', sig:'SIG-c2e58a77' },
+    { id:'RCP-0004', invoice:'INV-2026-007', amount:40000, date:'2026-06-12', method:'Nagad', sig:'SIG-77d21f0a' }
+  ],
+  tickets: [
+    { id:'MT-001', unit:'U-008', desc:'Roof structural crack over Shed A', reported:'2026-06-18', liability:'Landlord', status:'Open', contractor:'Rahim Steel Works', cost:0, note:'' },
+    { id:'MT-002', unit:'U-001', desc:'Kitchen sink leakage', reported:'2026-06-21', liability:'Tenant', status:'Open', contractor:'', cost:0, note:'' },
+    { id:'MT-003', unit:'U-010', desc:'Water pump failure (common line)', reported:'2026-06-24', liability:'Landlord', status:'In Progress', contractor:'Kazi Plumbing', cost:8500, note:'Invoice #CP-221 validated' },
+    { id:'MT-004', unit:'U-009', desc:'Flooring damage from tenant forklift', reported:'2026-06-27', liability:'Tenant', status:'Awaiting Payment', contractor:'Meghna Builders', cost:42000, note:'' }
+  ],
+  payments: [
+    { id:'PAY-001', invoice:'INV-2026-001', amount:25000, method:'bKash', ref:'BK-7f2a', date:'2026-06-05', status:'Success' },
+    { id:'PAY-002', invoice:'INV-2026-003', amount:405000, method:'bKash', ref:'BK-91cd', date:'2026-06-10', status:'Success' },
+    { id:'PAY-003', invoice:'INV-2026-007', amount:40000, method:'Nagad', ref:'NG-33ab', date:'2026-06-12', status:'Success' }
+  ],
+  ai_log: [
+    { role:'ai', text:'Hello 👋 I\'m KR — your AI property caretaker. Ask me about leases, taxes, PRCA compliance, or say "generate invoice for L-003" and I\'ll take action.', ts:'2026-06-30 09:00' }
+  ]
+};
+
+// === KRTaker core: state, utils, shell, dashboard, portfolio, tenancy ===
+const SW_CACHE = 'krtaker-v1-0';
+const MODULE_TITLE = 'KRTaker';
+let DB = loadDB();
+let currentView = 'dashboard';
+const NAV = [
+  { g:'Overview' },
+  { id:'dashboard', ico:'🏠', label:'Dashboard' },
+  { g:'Portfolio' },
+  { id:'properties', ico:'🏢', label:'Properties' },
+  { id:'units', ico:'🚪', label:'Units' },
+  { g:'Tenancy' },
+  { id:'tenants', ico:'👤', label:'Tenants' },
+  { id:'leases', ico:'📄', label:'Leases' },
+  { g:'Finance' },
+  { id:'invoices', ico:'🧾', label:'Invoices' },
+  { id:'receipts', ico:'📜', label:'Receipts' },
+  { id:'payments', ico:'💳', label:'Payments' },
+  { id:'taxes', ico:'🏦', label:'Taxes' },
+  { g:'Operations' },
+  { id:'maintenance', ico:'🔧', label:'Maintenance' },
+  { id:'compliance', ico:'⚖️', label:'Compliance' },
+  { g:'Intelligence' },
+  { id:'ai', ico:'🤖', label:'AI Assistant' }
+];
+const MOB_NAV = ['dashboard','properties','leases','invoices','ai'];
+
+// ---------- persistence ----------
+function loadDB(){
+  try{
+    const raw = localStorage.getItem('krtaker_db_v1');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return JSON.parse(JSON.stringify(SEED));
+}
+function saveDB(){ try{ localStorage.setItem('krtaker_db_v1', JSON.stringify(DB)); }catch(e){} }
+function resetDB(){ DB = JSON.parse(JSON.stringify(SEED)); saveDB(); toast('Demo data reset','success'); nav(currentView); }
+
+// ---------- utils ----------
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(n){ return '\u09F3' + Number(n||0).toLocaleString('en-IN'); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function uid(p){ return p + '-' + String(Date.now()).slice(-6); }
+function toast(msg, type){
+  const c = document.getElementById('toastContainer');
+  const d = document.createElement('div');
+  d.className = 'toast ' + (type||'');
+  d.textContent = msg;
+  c.appendChild(d);
+  setTimeout(()=>{ d.style.opacity='0'; setTimeout(()=>d.remove(), 300); }, 2600);
+}
+function badge(status){
+  const map = {'Active':'badge-active','Paid':'badge-active','Success':'badge-active','Leased':'badge-active','Open':'badge-new','Vacant':'badge-closed','Pending Registration':'badge-pending','Unpaid':'badge-pending','In Progress':'badge-pending','Overdue':'badge-sold','Expired':'badge-closed','Terminated':'badge-closed','Maintenance':'badge-reserved','Awaiting Payment':'badge-reserved','Landlord':'badge-sold','Tenant':'badge-closed'};
+  return `<span class="badge-status ${map[status]||'badge-pending'}">${esc(status)}</span>`;
+}
+function statCards(list){
+  return `<div class="stats-row">` + list.map(s=>
+    `<div class="stat-card"><div class="label">${s[0]}</div><div class="value"${s[2]?` style="color:${s[2]}"`:''}>${s[1]}</div>${s[3]?`<div class="trend">${s[3]}</div>`:''}</div>`
+  ).join('') + `</div>`;
+}
+function pageHeader(title, subtitle, actions){
+  return `<div class="tbl-toolbar" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+    <div><div class="page-subtitle" style="font-size:12px;color:#8895a7;margin:0">${subtitle||''}</div></div>
+    <div style="display:flex;gap:6px">${actions||''}</div></div>`;
+}
+function emptyState(msg){ return `<div style="padding:40px;text-align:center;color:#9aa5b1;font-size:12px">${msg}</div>`; }
+function propertyById(id){ return DB.properties.find(p=>p.id===id); }
+function unitById(id){ return DB.units.find(u=>u.id===id); }
+function tenantById(id){ return DB.tenants.find(t=>t.id===id); }
+function leaseById(id){ return DB.leases.find(l=>l.id===id); }
+function leasesForUnit(uid){ return DB.leases.filter(l=>l.unit===uid && (l.status==='Active'||l.status==='Pending Registration')); }
+function unitLabel(u){ return (propertyById(u.property)?.name||'?') + ' / ' + u.name; }
+
+// ---------- modal ----------
+function openModal(title, body, footer){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('modalFooter').innerHTML = footer||'';
+  document.getElementById('modalOverlay').style.display = 'flex';
+}
+function closeModal(){ document.getElementById('modalOverlay').style.display = 'none'; }
+function closeModalOnBackdrop(e){ if(e.target.id==='modalOverlay') closeModal(); }
+
+// ---------- global search ----------
+function openGlobalSearch(q){
+  const dd = document.getElementById('gsDropdown');
+  if(!q || q.trim().length < 2){ dd.style.display='none'; return; }
+  const ql = q.trim().toLowerCase();
+  const res = [];
+  DB.properties.forEach(p=>{ if((p.name+' '+p.holding).toLowerCase().includes(ql)) res.push({ico:'🏢', t:p.name, s:p.id+' · '+p.jurisdiction, fn:`nav('properties'); openPropDetail('${p.id}')`}); });
+  DB.tenants.forEach(t=>{ if(t.name.toLowerCase().includes(ql)) res.push({ico:'👤', t:t.name, s:t.id+' · '+t.nid, fn:`nav('tenants'); openTenantDetail('${t.id}')`}); });
+  DB.leases.forEach(l=>{ if(l.id.toLowerCase().includes(ql)) res.push({ico:'📄', t:l.id, s:unitLabel(unitById(l.unit))+' · '+fmt(l.rent)+'/mo', fn:`nav('leases'); openLeaseDetail('${l.id}')`}); });
+  DB.invoices.forEach(v=>{ if(v.id.toLowerCase().includes(ql)) res.push({ico:'🧾', t:v.id, s:leaseById(v.lease)?.id+' · '+v.month, fn:`nav('invoices')`}); });
+  NAV.forEach(n=>{ if(n.id && n.label.toLowerCase().includes(ql)) res.push({ico:n.ico, t:n.label+' module', s:'Go to module', fn:`nav('${n.id}')`}); });
+  const box = document.getElementById('gsResults');
+  box.innerHTML = res.slice(0,10).map(r=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:7px;cursor:pointer" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${r.fn}; closeGlobalSearch()">
+    <span style="font-size:14px">${r.ico}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">${esc(r.t)}</div><div style="font-size:10px;color:#8895a7">${esc(r.s)}</div></div></div>`).join('');
+  document.getElementById('gsEmpty').style.display = res.length ? 'none' : 'block';
+  dd.style.display = 'flex';
+}
+function closeGlobalSearch(){ document.getElementById('gsDropdown').style.display='none'; }
+function jumpFirstResult(){ const r=document.querySelector('#gsResults [onclick]'); if(r) r.click(); }
+document.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); const i=document.getElementById('gsInput'); i.focus(); i.select(); }
+  if(e.key==='Escape'){ closeModal(); closeGlobalSearch(); closeQuickAdd(); }
+});
+
+// ---------- quick add ----------
+const QUICK_ACTIONS = [
+  {ico:'🏢', label:'Add Property', fn:'openPropForm()'},
+  {ico:'👤', label:'Add Tenant', fn:'openTenantForm()'},
+  {ico:'📄', label:'Add Lease', fn:'openLeaseForm()'},
+  {ico:'🧾', label:'Generate Invoice', fn:'openInvoiceForm()'},
+  {ico:'🔧', label:'Report Maintenance', fn:'openTicketForm()'}
+];
+function openQuickAdd(){
+  document.getElementById('qaList').innerHTML = QUICK_ACTIONS.map(a=>
+    `<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid #f0f2f5" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${a.fn}; closeQuickAdd()">
+      <span style="font-size:15px">${a.ico}</span><span style="font-size:12px;font-weight:600">${a.label}</span></div>`).join('');
+  document.getElementById('qaDropdown').style.display = 'flex';
+}
+function closeQuickAdd(){ document.getElementById('qaDropdown').style.display='none'; }
+
+// ---------- sidebar / nav ----------
+function renderSidebar(){
+  let h = '';
+  NAV.forEach(n=>{
+    if(n.g) h += `<div class="sidebar-item has-children"><div class="grp-label">${n.g}</div></div>`;
+    else h += `<div class="sidebar-item ${currentView===n.id?'active':''}" data-nav="${n.id}" onclick="nav('${n.id}')"><span class="nav-ico">${n.ico}</span>${n.label}</div>`;
+  });
+  document.getElementById('sidebarMenu').innerHTML = h;
+  document.getElementById('mobBottomNav').innerHTML = MOB_NAV.map(id=>{
+    const n = NAV.find(x=>x.id===id);
+    return `<div class="mb-item ${currentView===id?'active':''}" onclick="nav('${id}')"><span class="mi">${n.ico}</span><span>${n.label.split(' ')[0]}</span></div>`;
+  }).join('');
+}
+function toggleMobSidebar(){
+  const sb = document.getElementById('sidebar');
+  sb.style.display = sb.style.display==='none' ? 'flex' : 'none';
+}
+function nav(id){
+  currentView = id;
+  const n = NAV.find(x=>x.id===id);
+  document.getElementById('pageTitle').textContent = n ? n.label : 'KRTaker';
+  document.getElementById('breadcrumb').textContent = 'Home / ' + (n?n.label:'');
+  document.getElementById('sidebarMenu').innerHTML = '';
+  renderSidebar();
+  window.scrollTo(0,0);
+  const renderers = {
+    dashboard: renderDashboard, properties: renderProperties, units: renderUnits,
+    tenants: renderTenants, leases: renderLeases, invoices: renderInvoices,
+    receipts: renderReceipts, payments: renderPayments, taxes: renderTaxes,
+    maintenance: renderMaintenance, compliance: renderCompliance, ai: renderAI
+  };
+  (renderers[id]||renderDashboard)();
+  if(window.location.hash !== '#'+id) history.replaceState(null,'','#'+id);
+}
+window.addEventListener('hashchange', ()=>{ const h=location.hash.slice(1); if(h && NAV.find(n=>n.id===h)) nav(h); });
+
+// ---------- dashboard ----------
+function renderDashboard(){
+  const activeLeases = DB.leases.filter(l=>l.status==='Active');
+  const pendingReg = DB.leases.filter(l=>l.status==='Pending Registration');
+  const occupied = DB.units.filter(u=>u.status==='Leased').length;
+  const totalUnits = DB.units.length;
+  const portValue = DB.properties.reduce((s,p)=>s+p.value,0);
+  const rentDue = DB.invoices.filter(v=>v.status==='Unpaid'||v.status==='Overdue').reduce((s,v)=>s+v.gross,0);
+  const openTickets = DB.tickets.filter(t=>t.status==='Open'||t.status==='In Progress').length;
+  const due30 = DB.invoices.filter(v=>v.status==='Overdue').reduce((s,v)=>s+v.gross,0);
+
+  let h = statCards([
+    ['Portfolio Value', fmt(portValue), '#2F80ED', portValue>1e9?'₹'+(portValue/1e7).toFixed(1)+' Cr':''],
+    ['Units', totalUnits+' ('+occupied+' leased)', '#27ae60', Math.round(occupied/totalUnits*100)+'% occupancy'],
+    ['Rent Due (Jun–Jul)', fmt(rentDue), '#e67e22', 'Overdue '+fmt(due30)],
+    ['Leases Pending Registration', pendingReg.length, pendingReg.length?'#e74c3c':'#27ae60', 'Legal gate active'],
+    ['Open Tickets', openTickets, '#9b59b6', DB.tickets.filter(t=>t.liability==='Landlord'&&t.status==='Open').length+' landlord-side']
+  ]);
+
+  // occupancy bars by property
+  const occBars = DB.properties.map(p=>{
+    const us = DB.units.filter(u=>u.property===p.id);
+    const oc = us.filter(u=>u.status==='Leased').length;
+    const pct = us.length ? Math.round(oc/us.length*100) : 0;
+    return `<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:10.5px;color:#667;margin-bottom:3px"><span>${esc(p.name)}</span><span>${oc}/${us.length} · ${pct}%</span></div>
+      <div style="height:7px;background:#eef1f5;border-radius:4px"><div style="height:7px;width:${pct}%;background:${pct>80?'#27ae60':pct>40?'#2F80ED':'#e67e22'};border-radius:4px"></div></div></div>`;
+  }).join('');
+
+  // recent activity
+  const acts = [
+    {t:'Payment received', d:'RCP-0004 · ৳40,000 via Nagad', when:'Jun 12'},
+    {t:'Payment received', d:'RCP-0003 · ৳405,000 via bKash (TDS ৳45,000 split)', when:'Jun 10'},
+    {t:'Lease flagged', d:'L-004 (>12mo) → Pending Registration — Sub-registry doc required', when:'Jun 08'},
+    {t:'Maintenance ticket', d:'MT-004 · flooring damage liability → Tenant', when:'Jun 27'},
+    {t:'AI action', d:'Generated rent reminder for INV-2026-006 (L-006)', when:'Jun 20'}
+  ];
+  const actList = acts.map(a=>`<div class="activity-item" style="display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #f4f6f9">
+    <div style="width:26px;height:26px;border-radius:7px;background:#eef6ff;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">${a.t.startsWith('Payment')?'💳':a.t.startsWith('Lease')?'⚖️':a.t.startsWith('AI')?'🤖':'🔧'}</div>
+    <div style="flex:1;min-width:0"><div style="font-size:11.5px;font-weight:600">${a.t}</div><div style="font-size:10.5px;color:#667">${a.d}</div></div>
+    <div style="font-size:9.5px;color:#9aa5b1">${a.when}</div></div>`).join('');
+
+  h += `<div class="dash-grid" style="margin-top:14px">
+    <div class="card"><div class="card-header">Occupancy by Property</div><div class="card-body">${occBars}</div></div>
+    <div class="card"><div class="card-header">Recent Activity</div><div class="card-body" style="padding:4px 14px">${actList}</div></div>
+    <div class="card"><div class="card-header">Compliance Snapshot</div><div class="card-body">
+      <div style="font-size:11px;line-height:1.9">
+        <div>⚖️ <b>${pendingReg.length}</b> lease${pendingReg.length>1?'s':''} pending registration (TPA 1882 §107)${pendingReg.length?` — <a href="javascript:nav('compliance')" style="color:#2F80ED">review</a>`:''}</div>
+        <div>🏠 <b>${DB.leases.filter(l=>l.residential && l.advance>l.rent).length}</b> residential lease(s) exceed 1-month advance cap (PRCA 1991 §10/§23)</div>
+        <div>📅 <b>${DB.leases.filter(l=>l.status==='Active'&&l.end<today()).length}</b> lease(s) expired or ending soon</div>
+        <div>🧾 <b>${DB.invoices.filter(v=>v.tds>0).length}</b> invoices with TDS split (Income Tax Act 2023)</div>
+      </div></div></div>
+    <div class="card"><div class="card-header">AI Caretaker</div><div class="card-body">
+      <div style="font-size:11px;color:#667;line-height:1.7;margin-bottom:8px">Ask KR to generate invoices, check PRCA limits, resolve maintenance liability, or answer tax questions.</div>
+      <button class="drawer-btn primary" style="width:100%" onclick="nav('ai')">🤖 Open AI Assistant</button>
+    </div></div>
+  </div>`;
+  document.getElementById('content').innerHTML = h;
+}
+
+// ---------- properties ----------
+function renderProperties(){
+  const rows = DB.properties.map(p=>{
+    const us = DB.units.filter(u=>u.property===p.id);
+    const ls = DB.leases.filter(l=>us.some(u=>u.id===l.unit) && l.status==='Active');
+    const monthly = ls.reduce((s,l)=>s+l.rent,0);
+    return `<tr onclick="openPropDetail('${p.id}')" style="cursor:pointer">
+      <td><b>${esc(p.name)}</b><span class="kr-badge">${p.type}</span><div class="mono" style="font-size:10px;color:#8895a7">${p.id} · ${esc(p.holding)}</div></td>
+      <td>${p.jurisdiction}</td>
+      <td class="mono">CS ${esc(p.khatian.cs)} / SA ${esc(p.khatian.sa)}</td>
+      <td>${us.length} units</td>
+      <td>${fmt(monthly)}<div style="font-size:9.5px;color:#8895a7">/mo</div></td>
+      <td>${fmt(p.value)}</td>
+      <td>${badge(p.status)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('content').innerHTML =
+    pageHeader('Properties', 'Portfolio assets with jurisdiction & khatian records (e-Porcha cross-reference)', `<button class="drawer-btn primary" onclick="openPropForm()">＋ Add Property</button>`)
+    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Property</th><th>Jurisdiction</th><th>Khatian (CS/SA)</th><th>Units</th><th>Rent Roll</th><th>Value</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No properties yet')}</td></tr>`}</tbody></table></div>`;
+}
+function openPropDetail(id){
+  const p = propertyById(id); if(!p) return;
+  const us = DB.units.filter(u=>u.property===id);
+  const unitsRows = us.map(u=>`<tr><td>${esc(u.name)}</td><td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td>${badge(u.status)}</td></tr>`).join('');
+  const tdsTxt = p.mortgage ? `Mortgage: ${p.mortgage.bank} · annual interest ${fmt(p.mortgage.interest)}` : 'No mortgage';
+  openModal(p.name,
+    `<div style="font-size:12px;line-height:1.8">
+      <div class="form-grid">
+        <div class="form-group"><div class="form-label">Type</div><div>${p.type} · ${p.jurisdiction}</div></div>
+        <div class="form-group"><div class="form-label">Holding No.</div><div>${esc(p.holding)}</div></div>
+        <div class="form-group"><div class="form-label">Khatian</div><div class="mono">CS ${esc(p.khatian.cs)} · SA ${esc(p.khatian.sa)} · RS ${esc(p.khatian.rs)} · BS ${esc(p.khatian.bs)}</div></div>
+        <div class="form-group"><div class="form-label">Mortgage</div><div>${tdsTxt}</div></div>
+        <div class="form-group"><div class="form-label">Value</div><div>${fmt(p.value)}</div></div>
+        <div class="form-group"><div class="form-label">Est. Holding Tax</div><div><a href="javascript:nav('taxes'); openHoldingTax('${p.id}')" style="color:#2F80ED">calculate →</a></div></div>
+      </div>
+      <div style="font-weight:700;margin:12px 0 6px">Units (${us.length})</div>
+      <div class="table-wrap"><table class="table-view"><thead><tr><th>Unit</th><th>Floor</th><th>Size</th><th>Status</th></tr></thead><tbody>${unitsRows}</tbody></table></div>
+    </div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal(); openPropForm('${p.id}')">Edit</button>
+     <button class="drawer-btn primary" onclick="nav('units')">View Units</button>`);
+}
+function openPropForm(id){
+  const p = id ? propertyById(id) : null;
+  const v = p || {name:'',type:'Flat',jurisdiction:'Dhaka North',holding:'',cs:'',sa:'',rs:'',bs:'',bank:'',interest:'',value:'',status:'Active'};
+  openModal(p?'Edit Property':'Add Property',
+    `<div class="form-grid">
+      <div class="form-group"><div class="form-label">Property name</div><input class="form-input" id="pf_name" value="${esc(v.name)}"></div>
+      <div class="form-group"><div class="form-label">Type</div><select class="form-input" id="pf_type">${['Flat','Plot','Commercial','Industrial','Warehouse','Mall'].map(t=>`<option ${v.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="form-group"><div class="form-label">Jurisdiction (City Corp)</div><select class="form-input" id="pf_jur">${['Dhaka North','Dhaka South','Chattogram','Gazipur','Other'].map(j=>`<option ${v.jurisdiction===j?'selected':''}>${j}</option>`).join('')}</select></div>
+      <div class="form-group"><div class="form-label">Holding no.</div><input class="form-input" id="pf_holding" value="${esc(v.holding)}" placeholder="12/5, Mirpur-10"></div>
+      <div class="form-group"><div class="form-label">CS Khatian</div><input class="form-input" id="pf_cs" value="${esc(v.khatian&&v.khatian.cs||'')}" placeholder="CS 452"></div>
+      <div class="form-group"><div class="form-label">SA Khatian</div><input class="form-input" id="pf_sa" value="${esc(v.khatian&&v.khatian.sa||'')}" placeholder="SA 1180"></div>
+      <div class="form-group"><div class="form-label">RS Khatian</div><input class="form-input" id="pf_rs" value="${esc(v.khatian&&v.khatian.rs||'')}" placeholder="RS 2277"></div>
+      <div class="form-group"><div class="form-label">BS Khatian</div><input class="form-input" id="pf_bs" value="${esc(v.khatian&&v.khatian.bs||'')}" placeholder="BS 3301"></div>
+      <div class="form-group"><div class="form-label">Mortgage bank (blank = none)</div><input class="form-input" id="pf_bank" value="${esc(v.mortgage&&v.mortgage.bank||'')}"></div>
+      <div class="form-group"><div class="form-label">Annual mortgage interest (৳)</div><input class="form-input" id="pf_interest" value="${v.mortgage&&v.mortgage.interest||''}"></div>
+      <div class="form-group"><div class="form-label">Market value (৳)</div><input class="form-input" id="pf_value" value="${v.value||''}"></div>
+    </div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Cancel</button>
+     <button class="drawer-btn primary" onclick="saveProp('${p?p.id:''}')">${p?'Save changes':'Add property'}</button>`);
+}
+function saveProp(id){
+  const g = x => document.getElementById(x).value;
+  const data = {
+    name:g('pf_name').trim(), type:g('pf_type'), jurisdiction:g('pf_jur'), holding:g('pf_holding').trim(),
+    khatian:{cs:g('pf_cs').trim(),sa:g('pf_sa').trim(),rs:g('pf_rs').trim(),bs:g('pf_bs').trim()},
+    mortgage:(g('pf_bank').trim()||g('pf_interest'))?{bank:g('pf_bank').trim(),interest:Number(g('pf_interest'))||0}:null,
+    value:Number(g('pf_value'))||0, status:'Active'
+  };
+  if(!data.name){ toast('Property name required','error'); return; }
+  if(id){ Object.assign(propertyById(id), data); toast('Property updated','success'); }
+  else { DB.properties.push(Object.assign({id:uid('P')}, data)); toast('Property added','success'); }
+  saveDB(); closeModal(); renderProperties();
+}
+
+// ---------- units ----------
+function renderUnits(){
+  const rows = DB.units.map(u=>{
+    const p = propertyById(u.property);
+    return `<tr onclick="openUnitDetail('${u.id}')" style="cursor:pointer">
+      <td><b>${esc(u.name)}</b><div style="font-size:10px;color:#8895a7">${esc(p?p.name:'')}</div></td>
+      <td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td>
+      <td>${badge(u.status)}</td>
+      <td>${leasesForUnit(u.id).map(l=>l.id).join(', ')||'—'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('content').innerHTML =
+    pageHeader('Units', 'Individual lettable units across the portfolio', `<button class="drawer-btn primary" onclick="openUnitForm()">＋ Add Unit</button>`)
+    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Unit</th><th>Floor</th><th>Size</th><th>Status</th><th>Lease(s)</th></tr></thead><tbody>${rows||`<tr><td colspan="5">${emptyState('No units')}</td></tr>`}</tbody></table></div>`;
+}
+function openUnitDetail(id){
+  const u = unitById(id); const p = propertyById(u.property);
+  const ls = leasesForUnit(u.id);
+  const lsRows = ls.map(l=>`<tr><td>${l.id}</td><td>${esc(tenantById(l.tenant)?.name||'')}</td><td>${fmt(l.rent)}/mo</td><td>${badge(l.status)}</td></tr>`).join('');
+  openModal(u.name,
+    `<div style="font-size:12px;line-height:1.8">
+      <div class="form-grid">
+        <div class="form-group"><div class="form-label">Property</div><div>${esc(p?.name||'')}</div></div>
+        <div class="form-group"><div class="form-label">Floor</div><div>${u.floor}</div></div>
+        <div class="form-group"><div class="form-label">Size</div><div>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</div></div>
+        <div class="form-group"><div class="form-label">Status</div><div>${badge(u.status)}</div></div>
+      </div>
+      <div style="font-weight:700;margin:12px 0 6px">Leases</div>
+      ${lsRows?`<div class="table-wrap"><table class="table-view"><thead><tr><th>Lease</th><th>Tenant</th><th>Rent</th><th>Status</th></tr></thead><tbody>${lsRows}</tbody></table></div>`:emptyState('No lease on this unit')}
+    </div>`,
+    `<button class="drawer-btn primary" onclick="closeModal(); openLeaseForm(null,'${u.id}')">＋ New Lease</button>`);
+}
+function openUnitForm(){
+  openModal('Add Unit',
+    `<div class="form-grid">
+      <div class="form-group"><div class="form-label">Property</div><select class="form-input" id="uf_prop">${DB.properties.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div>
+      <div class="form-group"><div class="form-label">Unit name</div><input class="form-input" id="uf_name" placeholder="Flat 6A"></div>
+      <div class="form-group"><div class="form-label">Floor</div><input class="form-input" id="uf_floor" placeholder="6th"></div>
+      <div class="form-group"><div class="form-label">Sqft</div><input class="form-input" id="uf_sqft" placeholder="1450"></div>
+      <div class="form-group"><div class="form-label">Status</div><select class="form-input" id="uf_status">${['Vacant','Leased','Maintenance'].map(s=>`<option>${s}</option>`).join('')}</select></div>
+    </div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Cancel</button><button class="drawer-btn primary" onclick="saveUnit()">Add unit</button>`);
+}
+function saveUnit(){
+  const g = x => document.getElementById(x).value;
+  const prop = g('uf_prop');
+  const name = g('uf_name').trim();
+  if(!name){ toast('Unit name required','error'); return; }
+  DB.units.push({id:uid('U'), property:prop, name, floor:g('uf_floor'), sqft:Number(g('uf_sqft'))||0, status:g('uf_status')});
+  saveDB(); closeModal(); renderUnits(); toast('Unit added','success');
+}
+
+// ---------- tenants ----------
+function renderTenants(){
+  const rows = DB.tenants.map(t=>{
+    const ls = DB.leases.filter(l=>l.tenant===t.id && (l.status==='Active'||l.status==='Pending Registration'));
+    const monthly = ls.reduce((s,l)=>s+l.rent,0);
+    return `<tr onclick="openTenantDetail('${t.id}')" style="cursor:pointer">
+      <td><b>${esc(t.name)}</b>${t.nrb?`<span class="kr-badge" style="background:#eef8ee;color:#27ae60;border-color:#c9ecc9">NRB</span>`:''}</td>
+      <td>${t.kind}</td><td class="mono">${t.nid}</td><td>${t.phone}</td>
+      <td>${ls.map(l=>l.id).join(', ')||'—'}</td><td>${ls.length?fmt(monthly)+'/mo':'—'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('content').innerHTML =
+    pageHeader('Tenants', 'Tenant directory with NID & NRB status', `<button class="drawer-btn primary" onclick="openTenantForm()">＋ Add Tenant</button>`)
+    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Tenant</th><th>Kind</th><th>NID / BIN</th><th>Phone</th><th>Leases</th><th>Rent Roll</th></tr></thead><tbody>${rows||`<tr><td colspan="6">${emptyState('No tenants')}</td></tr>`}</tbody></table></div>`;
+}
+function openTenantDetail(id){
+  const t = tenantById(id); if(!t) return;
+  const ls = DB.leases.filter(l=>l.tenant===id);
+  const lsRows = ls.map(l=>`<tr><td>${l.id}</td><td>${esc(unitLabel(unitById(l.unit)))}</td><td>${fmt(l.rent)}/mo</td><td>${badge(l.status)}</td></tr>`).join('');
+  openModal(t.name+(t.nrb?' (NRB)':''),
+    `<div style="font-size:12px;line-height:1.8">
+      <div class="form-grid">
+        <div class="form-group"><div class="form-label">Kind</div><div>${t.kind}</div></div>
+        <div class="form-group"><div class="form-label">NID / BIN</div><div class="mono">${t.nid}</div></div>
+        <div class="form-group"><div class="form-label">Phone</div><div>${t.phone}</div></div>
+        <div class="form-group"><div class="form-label">Email</div><div>${esc(t.email)}</div></div>
+        <div class="form-group"><div class="form-label">NRB</div><div>${t.nrb?'Yes — NRTA/NITA eligible':'No'}</div></div>
+      </div>
+      <div style="font-weight:700;margin:12px 0 6px">Leases</div>
+      ${lsRows?`<div class="table-wrap"><table class="table-view"><thead><tr><th>Lease</th><th>Unit</th><th>Rent</th><th>Status</th></tr></thead><tbody>${lsRows}</tbody></table></div>`:emptyState('No leases')}
+    </div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal(); openTenantForm('${t.id}')">Edit</button>`);
+}
+function openTenantForm(id){
+  const t = id ? tenantById(id) : null;
+  const v = t || {name:'',kind:'Individual',nid:'',phone:'',email:'',nrb:false};
+  openModal(t?'Edit Tenant':'Add Tenant',
+    `<div class="form-grid">
+      <div class="form-group"><div class="form-label">Full name / Company</div><input class="form-input" id="tf_name" value="${esc(v.name)}"></div>
+      <div class="form-group"><div class="form-label">Kind</div><select class="form-input" id="tf_kind">${['Individual','Corporate'].map(k=>`<option ${v.kind===k?'selected':''}>${k}</option>`).join('')}</select></div>
+      <div class="form-group"><div class="form-label">NID / BIN</div><input class="form-input" id="tf_nid" value="${esc(v.nid)}"></div>
+      <div class="form-group"><div class="form-label">Phone</div><input class="form-input" id="tf_phone" value="${esc(v.phone)}"></div>
+      <div class="form-group"><div class="form-label">Email</div><input class="form-input" id="tf_email" value="${esc(v.email)}"></div>
+      <div class="form-group"><div class="form-label">NRB status</div><select class="form-input" id="tf_nrb">${[['false','No'],['true','Yes — Non-Resident Bangladeshi']].map(o=>`<option value="${o[0]}" ${String(v.nrb)===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+    </div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Cancel</button><button class="drawer-btn primary" onclick="saveTenant('${id||''}')">${t?'Save changes':'Add tenant'}</button>`);
+}
+function saveTenant(id){
+  const g = x => document.getElementById(x).value;
+  const data = {name:g('tf_name').trim(), kind:g('tf_kind'), nid:g('tf_nid').trim(), phone:g('tf_phone').trim(), email:g('tf_email').trim(), nrb:g('tf_nrb')==='true'};
+  if(!data.name){ toast('Name required','error'); return; }
+  if(id) Object.assign(tenantById(id), data);
+  else DB.tenants.push(Object.assign({id:uid('T')}, data));
+  saveDB(); closeModal(); renderTenants(); toast('Tenant saved','success');
+}
+
+// === KRTaker: leases (legal gates), invoices (TDS), receipts, maintenance ===
+
+// ---------- legal engines ----------
+function leaseMonths(l){ return Math.max(1, Math.round((new Date(l.end)-new Date(l.start))/2592000000)); }
+function registrationGate(l){
+  const months = leaseMonths(l);
+  if(months > 12 && !l.regMeta) return {block:true, msg:`Duration ${months} months > 12 — TPA 1882 §107 + Registration Act §17(1)(d) require a registered instrument. Ledger stays inactive until sub-registry details are uploaded.`};
+  if(months > 12 && l.regMeta) return {block:false, note:'Registered instrument verified.'};
+  return {block:false, note:''};
+}
+function prcaAdvanceFlag(l){
+  if(l.residential && l.advance > l.rent) return {flag:true, msg:`Advance ${fmt(l.advance)} exceeds 1 month rent (${fmt(l.rent)}) — PRCA 1991 §10/§23 requires rent-controller written consent. Manual override allowed for commercial.`};
+  return {flag:false, msg:''};
+}
+function prcaRevisionFlag(l){
+  const months = leaseMonths(l);
+  if(months >= 24) return {flag:true, msg:`PRCA 1991 §15/§16 — rent can generally only be revised every 2 years. Future revision on this lease will be flagged.`};
+  return {flag:false, msg:''};
+}
+function tdsFor(lease){
+  const t = tenantById(lease.tenant);
+  if(t && t.kind === 'Corporate'){
+    const u = unitById(lease.unit);
+    const p = propertyById(u?.property);
+    const section = (p && p.type==='Commercial') ? '§128' : '§109';
+    const rate = (p && p.type==='Commercial') ? 0.04 : 0.10;
+    return {rate, section};
+  }
+  return {rate:0, section:''};
+}
+function holdingTaxCalc(p){
+  const us = DB.units.filter(u=>u.property===p.id);
+  const ls = DB.leases.filter(l=>us.some(u=>u.id===l.unit) && (l.status==='Active'||l.status==='Pending Registration'));
+  const gar = ls.reduce((s,l)=>s+l.rent*12,0);
+  const allowance = gar/6;                       // 2 months of rent ≈ 16.67%
+  const interest = p.mortgage ? p.mortgage.interest : 0;
+  const nav = Math.max(0, gar - allowance - interest);
+  const rate = { 'Dhaka North':0.08, 'Dhaka South':0.075, 'Chattogram':0.07, 'Gazipur':0.07 }[p.jurisdiction] || 0.06;
+  return {gar, allowance, interest, nav, rate, tax: Math.round(nav*rate)};
+}
+function evictionEligible(tenantId){
+  const overdue = DB.invoices.filter(v=>{
+    const l = leaseById(v.lease); return l && l.tenant===tenantId && v.status==='Overdue';
+  });
+  const months = overdue.length;
+  return {eligible: months>=3, months, msg: months>=3 ? `Tenant has ${months} months of unpaid rent — eviction grounds under PRCA 1991 §18 met. Generate compliant notice (§114A procedure).` : `${months} month(s) unpaid — §18 eviction grounds require ≥ 3 months.`};
+}
+
+// ---------- leases ----------
+function renderLeases(){
+  const rows = DB.leases.map(l=>{
+    const g = registrationGate(l);
+    const u = unitById(l.unit); const t = tenantById(l.tenant);
+    return `<tr onclick="openLeaseDetail('${l.id}')" style="cursor:pointer">
+      <td><b>${l.id}</b>${g.block?`<div style="font-size:9px;color:#e74c3c;font-weight:600">⚠ REGISTRATION REQUIRED</div>`:''}</td>
+      <td>${esc(unitLabel(u))}</td>
+      <td>${esc(t?t.name:'')}${t&&t.kind==='Corporate'?`<span class="kr-badge">TDS</span>`:''}</td>
+      <td>${fmt(l.rent)}<div style="font-size:9.5px;color:#8895a7">adv ${fmt(l.advance)}</div></td>
+      <td class="mono">${l.start} → ${l.end}</td>
+      <td>${leaseMonths(l)} mo</td>
+      <td>${badge(l.status)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('content').innerHTML =
+    pageHeader('Leases', 'Tenancy agreements — TPA 1882 §107 registration gate & PRCA 1991 validations active', `<button class="drawer-btn primary" onclick="openLeaseForm()">＋ Add Lease</button>`)
+    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Rent</th><th>Term</th><th>Length</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No leases')}</td></tr>`}</tbody></table></div>`;
+}
+function openLeaseDetail(id){
+  const l = leaseById(id); if(!l) return;
+  const u = unitById(l.unit); const t = tenantById(l.tenant);
+  const g = registrationGate(l);
+  const pa = prcaAdvanceFlag(l);
+  const pr = prcaRevisionFlag(l);
+  const td = tdsFor(l);
+  const invs = DB.invoices.filter(v=>v.lease===id);
+  const invRows = invs.map(v=>`<tr><td>${v.id}</td><td>${v.month}</td><td>${fmt(v.gross)}</td>${td.rate?`<td>${fmt(v.tds)}</td><td>${fmt(v.net)}</td>`:'<td>—</td><td>—</td>'}<td>${badge(v.status)}</td></tr>`).join('');
+  const evict = evictionEligible(l.tenant);
+  let h = `<div style="font-size:12px;line-height:1.8">
+    <div class="form-grid">
+      <div class="form-group"><div class="form-label">Unit</div><div>${esc(unitLabel(u))}</div></div>
+      <div class="form-group"><div class="form-label">Tenant</div><div>${esc(t?t.name:'')}${t&&t.nrb?' <span class="kr-badge">NRB</span>':''}</div></div>
+      <div class="form-group"><div class="form-label">Rent</div><div>${fmt(l.rent)} / month</div></div>
+      <div class="form-group"><div class="form-label">Advance</div><div>${fmt(l.advance)}${l.residential?' (residential)':''}</div></div>
+      <div class="form-group"><div class="form-label">Term</div><div class="mono">${l.start} → ${l.end} (${leaseMonths(l)} mo)</div></div>
+      <div class="form-group"><div class="form-label">Status</div><div>${badge(l.status)}</div></div>
+      ${td.rate?`<div class="form-group"><div class="form-label">TDS (Income Tax Act 2023 ${td.section})</div><div>${(td.rate*100).toFixed(0)}% withheld on invoices</div></div>`:''}
+      <div class="form-group"><div class="form-label">Registration</div><div>${l.regMeta?`<span style="color:#27ae60">✓ ${esc(l.regMeta.office)} · ${esc(l.regMeta.deed)} (${l.regMeta.date})</span>`:'<span style="color:#e67e22">Not registered</span>'}</div></div>
+    </div>`;
+  if(g.block) h += `<div class="compliance-block">${g.msg}</div>`;
+  if(pa.flag) h += `<div class="compliance-flag">${pa.msg}</div>`;
+  if(pr.flag) h += `<div class="compliance-flag">${pr.msg}</div>`;
+  if(evict.eligible) h += `<div class="compliance-block">${evict.msg}</div>`;
+  h += `<div style="font-weight:700;margin:12px 0 6px">Invoices</div>`;
+  h += invRows ? `<div class="table-wrap"><table class="table-view"><thead><tr><th>Invoice</th><th>Month</th><th>Gross</th>${td.rate?'<th>TDS</th><th>Net</th>':''}<th>Status</th></tr></thead><tbody>${invRows}</tbody></table></div>` : emptyState('No invoices generated');
+  h += `</div>`;
+  const footer = `<button class="drawer-btn secondary" onclick="closeModal(); openLeaseForm('${l.id}')">Edit</button>`;
+  if(g.block) footer + `<button class="drawer-btn primary" onclick="closeModal(); openRegistrationForm('${l.id}')">Upload Registration</button>`;
+  else footer + `<button class="drawer-btn primary" onclick="generateInvoiceForLease('${l.id}')">Generate Invoice</button>`;
+  openModal('Lease '+l.id, h, footer);
+}
+function openLeaseForm(id, presetUnit){
+  const l = id ? leaseById(id) : null;
+  const v = l || {unit:presetUnit||'', tenant:'', start:today(), end:'', rent:'', advance:'', residential:true};
+  openModal(l?'Edit Lease':'Add Lease',
+    `<div class="form-grid">
+      <div class="form-group"><div class="form-label">Unit</div><select class="form-input" id="lf_unit">${DB.units.map(u=>`<option value="${u.id}" ${v.unit===u.id?'selected':''}>${esc(unitLabel(u))}</option>`).join('')}</select></div>
+      <div class="form-group"><div class="form-label">Tenant</div><select class="form-input" id="lf_tenant">${DB.tenants.map(t=>`<option value="${t.id}" ${v.tenant===t.id?'selected':''}>${esc(t.name)}${t.kind==='Corporate'?' (TDS)':''}</option>`).join('')}</select></div>
+      <div class="form-group"><div class="form-label">Start date</div><input class="form-input" type="date" id="lf_start" value="${v.start}"></div>
+      <div class="form-group"><div class="form-label">End date</div><input class="form-input" type="date" id="lf_end" value="${v.end||''}"></div>
+      <div class="form-group"><div class="form-label">Monthly rent (৳)</div><input class="form-input" id="lf_rent" value="${v.rent}"></div>
+      <div class="form-group"><div class="form-label">Advance (৳)</div><input class="form-input" id="lf_advance" value="${v.advance}"></div>
+      <div class="form-group"><div class="form-label">Type</div><select class="form-input" id="lf_res">${[['true','Residential (PRCA 1991 applies)'],['false','Commercial']].map(o=>`<option value="${o[0]}" ${String(v.residential)===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+    </div>
+    <div style="font-size:10.5px;color:#8895a7;margin-top:8px;line-height:1.6">⚖️ Terms > 12 months auto-flag <b>Pending Registration</b> (TPA 1882 §107). Residential advance &gt; 1 month rent flagged under PRCA §10/§23.</div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Cancel</button><button class="drawer-btn primary" onclick="saveLease('${id||''}')">${l?'Save changes':'Add lease'}</button>`);
+}
+function saveLease(id){
+  const g = x => document.getElementById(x).value;
+  const unit = g('lf_unit'), tenant = g('lf_tenant');
+  const start = g('lf_start'), end = g('lf_end');
+  const rent = Number(g('lf_rent'))||0, advance = Number(g('lf_advance'))||0;
+  const residential = g('lf_res')==='true';
+  if(!unit||!tenant||!start||!end||!rent){ toast('Unit, tenant, dates and rent are required','error'); return; }
+  if(new Date(end) <= new Date(start)){ toast('End date must be after start date','error'); return; }
+  const months = Math.round((new Date(end)-new Date(start))/2592000000);
+  const data = {unit, tenant, start, end, rent, advance, residential,
+    regMeta: id? leaseById(id).regMeta : null,
+    status: months>12 ? 'Pending Registration' : 'Active'};
+  let newLease = null;
+  if(id){ Object.assign(leaseById(id), data); toast('Lease updated','success'); }
+  else { newLease = Object.assign({id:uid('L')}, data); DB.leases.push(newLease); }
+  saveDB(); closeModal(); renderLeases();
+  if(months>12){ toast('Lease >12 months — pending registration (TPA §107)','error'); }
+  else toast('Lease saved','success');
+}
+function openRegistrationForm(id){
+  const l = leaseById(id);
+  openModal('Upload Registration — '+l.id,
+    `<div style="font-size:12px;line-height:1.8">
+      <div class="compliance-block">TPA 1882 §107 / Registration Act §17(1)(d): a lease &gt; 12 months is invalid unless executed by a registered instrument. Upload sub-registry metadata to activate the financial ledger.</div>
+      <div class="form-grid" style="margin-top:10px">
+        <div class="form-group"><div class="form-label">Sub-registry office</div><input class="form-input" id="rg_office" placeholder="Sub-Registry Mirpur"></div>
+        <div class="form-group"><div class="form-label">Deed no.</div><input class="form-input" id="rg_deed" placeholder="DL-4521/2026"></div>
+        <div class="form-group"><div class="form-label">Registration date</div><input class="form-input" type="date" id="rg_date" value="${today()}"></div>
+      </div>
+    </div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Cancel</button><button class="drawer-btn primary" onclick="saveRegistration('${id}')">Verify & Activate</button>`);
+}
+function saveRegistration(id){
+  const g = x => document.getElementById(x).value;
+  const office = g('rg_office').trim(), deed = g('rg_deed').trim();
+  if(!office||!deed){ toast('Office and deed no. required','error'); return; }
+  leaseById(id).regMeta = {office, deed, date:g('rg_date')};
+  leaseById(id).status = 'Active';
+  saveDB(); closeModal(); renderLeases();
+  toast('Registration verified — lease active, ledger enabled','success');
+}
+
+// ---------- invoices ----------
+function renderInvoices(){
+  const rows = DB.invoices.map(v=>{
+    const l = leaseById(v.lease);
+    return `<tr onclick="openInvoiceDetail('${v.id}')" style="cursor:pointer">
+      <td><b>${v.id}</b></td>
+      <td>${l?l.id:'—'}${l?`<div style="font-size:9.5px;color:#8895a7">${esc(tenantById(l.tenant)?.name||'')}</div>`:''}</td>
+      <td>${v.month}</td><td>${fmt(v.gross)}</td>
+      ${v.tdsRate?`<td class="mono">${fmt(v.tds)}<div style="font-size:9px;color:#8895a7">${(v.tdsRate*100).toFixed(0)}%</div></td><td><b>${fmt(v.net)}</b></td>`:'<td>—</td><td>'+fmt(v.net)+'</td>'}
+      <td>${badge(v.status)}</td>
+    </tr>`;
+  }).join('');
+  const due = DB.invoices.filter(v=>v.status==='Unpaid'||v.status==='Overdue').reduce((s,v)=>s+v.net,0);
+  document.getElementById('content').innerHTML =
+    pageHeader('Invoices', 'Rent invoicing with automatic TDS split for corporate tenancies', `<button class="drawer-btn primary" onclick="openInvoiceForm()">＋ Generate Invoice</button>`)
+    + statCards([['Outstanding (net)', fmt(due), '#e67e22', ''], ['Invoices', DB.invoices.length, '#2F80ED', ''], ['TDS withheld total', fmt(DB.invoices.reduce((s,v)=>s+v.tds,0)), '#9b59b6', '']])
+    + `<div class="table-wrap" style="margin-top:12px"><table class="table-view"><thead><tr><th>Invoice</th><th>Lease</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No invoices')}</td></tr>`}</tbody></table></div>`;
+}
+function openInvoiceForm(){
+  const ls = DB.leases.filter(l=>l.status==='Active'||l.status==='Pending Registration');
+  openModal('Generate Invoice',
+    `<div class="form-grid">
+      <div class="form-group"><div class="form-label">Lease</div><select class="form-input" id="inv_lease">${ls.map(l=>`<option value="${l.id}">${l.id} · ${esc(tenantById(l.tenant)?.name||'')} · ${fmt(l.rent)}</option>`).join('')}</select></div>
+      <div class="form-group"><div class="form-label">Billing month</div><input class="form-input" type="month" id="inv_month" value="${today().slice(0,7)}"></div>
+    </div>
+    <div id="invPreview" style="font-size:11px;color:#667;margin-top:8px"></div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Cancel</button><button class="drawer-btn primary" onclick="generateInvoiceFromForm()">Generate</button>`);
+  document.getElementById('inv_lease') && document.getElementById('inv_lease').addEventListener('change', updateInvPreview);
+  updateInvPreview();
+}
+function updateInvPreview(){
+  const l = leaseById(document.getElementById('inv_lease').value);
+  if(!l) return;
+  const td = tdsFor(l);
+  const gross = l.rent, tds = Math.round(gross*td.rate), net = gross - tds;
+  document.getElementById('invPreview').innerHTML = td.rate
+    ? `TDS split preview: Gross <b>${fmt(gross)}</b> − TDS ${(td.rate*100).toFixed(0)}% (${fmt(tds)}, Income Tax Act 2023 ${td.section}) = Net <b>${fmt(net)}</b> payable to landlord.`
+    : `Individual tenant — no TDS. Gross = Net = <b>${fmt(gross)}</b>.`;
+}
+function generateInvoiceFromForm(){
+  const l = leaseById(document.getElementById('inv_lease').value);
+  const month = document.getElementById('inv_month').value;
+  if(!l||!month) return;
+  if(DB.invoices.some(v=>v.lease===l.id && v.month===month)){ toast('Invoice already exists for this month','error'); return; }
+  const td = tdsFor(l);
+  const gross = l.rent, tds = Math.round(gross*td.rate), net = gross - tds;
+  DB.invoices.push({id:'INV-2026-'+String(DB.invoices.length+1).padStart(3,'0'), lease:l.id, month, gross, tdsRate:td.rate, tds, net, status:'Unpaid'});
+  saveDB(); closeModal(); renderInvoices(); toast('Invoice generated with TDS split','success');
+}
+function generateInvoiceForLease(leaseId){
+  const l = leaseById(leaseId);
+  const month = today().slice(0,7);
+  if(DB.invoices.some(v=>v.lease===leaseId && v.month===month)){ toast('Invoice for this month already exists','error'); return; }
+  const td = tdsFor(l);
+  const gross = l.rent, tds = Math.round(gross*td.rate), net = gross - tds;
+  DB.invoices.push({id:'INV-2026-'+String(DB.invoices.length+1).padStart(3,'0'), lease:leaseId, month, gross, tdsRate:td.rate, tds, net, status:'Unpaid'});
+  saveDB(); renderInvoices(); toast('Invoice generated','success');
+}
+function openInvoiceDetail(id){
+  const v = DB.invoices.find(x=>x.id===id); if(!v) return;
+  const l = leaseById(v.lease);
+  const td = tdsFor(l);
+  openModal('Invoice '+v.id,
+    `<div style="font-size:12px;line-height:1.8">
+      <div class="form-grid">
+        <div class="form-group"><div class="form-label">Lease</div><div>${l.id} · ${esc(unitLabel(unitById(l.unit)))}</div></div>
+        <div class="form-group"><div class="form-label">Tenant</div><div>${esc(tenantById(l.tenant)?.name||'')}</div></div>
+        <div class="form-group"><div class="form-label">Month</div><div>${v.month}</div></div>
+        <div class="form-group"><div class="form-label">Status</div><div>${badge(v.status)}</div></div>
+      </div>
+      <div class="tax-step"><div class="ts-idx">1</div><div>Gross rent: <b>${fmt(v.gross)}</b></div></div>
+      ${v.tdsRate?`<div class="tax-step"><div class="ts-idx">2</div><div>TDS withheld (${(v.tdsRate*100).toFixed(0)}% · Income Tax Act 2023 ${td.section}): <b>− ${fmt(v.tds)}</b> — remitted to NBR by tenant</div></div>
+      <div class="tax-step"><div class="ts-idx">3</div><div>Net payable to landlord: <b>${fmt(v.net)}</b></div></div>`:''}
+      <div style="margin-top:10px;font-size:10.5px;color:#8895a7">Payment clears → cryptographic rent receipt auto-generated (PRCA §13).</div>
+    </div>`,
+    v.status==='Paid'
+      ? `<button class="drawer-btn primary" onclick="closeModal(); nav('receipts')">View Receipt</button>`
+      : `<button class="drawer-btn secondary" onclick="closeModal()">Close</button><button class="drawer-btn primary" onclick="payInvoice('${v.id}')">💳 Pay (bKash sandbox)</button>`);
+}
+function payInvoice(id){
+  const v = DB.invoices.find(x=>x.id===id); if(!v) return;
+  openModal('Pay '+id+' — bKash Tokenized Checkout',
+    `<div class="flow-4">
+      <div class="flow-step ok"><div class="fs-n">1 · Grant</div>id_token issued</div>
+      <div class="flow-step ok"><div class="fs-n">2 · Create</div>session created · ${v.id}</div>
+      <div class="flow-step"><div class="fs-n">3 · Execute</div>waiting PIN/OTP…</div>
+      <div class="flow-step"><div class="fs-n">4 · Query</div>fallback status</div>
+    </div>
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:26px;font-weight:800;color:#e2136e">${fmt(v.net)}</div>
+      <div style="font-size:10.5px;color:#8895a7;margin:2px 0 10px">bKash Sandbox · merchantInvoiceNumber: ${id}</div>
+      <input class="form-input" id="pay_otp" placeholder="Demo: type any 6-digit OTP" style="max-width:220px;margin:0 auto;display:block;text-align:center">
+    </div>
+    <div class="compliance-flag">Sandbox mode — live requires BKASH_APP_KEY/SECRET + PAYMENT_MODE=live.</div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Cancel</button><button class="drawer-btn primary" onclick="executePayment('${v.id}')">Execute Payment</button>`);
+}
+function executePayment(id){
+  const v = DB.invoices.find(x=>x.id===id); if(!v) return;
+  const l = leaseById(v.lease);
+  v.status = 'Paid';
+  const receipt = {id:'RCP-'+String(DB.receipts.length+1).padStart(4,'0'), invoice:id, amount:v.net, date:today(), method:'bKash', sig:'SIG-'+Math.random().toString(16).slice(2,10)};
+  DB.receipts.push(receipt);
+  DB.payments.push({id:'PAY-'+String(DB.payments.length+1).padStart(3,'0'), invoice:id, amount:v.net, method:'bKash', ref:'BK-'+Math.random().toString(16).slice(2,6), date:today(), status:'Success'});
+  saveDB(); closeModal(); renderInvoices();
+  toast('Payment executed — signed receipt '+receipt.id+' issued (PRCA §13)','success');
+}
+
+// ---------- receipts ----------
+function renderReceipts(){
+  const rows = DB.receipts.map(r=>{
+    const v = DB.invoices.find(x=>x.id===r.invoice);
+    return `<tr>
+      <td><b>${r.id}</b></td><td>${r.invoice}</td>
+      <td>${esc(tenantById(leaseById(v?.lease)?.tenant)?.name||'')}</td>
+      <td>${fmt(r.amount)}</td><td>${r.method}</td><td>${r.date}</td>
+      <td class="mono">${r.sig}</td>
+      <td><button class="mini-btn" onclick="printReceipt('${r.id}')">🖨 Print</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('content').innerHTML =
+    pageHeader('Receipts', 'Cryptographically signed digital rent receipts — PRCA 1991 §13', '')
+    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Receipt</th><th>Invoice</th><th>Tenant</th><th>Amount</th><th>Method</th><th>Date</th><th>Signature</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="8">${emptyState('No receipts yet')}</td></tr>`}</tbody></table></div>`;
+}
+function printReceipt(id){
+  const r = DB.receipts.find(x=>x.id===id); if(!r) return;
+  const v = DB.invoices.find(x=>x.id===r.invoice); const l = leaseById(v?.lease);
+  const t = tenantById(l?.tenant); const u = unitById(l?.unit);
+  const win = window.open('','_blank');
+  win.document.write(`<html><head><title>${r.id}</title><style>body{font-family:Arial,sans-serif;padding:30px;max-width:640px;margin:auto;color:#222}h1{font-size:22px;margin:0 0 2px}hr{border:none;border-top:2px solid #2F80ED;margin:14px 0}.row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}.sig{font-family:monospace;font-size:11px;color:#888;margin-top:18px}.stamp{border:2px solid #2F80ED;color:#2F80ED;display:inline-block;padding:4px 14px;border-radius:6px;font-weight:700;margin-top:14px}</style></head><body>
+    <h1>KRTaker — Rent Receipt</h1>
+    <div style="font-size:11px;color:#888">Key Responsibility Taker · digitally signed per PRCA 1991 §13</div><hr>
+    <div class="row"><span>Receipt no.</span><b>${r.id}</b></div>
+    <div class="row"><span>Invoice</span><b>${r.invoice}</b></div>
+    <div class="row"><span>Tenant</span><b>${esc(t?.name||'')}</b></div>
+    <div class="row"><span>Property / Unit</span><b>${esc(unitLabel(u))}</b></div>
+    <div class="row"><span>Amount received</span><b>${fmt(r.amount)}</b></div>
+    <div class="row"><span>Method</span><b>${r.method}</b></div>
+    <div class="row"><span>Date</span><b>${r.date}</b></div>
+    <div class="stamp">PAID · KRTaker</div>
+    <div class="sig">Signature: ${r.sig}<br>Generated: ${new Date().toISOString()} · KRTaker v1.0</div>
+  </body></html>`);
+  win.document.close(); win.focus();
+}
+
+// ---------- maintenance ----------
+function renderMaintenance(){
+  const rows = DB.tickets.map(t=>{
+    const u = unitById(t.unit);
+    return `<tr>
+      <td><b>${t.id}</b></td><td>${esc(unitLabel(u))}</td>
+      <td style="max-width:240px">${esc(t.desc)}</td>
+      <td>${badge(t.liability)}</td><td>${badge(t.status)}</td>
+      <td>${t.contractor?esc(t.contractor):'—'}</td>
+      <td>${t.cost?fmt(t.cost):'—'}</td>
+      <td><button class="mini-btn" onclick="openTicketDetail('${t.id}')">View</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('content').innerHTML =
+    pageHeader('Maintenance', 'Issue tickets with automatic liability resolution (landlord structural / tenant day-to-day)', `<button class="drawer-btn primary" onclick="openTicketForm()">＋ Report Issue</button>`)
+    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Ticket</th><th>Unit</th><th>Issue</th><th>Liability</th><th>Status</th><th>Contractor</th><th>Cost</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="8">${emptyState('No tickets')}</td></tr>`}</tbody></table></div>`;
+}
+function resolveLiability(unitId, desc){
+  const u = unitById(unitId); const p = propertyById(u?.property);
+  const d = (desc||'').toLowerCase();
+  const structural = /roof|structure|crack|wall|foundation|pump|electrical|plumbing main|common line|sewage|drain/i;
+  const daily = /leak|bulb|clean|door lock|faucet|switch|fixture/i;
+  if(structural.test(d) || p?.type==='Industrial' && /flooring|shed/.test(d)) return 'Landlord';
+  if(daily.test(d)) return 'Tenant';
+  return 'Landlord';
+}
+function openTicketForm(){
+  openModal('Report Maintenance Issue',
+    `<div class="form-grid">
+      <div class="form-group"><div class="form-label">Unit</div><select class="form-input" id="tk_unit">${DB.units.map(u=>`<option value="${u.id}">${esc(unitLabel(u))}</option>`).join('')}</select></div>
+      <div class="form-group"><div class="form-label">Issue description</div><input class="form-input" id="tk_desc" placeholder="e.g. Roof structural crack"></div>
+      <div class="form-group"><div class="form-label">Contractor (optional)</div><input class="form-input" id="tk_contractor"></div>
+    </div>
+    <div id="tkLiab" style="font-size:11px;color:#2F80ED;margin-top:8px"></div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Cancel</button><button class="drawer-btn primary" onclick="saveTicket()">Create ticket</button>`);
+  const upd = ()=>{ const u=document.getElementById('tk_unit').value, d=document.getElementById('tk_desc').value;
+    if(u) document.getElementById('tkLiab').textContent = 'AI liability resolver → '+resolveLiability(u,d)+' responsibility (from lease/PRCA default)'; };
+  document.getElementById('tk_unit').addEventListener('change', upd);
+  document.getElementById('tk_desc').addEventListener('input', upd);
+  upd();
+}
+function saveTicket(){
+  const g = x => document.getElementById(x).value;
+  const unit = g('tk_unit'), desc = g('tk_desc').trim();
+  if(!desc){ toast('Describe the issue','error'); return; }
+  DB.tickets.push({id:uid('MT'), unit, desc, reported:today(), liability:resolveLiability(unit,desc), status:'Open', contractor:g('tk_contractor').trim(), cost:0, note:''});
+  saveDB(); closeModal(); renderMaintenance(); toast('Ticket created — liability: '+resolveLiability(unit,desc),'success');
+}
+function openTicketDetail(id){
+  const t = DB.tickets.find(x=>x.id===id); if(!t) return;
+  const u = unitById(t.unit);
+  openModal(t.id+' · '+esc(t.desc),
+    `<div style="font-size:12px;line-height:1.8">
+      <div class="form-grid">
+        <div class="form-group"><div class="form-label">Unit</div><div>${esc(unitLabel(u))}</div></div>
+        <div class="form-group"><div class="form-label">Reported</div><div>${t.reported}</div></div>
+        <div class="form-group"><div class="form-label">Liability</div><div>${badge(t.liability)}</div></div>
+        <div class="form-group"><div class="form-label">Status</div><div>${badge(t.status)}</div></div>
+        <div class="form-group"><div class="form-label">Contractor</div><div>${t.contractor||'—'}</div></div>
+        <div class="form-group"><div class="form-label">Cost</div><div>${t.cost?fmt(t.cost):'—'}</div></div>
+      </div>
+      ${t.liability==='Landlord' && t.status==='Open' ? `<div class="compliance-flag">Tenant may deduct repair cost from rent if landlord neglects this structural ticket (PRCA 1991 — validated contractor invoices required).</div>`:''}
+      ${t.liability==='Tenant' ? `<div class="compliance-flag">Day-to-day care is tenant responsibility (PRCA 1991). Cost recovery from tenant security deposit if unresolved.</div>`:''}
+    </div>`,
+    `<button class="drawer-btn secondary" onclick="closeModal()">Close</button>
+     <button class="drawer-btn primary" onclick="closeModal(); markTicketDone('${t.id}')">Mark Resolved</button>`);
+}
+function markTicketDone(id){ const t=DB.tickets.find(x=>x.id===id); t.status='Closed'; t.note='Resolved'; saveDB(); renderMaintenance(); toast('Ticket closed','success'); }
+
+// === KRTaker: compliance, taxes, payments, AI assistant, SW, init ===
+
+// ---------- compliance ----------
+function renderCompliance(){
+  const pendingReg = DB.leases.filter(l=>l.status==='Pending Registration');
+  const advanceViol = DB.leases.filter(l=>l.residential && l.advance>l.rent);
+  const regDone = DB.leases.filter(l=>l.regMeta);
+  const evict = DB.tenants.map(t=>({t, e:evictionEligible(t.id)})).filter(x=>x.e.eligible);
+
+  const regRows = pendingReg.map(l=>`<tr>
+    <td><b>${l.id}</b></td><td>${esc(unitLabel(unitById(l.unit)))}</td><td>${esc(tenantById(l.tenant)?.name||'')}</td>
+    <td>${leaseMonths(l)} mo</td><td>${fmt(l.rent)}</td>
+    <td><button class="mini-btn" onclick="closeModal(); openRegistrationForm('${l.id}')">Upload docs</button></td></tr>`).join('');
+  const advRows = advanceViol.map(l=>`<tr>
+    <td><b>${l.id}</b></td><td>${esc(unitLabel(unitById(l.unit)))}</td>
+    <td>${fmt(l.advance)}</td><td>${fmt(l.rent)}</td>
+    <td><button class="mini-btn" onclick="closeModal(); openLeaseForm('${l.id}')">Review</button></td></tr>`).join('');
+  const evRows = evict.map(x=>`<tr><td><b>${esc(x.t.name)}</b></td><td>${x.e.months} mo unpaid</td>
+    <td><button class="mini-btn" onclick="generateEvictionNotice('${x.t.id}')">Generate §114A Notice</button></td></tr>`).join('');
+
+  document.getElementById('content').innerHTML =
+    pageHeader('Compliance', 'Programmatic enforcement of TPA 1882, PRCA 1991 & Registration Act', '')
+    + `<div class="dash-grid">
+      <div class="card"><div class="card-header">🔴 Lease Registration Tracker <span class="kr-badge">TPA §107</span></div><div class="card-body">
+        ${pendingReg.length?`<div class="table-wrap"><table class="table-view"><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th></th></tr></thead><tbody>${regRows}</tbody></table></div>`:emptyState('No leases pending registration ✓')}
+        <div style="font-size:10.5px;color:#8895a7;margin-top:6px">${regDone.length} leases verified with registered instruments.</div>
+      </div></div>
+      <div class="card"><div class="card-header">🟠 PRCA Advance Cap Violations <span class="kr-badge">PRCA §10/§23</span></div><div class="card-body">
+        ${advanceViol.length?`<div class="table-wrap"><table class="table-view"><thead><tr><th>Lease</th><th>Unit</th><th>Advance</th><th>1-mo Rent</th><th></th></tr></thead><tbody>${advRows}</tbody></table></div>`:emptyState('No advance cap violations ✓')}
+      </div></div>
+      <div class="card"><div class="card-header">🟠 Eviction Grounds Monitor <span class="kr-badge">PRCA §18</span></div><div class="card-body">
+        ${evRows?`<div class="table-wrap"><table class="table-view"><thead><tr><th>Tenant</th><th>Unpaid</th><th></th></tr></thead><tbody>${evRows}</tbody></table></div>`:emptyState('No tenants with ≥3 months unpaid ✓')}
+        <div style="font-size:10.5px;color:#8895a7;margin-top:6px">Digital lockouts are never executed — only compliant §114A notices when grounds are met.</div>
+      </div></div>
+      <div class="card"><div class="card-header">📋 Statutory Calendar</div><div class="card-body" style="font-size:11px;line-height:2">
+        <div>🗓 Holding tax return — <b>Jun 30</b> (city corporation)</div>
+        <div>🗓 TDS PSR submission — <b>monthly by 7th</b></div>
+        <div>🗓 Wealth surcharge declaration — <b>Nov 30</b> (FY 2025-26)</div>
+        <div>🗓 Income tax return — <b>Nov 30</b> (individuals)</div>
+        <div style="margin-top:6px"><button class="mini-btn" onclick="nav('taxes')">Open Tax Engine →</button></div>
+      </div></div>
+    </div>`;
+}
+function generateEvictionNotice(tenantId){
+  const t = tenantById(tenantId); const e = evictionEligible(tenantId);
+  const win = window.open('','_blank');
+  win.document.write(`<html><head><title>Eviction Notice — ${esc(t.name)}</title><style>body{font-family:Arial,sans-serif;padding:40px;max-width:640px;margin:auto;color:#222;line-height:1.7}h1{font-size:20px}hr{border:none;border-top:2px solid #e74c3c;margin:16px 0}.footer{font-size:11px;color:#888;margin-top:30px}</style></head><body>
+    <h1>NOTICE TO QUIT</h1>
+    <div style="font-size:11px;color:#888">Issued under Premises Rent Control Act 1991 §18 & §114A procedure</div><hr>
+    <p>To: <b>${esc(t.name)}</b> (${t.nid})</p>
+    <p>You have failed to pay rent for <b>${e.months} consecutive month(s)</b>, which constitutes valid grounds for eviction under Section 18 of the Premises Rent Control Act 1991.</p>
+    <p>You are hereby given notice to quit and vacate the premises within <b>30 days</b> of the date of this notice, failing which legal proceedings may be instituted in the appropriate Rent Court. This notice is issued without prejudice to any amounts legally due.</p>
+    <div class="footer">Generated by KRTaker v1.0 — compliance engine · ${new Date().toISOString()}<br>This notice is a system-generated draft for legal review; consult a licensed advocate before service.</div>
+  </body></html>`);
+  win.document.close(); win.focus();
+  toast('Compliant §114A eviction notice generated for '+t.name,'success');
+}
+
+// ---------- taxes ----------
+function renderTaxes(){
+  const tdsTable = [
+    ['Rental income (general)', '§109', '5–10%'],
+    ['Convention halls / conference', '§110', '10%'],
+    ['Developer → land owner', '§115', '15%'],
+    ['Transfer of property', '§125', '≤4%'],
+    ['Collection from lease of property', '§128', '4%'],
+    ['Developer (residential)', '§126', '৳1,600/sqm'],
+    ['Developer (commercial)', '§126', '৳6,500/sqm'],
+    ['Professional services', '§90 (A2)', '10%'],
+    ['Catering/cleaning/security', 'Various', '1–1.5%'],
+    ['Trade license renewal', '§131', '৳3,000 (DCC/CCC)']
+  ];
+  const sur = [
+    ['≤ ৳4 Cr','Nil'],['৳4–10 Cr','10%'],['৳10–20 Cr','20%'],['৳20–50 Cr','25–30%'],['> ৳50 Cr','35%']
+  ];
+  const tdsRows = tdsTable.map(r=>`<tr><td>${r[0]}</td><td class="mono">${r[1]}</td><td><b>${r[2]}</b></td></tr>`).join('');
+  const surRows = sur.map(r=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td></tr>`).join('');
+
+  document.getElementById('content').innerHTML =
+    pageHeader('Taxes', 'Holding tax · TDS · wealth surcharge — Income Tax Act 2023 & NBR rules', '')
+    + `<div class="dash-grid">
+      <div class="card"><div class="card-header">🏠 Holding Tax Calculator</div><div class="card-body">
+        <div class="form-grid">
+          <div class="form-group"><div class="form-label">Property</div><select class="form-input" id="ht_prop" onchange="openHoldingTaxPreview()">${DB.properties.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div>
+        </div>
+        <div id="htOutput"></div>
+      </div></div>
+      <div class="card"><div class="card-header">📜 TDS Schedules <span class="kr-badge">Withholding Tax Rules 2024</span></div><div class="card-body">
+        <div class="table-wrap"><table class="table-view"><thead><tr><th>Category</th><th>Section</th><th>Rate</th></tr></thead><tbody>${tdsRows}</tbody></table></div>
+        <div style="font-size:10px;color:#8895a7;margin-top:6px">Banks/insurance/MFS exempt under Rule 4 (2024). Missing PSR → rate +50%.</div>
+      </div></div>
+      <div class="card"><div class="card-header">💼 Wealth Surcharge Brackets <span class="kr-badge">FY 2025-26</span></div><div class="card-body">
+        <div class="table-wrap"><table class="table-view"><thead><tr><th>Net Worth</th><th>Surcharge</th></tr></thead><tbody>${surRows}</tbody></table></div>
+      </div></div>
+      <div class="card"><div class="card-header">⚙️ TDS Automation</div><div class="card-body" style="font-size:11px;line-height:1.9">
+        <div>✓ Corporate invoices auto-split: gross − TDS = net (see Invoices)</div>
+        <div>✓ PSR tracking — missing tax docs raises TDS by 50% (mandated)</div>
+        <div>✓ Minimum tax ৳5,000 applies to all taxpayers post-amendment</div>
+        <div style="margin-top:8px"><button class="mini-btn" onclick="nav('invoices')">View TDS invoices →</button></div>
+      </div></div>
+    </div>`;
+}
+function openHoldingTax(id){
+  nav('taxes');
+  setTimeout(()=>{ document.getElementById('ht_prop').value = id; openHoldingTaxPreview(); }, 80);
+}
+function openHoldingTaxPreview(){
+  const p = propertyById(document.getElementById('ht_prop').value); if(!p) return;
+  const r = holdingTaxCalc(p);
+  const jr = {'Dhaka North':0.08,'Dhaka South':0.075,'Chattogram':0.07,'Gazipur':0.07}[p.jurisdiction]||0.06;
+  document.getElementById('htOutput').innerHTML = `
+    <div class="tax-step"><div class="ts-idx">1</div><div>Gross Annual Rental (12 mo × active leases): <b>${fmt(r.gar)}</b></div></div>
+    <div class="tax-step"><div class="ts-idx">2</div><div>Maintenance allowance (2 months ≈ 16.67%): <b>− ${fmt(r.allowance)}</b></div></div>
+    <div class="tax-step"><div class="ts-idx">3</div><div>Mortgage interest (${p.mortgage?esc(p.mortgage.bank):'none'}): <b>− ${fmt(r.interest)}</b></div></div>
+    <div class="tax-step" style="border-color:#2F80ED;background:#f4f9ff"><div class="ts-idx" style="background:#27ae60">4</div><div><b>Net Annual Value = ${fmt(r.nav)}</b><br><span style="font-size:10px;color:#667">Assessed rate ${p.jurisdiction}: ${(jr*100).toFixed(1)}%</span></div></div>
+    <div style="text-align:center;margin-top:10px;font-size:16px;font-weight:800;color:#2F80ED">Holding Tax ≈ ${fmt(r.tax)} / year</div>
+    <div style="text-align:center;font-size:10px;color:#8895a7;margin-top:4px">City corporation assessment — schedule automated reminders to clear dues.</div>`;
+}
+
+// ---------- payments ----------
+function renderPayments(){
+  const rows = DB.payments.map(p=>`<tr>
+    <td><b>${p.id}</b></td><td>${p.invoice}</td><td>${fmt(p.amount)}</td><td>${p.method}</td>
+    <td class="mono">${p.ref}</td><td>${p.date}</td><td>${badge(p.status)}</td></tr>`).join('');
+  document.getElementById('content').innerHTML =
+    pageHeader('Payments', 'Payment orchestration — bKash Tokenized Checkout (sandbox) · SSLCommerz (seams ready)', '')
+    + `<div class="dash-grid">
+      <div class="card"><div class="card-header">💳 Gateway Status</div><div class="card-body" style="font-size:11px;line-height:2">
+        <div>✅ <b>bKash Tokenized Checkout</b> — sandbox (tokenized.sandbox.bka.sh) · grant → create → execute → query</div>
+        <div>⏳ <b>SSLCommerz</b> — GWPROCESS + IPN validation (Phase 4 integration)</div>
+        <div>🌐 <b>NRB</b> — NRTA/NITA workflows + remittance dossier generator (Phase 4)</div>
+        <div style="margin-top:6px;font-size:10px;color:#8895a7">Live mode: PAYMENT_MODE=live + BKASH_APP_KEY/SECRET · credentials never in client code.</div>
+      </div></div>
+      <div class="card"><div class="card-header">🧾 Payment History</div><div class="card-body">
+        <div class="table-wrap"><table class="table-view"><thead><tr><th>Payment</th><th>Invoice</th><th>Amount</th><th>Method</th><th>Ref</th><th>Date</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No payments')}</td></tr>`}</tbody></table></div>
+      </div></div>
+    </div>`;
+}
+
+// ---------- AI assistant ----------
+function renderAI(){
+  const log = DB.ai_log;
+  const msgs = log.map(m=>`<div class="msg ${m.role}">${esc(m.text)}${m.tools?`<div>${m.tools.map(t=>`<span class="tool-tag">⚙ ${esc(t)}</span>`).join('')}</div>`:''}</div>`).join('');
+  document.getElementById('content').innerHTML =
+    pageHeader('AI Assistant', 'KR — your autonomous property caretaker (DeepSeek backend arrives in Phase 5)', '')
+    + `<div class="chat-wrap">
+      <div class="chat-log" id="chatLog">${msgs}</div>
+      <div class="chat-sugg" id="chatSugg"></div>
+      <div class="chat-input-row">
+        <input class="form-input" id="chatInput" placeholder="Ask KR anything… (e.g. &quot;What is the TDS rate for my commercial lease?&quot;)" onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="drawer-btn primary" onclick="sendChat()">Send</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <span class="ai-status"><span class="dot"></span> KR online · knowledge: PRCA 1991 · TPA 1882 · ITA 2023 · portfolio live</span>
+        <button class="mini-btn" onclick="resetChat()">Reset</button>
+      </div>
+    </div>`;
+  renderChatSugg();
+  const el = document.getElementById('chatLog'); el.scrollTop = el.scrollHeight;
+}
+function renderChatSugg(){
+  const sugg = ['What is my rent due?','Check PRCA advance cap','Holding tax for Green View','TDS rate for commercial lease','Generate invoice for L-004','Report plumbing issue','Who is liable for roof crack?','Eviction grounds check'];
+  document.getElementById('chatSugg').innerHTML = sugg.map(s=>`<span onclick="sendChatText('${esc(s.replace(/'/g,"\\'"))}')">${esc(s)}</span>`).join('');
+}
+function addMsg(role, text, tools){
+  DB.ai_log.push({role, text, tools, ts:new Date().toISOString().slice(0,16).replace('T',' ')});
+  saveDB();
+}
+function resetChat(){ DB.ai_log = [{role:'ai', text:'Hello 👋 I\'m KR — your AI property caretaker. Ask me about leases, taxes, PRCA compliance, or say "generate invoice for L-003" and I\'ll take action.', ts:new Date().toISOString().slice(0,16).replace('T',' ')}]; saveDB(); renderAI(); }
+function sendChat(){ const i=document.getElementById('chatInput'); if(i.value.trim()) sendChatText(i.value.trim()); i.value=''; }
+function sendChatText(text){
+  addMsg('user', text); renderAI();
+  const reply = aiAnswer(text);
+  setTimeout(()=>{ addMsg('ai', reply.text, reply.tools); renderAI(); }, 350);
+}
+function aiAnswer(q){
+  const s = q.toLowerCase();
+  const L = DB.leases, I = DB.invoices, P = DB.properties;
+  // --- actions: generate invoice ---
+  let m = s.match(/invoice\s+(for\s+)?(l-\d+)/i);
+  if(m && /generat|create|make|issue|bill/.test(s)){
+    const l = L.find(x=>x.id.toLowerCase()===m[2].toLowerCase());
+    if(!l) return {text:'Lease '+m[2]+' not found. Active leases: '+L.filter(x=>x.status==='Active').map(x=>x.id).join(', '), tools:[]};
+    const td = tdsFor(l);
+    const gross = l.rent, tds = Math.round(gross*td.rate), net = gross-tds;
+    const inv = {id:'INV-2026-'+String(I.length+1).padStart(3,'0'), lease:l.id, month:today().slice(0,7), gross, tdsRate:td.rate, tds, net, status:'Unpaid'};
+    I.push(inv); saveDB();
+    return {text:'✅ Generated '+inv.id+' for '+l.id+' — gross '+fmt(gross)+(td.rate?', TDS '+fmt(tds)+' ('+td.section+'), net '+fmt(net):'')+'. Tenant: '+tenantById(l.tenant).name+'.', tools:['generate_invoice()']};
+  }
+  // --- actions: report maintenance / ticket ---
+  if(/report|ticket|issue|plumbing|leak|maintenance/.test(s) && /leak|plumb|roof|crack|fix|repair|maintenance|broken|pump/.test(s)){
+    const u = DB.units[0];
+    const desc = s.replace(/.*?(report|ticket|issue)\s*/i,'').slice(0,80) || 'Reported via AI chat';
+    const liab = resolveLiability(u.id, desc);
+    DB.tickets.push({id:uid('MT'), unit:u.id, desc, reported:today(), liability:liab, status:'Open', contractor:'', cost:0, note:'via KR'});
+    saveDB();
+    return {text:'🔧 Ticket '+DB.tickets[DB.tickets.length-1].id+' created for '+unitLabel(u)+'. Liability resolver → '+liab+' responsibility (per lease + PRCA defaults).', tools:['create_maintenance_ticket()','resolve_liability()']};
+  }
+  // --- rent due ---
+  if(/rent due|outstanding|who owes|unpaid/.test(s)){
+    const due = I.filter(v=>v.status==='Unpaid'||v.status==='Overdue');
+    if(!due.length) return {text:'Nothing outstanding — all invoices settled 🎉', tools:[]};
+    const lines = due.map(v=>{ const l=L.find(x=>x.id===v.lease); return v.id+' · '+tenantById(l.tenant).name+' · '+fmt(v.net)+(v.tds?' (net of TDS)':''); }).join('\n');
+    return {text:'You have '+due.length+' outstanding invoice(s), total '+fmt(due.reduce((s,v)=>s+v.net,0))+':\n'+lines, tools:['query_invoices()']};
+  }
+  // --- holding tax ---
+  if(/holding tax|annual value/.test(s)){
+    const p = P[0];
+    const r = holdingTaxCalc(p);
+    return {text:'Holding tax for '+p.name+' ('+p.jurisdiction+'):\n1) Gross Annual Rent: '+fmt(r.gar)+'\n2) − Maintenance allowance (2 mo): '+fmt(r.allowance)+'\n3) − Mortgage interest: '+fmt(r.interest)+'\n4) Net Annual Value: '+fmt(r.nav)+' → tax ≈ '+fmt(r.tax)+'/yr at '+(r.rate*100).toFixed(1)+'%.', tools:['calc_holding_tax()']};
+  }
+  // --- TDS ---
+  if(/tds|withholding/.test(s)){
+    const corp = L.filter(l=>tenantById(l.tenant)?.kind==='Corporate' && (l.status==='Active'||l.status==='Pending Registration'));
+    if(!corp.length) return {text:'No corporate tenancies — TDS not applicable on individual rent.', tools:[]};
+    const lines = corp.map(l=>{ const td=tdsFor(l); return l.id+' · '+tenantById(l.tenant).name+' · '+(td.rate*100).toFixed(0)+'% ('+td.section+')'; }).join('\n');
+    return {text:'TDS applies to corporate tenants (Income Tax Act 2023):\n'+lines+'\n\nCommercial lease collections: 4% (§128) · general rental: 10% (§109).', tools:['tds_lookup()']};
+  }
+  // --- PRCA advance cap ---
+  if(/advance|deposit|security/.test(s)){
+    const bad = L.filter(l=>l.residential && l.advance>l.rent);
+    if(!bad.length) return {text:'All residential leases comply — advance ≤ 1 month rent (PRCA 1991 §10/§23). ✓', tools:['prca_check()']};
+    return {text:'⚠ '+bad.length+' residential lease(s) exceed the 1-month advance cap:\n'+bad.map(l=>l.id+' · '+tenantById(l.tenant).name+' · advance '+fmt(l.advance)+' vs rent '+fmt(l.rent)).join('\n')+'\nRequires rent-controller written consent or commercial override.', tools:['prca_check()']};
+  }
+  // --- eviction ---
+  if(/evict|eviction/.test(s)){
+    const elig = DB.tenants.map(t=>({t,e:evictionEligible(t.id)})).filter(x=>x.e.eligible);
+    if(!elig.length) return {text:'No tenant currently meets the ≥3-month unpaid threshold for §18 eviction grounds. Digital lockouts are never performed.', tools:['eviction_check()']};
+    return {text:'⚠ '+elig.map(x=>x.t.name+' ('+x.e.months+' mo unpaid)').join(', ')+' — grounds met. I can generate a compliant §114A notice.', tools:['eviction_check()']};
+  }
+  // --- liability ---
+  if(/liab|who.*(pay|fix|responsible)|roof|structural/.test(s)){
+    return {text:'Liability rule (PRCA 1991): structural/maintenance = Landlord; day-to-day = Tenant. Open tickets:\n'+DB.tickets.filter(t=>t.status!=='Closed').map(t=>t.id+' · '+t.desc.slice(0,40)+' → '+t.liability).join('\n'), tools:['resolve_liability()']};
+  }
+  // --- lease registration ---
+  if(/registr/.test(s)){
+    const pr = L.filter(l=>l.status==='Pending Registration');
+    return {text: pr.length? '⚠ '+pr.length+' lease(s) pending registration (TPA 1882 §107): '+pr.map(l=>l.id+' ('+leaseMonths(l)+' mo)').join(', ')+'. Ledgers stay inactive until sub-registry docs uploaded.' : 'All leases >12 months have registered instruments ✓', tools:['registration_gate()']};
+  }
+  // --- legal RAG fallback ---
+  if(/legal|law|act|section|prca|tpa|allowed/.test(s)){
+    return {text:'⚖️ Under PRCA 1991 §18, a tenant paying allowable rent cannot be summarily evicted; eviction needs a court decree on specific grounds (e.g. 3 months unpaid). §10/§23 cap residential advance at 1 month rent without rent-controller consent. TPA 1882 §107 + Registration Act §17(1)(d) make leases >12 months invalid without a registered instrument.\n\n(Phase 5: full RAG retrieval over statute texts via DeepSeek embeddings.)', tools:['rag_retrieve()']};
+  }
+  return {text:'I can help with: rent due status · TDS rates · holding tax · PRCA advance/eviction rules · lease registration · maintenance liability · generating invoices & tickets.\n\nTry one of the suggestions above, or ask e.g. "Generate invoice for L-004".', tools:[]};
+}
+
+// ---------- service worker ----------
+function registerSW(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').then(()=>{
+      document.getElementById('swInfo').textContent = 'SW '+SW_CACHE+' ✓';
+    }).catch(()=>{ document.getElementById('swInfo').textContent = 'SW offline (file://)'; });
+  }
+}
+
+// ---------- init ----------
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderSidebar();
+  const h = location.hash.slice(1);
+  if(h && NAV.find(n=>n.id===h)) nav(h); else nav('dashboard');
+  registerSW();
+});
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2F80ED">
+<meta name="description" content="KRTaker — AI-driven autonomous property management platform for Bangladesh. Key Responsibility Taker.">
+<title>KRTaker — Key Responsibility Taker</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./pwa/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./pwa/icon-192.png">
+<style>
+/* === KRTaker v1.0 — design system inherited from REM ERP V10 (reference) === */
+{{CSS}}
+/* === KRTaker additions === */
+:root{--brand:#2F80ED}
+.sidebar-logo{background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.sidebar-brand-text b{display:block;font-size:14px;letter-spacing:.4px}
+.sidebar-brand-text small{font-size:8.5px;color:#9aa5b1;font-weight:500;letter-spacing:.3px}
+.sidebar-item .nav-ico{margin-right:8px;font-size:13px;width:18px;text-align:center;display:inline-block}
+.sidebar-item.has-children>.grp-label{font-size:9.5px;color:#9aa5b1;text-transform:uppercase;letter-spacing:.8px;padding:14px 12px 4px;font-weight:700}
+.mob-bottom-nav{display:none}
+@media (max-width:768px){
+  .mob-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eef0f3;z-index:90;padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
+  .mob-bottom-nav .mb-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;font-size:9px;color:#667;cursor:pointer;border-radius:8px}
+  .mob-bottom-nav .mb-item.active{color:var(--brand);font-weight:600}
+  .mob-bottom-nav .mb-item .mi{font-size:16px}
+  .main-area{padding-bottom:58px}
+}
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:420px}
+.chat-log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #eef0f3}
+.msg{max-width:78%;padding:8px 12px;border-radius:12px;font-size:12px;line-height:1.55;white-space:pre-wrap}
+.msg.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:3px}
+.msg.ai{align-self:flex-start;background:#fff;border:1px solid #e8ecf1;border-bottom-left-radius:3px}
+.msg.ai .tool-tag{display:inline-block;background:#eef6ff;color:#1e5eb8;font-size:9px;padding:1px 6px;border-radius:4px;margin:2px 4px 0 0}
+.chat-input-row{display:flex;gap:6px;margin-top:8px}
+.chat-input-row input{flex:1}
+.chat-sugg{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chat-sugg span{font-size:10px;background:#f0f4fa;border:1px solid #e3eaf3;color:#345;padding:4px 10px;border-radius:20px;cursor:pointer}
+.chat-sugg span:hover{background:#e3ecf8}
+.ai-status{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:#888;background:#f6f8fb;border:1px solid #eef0f3;padding:3px 10px;border-radius:20px}
+.ai-status .dot{width:7px;height:7px;border-radius:50%;background:#27ae60;display:inline-block}
+.compliance-flag{border-left:3px solid #e67e22;background:#fff8f0;padding:8px 12px;border-radius:6px;font-size:11px;margin:4px 0}
+.compliance-block{border-left:3px solid #e74c3c;background:#fef5f5;padding:8px 12px;border-radius:6px;font-size:11px;margin:4px 0}
+.tax-step{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #eef0f3;border-radius:8px;margin:4px 0;font-size:11.5px}
+.tax-step .ts-idx{width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.flow-4{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.flow-step{flex:1;min-width:130px;border:1px solid #e8ecf1;border-radius:8px;padding:8px;font-size:10.5px;background:#fff}
+.flow-step .fs-n{font-weight:700;color:var(--brand);font-size:10px;text-transform:uppercase;letter-spacing:.4px}
+.flow-step.ok{border-color:#b8e0c4;background:#f2fbf5}
+.flow-step.ok .fs-n{color:#27ae60}
+.kr-badge{display:inline-block;background:#eef6ff;color:#1e5eb8;font-size:9px;font-weight:600;padding:1px 7px;border-radius:10px;border:1px solid #d4e6fb;vertical-align:middle;margin-left:6px}
+.tbl-region td .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:#345}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div style="display:flex;align-items:center;gap:10px;padding:16px 14px 10px">
+      <div class="sidebar-logo" style="width:38px;height:38px">KR</div>
+      <div class="sidebar-brand-text">
+        <b>KRTaker</b>
+        <small>KEY RESPONSIBILITY TAKER</small>
+      </div>
+    </div>
+    <div class="sidebar-scroll" id="sidebarMenu"></div>
+    <div class="sidebar-bottom">
+      <div class="sb-version" id="sbVersion">v1.0 · PWA Prototype</div>
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <main class="main-area">
+    <div class="top-bar">
+      <button class="icon-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" style="display:none">☰</button>
+      <div style="flex:1;min-width:0">
+        <div class="page-title" id="pageTitle">Dashboard</div>
+        <div class="breadcrumb" id="breadcrumb">Home / Dashboard</div>
+      </div>
+      <div class="top-actions">
+        <div class="search-box" style="max-width:220px">
+          <input id="gsInput" placeholder="Search… (Ctrl+K)" oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()">
+        </div>
+        <button class="icon-btn" onclick="openQuickAdd()" title="Quick add">＋</button>
+        <div class="user-avatar" id="userAvatar" title="Owner — Kabir (demo)">KB</div>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+    <div class="content-footer">KRTaker v1.0 — AI-driven property caretaker · Prototype · <span id="swInfo" style="color:#9aa5b1">SW krtaker-v1-0</span></div>
+  </main>
+</div>
+
+<!-- ===== Mobile bottom nav ===== -->
+<div class="mob-bottom-nav" id="mobBottomNav"></div>
+
+<!-- ===== Global search dropdown ===== -->
+<div class="slide-out top-dropdown" id="gsDropdown" style="display:none">
+  <div class="backdrop" onclick="closeGlobalSearch()"></div>
+  <div class="panel" style="padding:10px;max-width:460px;max-height:60vh;overflow-y:auto">
+    <div style="font-size:11px;font-weight:600;color:#667;margin-bottom:6px">Search results</div>
+    <div id="gsResults" style="display:flex;flex-direction:column;gap:2px"></div>
+    <div id="gsEmpty" style="font-size:11px;color:#999;padding:8px;display:none">No matches — try a property, tenant, lease or module name.</div>
+  </div>
+</div>
+
+<!-- ===== Quick add ===== -->
+<div class="slide-out top-dropdown" id="qaDropdown" style="display:none">
+  <div class="backdrop" onclick="closeQuickAdd()"></div>
+  <div class="panel" style="padding:12px;max-width:420px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:13px;font-weight:600">Quick add</span>
+      <span onclick="closeQuickAdd()" style="cursor:pointer;color:#999;font-size:15px;padding:2px;width:28px;text-align:center">✕</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px" id="qaList"></div>
+  </div>
+</div>
+
+<!-- ===== Drawer modal ===== -->
+<div class="drawer-overlay" id="modalOverlay" style="display:none" onclick="closeModalOnBackdrop(event)">
+  <div class="drawer-sheet" id="modalSheet" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <span id="modalTitle">Title</span>
+      <span class="drawer-close" onclick="closeModal()">✕</span>
+    </div>
+    <div class="drawer-body" id="modalBody"></div>
+    <div class="drawer-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- ===== Toast ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+{{SEED}}
+{{APP}}
+</script>
+</body>
+</html>
