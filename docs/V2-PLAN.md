@@ -44,6 +44,7 @@ Single page `tools.html` (also linked from Resources mega-menu):
 - [x] V2 kickoff, README/V1 release docs, tag v1.0.0
 - [x] Calculators (holding tax / TDS / yield) — verified vs. blog example (NAV ৳20L → 8% → ৳1.6L)
 - [x] Blog + case studies (3 new posts: TDS commercial, NRB buying, eviction; case-studies page with Mirpur/Gulshan/Dubai)
-- [ ] SEO (sitemap, JSON-LD, OG)
+- [x] SEO foundation (sitemap.xml 26 URLs, robots.txt, canonical, OG/Twitter cards, JSON-LD Organization/SoftwareApplication/BlogPosting/FAQPage, OG image 1200×630, font preload, _headers)
+- [x] Back-to-top button + AI chat widget (KR assistant, bilingual EN/BN knowledge base, quick chips, typing indicator — LLM-pluggable for Phase 5)
 - [ ] krtaker.com deployment
 - [ ] Auth wiring

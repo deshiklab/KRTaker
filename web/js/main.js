@@ -63,6 +63,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Back-to-top button
+  const btt = document.querySelector('.btt-btn');
+  if (btt) {
+    const onScroll = () => btt.classList.toggle('show', (window.scrollY || document.documentElement.scrollTop) > 480);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
   // Toast helper
   window.krToast = (msg) => {
     let t = document.getElementById('krToast');
