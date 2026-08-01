@@ -6,9 +6,11 @@
 <meta name="theme-color" content="#2F80ED">
 <meta name="description" content="Log in to your KRTaker workspace.">
 <title>Log in — KRTaker</title>
-<link rel="icon" href="https://servers-diagnostic-kirk-jeremy.trycloudflare.com/pwa/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../pwa/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../pwa/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -18,18 +20,20 @@
     <a class="nav-logo" href="index.html"><span class="logo-mark">KR</span> KRTaker</a>
     <button class="nav-toggle" aria-label="Menu">☰</button>
     <ul class="nav-links">
-      <li><a href="features.html" >Features</a></li>
-      <li><a href="how-it-works.html" >How it works</a></li>
-      <li><a href="pricing.html" >Pricing</a></li>
-      <li><a href="for-owners.html" >For Owners</a></li>
-      <li><a href="for-partners.html" >Partners</a></li>
-      <li><a href="ai-caretaker.html" >AI Caretaker</a></li>
-      <li><a href="blog.html" >Insights</a></li>
-      <li><a href="about.html" >About</a></li>
+      <li><a href="features.html" data-i18n="nav.features" >Features</a></li>
+      <li><a href="how-it-works.html" data-i18n="nav.how" >How it works</a></li>
+      <li><a href="pricing.html" data-i18n="nav.pricing" >Pricing</a></li>
+      <li><a href="for-owners.html" data-i18n="nav.owners" >For Owners</a></li>
+      <li><a href="for-partners.html" data-i18n="nav.partners" >Partners</a></li>
+      <li><a href="ai-caretaker.html" data-i18n="nav.ai" >AI Caretaker</a></li>
+      <li><a href="blog.html" data-i18n="nav.insights" >Insights</a></li>
+      <li><a href="about.html" data-i18n="nav.about" >About</a></li>
     </ul>
     <div class="nav-cta">
-      <a href="login.html" class="btn btn-ghost" style="padding:9px 14px;font-size:13px">Log in</a>
-      <a href="register.html" class="btn btn-primary" style="padding:9px 18px;font-size:13px">Get started</a>
+      <button class="icon-btn" data-lang-toggle aria-label="Language">বাং</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      <a href="login.html" class="btn btn-ghost nav-ghost" data-i18n="nav.login">Log in</a>
+      <a href="register.html" class="btn btn-primary nav-primary" data-i18n="nav.getStarted">Get started</a>
     </div>
   </div>
 </nav>
@@ -38,23 +42,23 @@
     <div class="auth-card" style="max-width:440px">
       <div class="auth-header">
         <span class="auth-icon">🔐</span>
-        <h1>Welcome back</h1>
-        <p>Log in to your KRTaker workspace</p>
+        <h1 data-i18n="login.title">Welcome back</h1>
+        <p data-i18n="login.sub">Log in to your KRTaker workspace</p>
       </div>
       <form id="loginForm">
         <div class="form-group">
-          <label>Email address</label>
+          <label data-i18n="login.email">Email address</label>
           <input type="email" placeholder="you@example.com" required>
         </div>
         <div class="form-group">
-          <label>Password</label>
+          <label data-i18n="login.pass">Password</label>
           <input type="password" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="btn btn-primary btn-block btn-lg">Log in</button>
+        <button type="submit" data-i18n="login.btn" class="btn btn-primary btn-block btn-lg">Log in</button>
         <p class="terms-note"><a href="forgot-password.html">Forgot password?</a></p>
       </form>
       <div class="auth-footer">
-        <p>New to KRTaker? <a href="register.html">Create an account</a></p>
+        <p><span data-i18n="login.noacct">New to KRTaker?</span> <a href="register.html"><span data-i18n="login.signup">Create an account</span></a></p>
       </div>
       <div class="auth-feats">
         <span>Demo: any credentials → workspace</span>
@@ -63,60 +67,77 @@
   </div>
 </div>
 
+<!-- ===== CTA SECTION ===== -->
+<section class="cta-section">
+  <div class="container">
+    <h2 data-i18n="cta.title">Ready to put your property on autopilot?</h2>
+    <p data-i18n="cta.sub">Join 128 subscribers managing ৳74.55 Cr in property with KRTaker.</p>
+    <div class="cta-actions">
+      <a href="register.html" class="btn btn-white btn-lg" data-i18n="cta.btn">Start free trial</a>
+      <a href="contact.html" class="btn btn-outline btn-lg" data-i18n="shared.ctaBtn2">Talk to us</a>
+    </div>
+  </div>
+</section>
 <!-- ===== FOOTER ===== -->
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
         <div class="nav-logo"><span class="logo-mark">KR</span> KRTaker</div>
-        <p>Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
+        <p data-i18n="footer.blurb">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
       </div>
       <div>
-        <h4>Platform</h4>
+        <h4 data-i18n="footer.p1">Platform</h4>
         <ul>
-          <li><a href="features.html">Features</a></li>
-          <li><a href="how-it-works.html">How it works</a></li>
-          <li><a href="pricing.html">Pricing</a></li>
-          <li><a href="register.html">Register</a></li>
-          <li><a href="login.html">Log in</a></li>
+          <li><a href="features.html" data-i18n="footer.features">Features</a></li>
+          <li><a href="how-it-works.html" data-i18n="footer.how">How it works</a></li>
+          <li><a href="pricing.html" data-i18n="footer.pricing">Pricing</a></li>
+          <li><a href="register.html" data-i18n="footer.register">Register</a></li>
+          <li><a href="login.html" data-i18n="footer.login">Log in</a></li>
         </ul>
       </div>
       <div>
-        <h4>For you</h4>
+        <h4 data-i18n="footer.p2">For you</h4>
         <ul>
-          <li><a href="for-owners.html">Property Owners</a></li>
-          <li><a href="for-tenants.html">Tenants</a></li>
-          <li><a href="for-partners.html">Service Partners</a></li>
-          <li><a href="for-nrb.html">NRB Investors</a></li>
-          <li><a href="legal-compliance.html">Legal &amp; Compliance</a></li>
+          <li><a href="for-owners.html" data-i18n="footer.owners">Property Owners</a></li>
+          <li><a href="for-tenants.html" data-i18n="footer.tenants">Tenants</a></li>
+          <li><a href="for-partners.html" data-i18n="footer.partners">Service Partners</a></li>
+          <li><a href="for-nrb.html" data-i18n="footer.nrb">NRB Investors</a></li>
+          <li><a href="legal-compliance.html" data-i18n="footer.legal">Legal &amp; Compliance</a></li>
         </ul>
       </div>
       <div>
-        <h4>Company</h4>
+        <h4 data-i18n="footer.p3">Company</h4>
         <ul>
-          <li><a href="about.html">About us</a></li>
-          <li><a href="blog.html">Insights &amp; Blog</a></li>
-          <li><a href="faq.html">FAQ</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="ai-caretaker.html">AI Caretaker</a></li>
+          <li><a href="about.html" data-i18n="footer.about">About us</a></li>
+          <li><a href="blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
+          <li><a href="faq.html" data-i18n="footer.faq">FAQ</a></li>
+          <li><a href="contact.html" data-i18n="footer.contact">Contact</a></li>
+          <li><a href="ai-caretaker.html" data-i18n="footer.ai">AI Caretaker</a></li>
         </ul>
       </div>
       <div>
-        <h4>Get in touch</h4>
+        <h4 data-i18n="footer.p4">Get in touch</h4>
         <ul>
-          <li>📧 hello@krtaker.com</li>
-          <li>📞 +880 1712-000000</li>
-          <li>📍 Dhaka, Bangladesh</li>
-          <li>🕐 24/7 AI caretaker online</li>
+          <li data-i18n="footer.c1">📧 hello@krtaker.com</li>
+          <li data-i18n="footer.c2">📞 +880 1712-000000</li>
+          <li data-i18n="footer.c3">📍 Dhaka, Bangladesh</li>
+          <li data-i18n="footer.c4">🕐 24/7 AI caretaker online</li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 KRTaker. All rights reserved.</span>
-      <span><a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Support</a></span>
+      <span data-i18n="footer.rights">© 2026 KRTaker. All rights reserved.</span>
+      <span><a href="terms.html" data-i18n="footer.terms">Terms</a> · <a href="privacy.html" data-i18n="footer.privacy">Privacy</a> · <a href="contact.html" data-i18n="footer.support">Support</a></span>
     </div>
   </div>
 </footer>
+<!-- Mobile sticky CTA -->
+<div class="sticky-cta">
+  <a href="register.html" data-i18n="shared.stickyCta">Start free trial — 14 days, no card</a>
+</div>
+<script src="i18n/i18n-dict.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

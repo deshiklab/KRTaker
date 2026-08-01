@@ -1,76 +1,148 @@
 <div class="auth-page">
   <div class="container">
-    <div class="auth-card">
+    <div class="auth-card wide">
       <div class="auth-header">
         <span class="auth-icon">🏠</span>
-        <h1>Create your KRTaker account</h1>
-        <p>14-day free trial · No credit card needed</p>
+        <h1 data-i18n="reg.title">Create your KRTaker account</h1>
+        <p data-i18n="reg.sub">14-day free trial · No credit card needed</p>
       </div>
-      <form id="registerForm">
-        <div class="form-group">
-          <label>I am a…</label>
-          <div class="role-pick">
-            <input type="radio" name="acctType" id="rt_owner" value="owner" checked>
-            <label for="rt_owner">🏠 Property Owner</label>
-            <input type="radio" name="acctType" id="rt_partner" value="partner">
-            <label for="rt_partner">🛠️ Service Partner</label>
-            <input type="radio" name="acctType" id="rt_legal" value="legal">
-            <label for="rt_legal">⚖️ Legal Firm / Consultant</label>
-            <input type="radio" name="acctType" id="rt_tenant" value="tenant">
-            <label for="rt_tenant">👤 Tenant (invited)</label>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Your name</label>
-            <input type="text" name="name" placeholder="Rofiqul Islam" required>
-          </div>
-          <div class="form-group">
-            <label>Organization (optional)</label>
-            <input type="text" name="org" placeholder="Green View Residency">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Email address</label>
-            <input type="email" name="email" placeholder="you@example.com" required>
-          </div>
-          <div class="form-group">
-            <label>Phone / WhatsApp</label>
-            <input type="tel" name="phone" placeholder="+880 17XX-XXXXXX">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" name="password" placeholder="Min 6 characters" minlength="6" required>
-        </div>
-        <div class="form-group">
-          <label>Choose your plan</label>
-          <div class="plan-pick">
-            <input type="radio" name="plan" id="pl_starter" value="Starter" checked>
-            <label for="pl_starter">Starter<br><b>৳5,000</b>/mo</label>
-            <input type="radio" name="plan" id="pl_business" value="Business">
-            <label for="pl_business">Business<br><b>৳15,000</b>/mo</label>
-            <input type="radio" name="plan" id="pl_enterprise" value="Enterprise">
-            <label for="pl_enterprise">Enterprise<br><b>৳45,000</b>/mo</label>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block btn-lg">⚡ Create my account</button>
-        <p class="terms-note">By registering you agree to our <a href="terms.html">Terms</a> &amp; <a href="privacy.html">Privacy Policy</a>.</p>
-      </form>
-      <div id="regSuccess" class="success-box" style="display:none">
-        <div class="ok-ico">✓</div>
-        <h3 style="margin-bottom:6px">Welcome to KRTaker!</h3>
-        <p style="color:var(--text-soft);font-size:14px"><b id="regSuccessName"></b> is registered. Opening your AI caretaker workspace…</p>
+
+      <div class="wiz-progress" aria-hidden="true">
+        <div class="seg" id="seg1"></div><div class="seg" id="seg2"></div><div class="seg" id="seg3"></div><div class="seg" id="seg4"></div><div class="seg" id="seg5"></div>
       </div>
-      <div class="auth-footer">
-        <p>Already have an account? <a href="login.html">Log in</a></p>
+      <div class="wiz-labels">
+        <span class="cur" id="lab1" data-i18n="reg.step1">Plan</span>
+        <span id="lab2" data-i18n="reg.step2">Role</span>
+        <span id="lab3" data-i18n="reg.step3">Account</span>
+        <span id="lab4" data-i18n="reg.step4">Verify</span>
+        <span id="lab5" data-i18n="reg.step5">Done</span>
       </div>
-      <div class="auth-feats">
-        <span>✅ Free trial</span>
-        <span>✅ Cancel anytime</span>
-        <span>✅ bKash payment</span>
+
+      <!-- STEP 1: PLAN -->
+      <div class="wiz-pane active" id="pane1">
+        <h3 style="font-size:19px;margin-bottom:4px" data-i18n="reg.planTitle">Choose your plan</h3>
+        <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px" data-i18n="reg.planSub">Every plan includes the AI caretaker, all modules and unlimited units in trial.</p>
+        <div class="bill-toggle" role="tablist">
+          <button type="button" class="on" id="billMonthly" data-i18n="reg.monthly">Monthly</button>
+          <button type="button" id="billAnnual" data-i18n="reg.annual">Annual</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+          <button type="button" class="plan-card selected" data-plan="Starter" data-mo="5000" data-yr="48000" style="position:relative">
+            <b data-i18n="reg.plan.starter">Starter</b>
+            <div class="pc-price" data-price>৳5,000<span data-i18n="pricing.permo">/mo</span></div>
+            <div class="pc-d" data-i18n="reg.plan.starterD">For 1 building · up to 20 units</div>
+          </button>
+          <button type="button" class="plan-card" data-plan="Business" data-mo="15000" data-yr="144000" style="position:relative">
+            <b data-i18n="reg.plan.business">Business</b>
+            <div class="pc-price" data-price>৳15,000<span data-i18n="pricing.permo">/mo</span></div>
+            <div class="pc-d" data-i18n="reg.plan.businessD">For growing portfolios · up to 200 units</div>
+            <span class="pc-badge">★</span>
+          </button>
+          <button type="button" class="plan-card" data-plan="Enterprise" data-mo="45000" data-yr="432000" style="position:relative">
+            <b data-i18n="reg.plan.enterprise">Enterprise</b>
+            <div class="pc-price" data-price>৳45,000<span data-i18n="pricing.permo">/mo</span></div>
+            <div class="pc-d" data-i18n="reg.plan.enterpriseD">Multi-entity, multi-role · unlimited</div>
+          </button>
+        </div>
+        <div class="wiz-actions"><button class="btn btn-primary btn-lg" id="goStep2" data-i18n="reg.next">Continue</button></div>
+      </div>
+
+      <!-- STEP 2: ROLE -->
+      <div class="wiz-pane" id="pane2">
+        <h3 style="font-size:19px;margin-bottom:4px" data-i18n="reg.roleTitle">I am a…</h3>
+        <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px" data-i18n="reg.roleSub">Pick the role that fits — you can change it later.</p>
+        <button type="button" class="role-opt selected" data-role="owner">
+          <span class="ro-ico">🏠</span><span><b data-i18n="reg.role.owner">Property Owner</b><span data-i18n="reg.roleDesc.owner">Own buildings &amp; units</span></span>
+        </button>
+        <button type="button" class="role-opt" data-role="tenant">
+          <span class="ro-ico">👤</span><span><b data-i18n="reg.role.tenant">Tenant</b><span data-i18n="reg.roleDesc.tenant">Rent &amp; maintenance</span></span>
+        </button>
+        <button type="button" class="role-opt" data-role="partner">
+          <span class="ro-ico">🛠️</span><span><b data-i18n="reg.role.partner">Service Partner</b><span data-i18n="reg.roleDesc.partner">Work orders &amp; payouts</span></span>
+        </button>
+        <button type="button" class="role-opt" data-role="legal">
+          <span class="ro-ico">⚖️</span><span><b data-i18n="reg.role.legal">Legal Firm / Consultant</b><span data-i18n="reg.roleDesc.legal">Compliance &amp; drafting</span></span>
+        </button>
+        <button type="button" class="role-opt" data-role="nrb">
+          <span class="ro-ico">🌍</span><span><b data-i18n="reg.role.nrb">NRB Investor</b><span data-i18n="reg.roleDesc.nrb">Remote portfolio</span></span>
+        </button>
+        <div class="wiz-actions">
+          <button class="btn btn-outline" id="backTo1" data-i18n="reg.back">Back</button>
+          <button class="btn btn-primary btn-lg" id="goStep3" data-i18n="reg.next">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: ACCOUNT -->
+      <div class="wiz-pane" id="pane3">
+        <h3 style="font-size:19px;margin-bottom:4px" data-i18n="reg.acctTitle">Your account</h3>
+        <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px" data-i18n="reg.acctSub">We'll send a one-time code to your email.</p>
+        <form id="acctForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rName" data-i18n="reg.name">Full name</label>
+              <input type="text" id="rName" name="name" data-i18n-ph="reg.namePh" placeholder="Rofiqul Islam" required>
+            </div>
+            <div class="form-group">
+              <label for="rOrg" data-i18n="reg.org">Organization (optional)</label>
+              <input type="text" id="rOrg" name="org" data-i18n-ph="reg.orgPh" placeholder="Green View Residency">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rEmail" data-i18n="reg.email">Email address</label>
+              <input type="email" id="rEmail" name="email" data-i18n-ph="reg.emailPh" placeholder="you@example.com" required>
+              <div class="form-err" id="errEmail" data-i18n="reg.err.email">Please enter a valid email.</div>
+            </div>
+            <div class="form-group">
+              <label for="rPhone" data-i18n="reg.phone">Phone / WhatsApp</label>
+              <input type="tel" id="rPhone" name="phone" data-i18n-ph="reg.phonePh" placeholder="+880 17XX-XXXXXX">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="rPass" data-i18n="reg.pass">Password</label>
+            <input type="password" id="rPass" name="password" data-i18n-ph="reg.passPh" placeholder="Min 6 characters" minlength="6" required>
+            <div class="form-err" id="errPass" data-i18n="reg.err.pass">Password must be at least 6 characters.</div>
+          </div>
+          <p class="terms-note" data-i18n="reg.terms">By registering you agree to our <a href="terms.html">Terms</a> &amp; <a href="privacy.html">Privacy Policy</a>.</p>
+          <div class="wiz-actions">
+            <button type="button" class="btn btn-outline" id="backTo2" data-i18n="reg.back">Back</button>
+            <button type="submit" class="btn btn-primary btn-lg" id="regSubmit" data-i18n="reg.next">Continue</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- STEP 4: OTP -->
+      <div class="wiz-pane" id="pane4">
+        <h3 style="font-size:19px;margin-bottom:4px" data-i18n="reg.otpTitle">Verify your email</h3>
+        <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px"><span data-i18n="reg.otpSub">Enter the 6-digit code we emailed to</span> <b id="otpEmail" style="color:var(--primary)"></b></p>
+        <div class="otp-row" id="otpRow">
+          <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="OTP 1">
+          <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="OTP 2">
+          <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="OTP 3">
+          <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="OTP 4">
+          <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="OTP 5">
+          <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="OTP 6">
+        </div>
+        <div class="form-err" id="errOtp" style="text-align:center" data-i18n="reg.err.otp">Invalid or expired code. Try again.</div>
+        <div class="otp-timer" id="otpTimer">60s · <a id="otpResend" data-i18n="reg.otpResend">Resend code</a></div>
+        <div class="wiz-actions">
+          <button class="btn btn-outline" id="backTo3" data-i18n="reg.back">Back</button>
+          <button class="btn btn-primary btn-lg" id="otpVerify" data-i18n="reg.otpBtn">Verify &amp; activate trial</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: SUCCESS -->
+      <div class="wiz-pane" id="pane5">
+        <div class="success-box">
+          <div class="ok-ico">✓</div>
+          <h2 data-i18n="reg.successTitle">Trial activated 🎉</h2>
+          <p style="font-size:13.5px;color:var(--text-soft);margin-bottom:6px" data-i18n="reg.successSub">Your 14-day free trial started. Welcome to KRTaker.</p>
+          <p class="trial-note" id="trialNote"></p>
+          <a class="btn btn-primary btn-lg btn-block" href="../design-prototype.html" data-i18n="reg.successWorkspace">Open your workspace</a>
+          <a class="btn btn-outline btn-block" href="index.html" style="margin-top:10px" data-i18n="reg.successHome">Back to home</a>
+        </div>
       </div>
     </div>
   </div>
 </div>
+<script src="js/register.js"></script>

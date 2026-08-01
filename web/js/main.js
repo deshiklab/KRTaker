@@ -1,9 +1,34 @@
-/* KRTaker landing — main.js */
+/* KRTaker landing — main.js (nav, theme, reveal, forms) */
 document.addEventListener('DOMContentLoaded', () => {
   // Mobile nav toggle
   const t = document.querySelector('.nav-toggle');
   const links = document.querySelector('.nav-links');
   if (t && links) t.addEventListener('click', () => links.classList.toggle('open'));
+
+  // Dark mode toggle
+  const THEME_KEY = 'krtaker_theme';
+  let theme = 'light';
+  try { theme = localStorage.getItem(THEME_KEY) || 'light'; } catch (e) {}
+  const applyTheme = (th) => {
+    document.documentElement.setAttribute('data-theme', th);
+    document.querySelectorAll('[data-theme-toggle]').forEach(b => { b.textContent = th === 'dark' ? '☀️' : '🌙'; });
+    try { localStorage.setItem(THEME_KEY, th); } catch (e) {}
+  };
+  applyTheme(theme);
+  document.querySelectorAll('[data-theme-toggle]').forEach(b => {
+    b.addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && revealEls.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('visible'); io.unobserve(en.target); } });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('visible'));
+  }
 
   // FAQ accordion
   document.querySelectorAll('.faq-q').forEach(q => {
@@ -21,52 +46,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!t) { t = document.createElement('div'); t.id = 'krToast'; t.className = 'toast'; document.body.appendChild(t); }
     t.textContent = msg; t.classList.add('show');
     clearTimeout(window.__krToastT);
-    window.__krToastT = setTimeout(() => t.classList.remove('show'), 3200);
+    window.__krToastT = setTimeout(() => t.classList.remove('show'), 3600);
   };
 
-  // Register form → save to localStorage + demo redirect
-  const reg = document.getElementById('registerForm');
-  if (reg) {
-    reg.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const data = {
-        name: reg.name.value, org: reg.org.value, email: reg.email.value,
-        phone: reg.phone.value, role: (reg.querySelector('input[name=acctType]:checked')||{}).value || 'owner',
-        plan: (reg.querySelector('input[name=plan]:checked')||{}).value || 'Starter',
-        ts: new Date().toISOString()
-      };
-      let signups = []; try { signups = JSON.parse(localStorage.getItem('krtaker_signups')||'[]'); } catch(err){}
-      signups.push(data);
-      localStorage.setItem('krtaker_signups', JSON.stringify(signups));
-      const box = document.getElementById('regSuccess');
-      box.style.display = 'block';
-      document.getElementById('regSuccessName').textContent = data.org || data.name;
-      reg.style.display = 'none';
-      // set the signup into the PWA demo DB key so the new owner exists
-      try {
-        const key = 'krtaker_db_v3';
-        const db = JSON.parse(localStorage.getItem(key) || 'null');
-        if (db && db.users) {
-          db.users.push({ id:'USR-NEW-'+String(Date.now()).slice(-4), role:'owner', name:data.name, avatar:(data.name||'N').slice(0,2).toUpperCase(), scope:{} });
-          localStorage.setItem(key, JSON.stringify(db));
-        }
-      } catch(err){}
-      krToast('Account created 🎉 — redirecting to your workspace…');
-      setTimeout(() => { window.location.href = 'https://servers-diagnostic-kirk-jeremy.trycloudflare.com/design-prototype.html'; }, 1600);
-    });
-  }
-
-  // Login form
+  // Login form (demo)
   const log = document.getElementById('loginForm');
   if (log) {
     log.addEventListener('submit', (e) => {
       e.preventDefault();
       krToast('Demo login — opening KRTaker workspace…');
-      setTimeout(() => { window.location.href = 'https://servers-diagnostic-kirk-jeremy.trycloudflare.com/design-prototype.html'; }, 1200);
+      setTimeout(() => { window.location.href = '../design-prototype.html'; }, 1200);
     });
   }
 
-  // Contact form
+  // Contact form → landing API
   const cf = document.getElementById('contactForm');
-  if (cf) cf.addEventListener('submit', (e) => { e.preventDefault(); krToast('Message sent — we\'ll reply within 24h ✓'); cf.reset(); });
+  if (cf) {
+    cf.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = cf.querySelector('button[type=submit]');
+      const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = '…';
+      try {
+        const fd = new FormData(cf);
+        const res = await fetch('../api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: fd.get('name'), email: fd.get('email'),
+            phone: fd.get('phone') || '', subject: fd.get('subject') || '',
+            message: fd.get('message')
+          })
+        });
+        const data = await res.json();
+        if (data.ok) { krToast('Message sent — we\'ll reply within 24h ✓'); cf.reset(); }
+        else krToast(data.error || 'Something went wrong. Try again.');
+      } catch (err) { krToast('Network error — please try again.'); }
+      btn.disabled = false; btn.textContent = orig;
+    });
+  }
 });

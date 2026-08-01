@@ -50,3 +50,10 @@ for slug, (title, meta, active_nav) in PAGES.items():
 for s, kb in sorted(built, key=lambda x: x[0]):
     print(f'{s}.html  {kb} KB')
 print(f'TOTAL: {len(built)} pages')
+
+# Mirror to docs/landing so the PWA tunnel serves the site
+import shutil
+docs_landing = f'{ROOT}/docs/landing'
+shutil.rmtree(docs_landing, ignore_errors=True)
+shutil.copytree(OUT, docs_landing)
+print(f'mirrored web -> docs/landing')
