@@ -699,6 +699,48 @@
 .top-nav-item:hover{background:#f2f6fc;color:#2F80ED}
 .top-nav-item.active{background:#eef3ff;color:#2F80ED;font-weight:600}
 .kbd{font-size:9px;color:#999;border:1px solid #e0e0e0;border-radius:4px;padding:1px 5px;background:#fafbfc;font-family:ui-monospace,monospace}
+/* === Global search dropdown === */
+#searchWrap{flex:1;min-width:0;max-width:calc(100vw - 120px)}
+#searchBar{display:flex;align-items:center;gap:6px;border:1px solid #e0e0e0;border-radius:8px;padding:5px 10px;background:#fff;width:100%;transition:all .15s}
+#searchBar:hover{border-color:#c0d4f0}
+#searchBar:focus-within{border-color:#2F80ED;box-shadow:0 0 0 3px rgba(47,128,237,.12);width:100%}
+#searchBar .search-icon{width:13px;height:13px;color:#999;flex-shrink:0}
+#searchBar input{border:none;outline:none;font-size:11.5px;flex:1;min-width:60px;background:transparent;color:#333}
+#searchDropdown{position:fixed!important;left:8px!important;right:8px!important;width:auto!important;top:54px!important;max-height:calc(100vh - 64px)!important;transform:none!important;z-index:9997!important}
+#searchDropdown .backdrop{background:rgba(0,0,0,.25)!important}
+#searchDropdown .panel{position:absolute;top:0;left:50%;transform:translateX(-50%);width:560px;max-width:94vw;max-height:calc(100vh - 64px);height:auto;border-radius:12px!important;box-shadow:0 12px 40px rgba(0,0,0,.18);overflow:hidden;animation:sdDown .18s ease-out}
+@keyframes sdDown{from{opacity:0;transform:translateX(-50%) translateY(-8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.sd-input-wrap{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid #f0f2f5;background:#fff}
+.sd-input-wrap svg{flex-shrink:0}
+.sd-input-wrap input{flex:1;border:none;outline:none;font-size:13px;background:transparent;color:#222}
+.sd-results{overflow-y:auto;max-height:calc(100vh - 200px);padding:6px;background:#fff}
+.sd-group-header{font-size:9.5px;font-weight:700;color:#9aa5b1;text-transform:uppercase;letter-spacing:.7px;padding:8px 10px 4px}
+.sd-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .1s}
+.sd-item:hover,.sd-item.sd-hl{background:#f2f6fc}
+.sd-item.sd-hl{box-shadow:inset 0 0 0 1px #cfe0ff}
+.sd-icon{width:30px;height:30px;border-radius:8px;background:#eef6ff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sd-info{flex:1;min-width:0}
+.sd-title{font-size:12px;font-weight:600;color:#222;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sd-title mark{background:#fff3bf;color:#333;border-radius:2px;padding:0 1px}
+.sd-sub{font-size:10px;color:#8895a7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sd-mod{font-size:9px;color:#2F80ED;background:#eef6ff;border-radius:10px;padding:1px 8px;flex-shrink:0}
+.sd-empty{text-align:center;color:#9aa5b1;padding:26px 12px;font-size:11.5px;line-height:1.8}
+.sd-empty .sd-empty-icon{font-size:26px;margin-bottom:6px}
+.sd-recent-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .1s}
+.sd-recent-item:hover{background:#f2f6fc}
+.sd-footer{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;background:#fafbfc;border-top:1px solid #f0f2f5;font-size:9.5px;color:#9aa5b1}
+.sd-quick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px;padding:4px 8px}
+.sd-quick .sq{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:500;color:#444}
+.sd-quick .sq:hover{background:#f2f6fc;color:#2F80ED}
+@media (max-width:768px){
+  #searchDropdown{left:0!important;right:0!important;top:0!important;max-height:100vh!important}
+  #searchDropdown .panel{width:100vw!important;max-width:100vw!important;max-height:100vh;border-radius:0!important;transform:none;left:0;animation:sdUp .2s ease-out}
+  #searchDropdown .backdrop{background:rgba(0,0,0,.35)!important}
+  @keyframes sdUp{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+  #searchDropdown .panel{top:0}
+  .sd-results{max-height:calc(100vh - 130px)}
+  .sd-footer{flex-wrap:wrap;gap:4px}
+}
 .tbl-toolbar{display:flex;align-items:center;gap:4px;padding:6px 10px;background:#fafbfc;border-bottom:1px solid #e8e8e8;flex-wrap:wrap}
 .search-box{display:flex;align-items:center;border:1px solid #e0e0e0;border-radius:6px;padding:0 8px;background:#fff;flex:1;max-width:240px}
 .search-box input{border:none;outline:none;font-size:11px;padding:5px 4px;width:100%;background:transparent}
@@ -813,19 +855,19 @@
         <div id="searchWrap">
           <div id="searchBar" tabindex="-1" onclick="openSearchDropdown()" title="Search anything (Ctrl+K)" style="cursor:pointer">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input id="gsInput" placeholder="Search anything..." oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()" autocomplete="off"/>
-            <span class="kbd">⌘K</span>
+            <input id="gsInput" placeholder="Search anything..." oninput="onSearchInput(this.value)" onkeydown="searchKeyNav(event)" autocomplete="off"/>
+            <span class="kbd" id="gsKbd">Ctrl+K</span>
           </div>
-          <div id="searchDropdown" class="slide-out top-dropdown" style="display:none">
-            <div class="panel" style="padding:10px;max-width:460px;max-height:60vh;overflow-y:auto">
-              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input id="sdInput" placeholder="Search properties, tenants, leases, modules..." oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()" autocomplete="off" style="flex:1;border:none;outline:none;font-size:12px;background:transparent"/>
-                <span onclick="closeGlobalSearch()" style="cursor:pointer;color:#999;font-size:14px;padding:2px;width:24px;text-align:center;border-radius:4px">✕</span>
+          <div id="searchDropdown" class="slide-out top-dropdown">
+            <div class="backdrop" onclick="closeSearchDropdown()"></div>
+            <div class="panel" id="sdPanel">
+              <div class="sd-input-wrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="sdInput" placeholder="Search properties, tenants, leases, invoices, modules..." oninput="onSearchInput(this.value)" onkeydown="searchKeyNav(event)" autocomplete="off"/>
+                <span id="sdClear" onclick="clearSearch()" title="Clear" style="cursor:pointer;color:#999;font-size:13px;padding:2px 6px;border-radius:4px;display:none">✕</span>
               </div>
-              <div id="gsResults" style="display:flex;flex-direction:column;gap:2px"></div>
-              <div id="gsEmpty" style="font-size:11px;color:#999;padding:8px;display:none">No matches.</div>
-              <div style="display:flex;justify-content:space-between;font-size:9px;color:#bbb;padding:6px 2px 0;border-top:1px solid #f0f0f0;margin-top:6px"><span id="gsCount"></span><span>↑↓ Navigate · ↩ Open · ⎋ Close</span></div>
+              <div class="sd-results" id="sdResults"></div>
+              <div class="sd-footer"><span id="sdResultCount"></span><span id="sdHints">↑↓ Navigate · ↩ Open · ⎋ Close</span></div>
             </div>
           </div>
         </div>
@@ -847,7 +889,7 @@
         <span style="color:#e0e0e0">|</span>
         <button onclick="toggleFullScreen()" style="padding:2px 6px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:10px;color:#555" title="Fullscreen">⛶</button>
         <span style="color:#e0e0e0">|</span>
-        <span id="swInfo" style="font-size:9px;color:#9aa5b1">SW krtaker-v2-0</span>
+        <span id="swInfo" style="font-size:9px;color:#9aa5b1">SW krtaker-v2-1</span>
       </div>
     </div>
   </main>
@@ -960,7 +1002,7 @@ const SEED = {
 };
 
 // === KRTaker core v2: state, groups/nav, table framework, dashboard, portfolio, tenancy ===
-const SW_CACHE = 'krtaker-v2-0';
+const SW_CACHE = 'krtaker-v2-1';
 let DB = loadDB();
 let currentView = 'dashboard';
 let currentGroup = 'overview';
@@ -1113,35 +1155,137 @@ function nav(id){
 }
 window.addEventListener('hashchange', ()=>{ const h=location.hash.slice(1); if(h && MODS[h]) nav(h); });
 
-// ---------- global search ----------
-function openSearchDropdown(){ openGlobalSearch(document.getElementById('gsInput').value||''); }
-function openGlobalSearch(q){
-  const dd = document.getElementById('searchDropdown');
-  q = (q||'').trim();
-  const res = [];
-  if(q.length >= 2){
-    const ql = q.toLowerCase();
-    DB.properties.forEach(p=>{ if((p.name+' '+p.holding).toLowerCase().includes(ql)) res.push({ico:'🏢', t:p.name, s:p.id+' · '+p.jurisdiction, fn:`nav('properties'); openPropDetail('${p.id}')`}); });
-    DB.tenants.forEach(t=>{ if(t.name.toLowerCase().includes(ql)) res.push({ico:'👤', t:t.name, s:t.id+' · '+t.nid, fn:`nav('tenants'); openTenantDetail('${t.id}')`}); });
-    DB.leases.forEach(l=>{ if(l.id.toLowerCase().includes(ql)) res.push({ico:'📄', t:l.id, s:unitLabel(unitById(l.unit))+' · '+fmt(l.rent)+'/mo', fn:`nav('leases'); openLeaseDetail('${l.id}')`}); });
-    DB.invoices.forEach(v=>{ if(v.id.toLowerCase().includes(ql)) res.push({ico:'🧾', t:v.id, s:leaseById(v.lease)?.id+' · '+v.month, fn:`nav('invoices')`}); });
-    Object.values(MODS).forEach(m=>{ if(m.label.toLowerCase().includes(ql)) res.push({ico:m.ico, t:m.label+' module', s:'Go to module', fn:`nav('${Object.keys(MODS).find(k=>MODS[k]===m)}')`}); });
-  } else {
-    Object.values(MODS).forEach(m=>{ res.push({ico:m.ico, t:m.label, s:'Module', fn:`nav('${Object.keys(MODS).find(k=>MODS[k]===m)}')`}); });
-  }
-  const box = document.getElementById('gsResults');
-  box.innerHTML = res.slice(0,10).map(r=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:7px;cursor:pointer" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${r.fn}; closeGlobalSearch()">
-    <span style="font-size:14px">${r.ico}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">${esc(r.t)}</div><div style="font-size:10px;color:#8895a7">${esc(r.s)}</div></div></div>`).join('');
-  document.getElementById('gsEmpty').style.display = res.length ? 'none' : 'block';
-  document.getElementById('gsCount').textContent = res.length ? res.length + ' result(s)' : '';
-  dd.style.display = 'flex';
+// ---------- global search (v2: grouped, keyboard-nav, recent, highlighted) ----------
+let _sdItems = [], _sdHL = -1, _sdRecent = [];
+try{ _sdRecent = JSON.parse(localStorage.getItem('krtaker_recent')||'[]'); }catch(e){}
+function _sdSaveRecent(q){
+  _sdRecent = [q, ..._sdRecent.filter(x=>x!==q)].slice(0,5);
+  try{ localStorage.setItem('krtaker_recent', JSON.stringify(_sdRecent)); }catch(e){}
 }
-function closeGlobalSearch(){ document.getElementById('searchDropdown').style.display='none'; }
-function jumpFirstResult(){ const r=document.querySelector('#gsResults [onclick]'); if(r) r.click(); }
+function hl(text, q){
+  const t = esc(text); if(!q) return t;
+  const ql = q.toLowerCase();
+  let out = '', i = 0;
+  const lower = t.toLowerCase();
+  while(i < t.length){
+    const j = lower.indexOf(ql, i);
+    if(j < 0){ out += t.slice(i); break; }
+    out += t.slice(i, j) + '<mark>' + t.slice(j, j+q.length) + '</mark>';
+    i = j + q.length;
+  }
+  return out;
+}
+function openSearchDropdown(){
+  const dd = document.getElementById('searchDropdown');
+  dd.style.display = 'flex';
+  const sd = document.getElementById('sdInput');
+  sd.focus();
+  onSearchInput(sd.value);
+}
+function onSearchInput(v){
+  document.getElementById('gsInput').value = v;
+  document.getElementById('sdInput').value = v;
+  document.getElementById('sdClear').style.display = v ? 'flex' : 'none';
+  doSearch(v);
+}
+function clearSearch(){
+  document.getElementById('gsInput').value = '';
+  document.getElementById('sdInput').value = '';
+  document.getElementById('sdClear').style.display = 'none';
+  doSearch('');
+  document.getElementById('sdInput').focus();
+}
+function closeSearchDropdown(){
+  document.getElementById('searchDropdown').style.display = 'none';
+  _sdHL = -1; _sdItems = [];
+  const ae = document.activeElement;
+  if(ae && (ae.id==='sdInput'||ae.id==='gsInput')) ae.blur();
+}
+function doSearch(raw){
+  const q = (raw||'').trim();
+  const box = document.getElementById('sdResults');
+  const count = document.getElementById('sdResultCount');
+  _sdItems = []; _sdHL = -1;
+  if(!q){
+    // recent + quick module links
+    let h = '';
+    if(_sdRecent.length){
+      h += '<div class="sd-group-header">🕐 Recent searches</div>';
+      h += _sdRecent.map(r=>`<div class="sd-recent-item" data-r="${esc(r).replace(/'/g,'&#39;')}" onclick="sdGoRecent(this.dataset.r)"><span class="sd-icon" style="background:#f5f5f5;font-size:12px">🕐</span><div class="sd-info"><div class="sd-title">${esc(r)}</div></div><span class="sd-mod" onclick="event.stopPropagation();sdRemoveRecent(this.parentNode.dataset.r)">✕</span></div>`).join('');
+    }
+    h += '<div class="sd-group-header">🧭 Modules</div><div class="sd-quick">';
+    Object.entries(MODS).forEach(([mid,m])=>{
+      _sdItems.push({fn:`nav('${mid}')`});
+      h += `<div class="sq" data-idx="${_sdItems.length-1}" onclick="sdGo(${_sdItems.length-1})"><span>${m.ico}</span>${m.label}</div>`;
+    });
+    h += '</div>';
+    box.innerHTML = h;
+    count.textContent = _sdRecent.length ? `All ${Object.keys(MODS).length} modules · ${_sdRecent.length} recent` : `All ${Object.keys(MODS).length} modules`;
+    return;
+  }
+  const ql = q.toLowerCase();
+  const groups = [];
+  const push = (g, ico, mod, t, s, fn)=>{
+    if(!groups[g]) groups[g] = [];
+    groups[g].push({ico, mod, t, s, fn});
+  };
+  DB.properties.forEach(p=>{ if((p.name+' '+p.holding+' '+p.jurisdiction+' '+p.id).toLowerCase().includes(ql)) push('Properties','🏢','Property', p.name, `${p.id} · ${p.jurisdiction} · ${esc(p.holding)}`, `nav('properties'); openPropDetail('${p.id}')`); });
+  DB.tenants.forEach(t=>{ if((t.name+' '+t.nid+' '+t.phone+' '+t.email).toLowerCase().includes(ql)) push('Tenants','👤','Tenant', t.name, `${t.id} · ${t.kind}${t.nrb?' · NRB':''}`, `nav('tenants'); openTenantDetail('${t.id}')`); });
+  DB.leases.forEach(l=>{ if((l.id+' '+unitLabel(unitById(l.unit))+' '+(tenantById(l.tenant)?.name||'')).toLowerCase().includes(ql)) push('Leases','📄','Lease', l.id, `${unitLabel(unitById(l.unit))} · ${fmt(l.rent)}/mo · ${l.status}`, `nav('leases'); openLeaseDetail('${l.id}')`); });
+  DB.invoices.forEach(v=>{ if((v.id+' '+v.lease+' '+v.month+' '+(tenantById(leaseById(v.lease)?.tenant)?.name||'')).toLowerCase().includes(ql)) push('Invoices','🧾','Invoice', v.id, `${v.lease} · ${v.month} · ${fmt(v.net)} · ${v.status}`, `nav('invoices')`); });
+  DB.tickets.forEach(t=>{ if((t.id+' '+t.desc+' '+unitLabel(unitById(t.unit))).toLowerCase().includes(ql)) push('Maintenance','🔧','Ticket', t.id, `${unitLabel(unitById(t.unit))} · ${t.status}`, `nav('maintenance'); openTicketDetail('${t.id}')`); });
+  Object.entries(MODS).forEach(([mid,m])=>{ if(m.label.toLowerCase().includes(ql)) push('Modules', m.ico, 'Module', m.label, 'Go to module', `nav('${mid}')`); });
+
+  const total = Object.values(groups).reduce((s,a)=>s+a.length,0);
+  if(total){ _sdSaveRecent(q); }
+  let h = '';
+  if(!total){
+    h = `<div class="sd-empty"><div class="sd-empty-icon">🔍</div>No matches for “${esc(q)}”.<br>Try a property, tenant, lease, invoice or module name.</div>`;
+  } else {
+    Object.entries(groups).forEach(([g, arr])=>{
+      if(!arr.length) return;
+      h += `<div class="sd-group-header">${g} · ${arr.length}</div>`;
+      arr.forEach(r=>{
+        _sdItems.push({fn:r.fn});
+        h += `<div class="sd-item" data-idx="${_sdItems.length-1}" onmouseenter="sdHover(${_sdItems.length-1})" onclick="sdGo(${_sdItems.length-1})">
+          <span class="sd-icon">${r.ico}</span>
+          <div class="sd-info"><div class="sd-title">${hl(r.t, ql)}</div><div class="sd-sub">${hl(r.s, ql)}</div></div>
+          <span class="sd-mod">${r.mod}</span></div>`;
+      });
+    });
+  }
+  box.innerHTML = h;
+  count.textContent = total ? total + ' result(s)' : '';
+}
+function sdHover(i){ _sdHL = i; _sdMark(); }
+function sdGo(i){ const it=_sdItems[i]; if(!it) return; closeSearchDropdown(); eval(it.fn); }
+function sdGoRecent(r){ document.getElementById('sdInput').value = r; onSearchInput(r); document.getElementById('sdInput').focus(); }
+function sdRemoveRecent(r){ _sdRecent = _sdRecent.filter(x=>x!==r); try{ localStorage.setItem('krtaker_recent', JSON.stringify(_sdRecent)); }catch(e){} doSearch(''); }
+function _sdMark(){
+  document.querySelectorAll('.sd-item,.sd-recent-item,.sq').forEach(el=>{
+    el.classList.toggle('sd-hl', Number(el.dataset.idx)===_sdHL);
+  });
+  const el = document.querySelector('[data-idx="'+_sdHL+'"]');
+  if(el && el.scrollIntoView) el.scrollIntoView({block:'nearest'});
+}
+function searchKeyNav(e){
+  const open = document.getElementById('searchDropdown').style.display==='flex';
+  if(!open) return;
+  if(e.key==='ArrowDown'){ e.preventDefault(); if(_sdItems.length){ _sdHL = (_sdHL+1)%_sdItems.length; _sdMark(); } }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); if(_sdItems.length){ _sdHL = _sdHL<=0 ? _sdItems.length-1 : _sdHL-1; _sdMark(); } }
+  else if(e.key==='Enter'){ e.preventDefault(); if(_sdHL>=0 && _sdItems[_sdHL]) sdGo(_sdHL); else if(_sdItems[0]) sdGo(0); }
+  else if(e.key==='Escape'){ e.preventDefault(); closeSearchDropdown(); }
+}
 document.addEventListener('keydown', e=>{
-  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); const i=document.getElementById('gsInput'); i.focus(); i.select(); }
-  if(e.key==='Escape'){ closeModal(); closeGlobalSearch(); closeQuickAdd(); closeMobileNav(); }
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+    e.preventDefault();
+    const kbd = document.getElementById('gsKbd');
+    if(kbd) kbd.textContent = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘K' : 'Ctrl+K';
+    openSearchDropdown();
+  }
+  if(e.key==='Escape'){ closeModal(); closeQuickAdd(); closeMobileNav(); if(document.getElementById('searchDropdown').style.display==='flex') closeSearchDropdown(); }
 });
+(function(){ const kbd = document.getElementById('gsKbd'); if(kbd && /Mac|iPhone|iPad/.test(navigator.platform)) kbd.textContent = '⌘K'; })();
 
 // ---------- quick add ----------
 function openQuickAdd(){

@@ -1,5 +1,5 @@
 // === KRTaker core v2: state, groups/nav, table framework, dashboard, portfolio, tenancy ===
-const SW_CACHE = 'krtaker-v2-0';
+const SW_CACHE = 'krtaker-v2-1';
 let DB = loadDB();
 let currentView = 'dashboard';
 let currentGroup = 'overview';
@@ -152,35 +152,137 @@ function nav(id){
 }
 window.addEventListener('hashchange', ()=>{ const h=location.hash.slice(1); if(h && MODS[h]) nav(h); });
 
-// ---------- global search ----------
-function openSearchDropdown(){ openGlobalSearch(document.getElementById('gsInput').value||''); }
-function openGlobalSearch(q){
-  const dd = document.getElementById('searchDropdown');
-  q = (q||'').trim();
-  const res = [];
-  if(q.length >= 2){
-    const ql = q.toLowerCase();
-    DB.properties.forEach(p=>{ if((p.name+' '+p.holding).toLowerCase().includes(ql)) res.push({ico:'🏢', t:p.name, s:p.id+' · '+p.jurisdiction, fn:`nav('properties'); openPropDetail('${p.id}')`}); });
-    DB.tenants.forEach(t=>{ if(t.name.toLowerCase().includes(ql)) res.push({ico:'👤', t:t.name, s:t.id+' · '+t.nid, fn:`nav('tenants'); openTenantDetail('${t.id}')`}); });
-    DB.leases.forEach(l=>{ if(l.id.toLowerCase().includes(ql)) res.push({ico:'📄', t:l.id, s:unitLabel(unitById(l.unit))+' · '+fmt(l.rent)+'/mo', fn:`nav('leases'); openLeaseDetail('${l.id}')`}); });
-    DB.invoices.forEach(v=>{ if(v.id.toLowerCase().includes(ql)) res.push({ico:'🧾', t:v.id, s:leaseById(v.lease)?.id+' · '+v.month, fn:`nav('invoices')`}); });
-    Object.values(MODS).forEach(m=>{ if(m.label.toLowerCase().includes(ql)) res.push({ico:m.ico, t:m.label+' module', s:'Go to module', fn:`nav('${Object.keys(MODS).find(k=>MODS[k]===m)}')`}); });
-  } else {
-    Object.values(MODS).forEach(m=>{ res.push({ico:m.ico, t:m.label, s:'Module', fn:`nav('${Object.keys(MODS).find(k=>MODS[k]===m)}')`}); });
-  }
-  const box = document.getElementById('gsResults');
-  box.innerHTML = res.slice(0,10).map(r=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:7px;cursor:pointer" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${r.fn}; closeGlobalSearch()">
-    <span style="font-size:14px">${r.ico}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">${esc(r.t)}</div><div style="font-size:10px;color:#8895a7">${esc(r.s)}</div></div></div>`).join('');
-  document.getElementById('gsEmpty').style.display = res.length ? 'none' : 'block';
-  document.getElementById('gsCount').textContent = res.length ? res.length + ' result(s)' : '';
-  dd.style.display = 'flex';
+// ---------- global search (v2: grouped, keyboard-nav, recent, highlighted) ----------
+let _sdItems = [], _sdHL = -1, _sdRecent = [];
+try{ _sdRecent = JSON.parse(localStorage.getItem('krtaker_recent')||'[]'); }catch(e){}
+function _sdSaveRecent(q){
+  _sdRecent = [q, ..._sdRecent.filter(x=>x!==q)].slice(0,5);
+  try{ localStorage.setItem('krtaker_recent', JSON.stringify(_sdRecent)); }catch(e){}
 }
-function closeGlobalSearch(){ document.getElementById('searchDropdown').style.display='none'; }
-function jumpFirstResult(){ const r=document.querySelector('#gsResults [onclick]'); if(r) r.click(); }
+function hl(text, q){
+  const t = esc(text); if(!q) return t;
+  const ql = q.toLowerCase();
+  let out = '', i = 0;
+  const lower = t.toLowerCase();
+  while(i < t.length){
+    const j = lower.indexOf(ql, i);
+    if(j < 0){ out += t.slice(i); break; }
+    out += t.slice(i, j) + '<mark>' + t.slice(j, j+q.length) + '</mark>';
+    i = j + q.length;
+  }
+  return out;
+}
+function openSearchDropdown(){
+  const dd = document.getElementById('searchDropdown');
+  dd.style.display = 'flex';
+  const sd = document.getElementById('sdInput');
+  sd.focus();
+  onSearchInput(sd.value);
+}
+function onSearchInput(v){
+  document.getElementById('gsInput').value = v;
+  document.getElementById('sdInput').value = v;
+  document.getElementById('sdClear').style.display = v ? 'flex' : 'none';
+  doSearch(v);
+}
+function clearSearch(){
+  document.getElementById('gsInput').value = '';
+  document.getElementById('sdInput').value = '';
+  document.getElementById('sdClear').style.display = 'none';
+  doSearch('');
+  document.getElementById('sdInput').focus();
+}
+function closeSearchDropdown(){
+  document.getElementById('searchDropdown').style.display = 'none';
+  _sdHL = -1; _sdItems = [];
+  const ae = document.activeElement;
+  if(ae && (ae.id==='sdInput'||ae.id==='gsInput')) ae.blur();
+}
+function doSearch(raw){
+  const q = (raw||'').trim();
+  const box = document.getElementById('sdResults');
+  const count = document.getElementById('sdResultCount');
+  _sdItems = []; _sdHL = -1;
+  if(!q){
+    // recent + quick module links
+    let h = '';
+    if(_sdRecent.length){
+      h += '<div class="sd-group-header">🕐 Recent searches</div>';
+      h += _sdRecent.map(r=>`<div class="sd-recent-item" data-r="${esc(r).replace(/'/g,'&#39;')}" onclick="sdGoRecent(this.dataset.r)"><span class="sd-icon" style="background:#f5f5f5;font-size:12px">🕐</span><div class="sd-info"><div class="sd-title">${esc(r)}</div></div><span class="sd-mod" onclick="event.stopPropagation();sdRemoveRecent(this.parentNode.dataset.r)">✕</span></div>`).join('');
+    }
+    h += '<div class="sd-group-header">🧭 Modules</div><div class="sd-quick">';
+    Object.entries(MODS).forEach(([mid,m])=>{
+      _sdItems.push({fn:`nav('${mid}')`});
+      h += `<div class="sq" data-idx="${_sdItems.length-1}" onclick="sdGo(${_sdItems.length-1})"><span>${m.ico}</span>${m.label}</div>`;
+    });
+    h += '</div>';
+    box.innerHTML = h;
+    count.textContent = _sdRecent.length ? `All ${Object.keys(MODS).length} modules · ${_sdRecent.length} recent` : `All ${Object.keys(MODS).length} modules`;
+    return;
+  }
+  const ql = q.toLowerCase();
+  const groups = [];
+  const push = (g, ico, mod, t, s, fn)=>{
+    if(!groups[g]) groups[g] = [];
+    groups[g].push({ico, mod, t, s, fn});
+  };
+  DB.properties.forEach(p=>{ if((p.name+' '+p.holding+' '+p.jurisdiction+' '+p.id).toLowerCase().includes(ql)) push('Properties','🏢','Property', p.name, `${p.id} · ${p.jurisdiction} · ${esc(p.holding)}`, `nav('properties'); openPropDetail('${p.id}')`); });
+  DB.tenants.forEach(t=>{ if((t.name+' '+t.nid+' '+t.phone+' '+t.email).toLowerCase().includes(ql)) push('Tenants','👤','Tenant', t.name, `${t.id} · ${t.kind}${t.nrb?' · NRB':''}`, `nav('tenants'); openTenantDetail('${t.id}')`); });
+  DB.leases.forEach(l=>{ if((l.id+' '+unitLabel(unitById(l.unit))+' '+(tenantById(l.tenant)?.name||'')).toLowerCase().includes(ql)) push('Leases','📄','Lease', l.id, `${unitLabel(unitById(l.unit))} · ${fmt(l.rent)}/mo · ${l.status}`, `nav('leases'); openLeaseDetail('${l.id}')`); });
+  DB.invoices.forEach(v=>{ if((v.id+' '+v.lease+' '+v.month+' '+(tenantById(leaseById(v.lease)?.tenant)?.name||'')).toLowerCase().includes(ql)) push('Invoices','🧾','Invoice', v.id, `${v.lease} · ${v.month} · ${fmt(v.net)} · ${v.status}`, `nav('invoices')`); });
+  DB.tickets.forEach(t=>{ if((t.id+' '+t.desc+' '+unitLabel(unitById(t.unit))).toLowerCase().includes(ql)) push('Maintenance','🔧','Ticket', t.id, `${unitLabel(unitById(t.unit))} · ${t.status}`, `nav('maintenance'); openTicketDetail('${t.id}')`); });
+  Object.entries(MODS).forEach(([mid,m])=>{ if(m.label.toLowerCase().includes(ql)) push('Modules', m.ico, 'Module', m.label, 'Go to module', `nav('${mid}')`); });
+
+  const total = Object.values(groups).reduce((s,a)=>s+a.length,0);
+  if(total){ _sdSaveRecent(q); }
+  let h = '';
+  if(!total){
+    h = `<div class="sd-empty"><div class="sd-empty-icon">🔍</div>No matches for “${esc(q)}”.<br>Try a property, tenant, lease, invoice or module name.</div>`;
+  } else {
+    Object.entries(groups).forEach(([g, arr])=>{
+      if(!arr.length) return;
+      h += `<div class="sd-group-header">${g} · ${arr.length}</div>`;
+      arr.forEach(r=>{
+        _sdItems.push({fn:r.fn});
+        h += `<div class="sd-item" data-idx="${_sdItems.length-1}" onmouseenter="sdHover(${_sdItems.length-1})" onclick="sdGo(${_sdItems.length-1})">
+          <span class="sd-icon">${r.ico}</span>
+          <div class="sd-info"><div class="sd-title">${hl(r.t, ql)}</div><div class="sd-sub">${hl(r.s, ql)}</div></div>
+          <span class="sd-mod">${r.mod}</span></div>`;
+      });
+    });
+  }
+  box.innerHTML = h;
+  count.textContent = total ? total + ' result(s)' : '';
+}
+function sdHover(i){ _sdHL = i; _sdMark(); }
+function sdGo(i){ const it=_sdItems[i]; if(!it) return; closeSearchDropdown(); eval(it.fn); }
+function sdGoRecent(r){ document.getElementById('sdInput').value = r; onSearchInput(r); document.getElementById('sdInput').focus(); }
+function sdRemoveRecent(r){ _sdRecent = _sdRecent.filter(x=>x!==r); try{ localStorage.setItem('krtaker_recent', JSON.stringify(_sdRecent)); }catch(e){} doSearch(''); }
+function _sdMark(){
+  document.querySelectorAll('.sd-item,.sd-recent-item,.sq').forEach(el=>{
+    el.classList.toggle('sd-hl', Number(el.dataset.idx)===_sdHL);
+  });
+  const el = document.querySelector('[data-idx="'+_sdHL+'"]');
+  if(el && el.scrollIntoView) el.scrollIntoView({block:'nearest'});
+}
+function searchKeyNav(e){
+  const open = document.getElementById('searchDropdown').style.display==='flex';
+  if(!open) return;
+  if(e.key==='ArrowDown'){ e.preventDefault(); if(_sdItems.length){ _sdHL = (_sdHL+1)%_sdItems.length; _sdMark(); } }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); if(_sdItems.length){ _sdHL = _sdHL<=0 ? _sdItems.length-1 : _sdHL-1; _sdMark(); } }
+  else if(e.key==='Enter'){ e.preventDefault(); if(_sdHL>=0 && _sdItems[_sdHL]) sdGo(_sdHL); else if(_sdItems[0]) sdGo(0); }
+  else if(e.key==='Escape'){ e.preventDefault(); closeSearchDropdown(); }
+}
 document.addEventListener('keydown', e=>{
-  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); const i=document.getElementById('gsInput'); i.focus(); i.select(); }
-  if(e.key==='Escape'){ closeModal(); closeGlobalSearch(); closeQuickAdd(); closeMobileNav(); }
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+    e.preventDefault();
+    const kbd = document.getElementById('gsKbd');
+    if(kbd) kbd.textContent = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘K' : 'Ctrl+K';
+    openSearchDropdown();
+  }
+  if(e.key==='Escape'){ closeModal(); closeQuickAdd(); closeMobileNav(); if(document.getElementById('searchDropdown').style.display==='flex') closeSearchDropdown(); }
 });
+(function(){ const kbd = document.getElementById('gsKbd'); if(kbd && /Mac|iPhone|iPad/.test(navigator.platform)) kbd.textContent = '⌘K'; })();
 
 // ---------- quick add ----------
 function openQuickAdd(){
