@@ -53,6 +53,10 @@ print(f'TOTAL: {len(built)} pages')
 
 # Mirror to docs/landing so the PWA tunnel serves the site
 import shutil
+# SAFETY: never wipe the served copy if the source is broken
+for required in (f'{OUT}/css/style.css', f'{OUT}/js/main.js', f'{OUT}/index.html'):
+    if not os.path.exists(required):
+        raise SystemExit(f'ABORT: {required} missing — refusing to mirror (web/ incomplete)')
 docs_landing = f'{ROOT}/docs/landing'
 shutil.rmtree(docs_landing, ignore_errors=True)
 shutil.copytree(OUT, docs_landing)
