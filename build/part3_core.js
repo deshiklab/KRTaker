@@ -1,39 +1,48 @@
-// === KRTaker core: state, utils, shell, dashboard, portfolio, tenancy ===
-const SW_CACHE = 'krtaker-v1-0';
-const MODULE_TITLE = 'KRTaker';
+// === KRTaker core v2: state, groups/nav, table framework, dashboard, portfolio, tenancy ===
+const SW_CACHE = 'krtaker-v2-0';
 let DB = loadDB();
 let currentView = 'dashboard';
-const NAV = [
-  { g:'Overview' },
-  { id:'dashboard', ico:'🏠', label:'Dashboard' },
-  { g:'Portfolio' },
-  { id:'properties', ico:'🏢', label:'Properties' },
-  { id:'units', ico:'🚪', label:'Units' },
-  { g:'Tenancy' },
-  { id:'tenants', ico:'👤', label:'Tenants' },
-  { id:'leases', ico:'📄', label:'Leases' },
-  { g:'Finance' },
-  { id:'invoices', ico:'🧾', label:'Invoices' },
-  { id:'receipts', ico:'📜', label:'Receipts' },
-  { id:'payments', ico:'💳', label:'Payments' },
-  { id:'taxes', ico:'🏦', label:'Taxes' },
-  { g:'Operations' },
-  { id:'maintenance', ico:'🔧', label:'Maintenance' },
-  { id:'compliance', ico:'⚖️', label:'Compliance' },
-  { g:'Intelligence' },
-  { id:'ai', ico:'🤖', label:'AI Assistant' }
+let currentGroup = 'overview';
+
+const GROUPS = [
+  { id:'overview',  ico:'🏠', tip:'Overview',   mods:['dashboard'] },
+  { id:'portfolio', ico:'🏢', tip:'Portfolio',  mods:['properties','units'] },
+  { id:'tenancy',   ico:'👥', tip:'Tenancy',    mods:['tenants','leases'] },
+  { id:'finance',   ico:'💰', tip:'Finance',    mods:['invoices','receipts','payments','taxes'] },
+  { id:'ops',       ico:'🔧', tip:'Operations', mods:['maintenance','compliance'] },
+  { id:'intel',     ico:'🤖', tip:'Intelligence', mods:['ai'] }
 ];
-const MOB_NAV = ['dashboard','properties','leases','invoices','ai'];
+const MODS = {
+  dashboard:{label:'Dashboard',   ico:'🏠', group:'overview'},
+  properties:{label:'Properties', ico:'🏢', group:'portfolio'},
+  units:{label:'Units',       ico:'🚪', group:'portfolio'},
+  tenants:{label:'Tenants',    ico:'👤', group:'tenancy'},
+  leases:{label:'Leases',      ico:'📄', group:'tenancy'},
+  invoices:{label:'Invoices',   ico:'🧾', group:'finance'},
+  receipts:{label:'Receipts',   ico:'📜', group:'finance'},
+  payments:{label:'Payments',   ico:'💳', group:'finance'},
+  taxes:{label:'Taxes',      ico:'🏦', group:'finance'},
+  maintenance:{label:'Maintenance', ico:'🔧', group:'ops'},
+  compliance:{label:'Compliance',  ico:'⚖️', group:'ops'},
+  ai:{label:'AI Assistant', ico:'🤖', group:'intel'}
+};
+const QUICK_ACTIONS = [
+  {ico:'🏢', label:'Add Property', fn:'openPropForm()'},
+  {ico:'👤', label:'Add Tenant', fn:'openTenantForm()'},
+  {ico:'📄', label:'Add Lease', fn:'openLeaseForm()'},
+  {ico:'🧾', label:'Generate Invoice', fn:'openInvoiceForm()'},
+  {ico:'🔧', label:'Report Maintenance', fn:'openTicketForm()'}
+];
 
 // ---------- persistence ----------
 function loadDB(){
   try{
-    const raw = localStorage.getItem('krtaker_db_v1');
+    const raw = localStorage.getItem('krtaker_db_v2');
     if(raw) return JSON.parse(raw);
   }catch(e){}
   return JSON.parse(JSON.stringify(SEED));
 }
-function saveDB(){ try{ localStorage.setItem('krtaker_db_v1', JSON.stringify(DB)); }catch(e){} }
+function saveDB(){ try{ localStorage.setItem('krtaker_db_v2', JSON.stringify(DB)); }catch(e){} }
 function resetDB(){ DB = JSON.parse(JSON.stringify(SEED)); saveDB(); toast('Demo data reset','success'); nav(currentView); }
 
 // ---------- utils ----------
@@ -59,11 +68,11 @@ function statCards(list){
   ).join('') + `</div>`;
 }
 function pageHeader(title, subtitle, actions){
-  return `<div class="tbl-toolbar" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
-    <div><div class="page-subtitle" style="font-size:12px;color:#8895a7;margin:0">${subtitle||''}</div></div>
+  return `<div class="tbl-toolbar" style="justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:#222">${title}</span><span style="font-size:10.5px;color:#8895a7">${subtitle||''}</span></div>
     <div style="display:flex;gap:6px">${actions||''}</div></div>`;
 }
-function emptyState(msg){ return `<div style="padding:40px;text-align:center;color:#9aa5b1;font-size:12px">${msg}</div>`; }
+function emptyState(msg){ return `<div style="padding:30px;text-align:center;color:#9aa5b1;font-size:11.5px">${msg}</div>`; }
 function propertyById(id){ return DB.properties.find(p=>p.id===id); }
 function unitById(id){ return DB.units.find(u=>u.id===id); }
 function tenantById(id){ return DB.tenants.find(t=>t.id===id); }
@@ -81,70 +90,56 @@ function openModal(title, body, footer){
 function closeModal(){ document.getElementById('modalOverlay').style.display = 'none'; }
 function closeModalOnBackdrop(e){ if(e.target.id==='modalOverlay') closeModal(); }
 
-// ---------- global search ----------
-function openGlobalSearch(q){
-  const dd = document.getElementById('gsDropdown');
-  if(!q || q.trim().length < 2){ dd.style.display='none'; return; }
-  const ql = q.trim().toLowerCase();
-  const res = [];
-  DB.properties.forEach(p=>{ if((p.name+' '+p.holding).toLowerCase().includes(ql)) res.push({ico:'🏢', t:p.name, s:p.id+' · '+p.jurisdiction, fn:`nav('properties'); openPropDetail('${p.id}')`}); });
-  DB.tenants.forEach(t=>{ if(t.name.toLowerCase().includes(ql)) res.push({ico:'👤', t:t.name, s:t.id+' · '+t.nid, fn:`nav('tenants'); openTenantDetail('${t.id}')`}); });
-  DB.leases.forEach(l=>{ if(l.id.toLowerCase().includes(ql)) res.push({ico:'📄', t:l.id, s:unitLabel(unitById(l.unit))+' · '+fmt(l.rent)+'/mo', fn:`nav('leases'); openLeaseDetail('${l.id}')`}); });
-  DB.invoices.forEach(v=>{ if(v.id.toLowerCase().includes(ql)) res.push({ico:'🧾', t:v.id, s:leaseById(v.lease)?.id+' · '+v.month, fn:`nav('invoices')`}); });
-  NAV.forEach(n=>{ if(n.id && n.label.toLowerCase().includes(ql)) res.push({ico:n.ico, t:n.label+' module', s:'Go to module', fn:`nav('${n.id}')`}); });
-  const box = document.getElementById('gsResults');
-  box.innerHTML = res.slice(0,10).map(r=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:7px;cursor:pointer" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${r.fn}; closeGlobalSearch()">
-    <span style="font-size:14px">${r.ico}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">${esc(r.t)}</div><div style="font-size:10px;color:#8895a7">${esc(r.s)}</div></div></div>`).join('');
-  document.getElementById('gsEmpty').style.display = res.length ? 'none' : 'block';
-  dd.style.display = 'flex';
-}
-function closeGlobalSearch(){ document.getElementById('gsDropdown').style.display='none'; }
-function jumpFirstResult(){ const r=document.querySelector('#gsResults [onclick]'); if(r) r.click(); }
-document.addEventListener('keydown', e=>{
-  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); const i=document.getElementById('gsInput'); i.focus(); i.select(); }
-  if(e.key==='Escape'){ closeModal(); closeGlobalSearch(); closeQuickAdd(); }
-});
-
-// ---------- quick add ----------
-const QUICK_ACTIONS = [
-  {ico:'🏢', label:'Add Property', fn:'openPropForm()'},
-  {ico:'👤', label:'Add Tenant', fn:'openTenantForm()'},
-  {ico:'📄', label:'Add Lease', fn:'openLeaseForm()'},
-  {ico:'🧾', label:'Generate Invoice', fn:'openInvoiceForm()'},
-  {ico:'🔧', label:'Report Maintenance', fn:'openTicketForm()'}
-];
-function openQuickAdd(){
-  document.getElementById('qaList').innerHTML = QUICK_ACTIONS.map(a=>
-    `<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid #f0f2f5" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${a.fn}; closeQuickAdd()">
-      <span style="font-size:15px">${a.ico}</span><span style="font-size:12px;font-weight:600">${a.label}</span></div>`).join('');
-  document.getElementById('qaDropdown').style.display = 'flex';
-}
-function closeQuickAdd(){ document.getElementById('qaDropdown').style.display='none'; }
-
-// ---------- sidebar / nav ----------
+// ---------- nav / groups / top nav ----------
 function renderSidebar(){
-  let h = '';
-  NAV.forEach(n=>{
-    if(n.g) h += `<div class="sidebar-item has-children"><div class="grp-label">${n.g}</div></div>`;
-    else h += `<div class="sidebar-item ${currentView===n.id?'active':''}" data-nav="${n.id}" onclick="nav('${n.id}')"><span class="nav-ico">${n.ico}</span>${n.label}</div>`;
-  });
-  document.getElementById('sidebarMenu').innerHTML = h;
-  document.getElementById('mobBottomNav').innerHTML = MOB_NAV.map(id=>{
-    const n = NAV.find(x=>x.id===id);
-    return `<div class="mb-item ${currentView===id?'active':''}" onclick="nav('${id}')"><span class="mi">${n.ico}</span><span>${n.label.split(' ')[0]}</span></div>`;
+  const h = GROUPS.map(g=>{
+    const active = currentGroup===g.id;
+    return `<div class="sidebar-item ${active?'active':''} has-children" data-tip="${g.tip}" onclick="switchGroup('${g.id}')" id="s_${g.id}">${g.ico}</div>`;
+  }).join('<div class="s-grp-sep"></div>');
+  document.getElementById('sidebarNav').innerHTML = h;
+}
+function renderTopNav(){
+  const g = GROUPS.find(x=>x.id===currentGroup);
+  document.getElementById('topNav').innerHTML = g.mods.map(mid=>{
+    const m = MODS[mid];
+    return `<div class="top-nav-item ${currentView===mid?'active':''}" onclick="nav('${mid}')">${m.ico} ${m.label}</div>`;
   }).join('');
 }
-function toggleMobSidebar(){
-  const sb = document.getElementById('sidebar');
-  sb.style.display = sb.style.display==='none' ? 'flex' : 'none';
+function switchGroup(gid){
+  currentGroup = gid;
+  renderSidebar(); renderTopNav();
+  const g = GROUPS.find(x=>x.id===gid);
+  nav(g.mods[0]);
 }
+function openMobileNav(){
+  const p = document.getElementById('mobileNavPanel');
+  const groupsHtml = GROUPS.map(g=>`<div class="mnav-grp ${currentGroup===g.id?'active':''}" onclick="switchGroup('${g.id}'); renderMobileNavList();">${g.ico}</div>`).join('');
+  p.innerHTML = `
+    <div class="mnav-head"><span>KRTaker — Modules</span><span class="mnav-close" onclick="closeMobileNav()">✕</span></div>
+    <div class="mnav-groups">${groupsHtml}</div>
+    <div id="mnavListWrap"></div>`;
+  renderMobileNavList();
+  document.getElementById('mobileNavSheet').style.display = 'flex';
+}
+function renderMobileNavList(){
+  const g = GROUPS.find(x=>x.id===currentGroup);
+  const wrap = document.getElementById('mnavListWrap');
+  if(!wrap) return;
+  const mods = g.mods.map(mid=>{
+    const m = MODS[mid];
+    return `<div class="mnav-item ${currentView===mid?'active':''}" onclick="nav('${mid}'); closeMobileNav()">${m.ico} ${m.label}${currentView===mid?'<span class="mnav-check">✓</span>':''}</div>`;
+  }).join('');
+  wrap.innerHTML = `<div class="mnav-grp-label">${g.tip}</div><div class="mnav-list">${mods}</div>`;
+}
+function closeMobileNav(){ document.getElementById('mobileNavSheet').style.display = 'none'; }
 function nav(id){
   currentView = id;
-  const n = NAV.find(x=>x.id===id);
-  document.getElementById('pageTitle').textContent = n ? n.label : 'KRTaker';
-  document.getElementById('breadcrumb').textContent = 'Home / ' + (n?n.label:'');
-  document.getElementById('sidebarMenu').innerHTML = '';
-  renderSidebar();
+  const m = MODS[id];
+  if(m && m.group !== currentGroup){ currentGroup = m.group; }
+  renderSidebar(); renderTopNav();
+  document.getElementById('mobileNavBtnLabel').textContent = m ? m.label : 'Dashboard';
+  document.getElementById('footerGroup').textContent = m ? GROUPS.find(g=>g.id===m.group).tip : 'Overview';
+  document.getElementById('footerModName').textContent = m ? m.label : 'Dashboard';
   window.scrollTo(0,0);
   const renderers = {
     dashboard: renderDashboard, properties: renderProperties, units: renderUnits,
@@ -155,7 +150,142 @@ function nav(id){
   (renderers[id]||renderDashboard)();
   if(window.location.hash !== '#'+id) history.replaceState(null,'','#'+id);
 }
-window.addEventListener('hashchange', ()=>{ const h=location.hash.slice(1); if(h && NAV.find(n=>n.id===h)) nav(h); });
+window.addEventListener('hashchange', ()=>{ const h=location.hash.slice(1); if(h && MODS[h]) nav(h); });
+
+// ---------- global search ----------
+function openSearchDropdown(){ openGlobalSearch(document.getElementById('gsInput').value||''); }
+function openGlobalSearch(q){
+  const dd = document.getElementById('searchDropdown');
+  q = (q||'').trim();
+  const res = [];
+  if(q.length >= 2){
+    const ql = q.toLowerCase();
+    DB.properties.forEach(p=>{ if((p.name+' '+p.holding).toLowerCase().includes(ql)) res.push({ico:'🏢', t:p.name, s:p.id+' · '+p.jurisdiction, fn:`nav('properties'); openPropDetail('${p.id}')`}); });
+    DB.tenants.forEach(t=>{ if(t.name.toLowerCase().includes(ql)) res.push({ico:'👤', t:t.name, s:t.id+' · '+t.nid, fn:`nav('tenants'); openTenantDetail('${t.id}')`}); });
+    DB.leases.forEach(l=>{ if(l.id.toLowerCase().includes(ql)) res.push({ico:'📄', t:l.id, s:unitLabel(unitById(l.unit))+' · '+fmt(l.rent)+'/mo', fn:`nav('leases'); openLeaseDetail('${l.id}')`}); });
+    DB.invoices.forEach(v=>{ if(v.id.toLowerCase().includes(ql)) res.push({ico:'🧾', t:v.id, s:leaseById(v.lease)?.id+' · '+v.month, fn:`nav('invoices')`}); });
+    Object.values(MODS).forEach(m=>{ if(m.label.toLowerCase().includes(ql)) res.push({ico:m.ico, t:m.label+' module', s:'Go to module', fn:`nav('${Object.keys(MODS).find(k=>MODS[k]===m)}')`}); });
+  } else {
+    Object.values(MODS).forEach(m=>{ res.push({ico:m.ico, t:m.label, s:'Module', fn:`nav('${Object.keys(MODS).find(k=>MODS[k]===m)}')`}); });
+  }
+  const box = document.getElementById('gsResults');
+  box.innerHTML = res.slice(0,10).map(r=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:7px;cursor:pointer" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${r.fn}; closeGlobalSearch()">
+    <span style="font-size:14px">${r.ico}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">${esc(r.t)}</div><div style="font-size:10px;color:#8895a7">${esc(r.s)}</div></div></div>`).join('');
+  document.getElementById('gsEmpty').style.display = res.length ? 'none' : 'block';
+  document.getElementById('gsCount').textContent = res.length ? res.length + ' result(s)' : '';
+  dd.style.display = 'flex';
+}
+function closeGlobalSearch(){ document.getElementById('searchDropdown').style.display='none'; }
+function jumpFirstResult(){ const r=document.querySelector('#gsResults [onclick]'); if(r) r.click(); }
+document.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); const i=document.getElementById('gsInput'); i.focus(); i.select(); }
+  if(e.key==='Escape'){ closeModal(); closeGlobalSearch(); closeQuickAdd(); closeMobileNav(); }
+});
+
+// ---------- quick add ----------
+function openQuickAdd(){
+  document.getElementById('qaList').innerHTML = QUICK_ACTIONS.map(a=>
+    `<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid #f0f2f5" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${a.fn}; closeQuickAdd()">
+      <span style="font-size:15px">${a.ico}</span><span style="font-size:12px;font-weight:600">${a.label}</span></div>`).join('');
+  document.getElementById('qaDropdown').style.display = 'flex';
+}
+function closeQuickAdd(){ document.getElementById('qaDropdown').style.display='none'; }
+
+// ---------- footer controls ----------
+let _zoom = 100, _fs = 13;
+function fontStep(d){
+  _fs = Math.min(17, Math.max(10, _fs + d));
+  document.documentElement.style.fontSize = _fs + 'px';
+  toast('Text size: ' + _fs + 'px');
+}
+function changeZoom(d){
+  _zoom = Math.min(140, Math.max(70, _zoom + d));
+  document.getElementById('zoomLabel').textContent = _zoom + '%';
+  document.querySelector('.main-area').style.transform = `scale(${_zoom/100})`;
+  document.querySelector('.main-area').style.transformOrigin = 'top left';
+}
+function resetZoom(){ _zoom = 100; document.getElementById('zoomLabel').textContent = '100%'; document.querySelector('.main-area').style.transform=''; }
+function toggleFullScreen(){
+  if(!document.fullscreenElement){ document.documentElement.requestFullscreen().catch(()=>{}); }
+  else { document.exitFullscreen().catch(()=>{}); }
+}
+
+// ---------- smart table framework (REM-style) ----------
+const T = {};
+function tstate(mod){ if(!T[mod]) T[mod]={q:'',page:1,sort:null,dir:1,filt:'All',view:'list'}; return T[mod]; }
+function tblSearch(mod, val){ const st=tstate(mod); st.q=val; st.page=1; nav(mod); }
+function tblFilter(mod, f){ const st=tstate(mod); st.filt=f; st.page=1; nav(mod); }
+function tblSort(mod, k){ const st=tstate(mod); if(st.sort===k) st.dir*=-1; else { st.sort=k; st.dir=1; } st.page=1; nav(mod); }
+function tblPage(mod, p){ tstate(mod).page=p; nav(mod); }
+function tblView(mod, v){ tstate(mod).view=v; nav(mod); }
+
+function smartTable(mod, opts){
+  const st = tstate(mod);
+  let rows = opts.rows.filter(r => (st.filt==='All' || opts.filterMatch(r, st.filt)) && (!st.q || opts.search(r, st.q.toLowerCase())));
+  if(st.sort){
+    const c = opts.cols.find(x=>x.k===st.sort);
+    if(c && c.sort){
+      rows = [...rows].sort((a,b)=>{ const va=c.sort(a), vb=c.sort(b); return (va<vb?-1:va>vb?1:0)*st.dir; });
+    }
+  }
+  const total = rows.length, ps = opts.pageSize||8, pages = Math.max(1, Math.ceil(total/ps));
+  if(st.page > pages) st.page = pages;
+  const slice = rows.slice((st.page-1)*ps, st.page*ps);
+
+  // filter chips
+  const chips = ['All', ...opts.filters].map(f=>{
+    const cnt = f==='All' ? opts.rows.length : opts.rows.filter(r=>opts.filterMatch(r,f)).length;
+    return `<span class="flt-chip ${st.filt===f?'on':''}" onclick="tblFilter('${mod}','${f}')">${f} <span style="opacity:.6">${cnt}</span></span>`;
+  }).join('');
+
+  // view toggle (list / grid)
+  const viewChips = opts.grid ? `<div class="view-chips" style="margin:0"><span class="view-chip-title">View:</span>
+    <span class="view-chip ${st.view==='list'?'on':''}" onclick="tblView('${mod}','list')">☰ List</span>
+    <span class="view-chip ${st.view==='grid'?'on':''}" onclick="tblView('${mod}','grid')">▦ Grid</span></div>` : '';
+
+  // toolbar
+  const toolbar = `<div class="tbl-toolbar">
+    <div class="search-box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search ${opts.title.toLowerCase()}..." value="${esc(st.q)}" oninput="tblSearch('${mod}',this.value)"></div>
+    ${viewChips}
+    <span class="spacer" style="flex:1"></span>
+    <span class="flt-count">${total} record(s)</span>
+    <button class="filter-btn ${st.filt!=='All'?'on':''}" onclick="document.getElementById('fltBar_${mod}').style.display = document.getElementById('fltBar_${mod}').style.display==='none'?'flex':'none'">⚙ Filters${st.filt!=='All'?' ('+st.filt+')':''}</button>
+  </div>
+  <div class="flt-bar" id="fltBar_${mod}" style="${st.filt!=='All'?'':'display:none'}">${chips}</div>`;
+
+  // body: grid or table
+  let body = '';
+  if(opts.grid && st.view==='grid'){
+    body = slice.length ? `<div class="grid-cards">${slice.map(opts.grid).join('')}</div>` : emptyState(opts.empty||'Nothing found');
+  } else {
+    const thead = opts.cols.map(c=>{
+      const arrow = st.sort===c.k ? (st.dir===1?'▲':'▼') : '⇅';
+      return `<th class="${c.sort?'sortable':''}" ${c.sort?`onclick="tblSort('${mod}','${c.k}')"`:''}>${c.label}${c.sort?`<span class="s-arrow" style="color:${st.sort===c.k?'#2F80ED':'#bbb'}">${arrow}</span>`:''}</th>`;
+    }).join('');
+    const trows = slice.map(r=>`<tr ${opts.rowClick?`onclick="${opts.rowClick(r)}" style="cursor:pointer"`:''}>${opts.cols.map(c=>`<td>${c.render(r)}</td>`).join('')}</tr>`).join('');
+    body = `<div class="table-wrap"><table class="table-view"><thead><tr>${thead}</tr></thead><tbody>${trows||`<tr><td colspan="${opts.cols.length}">${emptyState(opts.empty||'Nothing found')}</td></tr>`}</tbody></table></div>`;
+  }
+
+  // pagination
+  const pgBtns = [];
+  const win = 3;
+  for(let p=1; p<=pages; p++){
+    if(pages>7 && p>1+win && p<pages-win){ if(pgBtns[pgBtns.length-1]!=='…') pgBtns.push('…'); continue; }
+    pgBtns.push(p);
+  }
+  const pag = pages>1 ? `<div class="pagination">
+    <span class="pg-info">Page ${st.page} of ${pages} · ${total} record(s)</span>
+    <button class="pg-btn" ${st.page>1?`onclick="tblPage('${mod}',${st.page-1})"`:''} ${st.page===1?'disabled style="opacity:.4"':''}>‹</button>
+    ${pgBtns.map(p=>p==='…'?`<span style="color:#999">…</span>`:`<button class="pg-btn ${p===st.page?'pg-active':''}" onclick="tblPage('${mod}',${p})">${p}</button>`).join('')}
+    <button class="pg-btn" ${st.page<pages?`onclick="tblPage('${mod}',${st.page+1})"`:''} ${st.page===pages?'disabled style="opacity:.4"':''}>›</button>
+  </div>` : '';
+
+  return `<div class="card" style="margin-top:10px">
+    ${toolbar}
+    ${body}
+    ${pag}
+  </div>`;
+}
 
 // ---------- dashboard ----------
 function renderDashboard(){
@@ -168,15 +298,15 @@ function renderDashboard(){
   const openTickets = DB.tickets.filter(t=>t.status==='Open'||t.status==='In Progress').length;
   const due30 = DB.invoices.filter(v=>v.status==='Overdue').reduce((s,v)=>s+v.gross,0);
 
-  let h = statCards([
-    ['Portfolio Value', fmt(portValue), '#2F80ED', portValue>1e9?'₹'+(portValue/1e7).toFixed(1)+' Cr':''],
+  let h = pageHeader('Overview', 'Portfolio at a glance — rent roll, compliance & AI caretaker', `<button class="action-btn ghost" onclick="openQuickAdd()">＋ Quick add</button><button class="action-btn primary" onclick="nav('ai')">🤖 Ask KR</button>`);
+  h += statCards([
+    ['Portfolio Value', fmt(portValue), '#2F80ED', '৳'+(portValue/1e7).toFixed(1)+' Cr'],
     ['Units', totalUnits+' ('+occupied+' leased)', '#27ae60', Math.round(occupied/totalUnits*100)+'% occupancy'],
     ['Rent Due (Jun–Jul)', fmt(rentDue), '#e67e22', 'Overdue '+fmt(due30)],
     ['Leases Pending Registration', pendingReg.length, pendingReg.length?'#e74c3c':'#27ae60', 'Legal gate active'],
     ['Open Tickets', openTickets, '#9b59b6', DB.tickets.filter(t=>t.liability==='Landlord'&&t.status==='Open').length+' landlord-side']
   ]);
 
-  // occupancy bars by property
   const occBars = DB.properties.map(p=>{
     const us = DB.units.filter(u=>u.property===p.id);
     const oc = us.filter(u=>u.status==='Leased').length;
@@ -185,7 +315,6 @@ function renderDashboard(){
       <div style="height:7px;background:#eef1f5;border-radius:4px"><div style="height:7px;width:${pct}%;background:${pct>80?'#27ae60':pct>40?'#2F80ED':'#e67e22'};border-radius:4px"></div></div></div>`;
   }).join('');
 
-  // recent activity
   const acts = [
     {t:'Payment received', d:'RCP-0004 · ৳40,000 via Nagad', when:'Jun 12'},
     {t:'Payment received', d:'RCP-0003 · ৳405,000 via bKash (TDS ৳45,000 split)', when:'Jun 10'},
@@ -210,7 +339,7 @@ function renderDashboard(){
       </div></div></div>
     <div class="card"><div class="card-header">AI Caretaker</div><div class="card-body">
       <div style="font-size:11px;color:#667;line-height:1.7;margin-bottom:8px">Ask KR to generate invoices, check PRCA limits, resolve maintenance liability, or answer tax questions.</div>
-      <button class="drawer-btn primary" style="width:100%" onclick="nav('ai')">🤖 Open AI Assistant</button>
+      <button class="action-btn primary" style="width:100%" onclick="nav('ai')">🤖 Open AI Assistant</button>
     </div></div>
   </div>`;
   document.getElementById('content').innerHTML = h;
@@ -218,23 +347,33 @@ function renderDashboard(){
 
 // ---------- properties ----------
 function renderProperties(){
-  const rows = DB.properties.map(p=>{
-    const us = DB.units.filter(u=>u.property===p.id);
-    const ls = DB.leases.filter(l=>us.some(u=>u.id===l.unit) && l.status==='Active');
-    const monthly = ls.reduce((s,l)=>s+l.rent,0);
-    return `<tr onclick="openPropDetail('${p.id}')" style="cursor:pointer">
-      <td><b>${esc(p.name)}</b><span class="kr-badge">${p.type}</span><div class="mono" style="font-size:10px;color:#8895a7">${p.id} · ${esc(p.holding)}</div></td>
-      <td>${p.jurisdiction}</td>
-      <td class="mono">CS ${esc(p.khatian.cs)} / SA ${esc(p.khatian.sa)}</td>
-      <td>${us.length} units</td>
-      <td>${fmt(monthly)}<div style="font-size:9.5px;color:#8895a7">/mo</div></td>
-      <td>${fmt(p.value)}</td>
-      <td>${badge(p.status)}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'properties',
+    cols:[
+      {k:'name', label:'Property', sortable:true, sort:r=>r.name, render:r=>`<b>${esc(r.name)}</b><span class="kr-badge">${r.type}</span><div class="mono" style="font-size:10px;color:#8895a7">${r.id} · ${esc(r.holding)}</div>`},
+      {k:'jur', label:'Jurisdiction', sortable:true, sort:r=>r.jurisdiction, render:r=>r.jurisdiction},
+      {k:'units', label:'Units', sortable:true, sort:r=>DB.units.filter(u=>u.property===r.id).length, render:r=>DB.units.filter(u=>u.property===r.id).length},
+      {k:'rent', label:'Rent Roll', sortable:true, sort:r=>{const us=DB.units.filter(u=>u.property===r.id); return DB.leases.filter(l=>us.some(u=>u.id===l.unit)&&l.status==='Active').reduce((s,l)=>s+l.rent,0);}, render:r=>{const us=DB.units.filter(u=>u.property===r.id); return fmt(DB.leases.filter(l=>us.some(u=>u.id===l.unit)&&l.status==='Active').reduce((s,l)=>s+l.rent,0))+'<div style="font-size:9.5px;color:#8895a7">/mo</div>';}},
+      {k:'value', label:'Value', sortable:true, sort:r=>r.value, render:r=>fmt(r.value)},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
+    ],
+    rows: DB.properties,
+    filters:['Flat','Plot','Commercial','Industrial'],
+    filterMatch:(r,f)=>r.type===f,
+    search:(r,q)=>((r.name+' '+r.holding+' '+r.jurisdiction+' '+r.id).toLowerCase().includes(q)),
+    rowClick:r=>`openPropDetail('${r.id}')`,
+    grid:true,
+    grid:r=>{const us=DB.units.filter(u=>u.property===r.id); const oc=us.filter(u=>u.status==='Leased').length;
+      return `<div class="prop-card" onclick="openPropDetail('${r.id}')">
+        <div style="display:flex;justify-content:space-between;align-items:start"><div class="pc-name">${esc(r.name)}</div>${badge(r.status)}</div>
+        <div class="pc-sub">${r.type} · ${r.jurisdiction}<br>${esc(r.holding)}</div>
+        <div class="pc-stats"><span>${us.length} units · ${oc} leased</span><span class="pc-val">${fmt(r.value)}</span></div>
+      </div>`;},
+    empty:'No properties match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Properties', 'Portfolio assets with jurisdiction & khatian records (e-Porcha cross-reference)', `<button class="drawer-btn primary" onclick="openPropForm()">＋ Add Property</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Property</th><th>Jurisdiction</th><th>Khatian (CS/SA)</th><th>Units</th><th>Rent Roll</th><th>Value</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No properties yet')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Properties', 'Portfolio assets with jurisdiction & khatian records', `<button class="action-btn primary" onclick="openPropForm()">＋ Add Property</button>`)
+    + smartTable('properties', opts);
 }
 function openPropDetail(id){
   const p = propertyById(id); if(!p) return;
@@ -293,18 +432,25 @@ function saveProp(id){
 
 // ---------- units ----------
 function renderUnits(){
-  const rows = DB.units.map(u=>{
-    const p = propertyById(u.property);
-    return `<tr onclick="openUnitDetail('${u.id}')" style="cursor:pointer">
-      <td><b>${esc(u.name)}</b><div style="font-size:10px;color:#8895a7">${esc(p?p.name:'')}</div></td>
-      <td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td>
-      <td>${badge(u.status)}</td>
-      <td>${leasesForUnit(u.id).map(l=>l.id).join(', ')||'—'}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'units',
+    cols:[
+      {k:'name', label:'Unit', sortable:true, sort:r=>r.name, render:r=>`<b>${esc(r.name)}</b><div style="font-size:10px;color:#8895a7">${esc(propertyById(r.property)?.name||'')}</div>`},
+      {k:'floor', label:'Floor', sortable:true, sort:r=>r.floor, render:r=>r.floor},
+      {k:'sqft', label:'Size', sortable:true, sort:r=>r.sqft, render:r=>r.sqft?r.sqft.toLocaleString()+' sqft':'—'},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)},
+      {k:'lease', label:'Lease(s)', sortable:false, render:r=>leasesForUnit(r.id).map(l=>l.id).join(', ')||'—'}
+    ],
+    rows: DB.units,
+    filters:['Leased','Vacant','Maintenance'],
+    filterMatch:(r,f)=>r.status===f,
+    search:(r,q)=>((r.name+' '+r.id+' '+(propertyById(r.property)?.name||'')).toLowerCase().includes(q)),
+    rowClick:r=>`openUnitDetail('${r.id}')`,
+    empty:'No units match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Units', 'Individual lettable units across the portfolio', `<button class="drawer-btn primary" onclick="openUnitForm()">＋ Add Unit</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Unit</th><th>Floor</th><th>Size</th><th>Status</th><th>Lease(s)</th></tr></thead><tbody>${rows||`<tr><td colspan="5">${emptyState('No units')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Units', 'Individual lettable units across the portfolio', `<button class="action-btn primary" onclick="openUnitForm()">＋ Add Unit</button>`)
+    + smartTable('units', opts);
 }
 function openUnitDetail(id){
   const u = unitById(id); const p = propertyById(u.property);
@@ -345,18 +491,26 @@ function saveUnit(){
 
 // ---------- tenants ----------
 function renderTenants(){
-  const rows = DB.tenants.map(t=>{
-    const ls = DB.leases.filter(l=>l.tenant===t.id && (l.status==='Active'||l.status==='Pending Registration'));
-    const monthly = ls.reduce((s,l)=>s+l.rent,0);
-    return `<tr onclick="openTenantDetail('${t.id}')" style="cursor:pointer">
-      <td><b>${esc(t.name)}</b>${t.nrb?`<span class="kr-badge" style="background:#eef8ee;color:#27ae60;border-color:#c9ecc9">NRB</span>`:''}</td>
-      <td>${t.kind}</td><td class="mono">${t.nid}</td><td>${t.phone}</td>
-      <td>${ls.map(l=>l.id).join(', ')||'—'}</td><td>${ls.length?fmt(monthly)+'/mo':'—'}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'tenants',
+    cols:[
+      {k:'name', label:'Tenant', sortable:true, sort:r=>r.name, render:r=>`<b>${esc(r.name)}</b>${r.nrb?`<span class="kr-badge" style="background:#eef8ee;color:#27ae60;border-color:#c9ecc9">NRB</span>`:''}`},
+      {k:'kind', label:'Kind', sortable:true, sort:r=>r.kind, render:r=>r.kind},
+      {k:'nid', label:'NID / BIN', sortable:false, render:r=>`<span class="mono">${r.nid}</span>`},
+      {k:'phone', label:'Phone', sortable:false, render:r=>r.phone},
+      {k:'leases', label:'Leases', sortable:true, sort:r=>DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).length, render:r=>DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).map(l=>l.id).join(', ')||'—'},
+      {k:'rent', label:'Rent Roll', sortable:true, sort:r=>DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0), render:r=>{const m=DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0); return m?fmt(m)+'/mo':'—';}}
+    ],
+    rows: DB.tenants,
+    filters:['Individual','Corporate'],
+    filterMatch:(r,f)=>r.kind===f,
+    search:(r,q)=>((r.name+' '+r.nid+' '+r.phone+' '+r.email).toLowerCase().includes(q)),
+    rowClick:r=>`openTenantDetail('${r.id}')`,
+    empty:'No tenants match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Tenants', 'Tenant directory with NID & NRB status', `<button class="drawer-btn primary" onclick="openTenantForm()">＋ Add Tenant</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Tenant</th><th>Kind</th><th>NID / BIN</th><th>Phone</th><th>Leases</th><th>Rent Roll</th></tr></thead><tbody>${rows||`<tr><td colspan="6">${emptyState('No tenants')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Tenants', 'Tenant directory with NID & NRB status', `<button class="action-btn primary" onclick="openTenantForm()">＋ Add Tenant</button>`)
+    + smartTable('tenants', opts);
 }
 function openTenantDetail(id){
   const t = tenantById(id); if(!t) return;

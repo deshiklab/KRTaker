@@ -4,13 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2F80ED">
-<meta name="description" content="KRTaker — AI-driven autonomous property management platform for Bangladesh. Key Responsibility Taker.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="KRTaker">
+<meta name="description" content="KRTaker — AI-driven autonomous property management platform for Bangladesh.">
 <title>KRTaker — Key Responsibility Taker</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./pwa/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./pwa/icon-192.png">
 <style>
-/* === KRTaker v1.0 — design system inherited from REM ERP V10 (reference) === */
+/* === KRTaker v2.0 — design system inherited from REM ERP V10 (reference) === */
 
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
@@ -683,20 +687,53 @@
   
 /* === KRTaker additions === */
 :root{--brand:#2F80ED}
-.sidebar-logo{background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
-.sidebar-brand-text b{display:block;font-size:14px;letter-spacing:.4px}
-.sidebar-brand-text small{font-size:8.5px;color:#9aa5b1;font-weight:500;letter-spacing:.3px}
-.sidebar-item .nav-ico{margin-right:8px;font-size:13px;width:18px;text-align:center;display:inline-block}
-.sidebar-item.has-children>.grp-label{font-size:9.5px;color:#9aa5b1;text-transform:uppercase;letter-spacing:.8px;padding:14px 12px 4px;font-weight:700}
-.mob-bottom-nav{display:none}
-@media (max-width:768px){
-  .mob-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eef0f3;z-index:90;padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
-  .mob-bottom-nav .mb-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;font-size:9px;color:#667;cursor:pointer;border-radius:8px}
-  .mob-bottom-nav .mb-item.active{color:var(--brand);font-weight:600}
-  .mob-bottom-nav .mb-item .mi{font-size:16px}
-  .main-area{padding-bottom:58px}
-}
-.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:420px}
+.sidebar-logo{height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-bottom:1px solid #f0f0f0;gap:3px;background:linear-gradient(180deg,#f8fbff,#fff)}
+.sidebar-logo .kr-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;letter-spacing:.5px}
+.sidebar-logo .sidebar-brand-text{font-size:10.5px;font-weight:800;color:#333;line-height:1}
+.sidebar-logo .sb-version{font-size:8px;color:#9aa5b1;font-weight:500}
+.sidebar-item{position:relative}
+.sidebar-item[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:52px;top:50%;transform:translateY(-50%);background:#222;color:#fff;font-size:10px;padding:3px 9px;border-radius:5px;white-space:nowrap;z-index:99;pointer-events:none;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.s-grp-sep{height:1px;background:#eef0f3;margin:4px 10px}
+.top-nav{display:flex;align-items:center;gap:0;flex:1;overflow-x:auto}
+.top-nav-item{padding:5px 12px;font-size:12px;font-weight:500;color:#666;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all .15s;margin-right:1px}
+.top-nav-item:hover{background:#f2f6fc;color:#2F80ED}
+.top-nav-item.active{background:#eef3ff;color:#2F80ED;font-weight:600}
+.kbd{font-size:9px;color:#999;border:1px solid #e0e0e0;border-radius:4px;padding:1px 5px;background:#fafbfc;font-family:ui-monospace,monospace}
+.tbl-toolbar{display:flex;align-items:center;gap:4px;padding:6px 10px;background:#fafbfc;border-bottom:1px solid #e8e8e8;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;border:1px solid #e0e0e0;border-radius:6px;padding:0 8px;background:#fff;flex:1;max-width:240px}
+.search-box input{border:none;outline:none;font-size:11px;padding:5px 4px;width:100%;background:transparent}
+.filter-btn{padding:5px 10px;font-size:11px;font-weight:500;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#333;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.filter-btn:hover,.filter-btn.on{border-color:#2F80ED;color:#2F80ED;background:#f0f4ff}
+.action-btn{display:inline-flex;align-items:center;gap:3px;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500;font-size:11px;padding:5px 12px;border:1px solid transparent}
+.action-btn.primary{background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff}
+.action-btn.primary:hover{filter:brightness(1.08)}
+.action-btn.ghost{border-color:#d7e3f7;background:#f0f4ff;color:#1565c0}
+.flt-bar{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:8px 0 6px;padding:4px 6px;background:#f8faff;border:1px solid #e3ecff;border-radius:6px;min-height:24px}
+.flt-count{font-size:9px;color:#555;font-weight:600;margin-right:2px;white-space:nowrap}
+.flt-chip{display:inline-flex;align-items:center;gap:4px;background:#eef3ff;border:1px solid #cfe0ff;color:#1565c0;font-size:9px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap;cursor:pointer}
+.flt-chip.on{background:#2F80ED;border-color:#2F80ED;color:#fff}
+.view-chips{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:0 0 6px}
+.view-chip-title{font-size:9px;color:#999;font-weight:600;margin-right:2px}
+.view-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;font-size:9px;font-weight:600;border:1px solid #d7e3f7;background:#f0f4ff;color:#1565c0;border-radius:10px;cursor:pointer;transition:all .12s}
+.view-chip.on{background:#2F80ED;border-color:#2F80ED;color:#fff}
+.pagination{display:flex;align-items:center;gap:4px;padding:6px 10px;background:#fafbfc;border-top:1px solid #e0e0e0;font-size:10px;color:#666;flex-shrink:0}
+.pagination .pg-btn{min-width:24px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e0e0e0;border-radius:5px;background:#fff;cursor:pointer;font-size:10px;color:#555;padding:0 7px}
+.pagination .pg-btn:hover{border-color:#2F80ED;color:#2F80ED}
+.pagination .pg-btn.pg-active{background:#2F80ED;color:#fff;border-color:#2F80ED;font-weight:600}
+.pagination .pg-info{flex:1}
+.app-footer{height:28px;min-height:28px;background:#fff;border-top:1px solid #e8e8e8;display:flex;align-items:center;padding:0 12px;font-size:10px;color:#888;justify-content:space-between;position:sticky;bottom:0;z-index:20}
+.crumb-part{cursor:pointer;color:#2F80ED;font-weight:600}
+.crumb-part:hover{text-decoration:underline}
+.crumb-sep{color:#ccc;margin:0 4px}
+.ft-textsize{font-size:10px}
+.prop-card{background:#fff;border:1px solid #eef0f3;border-radius:12px;padding:12px;cursor:pointer;transition:all .15s}
+.prop-card:hover{box-shadow:0 4px 14px rgba(47,128,237,.10);border-color:#cfe0ff;transform:translateY(-1px)}
+.prop-card .pc-name{font-size:12.5px;font-weight:700;color:#222}
+.prop-card .pc-sub{font-size:10px;color:#8895a7;margin-top:2px}
+.prop-card .pc-stats{display:flex;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid #f4f6f9;font-size:10.5px}
+.prop-card .pc-val{font-weight:700;color:#2F80ED}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;padding:10px}
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 210px);min-height:420px}
 .chat-log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #eef0f3}
 .msg{max-width:78%;padding:8px 12px;border-radius:12px;font-size:12px;line-height:1.55;white-space:pre-wrap}
 .msg.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:3px}
@@ -720,58 +757,104 @@
 .flow-step.ok .fs-n{color:#27ae60}
 .kr-badge{display:inline-block;background:#eef6ff;color:#1e5eb8;font-size:9px;font-weight:600;padding:1px 7px;border-radius:10px;border:1px solid #d4e6fb;vertical-align:middle;margin-left:6px}
 .tbl-region td .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:#345}
+.mob-filter-panel{display:none}
+.mnav-groups{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid #f0f0f0;overflow-x:auto;flex-shrink:0}
+.mnav-grp{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:17px;cursor:pointer;background:#f5f5f5;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.mnav-grp.active{background:#eef3ff;box-shadow:0 0 0 1px #2F80ED}
+.mnav-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 10px;font-size:14px;font-weight:700;color:#333;border-bottom:1px solid #f0f0f0;flex-shrink:0}
+.mnav-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:#999;font-size:14px}
+.mnav-close:hover{background:#f0f0f0;color:#333}
+.mnav-list{overflow-y:auto;max-height:52vh;padding:6px}
+.mnav-item{display:flex;align-items:center;gap:8px;padding:12px 12px;border-radius:10px;font-size:13px;font-weight:500;color:#444;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mnav-item.active{background:#eef3ff;color:#2F80ED;font-weight:600}
+.mnav-check{margin-left:auto;color:#2F80ED;font-weight:700}
+.mnav-grp-label{font-size:9px;font-weight:700;color:#8895a7;text-transform:uppercase;letter-spacing:.8px;padding:10px 12px 2px}
+@media (max-width:768px){
+  #sidebar{display:none}
+  #mobileNavBtn{display:flex!important}
+  .top-nav{display:none}
+  .search-box{max-width:none}
+  .dash-grid{grid-template-columns:1fr}
+  .grid-cards{grid-template-columns:1fr}
+  .content{padding:10px}
+  .mob-filter-panel{display:none}
+  .mob-filter-panel.open{display:block}
+  .table-wrap{max-width:100%}
+  .content-footer .ft-desktop{display:none}
+}
+@media (min-width:769px){
+  #mobileNavBtn{display:none!important}
+}
 </style>
 </head>
 <body>
 <div class="app-shell">
-  <!-- ===== Sidebar ===== -->
-  <aside class="sidebar" id="sidebar">
-    <div style="display:flex;align-items:center;gap:10px;padding:16px 14px 10px">
-      <div class="sidebar-logo" style="width:38px;height:38px">KR</div>
-      <div class="sidebar-brand-text">
-        <b>KRTaker</b>
-        <small>KEY RESPONSIBILITY TAKER</small>
-      </div>
+  <!-- ===== SIDEBAR: icon rail with group separators ===== -->
+  <div id="sidebar">
+    <div class="sidebar-logo">
+      <div class="kr-mark">KR</div>
+      <div class="sidebar-brand-text">KRTaker</div>
+      <div class="sb-version">v2.0 · PWA</div>
     </div>
-    <div class="sidebar-scroll" id="sidebarMenu"></div>
+    <div class="sidebar-scroll" id="sidebarNav"></div>
     <div class="sidebar-bottom">
-      <div class="sb-version" id="sbVersion">v1.0 · PWA Prototype</div>
+      <div class="sidebar-item" data-tip="Reset demo data" onclick="resetDB()" style="border-top:1px solid #f0f0f0">↺</div>
     </div>
-  </aside>
+  </div>
 
   <!-- ===== Main ===== -->
   <main class="main-area">
     <div class="top-bar">
-      <button class="icon-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" style="display:none">☰</button>
-      <div style="flex:1;min-width:0">
-        <div class="page-title" id="pageTitle">Dashboard</div>
-        <div class="breadcrumb" id="breadcrumb">Home / Dashboard</div>
-      </div>
-      <div class="top-actions">
-        <div class="search-box" style="max-width:220px">
-          <input id="gsInput" placeholder="Search… (Ctrl+K)" oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()">
+      <div class="top-nav" id="topNav"></div>
+      <div class="top-actions" style="position:relative">
+        <div id="mobileNavBtn" onclick="openMobileNav()" title="Modules" style="display:none;align-items:center;gap:6px;padding:6px 10px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:#333">
+          <span id="mobileNavBtnLabel">Dashboard</span><span style="font-size:8px">▾</span>
         </div>
-        <button class="icon-btn" onclick="openQuickAdd()" title="Quick add">＋</button>
-        <div class="user-avatar" id="userAvatar" title="Owner — Kabir (demo)">KB</div>
+        <div id="searchWrap">
+          <div id="searchBar" tabindex="-1" onclick="openSearchDropdown()" title="Search anything (Ctrl+K)" style="cursor:pointer">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="gsInput" placeholder="Search anything..." oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()" autocomplete="off"/>
+            <span class="kbd">⌘K</span>
+          </div>
+          <div id="searchDropdown" class="slide-out top-dropdown" style="display:none">
+            <div class="panel" style="padding:10px;max-width:460px;max-height:60vh;overflow-y:auto">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="sdInput" placeholder="Search properties, tenants, leases, modules..." oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()" autocomplete="off" style="flex:1;border:none;outline:none;font-size:12px;background:transparent"/>
+                <span onclick="closeGlobalSearch()" style="cursor:pointer;color:#999;font-size:14px;padding:2px;width:24px;text-align:center;border-radius:4px">✕</span>
+              </div>
+              <div id="gsResults" style="display:flex;flex-direction:column;gap:2px"></div>
+              <div id="gsEmpty" style="font-size:11px;color:#999;padding:8px;display:none">No matches.</div>
+              <div style="display:flex;justify-content:space-between;font-size:9px;color:#bbb;padding:6px 2px 0;border-top:1px solid #f0f0f0;margin-top:6px"><span id="gsCount"></span><span>↑↓ Navigate · ↩ Open · ⎋ Close</span></div>
+            </div>
+          </div>
+        </div>
+        <button class="action-btn primary" onclick="openQuickAdd()" title="Quick add">＋ Add</button>
+        <div class="user-avatar" id="userAvatar" title="Owner — Kabir (demo)" onclick="resetDB()" style="cursor:pointer">KB</div>
       </div>
     </div>
     <div class="content" id="content"></div>
-    <div class="content-footer">KRTaker v1.0 — AI-driven property caretaker · Prototype · <span id="swInfo" style="color:#9aa5b1">SW krtaker-v1-0</span></div>
+    <div class="app-footer">
+      <div class="breadcrumb"><span class="crumb-part crumb-root" onclick="openGlobalSearch('')" title="Search (Ctrl+K)">KRTaker</span> <span class="crumb-sep">›</span> <span id="footerGroup" class="crumb-part" onclick="openMobileNav()" title="Switch group">Overview</span> <span class="crumb-sep">›</span> <span id="footerModName" class="crumb-part" onclick="openMobileNav()" title="Switch module">Dashboard</span></div>
+      <div style="display:flex;align-items:center;gap:5px">
+        <span class="ft-textsize" style="display:flex;align-items:center;gap:2px;font-weight:700;color:#555">A</span>
+        <button class="ft-textsize" onclick="fontStep(-1)" title="Decrease text size" style="padding:1px 5px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;color:#555">−</button>
+        <button class="ft-textsize" onclick="fontStep(1)" title="Increase text size" style="padding:2px 6px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;color:#555">+</button>
+        <span class="ft-textsize" style="color:#e0e0e0">|</span>
+        <button onclick="changeZoom(-10)" style="padding:1px 5px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:10px;color:#555">−</button>
+        <span id="zoomLabel" onclick="resetZoom()" style="cursor:pointer;font-weight:600;min-width:36px;text-align:center;font-size:11px">100%</span>
+        <button onclick="changeZoom(10)" style="padding:2px 6px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;color:#555">+</button>
+        <span style="color:#e0e0e0">|</span>
+        <button onclick="toggleFullScreen()" style="padding:2px 6px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:10px;color:#555" title="Fullscreen">⛶</button>
+        <span style="color:#e0e0e0">|</span>
+        <span id="swInfo" style="font-size:9px;color:#9aa5b1">SW krtaker-v2-0</span>
+      </div>
+    </div>
   </main>
 </div>
 
-<!-- ===== Mobile bottom nav ===== -->
-<div class="mob-bottom-nav" id="mobBottomNav"></div>
-
-<!-- ===== Global search dropdown ===== -->
-<div class="slide-out top-dropdown" id="gsDropdown" style="display:none">
-  <div class="backdrop" onclick="closeGlobalSearch()"></div>
-  <div class="panel" style="padding:10px;max-width:460px;max-height:60vh;overflow-y:auto">
-    <div style="font-size:11px;font-weight:600;color:#667;margin-bottom:6px">Search results</div>
-    <div id="gsResults" style="display:flex;flex-direction:column;gap:2px"></div>
-    <div id="gsEmpty" style="font-size:11px;color:#999;padding:8px;display:none">No matches — try a property, tenant, lease or module name.</div>
-  </div>
-</div>
+<!-- ===== Mobile nav sheet ===== -->
+<div id="mobileNavSheet" class="slide-out"><div class="backdrop" onclick="closeMobileNav()"></div><div class="panel" id="mobileNavPanel"></div></div>
 
 <!-- ===== Quick add ===== -->
 <div class="slide-out top-dropdown" id="qaDropdown" style="display:none">
@@ -876,42 +959,51 @@ const SEED = {
   ]
 };
 
-// === KRTaker core: state, utils, shell, dashboard, portfolio, tenancy ===
-const SW_CACHE = 'krtaker-v1-0';
-const MODULE_TITLE = 'KRTaker';
+// === KRTaker core v2: state, groups/nav, table framework, dashboard, portfolio, tenancy ===
+const SW_CACHE = 'krtaker-v2-0';
 let DB = loadDB();
 let currentView = 'dashboard';
-const NAV = [
-  { g:'Overview' },
-  { id:'dashboard', ico:'🏠', label:'Dashboard' },
-  { g:'Portfolio' },
-  { id:'properties', ico:'🏢', label:'Properties' },
-  { id:'units', ico:'🚪', label:'Units' },
-  { g:'Tenancy' },
-  { id:'tenants', ico:'👤', label:'Tenants' },
-  { id:'leases', ico:'📄', label:'Leases' },
-  { g:'Finance' },
-  { id:'invoices', ico:'🧾', label:'Invoices' },
-  { id:'receipts', ico:'📜', label:'Receipts' },
-  { id:'payments', ico:'💳', label:'Payments' },
-  { id:'taxes', ico:'🏦', label:'Taxes' },
-  { g:'Operations' },
-  { id:'maintenance', ico:'🔧', label:'Maintenance' },
-  { id:'compliance', ico:'⚖️', label:'Compliance' },
-  { g:'Intelligence' },
-  { id:'ai', ico:'🤖', label:'AI Assistant' }
+let currentGroup = 'overview';
+
+const GROUPS = [
+  { id:'overview',  ico:'🏠', tip:'Overview',   mods:['dashboard'] },
+  { id:'portfolio', ico:'🏢', tip:'Portfolio',  mods:['properties','units'] },
+  { id:'tenancy',   ico:'👥', tip:'Tenancy',    mods:['tenants','leases'] },
+  { id:'finance',   ico:'💰', tip:'Finance',    mods:['invoices','receipts','payments','taxes'] },
+  { id:'ops',       ico:'🔧', tip:'Operations', mods:['maintenance','compliance'] },
+  { id:'intel',     ico:'🤖', tip:'Intelligence', mods:['ai'] }
 ];
-const MOB_NAV = ['dashboard','properties','leases','invoices','ai'];
+const MODS = {
+  dashboard:{label:'Dashboard',   ico:'🏠', group:'overview'},
+  properties:{label:'Properties', ico:'🏢', group:'portfolio'},
+  units:{label:'Units',       ico:'🚪', group:'portfolio'},
+  tenants:{label:'Tenants',    ico:'👤', group:'tenancy'},
+  leases:{label:'Leases',      ico:'📄', group:'tenancy'},
+  invoices:{label:'Invoices',   ico:'🧾', group:'finance'},
+  receipts:{label:'Receipts',   ico:'📜', group:'finance'},
+  payments:{label:'Payments',   ico:'💳', group:'finance'},
+  taxes:{label:'Taxes',      ico:'🏦', group:'finance'},
+  maintenance:{label:'Maintenance', ico:'🔧', group:'ops'},
+  compliance:{label:'Compliance',  ico:'⚖️', group:'ops'},
+  ai:{label:'AI Assistant', ico:'🤖', group:'intel'}
+};
+const QUICK_ACTIONS = [
+  {ico:'🏢', label:'Add Property', fn:'openPropForm()'},
+  {ico:'👤', label:'Add Tenant', fn:'openTenantForm()'},
+  {ico:'📄', label:'Add Lease', fn:'openLeaseForm()'},
+  {ico:'🧾', label:'Generate Invoice', fn:'openInvoiceForm()'},
+  {ico:'🔧', label:'Report Maintenance', fn:'openTicketForm()'}
+];
 
 // ---------- persistence ----------
 function loadDB(){
   try{
-    const raw = localStorage.getItem('krtaker_db_v1');
+    const raw = localStorage.getItem('krtaker_db_v2');
     if(raw) return JSON.parse(raw);
   }catch(e){}
   return JSON.parse(JSON.stringify(SEED));
 }
-function saveDB(){ try{ localStorage.setItem('krtaker_db_v1', JSON.stringify(DB)); }catch(e){} }
+function saveDB(){ try{ localStorage.setItem('krtaker_db_v2', JSON.stringify(DB)); }catch(e){} }
 function resetDB(){ DB = JSON.parse(JSON.stringify(SEED)); saveDB(); toast('Demo data reset','success'); nav(currentView); }
 
 // ---------- utils ----------
@@ -937,11 +1029,11 @@ function statCards(list){
   ).join('') + `</div>`;
 }
 function pageHeader(title, subtitle, actions){
-  return `<div class="tbl-toolbar" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
-    <div><div class="page-subtitle" style="font-size:12px;color:#8895a7;margin:0">${subtitle||''}</div></div>
+  return `<div class="tbl-toolbar" style="justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:#222">${title}</span><span style="font-size:10.5px;color:#8895a7">${subtitle||''}</span></div>
     <div style="display:flex;gap:6px">${actions||''}</div></div>`;
 }
-function emptyState(msg){ return `<div style="padding:40px;text-align:center;color:#9aa5b1;font-size:12px">${msg}</div>`; }
+function emptyState(msg){ return `<div style="padding:30px;text-align:center;color:#9aa5b1;font-size:11.5px">${msg}</div>`; }
 function propertyById(id){ return DB.properties.find(p=>p.id===id); }
 function unitById(id){ return DB.units.find(u=>u.id===id); }
 function tenantById(id){ return DB.tenants.find(t=>t.id===id); }
@@ -959,70 +1051,56 @@ function openModal(title, body, footer){
 function closeModal(){ document.getElementById('modalOverlay').style.display = 'none'; }
 function closeModalOnBackdrop(e){ if(e.target.id==='modalOverlay') closeModal(); }
 
-// ---------- global search ----------
-function openGlobalSearch(q){
-  const dd = document.getElementById('gsDropdown');
-  if(!q || q.trim().length < 2){ dd.style.display='none'; return; }
-  const ql = q.trim().toLowerCase();
-  const res = [];
-  DB.properties.forEach(p=>{ if((p.name+' '+p.holding).toLowerCase().includes(ql)) res.push({ico:'🏢', t:p.name, s:p.id+' · '+p.jurisdiction, fn:`nav('properties'); openPropDetail('${p.id}')`}); });
-  DB.tenants.forEach(t=>{ if(t.name.toLowerCase().includes(ql)) res.push({ico:'👤', t:t.name, s:t.id+' · '+t.nid, fn:`nav('tenants'); openTenantDetail('${t.id}')`}); });
-  DB.leases.forEach(l=>{ if(l.id.toLowerCase().includes(ql)) res.push({ico:'📄', t:l.id, s:unitLabel(unitById(l.unit))+' · '+fmt(l.rent)+'/mo', fn:`nav('leases'); openLeaseDetail('${l.id}')`}); });
-  DB.invoices.forEach(v=>{ if(v.id.toLowerCase().includes(ql)) res.push({ico:'🧾', t:v.id, s:leaseById(v.lease)?.id+' · '+v.month, fn:`nav('invoices')`}); });
-  NAV.forEach(n=>{ if(n.id && n.label.toLowerCase().includes(ql)) res.push({ico:n.ico, t:n.label+' module', s:'Go to module', fn:`nav('${n.id}')`}); });
-  const box = document.getElementById('gsResults');
-  box.innerHTML = res.slice(0,10).map(r=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:7px;cursor:pointer" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${r.fn}; closeGlobalSearch()">
-    <span style="font-size:14px">${r.ico}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">${esc(r.t)}</div><div style="font-size:10px;color:#8895a7">${esc(r.s)}</div></div></div>`).join('');
-  document.getElementById('gsEmpty').style.display = res.length ? 'none' : 'block';
-  dd.style.display = 'flex';
-}
-function closeGlobalSearch(){ document.getElementById('gsDropdown').style.display='none'; }
-function jumpFirstResult(){ const r=document.querySelector('#gsResults [onclick]'); if(r) r.click(); }
-document.addEventListener('keydown', e=>{
-  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); const i=document.getElementById('gsInput'); i.focus(); i.select(); }
-  if(e.key==='Escape'){ closeModal(); closeGlobalSearch(); closeQuickAdd(); }
-});
-
-// ---------- quick add ----------
-const QUICK_ACTIONS = [
-  {ico:'🏢', label:'Add Property', fn:'openPropForm()'},
-  {ico:'👤', label:'Add Tenant', fn:'openTenantForm()'},
-  {ico:'📄', label:'Add Lease', fn:'openLeaseForm()'},
-  {ico:'🧾', label:'Generate Invoice', fn:'openInvoiceForm()'},
-  {ico:'🔧', label:'Report Maintenance', fn:'openTicketForm()'}
-];
-function openQuickAdd(){
-  document.getElementById('qaList').innerHTML = QUICK_ACTIONS.map(a=>
-    `<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid #f0f2f5" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${a.fn}; closeQuickAdd()">
-      <span style="font-size:15px">${a.ico}</span><span style="font-size:12px;font-weight:600">${a.label}</span></div>`).join('');
-  document.getElementById('qaDropdown').style.display = 'flex';
-}
-function closeQuickAdd(){ document.getElementById('qaDropdown').style.display='none'; }
-
-// ---------- sidebar / nav ----------
+// ---------- nav / groups / top nav ----------
 function renderSidebar(){
-  let h = '';
-  NAV.forEach(n=>{
-    if(n.g) h += `<div class="sidebar-item has-children"><div class="grp-label">${n.g}</div></div>`;
-    else h += `<div class="sidebar-item ${currentView===n.id?'active':''}" data-nav="${n.id}" onclick="nav('${n.id}')"><span class="nav-ico">${n.ico}</span>${n.label}</div>`;
-  });
-  document.getElementById('sidebarMenu').innerHTML = h;
-  document.getElementById('mobBottomNav').innerHTML = MOB_NAV.map(id=>{
-    const n = NAV.find(x=>x.id===id);
-    return `<div class="mb-item ${currentView===id?'active':''}" onclick="nav('${id}')"><span class="mi">${n.ico}</span><span>${n.label.split(' ')[0]}</span></div>`;
+  const h = GROUPS.map(g=>{
+    const active = currentGroup===g.id;
+    return `<div class="sidebar-item ${active?'active':''} has-children" data-tip="${g.tip}" onclick="switchGroup('${g.id}')" id="s_${g.id}">${g.ico}</div>`;
+  }).join('<div class="s-grp-sep"></div>');
+  document.getElementById('sidebarNav').innerHTML = h;
+}
+function renderTopNav(){
+  const g = GROUPS.find(x=>x.id===currentGroup);
+  document.getElementById('topNav').innerHTML = g.mods.map(mid=>{
+    const m = MODS[mid];
+    return `<div class="top-nav-item ${currentView===mid?'active':''}" onclick="nav('${mid}')">${m.ico} ${m.label}</div>`;
   }).join('');
 }
-function toggleMobSidebar(){
-  const sb = document.getElementById('sidebar');
-  sb.style.display = sb.style.display==='none' ? 'flex' : 'none';
+function switchGroup(gid){
+  currentGroup = gid;
+  renderSidebar(); renderTopNav();
+  const g = GROUPS.find(x=>x.id===gid);
+  nav(g.mods[0]);
 }
+function openMobileNav(){
+  const p = document.getElementById('mobileNavPanel');
+  const groupsHtml = GROUPS.map(g=>`<div class="mnav-grp ${currentGroup===g.id?'active':''}" onclick="switchGroup('${g.id}'); renderMobileNavList();">${g.ico}</div>`).join('');
+  p.innerHTML = `
+    <div class="mnav-head"><span>KRTaker — Modules</span><span class="mnav-close" onclick="closeMobileNav()">✕</span></div>
+    <div class="mnav-groups">${groupsHtml}</div>
+    <div id="mnavListWrap"></div>`;
+  renderMobileNavList();
+  document.getElementById('mobileNavSheet').style.display = 'flex';
+}
+function renderMobileNavList(){
+  const g = GROUPS.find(x=>x.id===currentGroup);
+  const wrap = document.getElementById('mnavListWrap');
+  if(!wrap) return;
+  const mods = g.mods.map(mid=>{
+    const m = MODS[mid];
+    return `<div class="mnav-item ${currentView===mid?'active':''}" onclick="nav('${mid}'); closeMobileNav()">${m.ico} ${m.label}${currentView===mid?'<span class="mnav-check">✓</span>':''}</div>`;
+  }).join('');
+  wrap.innerHTML = `<div class="mnav-grp-label">${g.tip}</div><div class="mnav-list">${mods}</div>`;
+}
+function closeMobileNav(){ document.getElementById('mobileNavSheet').style.display = 'none'; }
 function nav(id){
   currentView = id;
-  const n = NAV.find(x=>x.id===id);
-  document.getElementById('pageTitle').textContent = n ? n.label : 'KRTaker';
-  document.getElementById('breadcrumb').textContent = 'Home / ' + (n?n.label:'');
-  document.getElementById('sidebarMenu').innerHTML = '';
-  renderSidebar();
+  const m = MODS[id];
+  if(m && m.group !== currentGroup){ currentGroup = m.group; }
+  renderSidebar(); renderTopNav();
+  document.getElementById('mobileNavBtnLabel').textContent = m ? m.label : 'Dashboard';
+  document.getElementById('footerGroup').textContent = m ? GROUPS.find(g=>g.id===m.group).tip : 'Overview';
+  document.getElementById('footerModName').textContent = m ? m.label : 'Dashboard';
   window.scrollTo(0,0);
   const renderers = {
     dashboard: renderDashboard, properties: renderProperties, units: renderUnits,
@@ -1033,7 +1111,142 @@ function nav(id){
   (renderers[id]||renderDashboard)();
   if(window.location.hash !== '#'+id) history.replaceState(null,'','#'+id);
 }
-window.addEventListener('hashchange', ()=>{ const h=location.hash.slice(1); if(h && NAV.find(n=>n.id===h)) nav(h); });
+window.addEventListener('hashchange', ()=>{ const h=location.hash.slice(1); if(h && MODS[h]) nav(h); });
+
+// ---------- global search ----------
+function openSearchDropdown(){ openGlobalSearch(document.getElementById('gsInput').value||''); }
+function openGlobalSearch(q){
+  const dd = document.getElementById('searchDropdown');
+  q = (q||'').trim();
+  const res = [];
+  if(q.length >= 2){
+    const ql = q.toLowerCase();
+    DB.properties.forEach(p=>{ if((p.name+' '+p.holding).toLowerCase().includes(ql)) res.push({ico:'🏢', t:p.name, s:p.id+' · '+p.jurisdiction, fn:`nav('properties'); openPropDetail('${p.id}')`}); });
+    DB.tenants.forEach(t=>{ if(t.name.toLowerCase().includes(ql)) res.push({ico:'👤', t:t.name, s:t.id+' · '+t.nid, fn:`nav('tenants'); openTenantDetail('${t.id}')`}); });
+    DB.leases.forEach(l=>{ if(l.id.toLowerCase().includes(ql)) res.push({ico:'📄', t:l.id, s:unitLabel(unitById(l.unit))+' · '+fmt(l.rent)+'/mo', fn:`nav('leases'); openLeaseDetail('${l.id}')`}); });
+    DB.invoices.forEach(v=>{ if(v.id.toLowerCase().includes(ql)) res.push({ico:'🧾', t:v.id, s:leaseById(v.lease)?.id+' · '+v.month, fn:`nav('invoices')`}); });
+    Object.values(MODS).forEach(m=>{ if(m.label.toLowerCase().includes(ql)) res.push({ico:m.ico, t:m.label+' module', s:'Go to module', fn:`nav('${Object.keys(MODS).find(k=>MODS[k]===m)}')`}); });
+  } else {
+    Object.values(MODS).forEach(m=>{ res.push({ico:m.ico, t:m.label, s:'Module', fn:`nav('${Object.keys(MODS).find(k=>MODS[k]===m)}')`}); });
+  }
+  const box = document.getElementById('gsResults');
+  box.innerHTML = res.slice(0,10).map(r=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:7px;cursor:pointer" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${r.fn}; closeGlobalSearch()">
+    <span style="font-size:14px">${r.ico}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">${esc(r.t)}</div><div style="font-size:10px;color:#8895a7">${esc(r.s)}</div></div></div>`).join('');
+  document.getElementById('gsEmpty').style.display = res.length ? 'none' : 'block';
+  document.getElementById('gsCount').textContent = res.length ? res.length + ' result(s)' : '';
+  dd.style.display = 'flex';
+}
+function closeGlobalSearch(){ document.getElementById('searchDropdown').style.display='none'; }
+function jumpFirstResult(){ const r=document.querySelector('#gsResults [onclick]'); if(r) r.click(); }
+document.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); const i=document.getElementById('gsInput'); i.focus(); i.select(); }
+  if(e.key==='Escape'){ closeModal(); closeGlobalSearch(); closeQuickAdd(); closeMobileNav(); }
+});
+
+// ---------- quick add ----------
+function openQuickAdd(){
+  document.getElementById('qaList').innerHTML = QUICK_ACTIONS.map(a=>
+    `<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid #f0f2f5" onmouseover="this.style.background='#f2f6fc'" onmouseout="this.style.background=''" onclick="${a.fn}; closeQuickAdd()">
+      <span style="font-size:15px">${a.ico}</span><span style="font-size:12px;font-weight:600">${a.label}</span></div>`).join('');
+  document.getElementById('qaDropdown').style.display = 'flex';
+}
+function closeQuickAdd(){ document.getElementById('qaDropdown').style.display='none'; }
+
+// ---------- footer controls ----------
+let _zoom = 100, _fs = 13;
+function fontStep(d){
+  _fs = Math.min(17, Math.max(10, _fs + d));
+  document.documentElement.style.fontSize = _fs + 'px';
+  toast('Text size: ' + _fs + 'px');
+}
+function changeZoom(d){
+  _zoom = Math.min(140, Math.max(70, _zoom + d));
+  document.getElementById('zoomLabel').textContent = _zoom + '%';
+  document.querySelector('.main-area').style.transform = `scale(${_zoom/100})`;
+  document.querySelector('.main-area').style.transformOrigin = 'top left';
+}
+function resetZoom(){ _zoom = 100; document.getElementById('zoomLabel').textContent = '100%'; document.querySelector('.main-area').style.transform=''; }
+function toggleFullScreen(){
+  if(!document.fullscreenElement){ document.documentElement.requestFullscreen().catch(()=>{}); }
+  else { document.exitFullscreen().catch(()=>{}); }
+}
+
+// ---------- smart table framework (REM-style) ----------
+const T = {};
+function tstate(mod){ if(!T[mod]) T[mod]={q:'',page:1,sort:null,dir:1,filt:'All',view:'list'}; return T[mod]; }
+function tblSearch(mod, val){ const st=tstate(mod); st.q=val; st.page=1; nav(mod); }
+function tblFilter(mod, f){ const st=tstate(mod); st.filt=f; st.page=1; nav(mod); }
+function tblSort(mod, k){ const st=tstate(mod); if(st.sort===k) st.dir*=-1; else { st.sort=k; st.dir=1; } st.page=1; nav(mod); }
+function tblPage(mod, p){ tstate(mod).page=p; nav(mod); }
+function tblView(mod, v){ tstate(mod).view=v; nav(mod); }
+
+function smartTable(mod, opts){
+  const st = tstate(mod);
+  let rows = opts.rows.filter(r => (st.filt==='All' || opts.filterMatch(r, st.filt)) && (!st.q || opts.search(r, st.q.toLowerCase())));
+  if(st.sort){
+    const c = opts.cols.find(x=>x.k===st.sort);
+    if(c && c.sort){
+      rows = [...rows].sort((a,b)=>{ const va=c.sort(a), vb=c.sort(b); return (va<vb?-1:va>vb?1:0)*st.dir; });
+    }
+  }
+  const total = rows.length, ps = opts.pageSize||8, pages = Math.max(1, Math.ceil(total/ps));
+  if(st.page > pages) st.page = pages;
+  const slice = rows.slice((st.page-1)*ps, st.page*ps);
+
+  // filter chips
+  const chips = ['All', ...opts.filters].map(f=>{
+    const cnt = f==='All' ? opts.rows.length : opts.rows.filter(r=>opts.filterMatch(r,f)).length;
+    return `<span class="flt-chip ${st.filt===f?'on':''}" onclick="tblFilter('${mod}','${f}')">${f} <span style="opacity:.6">${cnt}</span></span>`;
+  }).join('');
+
+  // view toggle (list / grid)
+  const viewChips = opts.grid ? `<div class="view-chips" style="margin:0"><span class="view-chip-title">View:</span>
+    <span class="view-chip ${st.view==='list'?'on':''}" onclick="tblView('${mod}','list')">☰ List</span>
+    <span class="view-chip ${st.view==='grid'?'on':''}" onclick="tblView('${mod}','grid')">▦ Grid</span></div>` : '';
+
+  // toolbar
+  const toolbar = `<div class="tbl-toolbar">
+    <div class="search-box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search ${opts.title.toLowerCase()}..." value="${esc(st.q)}" oninput="tblSearch('${mod}',this.value)"></div>
+    ${viewChips}
+    <span class="spacer" style="flex:1"></span>
+    <span class="flt-count">${total} record(s)</span>
+    <button class="filter-btn ${st.filt!=='All'?'on':''}" onclick="document.getElementById('fltBar_${mod}').style.display = document.getElementById('fltBar_${mod}').style.display==='none'?'flex':'none'">⚙ Filters${st.filt!=='All'?' ('+st.filt+')':''}</button>
+  </div>
+  <div class="flt-bar" id="fltBar_${mod}" style="${st.filt!=='All'?'':'display:none'}">${chips}</div>`;
+
+  // body: grid or table
+  let body = '';
+  if(opts.grid && st.view==='grid'){
+    body = slice.length ? `<div class="grid-cards">${slice.map(opts.grid).join('')}</div>` : emptyState(opts.empty||'Nothing found');
+  } else {
+    const thead = opts.cols.map(c=>{
+      const arrow = st.sort===c.k ? (st.dir===1?'▲':'▼') : '⇅';
+      return `<th class="${c.sort?'sortable':''}" ${c.sort?`onclick="tblSort('${mod}','${c.k}')"`:''}>${c.label}${c.sort?`<span class="s-arrow" style="color:${st.sort===c.k?'#2F80ED':'#bbb'}">${arrow}</span>`:''}</th>`;
+    }).join('');
+    const trows = slice.map(r=>`<tr ${opts.rowClick?`onclick="${opts.rowClick(r)}" style="cursor:pointer"`:''}>${opts.cols.map(c=>`<td>${c.render(r)}</td>`).join('')}</tr>`).join('');
+    body = `<div class="table-wrap"><table class="table-view"><thead><tr>${thead}</tr></thead><tbody>${trows||`<tr><td colspan="${opts.cols.length}">${emptyState(opts.empty||'Nothing found')}</td></tr>`}</tbody></table></div>`;
+  }
+
+  // pagination
+  const pgBtns = [];
+  const win = 3;
+  for(let p=1; p<=pages; p++){
+    if(pages>7 && p>1+win && p<pages-win){ if(pgBtns[pgBtns.length-1]!=='…') pgBtns.push('…'); continue; }
+    pgBtns.push(p);
+  }
+  const pag = pages>1 ? `<div class="pagination">
+    <span class="pg-info">Page ${st.page} of ${pages} · ${total} record(s)</span>
+    <button class="pg-btn" ${st.page>1?`onclick="tblPage('${mod}',${st.page-1})"`:''} ${st.page===1?'disabled style="opacity:.4"':''}>‹</button>
+    ${pgBtns.map(p=>p==='…'?`<span style="color:#999">…</span>`:`<button class="pg-btn ${p===st.page?'pg-active':''}" onclick="tblPage('${mod}',${p})">${p}</button>`).join('')}
+    <button class="pg-btn" ${st.page<pages?`onclick="tblPage('${mod}',${st.page+1})"`:''} ${st.page===pages?'disabled style="opacity:.4"':''}>›</button>
+  </div>` : '';
+
+  return `<div class="card" style="margin-top:10px">
+    ${toolbar}
+    ${body}
+    ${pag}
+  </div>`;
+}
 
 // ---------- dashboard ----------
 function renderDashboard(){
@@ -1046,15 +1259,15 @@ function renderDashboard(){
   const openTickets = DB.tickets.filter(t=>t.status==='Open'||t.status==='In Progress').length;
   const due30 = DB.invoices.filter(v=>v.status==='Overdue').reduce((s,v)=>s+v.gross,0);
 
-  let h = statCards([
-    ['Portfolio Value', fmt(portValue), '#2F80ED', portValue>1e9?'₹'+(portValue/1e7).toFixed(1)+' Cr':''],
+  let h = pageHeader('Overview', 'Portfolio at a glance — rent roll, compliance & AI caretaker', `<button class="action-btn ghost" onclick="openQuickAdd()">＋ Quick add</button><button class="action-btn primary" onclick="nav('ai')">🤖 Ask KR</button>`);
+  h += statCards([
+    ['Portfolio Value', fmt(portValue), '#2F80ED', '৳'+(portValue/1e7).toFixed(1)+' Cr'],
     ['Units', totalUnits+' ('+occupied+' leased)', '#27ae60', Math.round(occupied/totalUnits*100)+'% occupancy'],
     ['Rent Due (Jun–Jul)', fmt(rentDue), '#e67e22', 'Overdue '+fmt(due30)],
     ['Leases Pending Registration', pendingReg.length, pendingReg.length?'#e74c3c':'#27ae60', 'Legal gate active'],
     ['Open Tickets', openTickets, '#9b59b6', DB.tickets.filter(t=>t.liability==='Landlord'&&t.status==='Open').length+' landlord-side']
   ]);
 
-  // occupancy bars by property
   const occBars = DB.properties.map(p=>{
     const us = DB.units.filter(u=>u.property===p.id);
     const oc = us.filter(u=>u.status==='Leased').length;
@@ -1063,7 +1276,6 @@ function renderDashboard(){
       <div style="height:7px;background:#eef1f5;border-radius:4px"><div style="height:7px;width:${pct}%;background:${pct>80?'#27ae60':pct>40?'#2F80ED':'#e67e22'};border-radius:4px"></div></div></div>`;
   }).join('');
 
-  // recent activity
   const acts = [
     {t:'Payment received', d:'RCP-0004 · ৳40,000 via Nagad', when:'Jun 12'},
     {t:'Payment received', d:'RCP-0003 · ৳405,000 via bKash (TDS ৳45,000 split)', when:'Jun 10'},
@@ -1088,7 +1300,7 @@ function renderDashboard(){
       </div></div></div>
     <div class="card"><div class="card-header">AI Caretaker</div><div class="card-body">
       <div style="font-size:11px;color:#667;line-height:1.7;margin-bottom:8px">Ask KR to generate invoices, check PRCA limits, resolve maintenance liability, or answer tax questions.</div>
-      <button class="drawer-btn primary" style="width:100%" onclick="nav('ai')">🤖 Open AI Assistant</button>
+      <button class="action-btn primary" style="width:100%" onclick="nav('ai')">🤖 Open AI Assistant</button>
     </div></div>
   </div>`;
   document.getElementById('content').innerHTML = h;
@@ -1096,23 +1308,33 @@ function renderDashboard(){
 
 // ---------- properties ----------
 function renderProperties(){
-  const rows = DB.properties.map(p=>{
-    const us = DB.units.filter(u=>u.property===p.id);
-    const ls = DB.leases.filter(l=>us.some(u=>u.id===l.unit) && l.status==='Active');
-    const monthly = ls.reduce((s,l)=>s+l.rent,0);
-    return `<tr onclick="openPropDetail('${p.id}')" style="cursor:pointer">
-      <td><b>${esc(p.name)}</b><span class="kr-badge">${p.type}</span><div class="mono" style="font-size:10px;color:#8895a7">${p.id} · ${esc(p.holding)}</div></td>
-      <td>${p.jurisdiction}</td>
-      <td class="mono">CS ${esc(p.khatian.cs)} / SA ${esc(p.khatian.sa)}</td>
-      <td>${us.length} units</td>
-      <td>${fmt(monthly)}<div style="font-size:9.5px;color:#8895a7">/mo</div></td>
-      <td>${fmt(p.value)}</td>
-      <td>${badge(p.status)}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'properties',
+    cols:[
+      {k:'name', label:'Property', sortable:true, sort:r=>r.name, render:r=>`<b>${esc(r.name)}</b><span class="kr-badge">${r.type}</span><div class="mono" style="font-size:10px;color:#8895a7">${r.id} · ${esc(r.holding)}</div>`},
+      {k:'jur', label:'Jurisdiction', sortable:true, sort:r=>r.jurisdiction, render:r=>r.jurisdiction},
+      {k:'units', label:'Units', sortable:true, sort:r=>DB.units.filter(u=>u.property===r.id).length, render:r=>DB.units.filter(u=>u.property===r.id).length},
+      {k:'rent', label:'Rent Roll', sortable:true, sort:r=>{const us=DB.units.filter(u=>u.property===r.id); return DB.leases.filter(l=>us.some(u=>u.id===l.unit)&&l.status==='Active').reduce((s,l)=>s+l.rent,0);}, render:r=>{const us=DB.units.filter(u=>u.property===r.id); return fmt(DB.leases.filter(l=>us.some(u=>u.id===l.unit)&&l.status==='Active').reduce((s,l)=>s+l.rent,0))+'<div style="font-size:9.5px;color:#8895a7">/mo</div>';}},
+      {k:'value', label:'Value', sortable:true, sort:r=>r.value, render:r=>fmt(r.value)},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
+    ],
+    rows: DB.properties,
+    filters:['Flat','Plot','Commercial','Industrial'],
+    filterMatch:(r,f)=>r.type===f,
+    search:(r,q)=>((r.name+' '+r.holding+' '+r.jurisdiction+' '+r.id).toLowerCase().includes(q)),
+    rowClick:r=>`openPropDetail('${r.id}')`,
+    grid:true,
+    grid:r=>{const us=DB.units.filter(u=>u.property===r.id); const oc=us.filter(u=>u.status==='Leased').length;
+      return `<div class="prop-card" onclick="openPropDetail('${r.id}')">
+        <div style="display:flex;justify-content:space-between;align-items:start"><div class="pc-name">${esc(r.name)}</div>${badge(r.status)}</div>
+        <div class="pc-sub">${r.type} · ${r.jurisdiction}<br>${esc(r.holding)}</div>
+        <div class="pc-stats"><span>${us.length} units · ${oc} leased</span><span class="pc-val">${fmt(r.value)}</span></div>
+      </div>`;},
+    empty:'No properties match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Properties', 'Portfolio assets with jurisdiction & khatian records (e-Porcha cross-reference)', `<button class="drawer-btn primary" onclick="openPropForm()">＋ Add Property</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Property</th><th>Jurisdiction</th><th>Khatian (CS/SA)</th><th>Units</th><th>Rent Roll</th><th>Value</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No properties yet')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Properties', 'Portfolio assets with jurisdiction & khatian records', `<button class="action-btn primary" onclick="openPropForm()">＋ Add Property</button>`)
+    + smartTable('properties', opts);
 }
 function openPropDetail(id){
   const p = propertyById(id); if(!p) return;
@@ -1171,18 +1393,25 @@ function saveProp(id){
 
 // ---------- units ----------
 function renderUnits(){
-  const rows = DB.units.map(u=>{
-    const p = propertyById(u.property);
-    return `<tr onclick="openUnitDetail('${u.id}')" style="cursor:pointer">
-      <td><b>${esc(u.name)}</b><div style="font-size:10px;color:#8895a7">${esc(p?p.name:'')}</div></td>
-      <td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td>
-      <td>${badge(u.status)}</td>
-      <td>${leasesForUnit(u.id).map(l=>l.id).join(', ')||'—'}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'units',
+    cols:[
+      {k:'name', label:'Unit', sortable:true, sort:r=>r.name, render:r=>`<b>${esc(r.name)}</b><div style="font-size:10px;color:#8895a7">${esc(propertyById(r.property)?.name||'')}</div>`},
+      {k:'floor', label:'Floor', sortable:true, sort:r=>r.floor, render:r=>r.floor},
+      {k:'sqft', label:'Size', sortable:true, sort:r=>r.sqft, render:r=>r.sqft?r.sqft.toLocaleString()+' sqft':'—'},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)},
+      {k:'lease', label:'Lease(s)', sortable:false, render:r=>leasesForUnit(r.id).map(l=>l.id).join(', ')||'—'}
+    ],
+    rows: DB.units,
+    filters:['Leased','Vacant','Maintenance'],
+    filterMatch:(r,f)=>r.status===f,
+    search:(r,q)=>((r.name+' '+r.id+' '+(propertyById(r.property)?.name||'')).toLowerCase().includes(q)),
+    rowClick:r=>`openUnitDetail('${r.id}')`,
+    empty:'No units match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Units', 'Individual lettable units across the portfolio', `<button class="drawer-btn primary" onclick="openUnitForm()">＋ Add Unit</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Unit</th><th>Floor</th><th>Size</th><th>Status</th><th>Lease(s)</th></tr></thead><tbody>${rows||`<tr><td colspan="5">${emptyState('No units')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Units', 'Individual lettable units across the portfolio', `<button class="action-btn primary" onclick="openUnitForm()">＋ Add Unit</button>`)
+    + smartTable('units', opts);
 }
 function openUnitDetail(id){
   const u = unitById(id); const p = propertyById(u.property);
@@ -1223,18 +1452,26 @@ function saveUnit(){
 
 // ---------- tenants ----------
 function renderTenants(){
-  const rows = DB.tenants.map(t=>{
-    const ls = DB.leases.filter(l=>l.tenant===t.id && (l.status==='Active'||l.status==='Pending Registration'));
-    const monthly = ls.reduce((s,l)=>s+l.rent,0);
-    return `<tr onclick="openTenantDetail('${t.id}')" style="cursor:pointer">
-      <td><b>${esc(t.name)}</b>${t.nrb?`<span class="kr-badge" style="background:#eef8ee;color:#27ae60;border-color:#c9ecc9">NRB</span>`:''}</td>
-      <td>${t.kind}</td><td class="mono">${t.nid}</td><td>${t.phone}</td>
-      <td>${ls.map(l=>l.id).join(', ')||'—'}</td><td>${ls.length?fmt(monthly)+'/mo':'—'}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'tenants',
+    cols:[
+      {k:'name', label:'Tenant', sortable:true, sort:r=>r.name, render:r=>`<b>${esc(r.name)}</b>${r.nrb?`<span class="kr-badge" style="background:#eef8ee;color:#27ae60;border-color:#c9ecc9">NRB</span>`:''}`},
+      {k:'kind', label:'Kind', sortable:true, sort:r=>r.kind, render:r=>r.kind},
+      {k:'nid', label:'NID / BIN', sortable:false, render:r=>`<span class="mono">${r.nid}</span>`},
+      {k:'phone', label:'Phone', sortable:false, render:r=>r.phone},
+      {k:'leases', label:'Leases', sortable:true, sort:r=>DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).length, render:r=>DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).map(l=>l.id).join(', ')||'—'},
+      {k:'rent', label:'Rent Roll', sortable:true, sort:r=>DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0), render:r=>{const m=DB.leases.filter(l=>l.tenant===r.id&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0); return m?fmt(m)+'/mo':'—';}}
+    ],
+    rows: DB.tenants,
+    filters:['Individual','Corporate'],
+    filterMatch:(r,f)=>r.kind===f,
+    search:(r,q)=>((r.name+' '+r.nid+' '+r.phone+' '+r.email).toLowerCase().includes(q)),
+    rowClick:r=>`openTenantDetail('${r.id}')`,
+    empty:'No tenants match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Tenants', 'Tenant directory with NID & NRB status', `<button class="drawer-btn primary" onclick="openTenantForm()">＋ Add Tenant</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Tenant</th><th>Kind</th><th>NID / BIN</th><th>Phone</th><th>Leases</th><th>Rent Roll</th></tr></thead><tbody>${rows||`<tr><td colspan="6">${emptyState('No tenants')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Tenants', 'Tenant directory with NID & NRB status', `<button class="action-btn primary" onclick="openTenantForm()">＋ Add Tenant</button>`)
+    + smartTable('tenants', opts);
 }
 function openTenantDetail(id){
   const t = tenantById(id); if(!t) return;
@@ -1327,22 +1564,27 @@ function evictionEligible(tenantId){
 
 // ---------- leases ----------
 function renderLeases(){
-  const rows = DB.leases.map(l=>{
-    const g = registrationGate(l);
-    const u = unitById(l.unit); const t = tenantById(l.tenant);
-    return `<tr onclick="openLeaseDetail('${l.id}')" style="cursor:pointer">
-      <td><b>${l.id}</b>${g.block?`<div style="font-size:9px;color:#e74c3c;font-weight:600">⚠ REGISTRATION REQUIRED</div>`:''}</td>
-      <td>${esc(unitLabel(u))}</td>
-      <td>${esc(t?t.name:'')}${t&&t.kind==='Corporate'?`<span class="kr-badge">TDS</span>`:''}</td>
-      <td>${fmt(l.rent)}<div style="font-size:9.5px;color:#8895a7">adv ${fmt(l.advance)}</div></td>
-      <td class="mono">${l.start} → ${l.end}</td>
-      <td>${leaseMonths(l)} mo</td>
-      <td>${badge(l.status)}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'leases',
+    cols:[
+      {k:'id', label:'Lease', sortable:true, sort:r=>r.id, render:r=>{const g=registrationGate(r); return `<b>${r.id}</b>${g.block?`<div style="font-size:9px;color:#e74c3c;font-weight:600">⚠ REGISTRATION REQUIRED</div>`:''}`;}},
+      {k:'unit', label:'Unit', sortable:true, sort:r=>unitLabel(unitById(r.unit)), render:r=>esc(unitLabel(unitById(r.unit)))},
+      {k:'tenant', label:'Tenant', sortable:true, sort:r=>tenantById(r.tenant)?.name||'', render:r=>{const t=tenantById(r.tenant); return `${esc(t?t.name:'')}${t&&t.kind==='Corporate'?`<span class="kr-badge">TDS</span>`:''}`;}},
+      {k:'rent', label:'Rent', sortable:true, sort:r=>r.rent, render:r=>`${fmt(r.rent)}<div style="font-size:9.5px;color:#8895a7">adv ${fmt(r.advance)}</div>`},
+      {k:'term', label:'Term', sortable:true, sort:r=>r.start, render:r=>`<span class="mono">${r.start} → ${r.end}</span>`},
+      {k:'months', label:'Length', sortable:true, sort:r=>leaseMonths(r), render:r=>leaseMonths(r)+' mo'},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
+    ],
+    rows: DB.leases,
+    filters:['Active','Pending Registration','Expired','Terminated'],
+    filterMatch:(r,f)=>r.status===f,
+    search:(r,q)=>((r.id+' '+unitLabel(unitById(r.unit))+' '+(tenantById(r.tenant)?.name||'')).toLowerCase().includes(q)),
+    rowClick:r=>`openLeaseDetail('${r.id}')`,
+    empty:'No leases match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Leases', 'Tenancy agreements — TPA 1882 §107 registration gate & PRCA 1991 validations active', `<button class="drawer-btn primary" onclick="openLeaseForm()">＋ Add Lease</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Rent</th><th>Term</th><th>Length</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No leases')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Leases', 'TPA 1882 §107 registration gate & PRCA 1991 validations active', `<button class="action-btn primary" onclick="openLeaseForm()">＋ Add Lease</button>`)
+    + smartTable('leases', opts);
 }
 function openLeaseDetail(id){
   const l = leaseById(id); if(!l) return;
@@ -1372,9 +1614,9 @@ function openLeaseDetail(id){
   h += `<div style="font-weight:700;margin:12px 0 6px">Invoices</div>`;
   h += invRows ? `<div class="table-wrap"><table class="table-view"><thead><tr><th>Invoice</th><th>Month</th><th>Gross</th>${td.rate?'<th>TDS</th><th>Net</th>':''}<th>Status</th></tr></thead><tbody>${invRows}</tbody></table></div>` : emptyState('No invoices generated');
   h += `</div>`;
-  const footer = `<button class="drawer-btn secondary" onclick="closeModal(); openLeaseForm('${l.id}')">Edit</button>`;
-  if(g.block) footer + `<button class="drawer-btn primary" onclick="closeModal(); openRegistrationForm('${l.id}')">Upload Registration</button>`;
-  else footer + `<button class="drawer-btn primary" onclick="generateInvoiceForLease('${l.id}')">Generate Invoice</button>`;
+  let footer = `<button class="drawer-btn secondary" onclick="closeModal(); openLeaseForm('${l.id}')">Edit</button>`;
+  if(g.block) footer += `<button class="drawer-btn primary" onclick="closeModal(); openRegistrationForm('${l.id}')">Upload Registration</button>`;
+  else footer += `<button class="drawer-btn primary" onclick="generateInvoiceForLease('${l.id}')">Generate Invoice</button>`;
   openModal('Lease '+l.id, h, footer);
 }
 function openLeaseForm(id, presetUnit){
@@ -1405,9 +1647,8 @@ function saveLease(id){
   const data = {unit, tenant, start, end, rent, advance, residential,
     regMeta: id? leaseById(id).regMeta : null,
     status: months>12 ? 'Pending Registration' : 'Active'};
-  let newLease = null;
   if(id){ Object.assign(leaseById(id), data); toast('Lease updated','success'); }
-  else { newLease = Object.assign({id:uid('L')}, data); DB.leases.push(newLease); }
+  else { DB.leases.push(Object.assign({id:uid('L')}, data)); }
   saveDB(); closeModal(); renderLeases();
   if(months>12){ toast('Lease >12 months — pending registration (TPA §107)','error'); }
   else toast('Lease saved','success');
@@ -1437,21 +1678,33 @@ function saveRegistration(id){
 
 // ---------- invoices ----------
 function renderInvoices(){
-  const rows = DB.invoices.map(v=>{
-    const l = leaseById(v.lease);
-    return `<tr onclick="openInvoiceDetail('${v.id}')" style="cursor:pointer">
-      <td><b>${v.id}</b></td>
-      <td>${l?l.id:'—'}${l?`<div style="font-size:9.5px;color:#8895a7">${esc(tenantById(l.tenant)?.name||'')}</div>`:''}</td>
-      <td>${v.month}</td><td>${fmt(v.gross)}</td>
-      ${v.tdsRate?`<td class="mono">${fmt(v.tds)}<div style="font-size:9px;color:#8895a7">${(v.tdsRate*100).toFixed(0)}%</div></td><td><b>${fmt(v.net)}</b></td>`:'<td>—</td><td>'+fmt(v.net)+'</td>'}
-      <td>${badge(v.status)}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'invoices',
+    cols:[
+      {k:'id', label:'Invoice', sortable:true, sort:r=>r.id, render:r=>`<b>${r.id}</b>`},
+      {k:'lease', label:'Lease', sortable:true, sort:r=>r.lease, render:r=>`${r.lease}<div style="font-size:9.5px;color:#8895a7">${esc(tenantById(leaseById(r.lease)?.tenant)?.name||'')}</div>`},
+      {k:'month', label:'Month', sortable:true, sort:r=>r.month, render:r=>r.month},
+      {k:'gross', label:'Gross', sortable:true, sort:r=>r.gross, render:r=>fmt(r.gross)},
+      {k:'tds', label:'TDS', sortable:true, sort:r=>r.tds, render:r=>r.tdsRate?`<span class="mono">${fmt(r.tds)}<div style="font-size:9px;color:#8895a7">${(r.tdsRate*100).toFixed(0)}%</div></span>`:'—'},
+      {k:'net', label:'Net', sortable:true, sort:r=>r.net, render:r=>`<b>${fmt(r.net)}</b>`},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
+    ],
+    rows: DB.invoices,
+    filters:['Paid','Unpaid','Overdue'],
+    filterMatch:(r,f)=>r.status===f,
+    search:(r,q)=>((r.id+' '+r.lease+' '+r.month).toLowerCase().includes(q)),
+    rowClick:r=>`openInvoiceDetail('${r.id}')`,
+    empty:'No invoices match'
+  };
   const due = DB.invoices.filter(v=>v.status==='Unpaid'||v.status==='Overdue').reduce((s,v)=>s+v.net,0);
   document.getElementById('content').innerHTML =
-    pageHeader('Invoices', 'Rent invoicing with automatic TDS split for corporate tenancies', `<button class="drawer-btn primary" onclick="openInvoiceForm()">＋ Generate Invoice</button>`)
-    + statCards([['Outstanding (net)', fmt(due), '#e67e22', ''], ['Invoices', DB.invoices.length, '#2F80ED', ''], ['TDS withheld total', fmt(DB.invoices.reduce((s,v)=>s+v.tds,0)), '#9b59b6', '']])
-    + `<div class="table-wrap" style="margin-top:12px"><table class="table-view"><thead><tr><th>Invoice</th><th>Lease</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No invoices')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Invoices', 'Rent invoicing with automatic TDS split for corporate tenancies', `<button class="action-btn primary" onclick="openInvoiceForm()">＋ Generate Invoice</button>`)
+    + statCards([
+        ['Outstanding (net)', fmt(due), '#e67e22', DB.invoices.filter(v=>v.status==='Overdue').length+' overdue'],
+        ['Invoices', DB.invoices.length, '#2F80ED', ''],
+        ['TDS withheld total', fmt(DB.invoices.reduce((s,v)=>s+v.tds,0)), '#9b59b6', '']
+      ])
+    + smartTable('invoices', opts);
 }
 function openInvoiceForm(){
   const ls = DB.leases.filter(l=>l.status==='Active'||l.status==='Pending Registration');
@@ -1533,7 +1786,6 @@ function payInvoice(id){
 }
 function executePayment(id){
   const v = DB.invoices.find(x=>x.id===id); if(!v) return;
-  const l = leaseById(v.lease);
   v.status = 'Paid';
   const receipt = {id:'RCP-'+String(DB.receipts.length+1).padStart(4,'0'), invoice:id, amount:v.net, date:today(), method:'bKash', sig:'SIG-'+Math.random().toString(16).slice(2,10)};
   DB.receipts.push(receipt);
@@ -1544,19 +1796,27 @@ function executePayment(id){
 
 // ---------- receipts ----------
 function renderReceipts(){
-  const rows = DB.receipts.map(r=>{
-    const v = DB.invoices.find(x=>x.id===r.invoice);
-    return `<tr>
-      <td><b>${r.id}</b></td><td>${r.invoice}</td>
-      <td>${esc(tenantById(leaseById(v?.lease)?.tenant)?.name||'')}</td>
-      <td>${fmt(r.amount)}</td><td>${r.method}</td><td>${r.date}</td>
-      <td class="mono">${r.sig}</td>
-      <td><button class="mini-btn" onclick="printReceipt('${r.id}')">🖨 Print</button></td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'receipts',
+    cols:[
+      {k:'id', label:'Receipt', sortable:true, sort:r=>r.id, render:r=>`<b>${r.id}</b>`},
+      {k:'inv', label:'Invoice', sortable:true, sort:r=>r.invoice, render:r=>r.invoice},
+      {k:'tenant', label:'Tenant', sortable:true, sort:r=>tenantById(leaseById(DB.invoices.find(x=>x.id===r.invoice)?.lease)?.tenant)?.name||'', render:r=>esc(tenantById(leaseById(DB.invoices.find(x=>x.id===r.invoice)?.lease)?.tenant)?.name||'')},
+      {k:'amt', label:'Amount', sortable:true, sort:r=>r.amount, render:r=>fmt(r.amount)},
+      {k:'method', label:'Method', sortable:true, sort:r=>r.method, render:r=>r.method},
+      {k:'date', label:'Date', sortable:true, sort:r=>r.date, render:r=>r.date},
+      {k:'sig', label:'Signature', sortable:false, render:r=>`<span class="mono">${r.sig}</span>`},
+      {k:'act', label:'', sortable:false, render:r=>`<button class="mini-btn" onclick="event.stopPropagation(); printReceipt('${r.id}')">🖨 Print</button>`}
+    ],
+    rows: DB.receipts,
+    filters:[],
+    filterMatch:(r,f)=>true,
+    search:(r,q)=>((r.id+' '+r.invoice+' '+r.method+' '+r.sig).toLowerCase().includes(q)),
+    empty:'No receipts yet — pay an invoice to auto-generate one (PRCA §13)'
+  };
   document.getElementById('content').innerHTML =
     pageHeader('Receipts', 'Cryptographically signed digital rent receipts — PRCA 1991 §13', '')
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Receipt</th><th>Invoice</th><th>Tenant</th><th>Amount</th><th>Method</th><th>Date</th><th>Signature</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="8">${emptyState('No receipts yet')}</td></tr>`}</tbody></table></div>`;
+    + smartTable('receipts', opts);
 }
 function printReceipt(id){
   const r = DB.receipts.find(x=>x.id===id); if(!r) return;
@@ -1574,27 +1834,34 @@ function printReceipt(id){
     <div class="row"><span>Method</span><b>${r.method}</b></div>
     <div class="row"><span>Date</span><b>${r.date}</b></div>
     <div class="stamp">PAID · KRTaker</div>
-    <div class="sig">Signature: ${r.sig}<br>Generated: ${new Date().toISOString()} · KRTaker v1.0</div>
+    <div class="sig">Signature: ${r.sig}<br>Generated: ${new Date().toISOString()} · KRTaker v2.0</div>
   </body></html>`);
   win.document.close(); win.focus();
 }
 
 // ---------- maintenance ----------
 function renderMaintenance(){
-  const rows = DB.tickets.map(t=>{
-    const u = unitById(t.unit);
-    return `<tr>
-      <td><b>${t.id}</b></td><td>${esc(unitLabel(u))}</td>
-      <td style="max-width:240px">${esc(t.desc)}</td>
-      <td>${badge(t.liability)}</td><td>${badge(t.status)}</td>
-      <td>${t.contractor?esc(t.contractor):'—'}</td>
-      <td>${t.cost?fmt(t.cost):'—'}</td>
-      <td><button class="mini-btn" onclick="openTicketDetail('${t.id}')">View</button></td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'tickets',
+    cols:[
+      {k:'id', label:'Ticket', sortable:true, sort:r=>r.id, render:r=>`<b>${r.id}</b>`},
+      {k:'unit', label:'Unit', sortable:true, sort:r=>unitLabel(unitById(r.unit)), render:r=>esc(unitLabel(unitById(r.unit)))},
+      {k:'desc', label:'Issue', sortable:false, render:r=>`<span style="max-width:220px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.desc)}</span>`},
+      {k:'liab', label:'Liability', sortable:true, sort:r=>r.liability, render:r=>badge(r.liability)},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)},
+      {k:'contractor', label:'Contractor', sortable:false, render:r=>r.contractor?esc(r.contractor):'—'},
+      {k:'cost', label:'Cost', sortable:true, sort:r=>r.cost, render:r=>r.cost?fmt(r.cost):'—'},
+      {k:'act', label:'', sortable:false, render:r=>`<button class="mini-btn" onclick="event.stopPropagation(); openTicketDetail('${r.id}')">View</button>`}
+    ],
+    rows: DB.tickets,
+    filters:['Open','In Progress','Awaiting Payment','Closed'],
+    filterMatch:(r,f)=>r.status===f,
+    search:(r,q)=>((r.id+' '+r.desc+' '+r.contractor+' '+unitLabel(unitById(r.unit))).toLowerCase().includes(q)),
+    empty:'No tickets match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Maintenance', 'Issue tickets with automatic liability resolution (landlord structural / tenant day-to-day)', `<button class="drawer-btn primary" onclick="openTicketForm()">＋ Report Issue</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Ticket</th><th>Unit</th><th>Issue</th><th>Liability</th><th>Status</th><th>Contractor</th><th>Cost</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="8">${emptyState('No tickets')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Maintenance', 'Liability auto-resolved (landlord structural / tenant day-to-day)', `<button class="action-btn primary" onclick="openTicketForm()">＋ Report Issue</button>`)
+    + smartTable('maintenance', opts);
 }
 function resolveLiability(unitId, desc){
   const u = unitById(unitId); const p = propertyById(u?.property);
@@ -1660,11 +1927,11 @@ function renderCompliance(){
   const regRows = pendingReg.map(l=>`<tr>
     <td><b>${l.id}</b></td><td>${esc(unitLabel(unitById(l.unit)))}</td><td>${esc(tenantById(l.tenant)?.name||'')}</td>
     <td>${leaseMonths(l)} mo</td><td>${fmt(l.rent)}</td>
-    <td><button class="mini-btn" onclick="closeModal(); openRegistrationForm('${l.id}')">Upload docs</button></td></tr>`).join('');
+    <td><button class="mini-btn" onclick="openRegistrationForm('${l.id}')">Upload docs</button></td></tr>`).join('');
   const advRows = advanceViol.map(l=>`<tr>
     <td><b>${l.id}</b></td><td>${esc(unitLabel(unitById(l.unit)))}</td>
     <td>${fmt(l.advance)}</td><td>${fmt(l.rent)}</td>
-    <td><button class="mini-btn" onclick="closeModal(); openLeaseForm('${l.id}')">Review</button></td></tr>`).join('');
+    <td><button class="mini-btn" onclick="openLeaseForm('${l.id}')">Review</button></td></tr>`).join('');
   const evRows = evict.map(x=>`<tr><td><b>${esc(x.t.name)}</b></td><td>${x.e.months} mo unpaid</td>
     <td><button class="mini-btn" onclick="generateEvictionNotice('${x.t.id}')">Generate §114A Notice</button></td></tr>`).join('');
 
@@ -1700,7 +1967,7 @@ function generateEvictionNotice(tenantId){
     <p>To: <b>${esc(t.name)}</b> (${t.nid})</p>
     <p>You have failed to pay rent for <b>${e.months} consecutive month(s)</b>, which constitutes valid grounds for eviction under Section 18 of the Premises Rent Control Act 1991.</p>
     <p>You are hereby given notice to quit and vacate the premises within <b>30 days</b> of the date of this notice, failing which legal proceedings may be instituted in the appropriate Rent Court. This notice is issued without prejudice to any amounts legally due.</p>
-    <div class="footer">Generated by KRTaker v1.0 — compliance engine · ${new Date().toISOString()}<br>This notice is a system-generated draft for legal review; consult a licensed advocate before service.</div>
+    <div class="footer">Generated by KRTaker v2.0 — compliance engine · ${new Date().toISOString()}<br>This notice is a system-generated draft for legal review; consult a licensed advocate before service.</div>
   </body></html>`);
   win.document.close(); win.focus();
   toast('Compliant §114A eviction notice generated for '+t.name,'success');
@@ -1769,22 +2036,32 @@ function openHoldingTaxPreview(){
 
 // ---------- payments ----------
 function renderPayments(){
-  const rows = DB.payments.map(p=>`<tr>
-    <td><b>${p.id}</b></td><td>${p.invoice}</td><td>${fmt(p.amount)}</td><td>${p.method}</td>
-    <td class="mono">${p.ref}</td><td>${p.date}</td><td>${badge(p.status)}</td></tr>`).join('');
+  const opts = {
+    title:'payments',
+    cols:[
+      {k:'id', label:'Payment', sortable:true, sort:r=>r.id, render:r=>`<b>${r.id}</b>`},
+      {k:'inv', label:'Invoice', sortable:true, sort:r=>r.invoice, render:r=>r.invoice},
+      {k:'amt', label:'Amount', sortable:true, sort:r=>r.amount, render:r=>fmt(r.amount)},
+      {k:'method', label:'Method', sortable:true, sort:r=>r.method, render:r=>r.method},
+      {k:'ref', label:'Ref', sortable:false, render:r=>`<span class="mono">${r.ref}</span>`},
+      {k:'date', label:'Date', sortable:true, sort:r=>r.date, render:r=>r.date},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
+    ],
+    rows: DB.payments,
+    filters:['Success'],
+    filterMatch:(r,f)=>r.status===f,
+    search:(r,q)=>((r.id+' '+r.invoice+' '+r.method+' '+r.ref).toLowerCase().includes(q)),
+    empty:'No payments yet'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Payments', 'Payment orchestration — bKash Tokenized Checkout (sandbox) · SSLCommerz (seams ready)', '')
-    + `<div class="dash-grid">
-      <div class="card"><div class="card-header">💳 Gateway Status</div><div class="card-body" style="font-size:11px;line-height:2">
-        <div>✅ <b>bKash Tokenized Checkout</b> — sandbox (tokenized.sandbox.bka.sh) · grant → create → execute → query</div>
-        <div>⏳ <b>SSLCommerz</b> — GWPROCESS + IPN validation (Phase 4 integration)</div>
-        <div>🌐 <b>NRB</b> — NRTA/NITA workflows + remittance dossier generator (Phase 4)</div>
-        <div style="margin-top:6px;font-size:10px;color:#8895a7">Live mode: PAYMENT_MODE=live + BKASH_APP_KEY/SECRET · credentials never in client code.</div>
-      </div></div>
-      <div class="card"><div class="card-header">🧾 Payment History</div><div class="card-body">
-        <div class="table-wrap"><table class="table-view"><thead><tr><th>Payment</th><th>Invoice</th><th>Amount</th><th>Method</th><th>Ref</th><th>Date</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No payments')}</td></tr>`}</tbody></table></div>
-      </div></div>
-    </div>`;
+    pageHeader('Payments', 'bKash Tokenized Checkout (sandbox) · SSLCommerz seams ready', '')
+    + `<div class="card" style="margin-bottom:10px"><div class="card-body" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;font-size:11px">
+        <span>✅ <b>bKash Tokenized Checkout</b> — sandbox (tokenized.sandbox.bka.sh) · grant → create → execute → query</span>
+        <span>⏳ <b>SSLCommerz</b> — GWPROCESS + IPN (Phase 4)</span>
+        <span>🌐 <b>NRB</b> — NRTA/NITA + remittance dossiers (Phase 4)</span>
+        <span style="font-size:10px;color:#8895a7">Live: PAYMENT_MODE=live + BKASH_APP_KEY/SECRET · creds never in client code.</span>
+      </div></div>`
+    + smartTable('payments', opts);
 }
 
 // ---------- AI assistant ----------
@@ -1792,7 +2069,7 @@ function renderAI(){
   const log = DB.ai_log;
   const msgs = log.map(m=>`<div class="msg ${m.role}">${esc(m.text)}${m.tools?`<div>${m.tools.map(t=>`<span class="tool-tag">⚙ ${esc(t)}</span>`).join('')}</div>`:''}</div>`).join('');
   document.getElementById('content').innerHTML =
-    pageHeader('AI Assistant', 'KR — your autonomous property caretaker (DeepSeek backend arrives in Phase 5)', '')
+    pageHeader('AI Assistant', 'KR — autonomous property caretaker (DeepSeek backend in Phase 5)', '')
     + `<div class="chat-wrap">
       <div class="chat-log" id="chatLog">${msgs}</div>
       <div class="chat-sugg" id="chatSugg"></div>
@@ -1801,7 +2078,7 @@ function renderAI(){
         <button class="drawer-btn primary" onclick="sendChat()">Send</button>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-        <span class="ai-status"><span class="dot"></span> KR online · knowledge: PRCA 1991 · TPA 1882 · ITA 2023 · portfolio live</span>
+        <span class="ai-status"><span class="dot"></span> KR online · PRCA 1991 · TPA 1882 · ITA 2023 · portfolio live</span>
         <button class="mini-btn" onclick="resetChat()">Reset</button>
       </div>
     </div>`;
@@ -1826,7 +2103,6 @@ function sendChatText(text){
 function aiAnswer(q){
   const s = q.toLowerCase();
   const L = DB.leases, I = DB.invoices, P = DB.properties;
-  // --- actions: generate invoice ---
   let m = s.match(/invoice\s+(for\s+)?(l-\d+)/i);
   if(m && /generat|create|make|issue|bill/.test(s)){
     const l = L.find(x=>x.id.toLowerCase()===m[2].toLowerCase());
@@ -1837,7 +2113,6 @@ function aiAnswer(q){
     I.push(inv); saveDB();
     return {text:'✅ Generated '+inv.id+' for '+l.id+' — gross '+fmt(gross)+(td.rate?', TDS '+fmt(tds)+' ('+td.section+'), net '+fmt(net):'')+'. Tenant: '+tenantById(l.tenant).name+'.', tools:['generate_invoice()']};
   }
-  // --- actions: report maintenance / ticket ---
   if(/report|ticket|issue|plumbing|leak|maintenance/.test(s) && /leak|plumb|roof|crack|fix|repair|maintenance|broken|pump/.test(s)){
     const u = DB.units[0];
     const desc = s.replace(/.*?(report|ticket|issue)\s*/i,'').slice(0,80) || 'Reported via AI chat';
@@ -1846,48 +2121,40 @@ function aiAnswer(q){
     saveDB();
     return {text:'🔧 Ticket '+DB.tickets[DB.tickets.length-1].id+' created for '+unitLabel(u)+'. Liability resolver → '+liab+' responsibility (per lease + PRCA defaults).', tools:['create_maintenance_ticket()','resolve_liability()']};
   }
-  // --- rent due ---
   if(/rent due|outstanding|who owes|unpaid/.test(s)){
     const due = I.filter(v=>v.status==='Unpaid'||v.status==='Overdue');
     if(!due.length) return {text:'Nothing outstanding — all invoices settled 🎉', tools:[]};
     const lines = due.map(v=>{ const l=L.find(x=>x.id===v.lease); return v.id+' · '+tenantById(l.tenant).name+' · '+fmt(v.net)+(v.tds?' (net of TDS)':''); }).join('\n');
     return {text:'You have '+due.length+' outstanding invoice(s), total '+fmt(due.reduce((s,v)=>s+v.net,0))+':\n'+lines, tools:['query_invoices()']};
   }
-  // --- holding tax ---
   if(/holding tax|annual value/.test(s)){
     const p = P[0];
     const r = holdingTaxCalc(p);
     return {text:'Holding tax for '+p.name+' ('+p.jurisdiction+'):\n1) Gross Annual Rent: '+fmt(r.gar)+'\n2) − Maintenance allowance (2 mo): '+fmt(r.allowance)+'\n3) − Mortgage interest: '+fmt(r.interest)+'\n4) Net Annual Value: '+fmt(r.nav)+' → tax ≈ '+fmt(r.tax)+'/yr at '+(r.rate*100).toFixed(1)+'%.', tools:['calc_holding_tax()']};
   }
-  // --- TDS ---
   if(/tds|withholding/.test(s)){
     const corp = L.filter(l=>tenantById(l.tenant)?.kind==='Corporate' && (l.status==='Active'||l.status==='Pending Registration'));
     if(!corp.length) return {text:'No corporate tenancies — TDS not applicable on individual rent.', tools:[]};
     const lines = corp.map(l=>{ const td=tdsFor(l); return l.id+' · '+tenantById(l.tenant).name+' · '+(td.rate*100).toFixed(0)+'% ('+td.section+')'; }).join('\n');
     return {text:'TDS applies to corporate tenants (Income Tax Act 2023):\n'+lines+'\n\nCommercial lease collections: 4% (§128) · general rental: 10% (§109).', tools:['tds_lookup()']};
   }
-  // --- PRCA advance cap ---
   if(/advance|deposit|security/.test(s)){
     const bad = L.filter(l=>l.residential && l.advance>l.rent);
     if(!bad.length) return {text:'All residential leases comply — advance ≤ 1 month rent (PRCA 1991 §10/§23). ✓', tools:['prca_check()']};
     return {text:'⚠ '+bad.length+' residential lease(s) exceed the 1-month advance cap:\n'+bad.map(l=>l.id+' · '+tenantById(l.tenant).name+' · advance '+fmt(l.advance)+' vs rent '+fmt(l.rent)).join('\n')+'\nRequires rent-controller written consent or commercial override.', tools:['prca_check()']};
   }
-  // --- eviction ---
   if(/evict|eviction/.test(s)){
     const elig = DB.tenants.map(t=>({t,e:evictionEligible(t.id)})).filter(x=>x.e.eligible);
     if(!elig.length) return {text:'No tenant currently meets the ≥3-month unpaid threshold for §18 eviction grounds. Digital lockouts are never performed.', tools:['eviction_check()']};
     return {text:'⚠ '+elig.map(x=>x.t.name+' ('+x.e.months+' mo unpaid)').join(', ')+' — grounds met. I can generate a compliant §114A notice.', tools:['eviction_check()']};
   }
-  // --- liability ---
   if(/liab|who.*(pay|fix|responsible)|roof|structural/.test(s)){
     return {text:'Liability rule (PRCA 1991): structural/maintenance = Landlord; day-to-day = Tenant. Open tickets:\n'+DB.tickets.filter(t=>t.status!=='Closed').map(t=>t.id+' · '+t.desc.slice(0,40)+' → '+t.liability).join('\n'), tools:['resolve_liability()']};
   }
-  // --- lease registration ---
   if(/registr/.test(s)){
     const pr = L.filter(l=>l.status==='Pending Registration');
     return {text: pr.length? '⚠ '+pr.length+' lease(s) pending registration (TPA 1882 §107): '+pr.map(l=>l.id+' ('+leaseMonths(l)+' mo)').join(', ')+'. Ledgers stay inactive until sub-registry docs uploaded.' : 'All leases >12 months have registered instruments ✓', tools:['registration_gate()']};
   }
-  // --- legal RAG fallback ---
   if(/legal|law|act|section|prca|tpa|allowed/.test(s)){
     return {text:'⚖️ Under PRCA 1991 §18, a tenant paying allowable rent cannot be summarily evicted; eviction needs a court decree on specific grounds (e.g. 3 months unpaid). §10/§23 cap residential advance at 1 month rent without rent-controller consent. TPA 1882 §107 + Registration Act §17(1)(d) make leases >12 months invalid without a registered instrument.\n\n(Phase 5: full RAG retrieval over statute texts via DeepSeek embeddings.)', tools:['rag_retrieve()']};
   }
@@ -1905,9 +2172,9 @@ function registerSW(){
 
 // ---------- init ----------
 document.addEventListener('DOMContentLoaded', ()=>{
-  renderSidebar();
+  renderSidebar(); renderTopNav();
   const h = location.hash.slice(1);
-  if(h && NAV.find(n=>n.id===h)) nav(h); else nav('dashboard');
+  if(h && MODS[h]) nav(h); else nav('dashboard');
   registerSW();
 });
 

@@ -1,5 +1,5 @@
 /* KRTaker v1.0 — Service Worker */
-const CACHE = 'krtaker-v1-0';
+const CACHE = 'krtaker-v2-0';
 const CORE = [
   './design-prototype.html',
   './manifest.json',

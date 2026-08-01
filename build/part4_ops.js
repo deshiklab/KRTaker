@@ -48,22 +48,27 @@ function evictionEligible(tenantId){
 
 // ---------- leases ----------
 function renderLeases(){
-  const rows = DB.leases.map(l=>{
-    const g = registrationGate(l);
-    const u = unitById(l.unit); const t = tenantById(l.tenant);
-    return `<tr onclick="openLeaseDetail('${l.id}')" style="cursor:pointer">
-      <td><b>${l.id}</b>${g.block?`<div style="font-size:9px;color:#e74c3c;font-weight:600">⚠ REGISTRATION REQUIRED</div>`:''}</td>
-      <td>${esc(unitLabel(u))}</td>
-      <td>${esc(t?t.name:'')}${t&&t.kind==='Corporate'?`<span class="kr-badge">TDS</span>`:''}</td>
-      <td>${fmt(l.rent)}<div style="font-size:9.5px;color:#8895a7">adv ${fmt(l.advance)}</div></td>
-      <td class="mono">${l.start} → ${l.end}</td>
-      <td>${leaseMonths(l)} mo</td>
-      <td>${badge(l.status)}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'leases',
+    cols:[
+      {k:'id', label:'Lease', sortable:true, sort:r=>r.id, render:r=>{const g=registrationGate(r); return `<b>${r.id}</b>${g.block?`<div style="font-size:9px;color:#e74c3c;font-weight:600">⚠ REGISTRATION REQUIRED</div>`:''}`;}},
+      {k:'unit', label:'Unit', sortable:true, sort:r=>unitLabel(unitById(r.unit)), render:r=>esc(unitLabel(unitById(r.unit)))},
+      {k:'tenant', label:'Tenant', sortable:true, sort:r=>tenantById(r.tenant)?.name||'', render:r=>{const t=tenantById(r.tenant); return `${esc(t?t.name:'')}${t&&t.kind==='Corporate'?`<span class="kr-badge">TDS</span>`:''}`;}},
+      {k:'rent', label:'Rent', sortable:true, sort:r=>r.rent, render:r=>`${fmt(r.rent)}<div style="font-size:9.5px;color:#8895a7">adv ${fmt(r.advance)}</div>`},
+      {k:'term', label:'Term', sortable:true, sort:r=>r.start, render:r=>`<span class="mono">${r.start} → ${r.end}</span>`},
+      {k:'months', label:'Length', sortable:true, sort:r=>leaseMonths(r), render:r=>leaseMonths(r)+' mo'},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
+    ],
+    rows: DB.leases,
+    filters:['Active','Pending Registration','Expired','Terminated'],
+    filterMatch:(r,f)=>r.status===f,
+    search:(r,q)=>((r.id+' '+unitLabel(unitById(r.unit))+' '+(tenantById(r.tenant)?.name||'')).toLowerCase().includes(q)),
+    rowClick:r=>`openLeaseDetail('${r.id}')`,
+    empty:'No leases match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Leases', 'Tenancy agreements — TPA 1882 §107 registration gate & PRCA 1991 validations active', `<button class="drawer-btn primary" onclick="openLeaseForm()">＋ Add Lease</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Rent</th><th>Term</th><th>Length</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No leases')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Leases', 'TPA 1882 §107 registration gate & PRCA 1991 validations active', `<button class="action-btn primary" onclick="openLeaseForm()">＋ Add Lease</button>`)
+    + smartTable('leases', opts);
 }
 function openLeaseDetail(id){
   const l = leaseById(id); if(!l) return;
@@ -93,9 +98,9 @@ function openLeaseDetail(id){
   h += `<div style="font-weight:700;margin:12px 0 6px">Invoices</div>`;
   h += invRows ? `<div class="table-wrap"><table class="table-view"><thead><tr><th>Invoice</th><th>Month</th><th>Gross</th>${td.rate?'<th>TDS</th><th>Net</th>':''}<th>Status</th></tr></thead><tbody>${invRows}</tbody></table></div>` : emptyState('No invoices generated');
   h += `</div>`;
-  const footer = `<button class="drawer-btn secondary" onclick="closeModal(); openLeaseForm('${l.id}')">Edit</button>`;
-  if(g.block) footer + `<button class="drawer-btn primary" onclick="closeModal(); openRegistrationForm('${l.id}')">Upload Registration</button>`;
-  else footer + `<button class="drawer-btn primary" onclick="generateInvoiceForLease('${l.id}')">Generate Invoice</button>`;
+  let footer = `<button class="drawer-btn secondary" onclick="closeModal(); openLeaseForm('${l.id}')">Edit</button>`;
+  if(g.block) footer += `<button class="drawer-btn primary" onclick="closeModal(); openRegistrationForm('${l.id}')">Upload Registration</button>`;
+  else footer += `<button class="drawer-btn primary" onclick="generateInvoiceForLease('${l.id}')">Generate Invoice</button>`;
   openModal('Lease '+l.id, h, footer);
 }
 function openLeaseForm(id, presetUnit){
@@ -126,9 +131,8 @@ function saveLease(id){
   const data = {unit, tenant, start, end, rent, advance, residential,
     regMeta: id? leaseById(id).regMeta : null,
     status: months>12 ? 'Pending Registration' : 'Active'};
-  let newLease = null;
   if(id){ Object.assign(leaseById(id), data); toast('Lease updated','success'); }
-  else { newLease = Object.assign({id:uid('L')}, data); DB.leases.push(newLease); }
+  else { DB.leases.push(Object.assign({id:uid('L')}, data)); }
   saveDB(); closeModal(); renderLeases();
   if(months>12){ toast('Lease >12 months — pending registration (TPA §107)','error'); }
   else toast('Lease saved','success');
@@ -158,21 +162,33 @@ function saveRegistration(id){
 
 // ---------- invoices ----------
 function renderInvoices(){
-  const rows = DB.invoices.map(v=>{
-    const l = leaseById(v.lease);
-    return `<tr onclick="openInvoiceDetail('${v.id}')" style="cursor:pointer">
-      <td><b>${v.id}</b></td>
-      <td>${l?l.id:'—'}${l?`<div style="font-size:9.5px;color:#8895a7">${esc(tenantById(l.tenant)?.name||'')}</div>`:''}</td>
-      <td>${v.month}</td><td>${fmt(v.gross)}</td>
-      ${v.tdsRate?`<td class="mono">${fmt(v.tds)}<div style="font-size:9px;color:#8895a7">${(v.tdsRate*100).toFixed(0)}%</div></td><td><b>${fmt(v.net)}</b></td>`:'<td>—</td><td>'+fmt(v.net)+'</td>'}
-      <td>${badge(v.status)}</td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'invoices',
+    cols:[
+      {k:'id', label:'Invoice', sortable:true, sort:r=>r.id, render:r=>`<b>${r.id}</b>`},
+      {k:'lease', label:'Lease', sortable:true, sort:r=>r.lease, render:r=>`${r.lease}<div style="font-size:9.5px;color:#8895a7">${esc(tenantById(leaseById(r.lease)?.tenant)?.name||'')}</div>`},
+      {k:'month', label:'Month', sortable:true, sort:r=>r.month, render:r=>r.month},
+      {k:'gross', label:'Gross', sortable:true, sort:r=>r.gross, render:r=>fmt(r.gross)},
+      {k:'tds', label:'TDS', sortable:true, sort:r=>r.tds, render:r=>r.tdsRate?`<span class="mono">${fmt(r.tds)}<div style="font-size:9px;color:#8895a7">${(r.tdsRate*100).toFixed(0)}%</div></span>`:'—'},
+      {k:'net', label:'Net', sortable:true, sort:r=>r.net, render:r=>`<b>${fmt(r.net)}</b>`},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)}
+    ],
+    rows: DB.invoices,
+    filters:['Paid','Unpaid','Overdue'],
+    filterMatch:(r,f)=>r.status===f,
+    search:(r,q)=>((r.id+' '+r.lease+' '+r.month).toLowerCase().includes(q)),
+    rowClick:r=>`openInvoiceDetail('${r.id}')`,
+    empty:'No invoices match'
+  };
   const due = DB.invoices.filter(v=>v.status==='Unpaid'||v.status==='Overdue').reduce((s,v)=>s+v.net,0);
   document.getElementById('content').innerHTML =
-    pageHeader('Invoices', 'Rent invoicing with automatic TDS split for corporate tenancies', `<button class="drawer-btn primary" onclick="openInvoiceForm()">＋ Generate Invoice</button>`)
-    + statCards([['Outstanding (net)', fmt(due), '#e67e22', ''], ['Invoices', DB.invoices.length, '#2F80ED', ''], ['TDS withheld total', fmt(DB.invoices.reduce((s,v)=>s+v.tds,0)), '#9b59b6', '']])
-    + `<div class="table-wrap" style="margin-top:12px"><table class="table-view"><thead><tr><th>Invoice</th><th>Lease</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${rows||`<tr><td colspan="7">${emptyState('No invoices')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Invoices', 'Rent invoicing with automatic TDS split for corporate tenancies', `<button class="action-btn primary" onclick="openInvoiceForm()">＋ Generate Invoice</button>`)
+    + statCards([
+        ['Outstanding (net)', fmt(due), '#e67e22', DB.invoices.filter(v=>v.status==='Overdue').length+' overdue'],
+        ['Invoices', DB.invoices.length, '#2F80ED', ''],
+        ['TDS withheld total', fmt(DB.invoices.reduce((s,v)=>s+v.tds,0)), '#9b59b6', '']
+      ])
+    + smartTable('invoices', opts);
 }
 function openInvoiceForm(){
   const ls = DB.leases.filter(l=>l.status==='Active'||l.status==='Pending Registration');
@@ -254,7 +270,6 @@ function payInvoice(id){
 }
 function executePayment(id){
   const v = DB.invoices.find(x=>x.id===id); if(!v) return;
-  const l = leaseById(v.lease);
   v.status = 'Paid';
   const receipt = {id:'RCP-'+String(DB.receipts.length+1).padStart(4,'0'), invoice:id, amount:v.net, date:today(), method:'bKash', sig:'SIG-'+Math.random().toString(16).slice(2,10)};
   DB.receipts.push(receipt);
@@ -265,19 +280,27 @@ function executePayment(id){
 
 // ---------- receipts ----------
 function renderReceipts(){
-  const rows = DB.receipts.map(r=>{
-    const v = DB.invoices.find(x=>x.id===r.invoice);
-    return `<tr>
-      <td><b>${r.id}</b></td><td>${r.invoice}</td>
-      <td>${esc(tenantById(leaseById(v?.lease)?.tenant)?.name||'')}</td>
-      <td>${fmt(r.amount)}</td><td>${r.method}</td><td>${r.date}</td>
-      <td class="mono">${r.sig}</td>
-      <td><button class="mini-btn" onclick="printReceipt('${r.id}')">🖨 Print</button></td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'receipts',
+    cols:[
+      {k:'id', label:'Receipt', sortable:true, sort:r=>r.id, render:r=>`<b>${r.id}</b>`},
+      {k:'inv', label:'Invoice', sortable:true, sort:r=>r.invoice, render:r=>r.invoice},
+      {k:'tenant', label:'Tenant', sortable:true, sort:r=>tenantById(leaseById(DB.invoices.find(x=>x.id===r.invoice)?.lease)?.tenant)?.name||'', render:r=>esc(tenantById(leaseById(DB.invoices.find(x=>x.id===r.invoice)?.lease)?.tenant)?.name||'')},
+      {k:'amt', label:'Amount', sortable:true, sort:r=>r.amount, render:r=>fmt(r.amount)},
+      {k:'method', label:'Method', sortable:true, sort:r=>r.method, render:r=>r.method},
+      {k:'date', label:'Date', sortable:true, sort:r=>r.date, render:r=>r.date},
+      {k:'sig', label:'Signature', sortable:false, render:r=>`<span class="mono">${r.sig}</span>`},
+      {k:'act', label:'', sortable:false, render:r=>`<button class="mini-btn" onclick="event.stopPropagation(); printReceipt('${r.id}')">🖨 Print</button>`}
+    ],
+    rows: DB.receipts,
+    filters:[],
+    filterMatch:(r,f)=>true,
+    search:(r,q)=>((r.id+' '+r.invoice+' '+r.method+' '+r.sig).toLowerCase().includes(q)),
+    empty:'No receipts yet — pay an invoice to auto-generate one (PRCA §13)'
+  };
   document.getElementById('content').innerHTML =
     pageHeader('Receipts', 'Cryptographically signed digital rent receipts — PRCA 1991 §13', '')
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Receipt</th><th>Invoice</th><th>Tenant</th><th>Amount</th><th>Method</th><th>Date</th><th>Signature</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="8">${emptyState('No receipts yet')}</td></tr>`}</tbody></table></div>`;
+    + smartTable('receipts', opts);
 }
 function printReceipt(id){
   const r = DB.receipts.find(x=>x.id===id); if(!r) return;
@@ -295,27 +318,34 @@ function printReceipt(id){
     <div class="row"><span>Method</span><b>${r.method}</b></div>
     <div class="row"><span>Date</span><b>${r.date}</b></div>
     <div class="stamp">PAID · KRTaker</div>
-    <div class="sig">Signature: ${r.sig}<br>Generated: ${new Date().toISOString()} · KRTaker v1.0</div>
+    <div class="sig">Signature: ${r.sig}<br>Generated: ${new Date().toISOString()} · KRTaker v2.0</div>
   </body></html>`);
   win.document.close(); win.focus();
 }
 
 // ---------- maintenance ----------
 function renderMaintenance(){
-  const rows = DB.tickets.map(t=>{
-    const u = unitById(t.unit);
-    return `<tr>
-      <td><b>${t.id}</b></td><td>${esc(unitLabel(u))}</td>
-      <td style="max-width:240px">${esc(t.desc)}</td>
-      <td>${badge(t.liability)}</td><td>${badge(t.status)}</td>
-      <td>${t.contractor?esc(t.contractor):'—'}</td>
-      <td>${t.cost?fmt(t.cost):'—'}</td>
-      <td><button class="mini-btn" onclick="openTicketDetail('${t.id}')">View</button></td>
-    </tr>`;
-  }).join('');
+  const opts = {
+    title:'tickets',
+    cols:[
+      {k:'id', label:'Ticket', sortable:true, sort:r=>r.id, render:r=>`<b>${r.id}</b>`},
+      {k:'unit', label:'Unit', sortable:true, sort:r=>unitLabel(unitById(r.unit)), render:r=>esc(unitLabel(unitById(r.unit)))},
+      {k:'desc', label:'Issue', sortable:false, render:r=>`<span style="max-width:220px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.desc)}</span>`},
+      {k:'liab', label:'Liability', sortable:true, sort:r=>r.liability, render:r=>badge(r.liability)},
+      {k:'status', label:'Status', sortable:true, sort:r=>r.status, render:r=>badge(r.status)},
+      {k:'contractor', label:'Contractor', sortable:false, render:r=>r.contractor?esc(r.contractor):'—'},
+      {k:'cost', label:'Cost', sortable:true, sort:r=>r.cost, render:r=>r.cost?fmt(r.cost):'—'},
+      {k:'act', label:'', sortable:false, render:r=>`<button class="mini-btn" onclick="event.stopPropagation(); openTicketDetail('${r.id}')">View</button>`}
+    ],
+    rows: DB.tickets,
+    filters:['Open','In Progress','Awaiting Payment','Closed'],
+    filterMatch:(r,f)=>r.status===f,
+    search:(r,q)=>((r.id+' '+r.desc+' '+r.contractor+' '+unitLabel(unitById(r.unit))).toLowerCase().includes(q)),
+    empty:'No tickets match'
+  };
   document.getElementById('content').innerHTML =
-    pageHeader('Maintenance', 'Issue tickets with automatic liability resolution (landlord structural / tenant day-to-day)', `<button class="drawer-btn primary" onclick="openTicketForm()">＋ Report Issue</button>`)
-    + `<div class="table-wrap"><table class="table-view"><thead><tr><th>Ticket</th><th>Unit</th><th>Issue</th><th>Liability</th><th>Status</th><th>Contractor</th><th>Cost</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="8">${emptyState('No tickets')}</td></tr>`}</tbody></table></div>`;
+    pageHeader('Maintenance', 'Liability auto-resolved (landlord structural / tenant day-to-day)', `<button class="action-btn primary" onclick="openTicketForm()">＋ Report Issue</button>`)
+    + smartTable('maintenance', opts);
 }
 function resolveLiability(unitId, desc){
   const u = unitById(unitId); const p = propertyById(u?.property);

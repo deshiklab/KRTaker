@@ -4,30 +4,67 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2F80ED">
-<meta name="description" content="KRTaker — AI-driven autonomous property management platform for Bangladesh. Key Responsibility Taker.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="KRTaker">
+<meta name="description" content="KRTaker — AI-driven autonomous property management platform for Bangladesh.">
 <title>KRTaker — Key Responsibility Taker</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./pwa/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./pwa/icon-192.png">
 <style>
-/* === KRTaker v1.0 — design system inherited from REM ERP V10 (reference) === */
+/* === KRTaker v2.0 — design system inherited from REM ERP V10 (reference) === */
 {{CSS}}
 /* === KRTaker additions === */
 :root{--brand:#2F80ED}
-.sidebar-logo{background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
-.sidebar-brand-text b{display:block;font-size:14px;letter-spacing:.4px}
-.sidebar-brand-text small{font-size:8.5px;color:#9aa5b1;font-weight:500;letter-spacing:.3px}
-.sidebar-item .nav-ico{margin-right:8px;font-size:13px;width:18px;text-align:center;display:inline-block}
-.sidebar-item.has-children>.grp-label{font-size:9.5px;color:#9aa5b1;text-transform:uppercase;letter-spacing:.8px;padding:14px 12px 4px;font-weight:700}
-.mob-bottom-nav{display:none}
-@media (max-width:768px){
-  .mob-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eef0f3;z-index:90;padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
-  .mob-bottom-nav .mb-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;font-size:9px;color:#667;cursor:pointer;border-radius:8px}
-  .mob-bottom-nav .mb-item.active{color:var(--brand);font-weight:600}
-  .mob-bottom-nav .mb-item .mi{font-size:16px}
-  .main-area{padding-bottom:58px}
-}
-.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:420px}
+.sidebar-logo{height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-bottom:1px solid #f0f0f0;gap:3px;background:linear-gradient(180deg,#f8fbff,#fff)}
+.sidebar-logo .kr-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;letter-spacing:.5px}
+.sidebar-logo .sidebar-brand-text{font-size:10.5px;font-weight:800;color:#333;line-height:1}
+.sidebar-logo .sb-version{font-size:8px;color:#9aa5b1;font-weight:500}
+.sidebar-item{position:relative}
+.sidebar-item[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:52px;top:50%;transform:translateY(-50%);background:#222;color:#fff;font-size:10px;padding:3px 9px;border-radius:5px;white-space:nowrap;z-index:99;pointer-events:none;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.s-grp-sep{height:1px;background:#eef0f3;margin:4px 10px}
+.top-nav{display:flex;align-items:center;gap:0;flex:1;overflow-x:auto}
+.top-nav-item{padding:5px 12px;font-size:12px;font-weight:500;color:#666;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all .15s;margin-right:1px}
+.top-nav-item:hover{background:#f2f6fc;color:#2F80ED}
+.top-nav-item.active{background:#eef3ff;color:#2F80ED;font-weight:600}
+.kbd{font-size:9px;color:#999;border:1px solid #e0e0e0;border-radius:4px;padding:1px 5px;background:#fafbfc;font-family:ui-monospace,monospace}
+.tbl-toolbar{display:flex;align-items:center;gap:4px;padding:6px 10px;background:#fafbfc;border-bottom:1px solid #e8e8e8;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;border:1px solid #e0e0e0;border-radius:6px;padding:0 8px;background:#fff;flex:1;max-width:240px}
+.search-box input{border:none;outline:none;font-size:11px;padding:5px 4px;width:100%;background:transparent}
+.filter-btn{padding:5px 10px;font-size:11px;font-weight:500;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#333;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.filter-btn:hover,.filter-btn.on{border-color:#2F80ED;color:#2F80ED;background:#f0f4ff}
+.action-btn{display:inline-flex;align-items:center;gap:3px;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500;font-size:11px;padding:5px 12px;border:1px solid transparent}
+.action-btn.primary{background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff}
+.action-btn.primary:hover{filter:brightness(1.08)}
+.action-btn.ghost{border-color:#d7e3f7;background:#f0f4ff;color:#1565c0}
+.flt-bar{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:8px 0 6px;padding:4px 6px;background:#f8faff;border:1px solid #e3ecff;border-radius:6px;min-height:24px}
+.flt-count{font-size:9px;color:#555;font-weight:600;margin-right:2px;white-space:nowrap}
+.flt-chip{display:inline-flex;align-items:center;gap:4px;background:#eef3ff;border:1px solid #cfe0ff;color:#1565c0;font-size:9px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap;cursor:pointer}
+.flt-chip.on{background:#2F80ED;border-color:#2F80ED;color:#fff}
+.view-chips{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:0 0 6px}
+.view-chip-title{font-size:9px;color:#999;font-weight:600;margin-right:2px}
+.view-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;font-size:9px;font-weight:600;border:1px solid #d7e3f7;background:#f0f4ff;color:#1565c0;border-radius:10px;cursor:pointer;transition:all .12s}
+.view-chip.on{background:#2F80ED;border-color:#2F80ED;color:#fff}
+.pagination{display:flex;align-items:center;gap:4px;padding:6px 10px;background:#fafbfc;border-top:1px solid #e0e0e0;font-size:10px;color:#666;flex-shrink:0}
+.pagination .pg-btn{min-width:24px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e0e0e0;border-radius:5px;background:#fff;cursor:pointer;font-size:10px;color:#555;padding:0 7px}
+.pagination .pg-btn:hover{border-color:#2F80ED;color:#2F80ED}
+.pagination .pg-btn.pg-active{background:#2F80ED;color:#fff;border-color:#2F80ED;font-weight:600}
+.pagination .pg-info{flex:1}
+.app-footer{height:28px;min-height:28px;background:#fff;border-top:1px solid #e8e8e8;display:flex;align-items:center;padding:0 12px;font-size:10px;color:#888;justify-content:space-between;position:sticky;bottom:0;z-index:20}
+.crumb-part{cursor:pointer;color:#2F80ED;font-weight:600}
+.crumb-part:hover{text-decoration:underline}
+.crumb-sep{color:#ccc;margin:0 4px}
+.ft-textsize{font-size:10px}
+.prop-card{background:#fff;border:1px solid #eef0f3;border-radius:12px;padding:12px;cursor:pointer;transition:all .15s}
+.prop-card:hover{box-shadow:0 4px 14px rgba(47,128,237,.10);border-color:#cfe0ff;transform:translateY(-1px)}
+.prop-card .pc-name{font-size:12.5px;font-weight:700;color:#222}
+.prop-card .pc-sub{font-size:10px;color:#8895a7;margin-top:2px}
+.prop-card .pc-stats{display:flex;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid #f4f6f9;font-size:10.5px}
+.prop-card .pc-val{font-weight:700;color:#2F80ED}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;padding:10px}
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 210px);min-height:420px}
 .chat-log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #eef0f3}
 .msg{max-width:78%;padding:8px 12px;border-radius:12px;font-size:12px;line-height:1.55;white-space:pre-wrap}
 .msg.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:3px}
@@ -51,58 +88,104 @@
 .flow-step.ok .fs-n{color:#27ae60}
 .kr-badge{display:inline-block;background:#eef6ff;color:#1e5eb8;font-size:9px;font-weight:600;padding:1px 7px;border-radius:10px;border:1px solid #d4e6fb;vertical-align:middle;margin-left:6px}
 .tbl-region td .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:#345}
+.mob-filter-panel{display:none}
+.mnav-groups{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid #f0f0f0;overflow-x:auto;flex-shrink:0}
+.mnav-grp{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:17px;cursor:pointer;background:#f5f5f5;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.mnav-grp.active{background:#eef3ff;box-shadow:0 0 0 1px #2F80ED}
+.mnav-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 10px;font-size:14px;font-weight:700;color:#333;border-bottom:1px solid #f0f0f0;flex-shrink:0}
+.mnav-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:#999;font-size:14px}
+.mnav-close:hover{background:#f0f0f0;color:#333}
+.mnav-list{overflow-y:auto;max-height:52vh;padding:6px}
+.mnav-item{display:flex;align-items:center;gap:8px;padding:12px 12px;border-radius:10px;font-size:13px;font-weight:500;color:#444;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mnav-item.active{background:#eef3ff;color:#2F80ED;font-weight:600}
+.mnav-check{margin-left:auto;color:#2F80ED;font-weight:700}
+.mnav-grp-label{font-size:9px;font-weight:700;color:#8895a7;text-transform:uppercase;letter-spacing:.8px;padding:10px 12px 2px}
+@media (max-width:768px){
+  #sidebar{display:none}
+  #mobileNavBtn{display:flex!important}
+  .top-nav{display:none}
+  .search-box{max-width:none}
+  .dash-grid{grid-template-columns:1fr}
+  .grid-cards{grid-template-columns:1fr}
+  .content{padding:10px}
+  .mob-filter-panel{display:none}
+  .mob-filter-panel.open{display:block}
+  .table-wrap{max-width:100%}
+  .content-footer .ft-desktop{display:none}
+}
+@media (min-width:769px){
+  #mobileNavBtn{display:none!important}
+}
 </style>
 </head>
 <body>
 <div class="app-shell">
-  <!-- ===== Sidebar ===== -->
-  <aside class="sidebar" id="sidebar">
-    <div style="display:flex;align-items:center;gap:10px;padding:16px 14px 10px">
-      <div class="sidebar-logo" style="width:38px;height:38px">KR</div>
-      <div class="sidebar-brand-text">
-        <b>KRTaker</b>
-        <small>KEY RESPONSIBILITY TAKER</small>
-      </div>
+  <!-- ===== SIDEBAR: icon rail with group separators ===== -->
+  <div id="sidebar">
+    <div class="sidebar-logo">
+      <div class="kr-mark">KR</div>
+      <div class="sidebar-brand-text">KRTaker</div>
+      <div class="sb-version">v2.0 · PWA</div>
     </div>
-    <div class="sidebar-scroll" id="sidebarMenu"></div>
+    <div class="sidebar-scroll" id="sidebarNav"></div>
     <div class="sidebar-bottom">
-      <div class="sb-version" id="sbVersion">v1.0 · PWA Prototype</div>
+      <div class="sidebar-item" data-tip="Reset demo data" onclick="resetDB()" style="border-top:1px solid #f0f0f0">↺</div>
     </div>
-  </aside>
+  </div>
 
   <!-- ===== Main ===== -->
   <main class="main-area">
     <div class="top-bar">
-      <button class="icon-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" style="display:none">☰</button>
-      <div style="flex:1;min-width:0">
-        <div class="page-title" id="pageTitle">Dashboard</div>
-        <div class="breadcrumb" id="breadcrumb">Home / Dashboard</div>
-      </div>
-      <div class="top-actions">
-        <div class="search-box" style="max-width:220px">
-          <input id="gsInput" placeholder="Search… (Ctrl+K)" oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()">
+      <div class="top-nav" id="topNav"></div>
+      <div class="top-actions" style="position:relative">
+        <div id="mobileNavBtn" onclick="openMobileNav()" title="Modules" style="display:none;align-items:center;gap:6px;padding:6px 10px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:#333">
+          <span id="mobileNavBtnLabel">Dashboard</span><span style="font-size:8px">▾</span>
         </div>
-        <button class="icon-btn" onclick="openQuickAdd()" title="Quick add">＋</button>
-        <div class="user-avatar" id="userAvatar" title="Owner — Kabir (demo)">KB</div>
+        <div id="searchWrap">
+          <div id="searchBar" tabindex="-1" onclick="openSearchDropdown()" title="Search anything (Ctrl+K)" style="cursor:pointer">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="gsInput" placeholder="Search anything..." oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()" autocomplete="off"/>
+            <span class="kbd">⌘K</span>
+          </div>
+          <div id="searchDropdown" class="slide-out top-dropdown" style="display:none">
+            <div class="panel" style="padding:10px;max-width:460px;max-height:60vh;overflow-y:auto">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="sdInput" placeholder="Search properties, tenants, leases, modules..." oninput="openGlobalSearch(this.value)" onkeydown="if(event.key==='Enter')jumpFirstResult()" autocomplete="off" style="flex:1;border:none;outline:none;font-size:12px;background:transparent"/>
+                <span onclick="closeGlobalSearch()" style="cursor:pointer;color:#999;font-size:14px;padding:2px;width:24px;text-align:center;border-radius:4px">✕</span>
+              </div>
+              <div id="gsResults" style="display:flex;flex-direction:column;gap:2px"></div>
+              <div id="gsEmpty" style="font-size:11px;color:#999;padding:8px;display:none">No matches.</div>
+              <div style="display:flex;justify-content:space-between;font-size:9px;color:#bbb;padding:6px 2px 0;border-top:1px solid #f0f0f0;margin-top:6px"><span id="gsCount"></span><span>↑↓ Navigate · ↩ Open · ⎋ Close</span></div>
+            </div>
+          </div>
+        </div>
+        <button class="action-btn primary" onclick="openQuickAdd()" title="Quick add">＋ Add</button>
+        <div class="user-avatar" id="userAvatar" title="Owner — Kabir (demo)" onclick="resetDB()" style="cursor:pointer">KB</div>
       </div>
     </div>
     <div class="content" id="content"></div>
-    <div class="content-footer">KRTaker v1.0 — AI-driven property caretaker · Prototype · <span id="swInfo" style="color:#9aa5b1">SW krtaker-v1-0</span></div>
+    <div class="app-footer">
+      <div class="breadcrumb"><span class="crumb-part crumb-root" onclick="openGlobalSearch('')" title="Search (Ctrl+K)">KRTaker</span> <span class="crumb-sep">›</span> <span id="footerGroup" class="crumb-part" onclick="openMobileNav()" title="Switch group">Overview</span> <span class="crumb-sep">›</span> <span id="footerModName" class="crumb-part" onclick="openMobileNav()" title="Switch module">Dashboard</span></div>
+      <div style="display:flex;align-items:center;gap:5px">
+        <span class="ft-textsize" style="display:flex;align-items:center;gap:2px;font-weight:700;color:#555">A</span>
+        <button class="ft-textsize" onclick="fontStep(-1)" title="Decrease text size" style="padding:1px 5px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;color:#555">−</button>
+        <button class="ft-textsize" onclick="fontStep(1)" title="Increase text size" style="padding:2px 6px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;color:#555">+</button>
+        <span class="ft-textsize" style="color:#e0e0e0">|</span>
+        <button onclick="changeZoom(-10)" style="padding:1px 5px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:10px;color:#555">−</button>
+        <span id="zoomLabel" onclick="resetZoom()" style="cursor:pointer;font-weight:600;min-width:36px;text-align:center;font-size:11px">100%</span>
+        <button onclick="changeZoom(10)" style="padding:2px 6px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;color:#555">+</button>
+        <span style="color:#e0e0e0">|</span>
+        <button onclick="toggleFullScreen()" style="padding:2px 6px;border:1px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:10px;color:#555" title="Fullscreen">⛶</button>
+        <span style="color:#e0e0e0">|</span>
+        <span id="swInfo" style="font-size:9px;color:#9aa5b1">SW krtaker-v2-0</span>
+      </div>
+    </div>
   </main>
 </div>
 
-<!-- ===== Mobile bottom nav ===== -->
-<div class="mob-bottom-nav" id="mobBottomNav"></div>
-
-<!-- ===== Global search dropdown ===== -->
-<div class="slide-out top-dropdown" id="gsDropdown" style="display:none">
-  <div class="backdrop" onclick="closeGlobalSearch()"></div>
-  <div class="panel" style="padding:10px;max-width:460px;max-height:60vh;overflow-y:auto">
-    <div style="font-size:11px;font-weight:600;color:#667;margin-bottom:6px">Search results</div>
-    <div id="gsResults" style="display:flex;flex-direction:column;gap:2px"></div>
-    <div id="gsEmpty" style="font-size:11px;color:#999;padding:8px;display:none">No matches — try a property, tenant, lease or module name.</div>
-  </div>
-</div>
+<!-- ===== Mobile nav sheet ===== -->
+<div id="mobileNavSheet" class="slide-out"><div class="backdrop" onclick="closeMobileNav()"></div><div class="panel" id="mobileNavPanel"></div></div>
 
 <!-- ===== Quick add ===== -->
 <div class="slide-out top-dropdown" id="qaDropdown" style="display:none">
