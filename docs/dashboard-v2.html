@@ -814,9 +814,9 @@ const SEED = {
 /* ═══ Roles & modules ═══ */
 const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
-  {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions']},
-  {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions']},
-  {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:ALL},
+  {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
+  {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
+  {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','maintenance','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','invoices','payments','ai','notices','documents','referrals']},
   {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai','analytics','notices','documents']},
@@ -829,13 +829,14 @@ const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
   {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['compliance','⚖️','Compliance']]},
-  {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]}
+  {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
+  {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন',
-  'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
 
@@ -1001,6 +1002,7 @@ function render(){
   enhanceTables();
   if(state.view==='leases' && ['superadmin','owner','manager'].includes(role().id)) setTimeout(renewalsPanel,0);
   if(state.view==='tenants' && ['superadmin','owner','manager'].includes(role().id)) setTimeout(loadScores,0);
+  if(state.view==='caretaker' && ['superadmin','owner','manager'].includes(role().id)) setTimeout(caretakerLoad,0);
 }
 
 /* ═══ Table toolkit (REM-ERP style: search · status filter · sort · paginate · export · columns · refresh) ═══ */
@@ -2235,8 +2237,145 @@ async function printVettingReport(tid){
   }
 }
 
+/* ═══ Phase 22: NRB premium tier — remote caretaker (owner/superadmin/manager) ═══ */
+let DEMO_PREMIUM = { subs: [], walkthroughs: [], tasks: { w: false, b: false, r: false, h: false } };
+function demoPremiumPlans() {
+  return {
+    care_plus: { label: 'Caretaker Plus', tag: 'Local premium', blurb: 'Your AI caretaker for one property — rent chase, utility settlement, monthly report.',
+      price: { monthly: 2500, quarterly: 7000, annual: 25000 },
+      features: ['Rent autopilot & reminders', 'Utility bill auto-settlement', 'Monthly caretaker report', 'Repair coordination', 'KR AI chat priority'] },
+    nrb_caretaker: { label: 'NRB Remote Caretaker', tag: 'For overseas owners', popular: true, blurb: 'Full remote management for NRB landlords — video walkthroughs, escrow, compliance desk, repatriated rent.',
+      price: { monthly: 4500, quarterly: 12000, annual: 45000 },
+      features: ['Everything in Caretaker Plus', 'Monthly video walkthrough', 'NRTA/NITA remittance dossier', 'TPA registration desk', 'Repair escrow with partner QC', 'Quarterly property health report', 'WhatsApp concierge line'] }
+  };
+}
+function renderCaretaker() {
+  let h = pageHead('👑 ' + t('Remote Caretaker', 'রিমোট কেয়ারটেকার'), t('NRB premium — your AI caretaker runs the property while you are away.', 'এনআরবি প্রিমিয়াম — আপনি দূরে থাকলেও আপনার AI কেয়ারটেকার সম্পত্তি চালায়।'), '');
+  h += `<div id="caretakerLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+  return h;
+}
+async function caretakerLoad() {
+  const host = document.getElementById('caretakerLive'); if (!host) return;
+  let plans = {}, subs = [];
+  if (TOKEN && !DEMO_MODE) {
+    const p = await apiCall('app-premium-plans'); if (p.ok) plans = p.plans || {};
+    const s = await apiCall('app-premium-sub-list'); if (s.ok) subs = s.subs || [];
+  } else {
+    plans = demoPremiumPlans(); subs = DEMO_PREMIUM.subs;
+  }
+  host.innerHTML = caretakerHtml(plans, subs);
+}
+function caretakerHtml(plans, subs) {
+  const active = (subs || []).find(s => s.status === 'active' || s.status === 'paused');
+  const props = (DB.properties || []).map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('') || `<option value="">—</option>`;
+  const cycleSel = (id) => `<select id="${id}" class="inp" style="flex:1;min-width:0"><option value="monthly">${t('Monthly','মাসিক')}</option><option value="quarterly">${t('Quarterly','ত্রৈমাসিক')}</option><option value="annual">${t('Annual','বার্ষিক')}</option></select>`;
+  const tierCards = Object.entries(plans || {}).map(([key, pl]) => {
+    const isCur = active && active.tier === key;
+    const prices = pl.price || {};
+    const feat = (pl.features || []).map(f => `<div style="display:flex;gap:8px;font-size:12.5px;color:var(--text-soft);padding:3px 0"><span style="color:var(--accent)">✓</span>${esc(f)}</div>`).join('');
+    return `<div class="panel" style="flex:1;min-width:280px;${pl.popular ? 'border:1.5px solid var(--accent)' : ''}"><div class="panel-b">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:14.5px;font-weight:800">${esc(pl.label)}</span>${pl.popular ? '<span class="badge b-blue">★ ' + t('Popular','জনপ্রিয়') + '</span>' : ''}${isCur ? '<span class="badge b-green">' + t('Current','বর্তমান') + '</span>' : ''}</div>
+      <div style="font-size:11.5px;color:var(--text-mute);margin-bottom:8px">${esc(pl.tag || '')} · ${esc(pl.blurb || '')}</div>
+      <div style="font-size:20px;font-weight:800;margin-bottom:10px">৳${(prices.monthly || 0).toLocaleString()}<span style="font-size:11.5px;color:var(--text-mute);font-weight:500">/${t('mo','মাস')}</span></div>
+      ${feat}
+      <div style="display:flex;gap:6px;margin-top:12px">${cycleSel('cycle-' + key)}<button class="btn-primary" style="flex:1" onclick="caretakerSubscribe('${esc(key)}')">${isCur ? t('Upgrade','আপগ্রেড') : t('Subscribe','সাবস্ক্রাইব')}</button></div>
+    </div></div>`;
+  }).join('');
+  let subCard = '';
+  if (active) {
+    const feat = (active.features || []).map(f => `<div style="display:flex;gap:8px;font-size:12.5px;color:var(--text-soft);padding:3px 0"><span style="color:#059669">✓</span>${esc(f)}</div>`).join('');
+    subCard = `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">👑</span>${t('Active subscription','সক্রিয় সাবস্ক্রিপশন')}</div><span class="badge ${active.status === 'active' ? 'b-green' : 'b-orange'}">${t(active.status === 'active' ? 'Active' : 'Paused', active.status === 'active' ? 'সক্রিয়' : 'বিরত')}</span></div><div class="panel-b">
+      <div class="kv"><span class="k">${t('Plan','প্ল্যান')}</span><span class="v">${esc(active.tier_label || active.tier)}</span></div>
+      <div class="kv"><span class="k">${t('Property under care','যত্নাধীন সম্পত্তি')}</span><span class="v">${esc(active.property_name || active.prop || '—')}</span></div>
+      <div class="kv"><span class="k">${t('Billing cycle','বিলিং চক্র')}</span><span class="v">${esc(active.cycle)} · ৳${Number(active.price || 0).toLocaleString()}</span></div>
+      <div class="kv"><span class="k">${t('Next invoice','পরবর্তী ইনভয়েস')}</span><span class="v">${esc(active.next_invoice || '—')}</span></div>
+      <div class="kv"><span class="k">${t('Since','শুরু')}</span><span class="v">${esc(String(active.start || '').slice(0, 10))}</span></div>
+      <div style="margin-top:8px">${feat}</div>
+      <div style="display:flex;gap:6px;margin-top:12px"><button class="btn-outline" style="flex:1" onclick="caretakerToggle('${esc(active.id)}')">${active.status === 'active' ? t('⏸ Pause','⏸ বিরতি') : t('▶ Resume','▶ পুনরায় চালু')}</button><button class="btn-ghost" style="flex:1" onclick="caretakerCancel('${esc(active.id)}')">✕ ${t('Cancel','বাতিল')}</button></div>
+    </div></div>`;
+  } else {
+    subCard = `<div class="panel" style="margin-bottom:18px"><div class="panel-b"><div class="c-sub">${t('No active caretaker subscription — pick a tier above.','কোনো সক্রিয় কেয়ারটেকার সাবস্ক্রিপশন নেই — উপরে একটি টিয়ার বেছে নিন।')}</div></div></div>`;
+  }
+  const health = caretakerHealth();
+  const walkRows = (DEMO_PREMIUM.walkthroughs || []).map(w => rowItem('🎥', 'Video walkthrough', w, badge('Booked'))).join('') || `<div class="empty">${t('No walkthroughs booked yet.','এখনো কোনো ওয়াকথ্রু বুক হয়নি।')}</div>`;
+  const tasks = [['w', t('Monthly video walkthrough','মাসিক ভিডিও ওয়াকথ্রু')], ['b', t('Utility bills reviewed & settled','ইউটিলিটি বিল পর্যালোচনা ও পরিশোধ')], ['r', t('Rent chase complete','ভাড়া আদায় সম্পন্ন')], ['h', t('Health report sent to owner','স্বাস্থ্য রিপোর্ট পাঠানো')]];
+  const taskRows = tasks.map(([k, label]) => `<label style="display:flex;gap:10px;align-items:center;padding:7px 0;font-size:13px;cursor:pointer"><input type="checkbox" ${DEMO_PREMIUM.tasks[k] ? 'checked' : ''} onchange="DEMO_PREMIUM.tasks['${k}']=this.checked" style="accent-color:var(--accent)">${label}</label>`).join('');
+  return `${subCard}
+  <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">👑</span>${t('Caretaker tiers','কেয়ারটেকার টিয়ার')}</div></div>
+    <div class="panel-b"><div style="display:flex;gap:6px;align-items:center;margin-bottom:10px"><span style="font-size:12.5px;color:var(--text-soft)">${t('Property under care','যত্নাধীন সম্পত্তি')}:</span><select id="cProp" class="inp" style="max-width:260px">${props}</select></div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">${tierCards}</div></div></div>
+  <div class="grid grid-2">
+    <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🩺</span>${t('Property health snapshot','সম্পত্তি স্বাস্থ্য স্ন্যাপশট')}</div></div><div class="panel-b">
+      <div class="kv"><span class="k">${t('Monthly rent expected','মাসিক প্রত্যাশিত ভাড়া')}</span><span class="v">${money(health.expected)}</span></div>
+      <div class="kv"><span class="k">${t('Collected (all time)','মোট আদায়')}</span><span class="v pos">${money(health.collected)}</span></div>
+      <div class="kv"><span class="k">${t('Outstanding','বকেয়া')}</span><span class="v neg">${money(health.outstanding)}</span></div>
+      <div class="kv"><span class="k">${t('Open maintenance tickets','খোলা মেরামত টিকিট')}</span><span class="v">${health.tickets}</span></div>
+      <div class="kv"><span class="k">${t('Avg tenant score','গড় ভাড়াটিয়া স্কোর')}</span><span class="v">${health.avgScore}/100</span></div>
+    </div></div>
+    <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📋</span>${t('This month’s care tasks','এই মাসের যত্নের কাজ')}</div></div><div class="panel-b">${taskRows}</div></div>
+  </div>
+  <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🎥</span>${t('Video walkthrough booking','ভিডিও ওয়াকথ্রু বুকিং')}</div></div><div class="panel-b">
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:10px"><input type="date" id="wDate" class="inp" style="max-width:200px"><button class="btn-outline" onclick="caretakerBook()">＋ ${t('Book walkthrough','ওয়াকথ্রু বুক করুন')}</button></div>
+    ${walkRows}
+  </div></div>`;
+}
+function caretakerHealth() {
+  const leases = (DB.leases || []).filter(l => l.status === 'Active' || l.status === 'Pending Registration');
+  const expected = leases.reduce((s, l) => s + (parseInt(l.rent, 10) || 0), 0);
+  const invIds = (DB.invoices || []).filter(i => leases.some(l => l.id === i.l)).map(i => i.id);
+  const collected = (DB.payments || []).filter(p => invIds.includes(p.inv) && p.status === 'Success').reduce((s, p) => s + (parseInt(p.amount, 10) || 0), 0);
+  const outstanding = (DB.invoices || []).filter(i => invIds.includes(i.id)).reduce((s, i) => { const paid = (DB.payments || []).filter(p => p.inv === i.id && p.status === 'Success').reduce((x, p) => x + (parseInt(p.amount, 10) || 0), 0); return s + Math.max(0, (parseInt(i.net, 10) || 0) - paid); }, 0);
+  const tickets = (DB.tickets || []).filter(x => x.status !== 'Closed').length;
+  const tids = (DB.tenants || []).map(x => x.id);
+  const scores = tids.map(demoScoreFor).filter(Boolean);
+  const avgScore = scores.length ? Math.round(scores.reduce((s, x) => s + (x.score || 0), 0) / scores.length) : 0;
+  return { expected, collected, outstanding, tickets, avgScore };
+}
+async function caretakerSubscribe(tier) {
+  const cycle = ($('cycle-' + tier) || {}).value || 'monthly';
+  const prop = ($('cProp') || {}).value || '';
+  if (TOKEN && !DEMO_MODE) {
+    const r = await apiCall('app-premium-subscribe', { tier, cycle, prop });
+    if (!r.ok) { toast(r.error || 'Failed'); return; }
+    toast(t('Caretaker subscription active ✅','কেয়ারটেকার সাবস্ক্রিপশন সক্রিয় ✅'));
+  } else {
+    DEMO_PREMIUM.subs = [{ id: 'CS-100', user_email: 'demo@krtaker.com', prop, property_name: (DB.properties || []).find(p => p.id === prop)?.name || '', tier, tier_label: (demoPremiumPlans()[tier] || {}).label || tier, price: (demoPremiumPlans()[tier] || {}).price[cycle] || 0, cycle, status: 'active', start: new Date().toISOString().slice(0, 10), next_invoice: '2026-09', features: (demoPremiumPlans()[tier] || {}).features || [] }];
+    toast(t('Caretaker subscription active ✅ (demo)','কেয়ারটেকার সাবস্ক্রিপশন সক্রিয় ✅ (ডেমো)'));
+  }
+  caretakerLoad();
+}
+async function caretakerToggle(id) {
+  if (TOKEN && !DEMO_MODE) {
+    const r = await apiCall('app-premium-toggle', { id });
+    if (!r.ok) { toast(r.error || 'Failed'); return; }
+    toast(r.status === 'paused' ? t('Subscription paused','সাবস্ক্রিপশন বিরত') : t('Subscription resumed','সাবস্ক্রিপশন চালু'));
+  } else {
+    const s = DEMO_PREMIUM.subs.find(x => x.id === id); if (s) s.status = s.status === 'active' ? 'paused' : 'active';
+  }
+  caretakerLoad();
+}
+async function caretakerCancel(id) {
+  if (!confirm(t('Cancel this caretaker subscription?','এই কেয়ারটেকার সাবস্ক্রিপশন বাতিল করবেন?'))) return;
+  if (TOKEN && !DEMO_MODE) {
+    const r = await apiCall('app-premium-cancel', { id });
+    if (!r.ok) { toast(r.error || 'Failed'); return; }
+  } else {
+    DEMO_PREMIUM.subs = DEMO_PREMIUM.subs.filter(x => x.id !== id);
+  }
+  toast(t('Subscription cancelled','সাবস্ক্রিপশন বাতিল হয়েছে'));
+  caretakerLoad();
+}
+function caretakerBook() {
+  const d = ($('wDate') || {}).value;
+  if (!d) { toast(t('Pick a date first.','আগে একটি তারিখ নির্বাচন করুন।')); return; }
+  DEMO_PREMIUM.walkthroughs.push(d);
+  toast(t('Walkthrough booked ✅','ওয়াকথ্রু বুক হয়েছে ✅'));
+  caretakerLoad();
+}
+
 const renderers={
   dashboard:renderDashboard,
+  caretaker:renderCaretaker,
   properties(){
     let h=pageHead(t('Properties','সম্পত্তি'),t('Your portfolio across Dhaka & Chattogram.','ঢাকা ও চট্টগ্রামে আপনার পোর্টফোলিও।'),`<button class="btn-primary" onclick="openNew('properties')">＋ ${t('Add property','সম্পত্তি যোগ করুন')}</button>`);
     h+=`<div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${DB.properties.map(p=>{const u=DB.units.filter(x=>x.p===p.id);const lc=u.filter(x=>x.status==='Leased').length;const pct=u.length?Math.round(lc/u.length*100):0;const rent=DB.leases.filter(l=>u.some(x=>x.id===l.u)&&(l.status==='Active'||l.status==='Pending Registration')).reduce((s,l)=>s+l.rent,0);return `<div class="panel" data-id="${p.id}" onclick="openDetail('properties','${p.id}')"><div class="panel-b">
