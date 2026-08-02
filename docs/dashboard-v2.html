@@ -1398,32 +1398,11 @@ manager(){
 
 /* ── Tenant · Tenant Portal ── */
 tenant(){
-  const myLeases=DB.leases.filter(l=>l.t==='T-002'&&l.status==='Active');
-  const myInvs=DB.invoices.filter(i=>myLeases.some(l=>l.id===i.l));
-  const paid=myInvs.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.net,0);
-  const due=myInvs.filter(i=>i.status!=='Paid').reduce((s,i)=>s+i.net,0);
-  const myTickets=DB.tickets.filter(x=>x.u==='U-010');
-  let h=pageHead(t('Tenant Portal','টেন্যান্ট পোর্টাল'),t('Sultana — Apartment 7B, Dhanmondi Apartment.','সুলতানা — অ্যাপার্টমেন্ট ৭বি, ধানমন্ডি অ্যাপার্টমেন্ট।'),`<button class="btn-primary" onclick="gatewayPayTenant()">💳 ${t('Pay rent','ভাড়া পরিশোধ করুন')}</button><button class="btn-outline" onclick="openNew('tickets')">＋ ${t('Report issue','সমস্যা জানান')}</button>`);
-  h+=statsRow([
-    stat(t('Rent due','বকেয়া ভাড়া'),money(due),due?'this month':'All settled',due?'down':'up','💳'),
-    stat(t('Paid (Jun)','পরিশোধিত (জুন)'),money(paid),'2 invoices cleared','up','✅'),
-    stat(t('Next due','পরবর্তী বকেয়া'),'Jul 01','৳40,000 / month','','📅'),
-    stat(t('My tickets','আমার টিকিট'),myTickets.length,'repairs & requests','','🔧')
-  ]);
-  h+=`<div class="grid grid-2">
-    <div>
-      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('My invoices','আমার ইনভয়েস')}</div></div><div class="panel-b">${myInvs.map(i=>rowItem('🧾',i.id+' · '+i.m,leaseById(i.l)?unitById(leaseById(i.l).u)?.name:'—',`<div class="t-amount">${money(i.net)}</div>${i.status==='Paid'?badge('Paid'):`<button class="btn-primary" style="padding:6px 12px;font-size:11px" onclick="gatewayPay('${i.id}')">Pay now</button>`}`)).join('')}</div></div>
-      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📎</span>${t('Payment history','পেমেন্ট ইতিহাস')}</div></div><div class="panel-b">${DB.payments.filter(p=>myInvs.some(i=>i.id===p.inv)).map(p=>rowItem('💳',p.ref+' · '+p.method,esc(p.date),`<span class="t-pos">+${money(p.amount)}</span>`)).join('')||'<div class="empty">No payments yet</div>'}</div></div>
-    </div>
-    <div>
-      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My maintenance requests','আমার মেরামত অনুরোধ')}</div><span class="link" onclick="nav('maintenance')">${t('All','সব')} →</span></div><div class="panel-b">${myTickets.map(x=>rowItem('🔧',x.desc,unitById(x.u)?.name+' · reported '+x.reported,badge(x.status))).join('')||'<div class="empty">No open requests — all quiet 🎉</div>'}</div></div>
-      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📄</span>${t('My lease','আমার লিজ')}</div></div><div class="panel-b">${myLeases.map(l=>`${kv('Lease',l.id)}${kv('Unit',unitById(l.u)?.name)}${kv('Rent',money(l.rent)+'/month')}${kv('Advance',money(l.adv))}${kv('Term',l.start+' → '+l.end)}${kv('Status',badge(l.status),'')}`).join('')}</div></div>
-    </div>
-  </div>`;
+  let h=pageHead(t('Tenant Portal','টেন্যান্ট পোর্টাল'),t('Your home, lease and payments — one calm screen.','আপনার বাসা, লিজ ও পেমেন্ট — এক শান্ত স্ক্রিনে।'),`<button class="btn-primary" onclick="gatewayPayTenant()">💳 ${t('Pay rent','ভাড়া পরিশোধ করুন')}</button><button class="btn-outline" onclick="openNew('tickets')">＋ ${t('Report issue','সমস্যা জানান')}</button>`);
+  h+=`<div id="portalLive"><div class="panel"><div class="panel-b c-sub">${t('Loading your portal…','আপনার পোর্টাল লোড হচ্ছে…')}</div></div></div>`;
+  loadPortal();
   return h;
-},
-
-/* ── Partner · Partner Works ── */
+},/* ── Partner · Partner Works ── */
 partner(){
   const myJobs=DB.tickets.filter(x=>x.con==='Rahim Steel Works');
   const done=myJobs.filter(x=>x.status==='Awaiting Payment'||x.status==='Closed').length;
@@ -1599,6 +1578,146 @@ hr(){
 }
 };
 
+/* ═══ Tenant Portal v2 (Phase 14) ═══ */
+async function loadPortal(){
+  try{
+    let d;
+    if(TOKEN && !DEMO_MODE){
+      const r=await apiCall('app-portal');
+      if(!r.ok){ toast(r.error||'Portal failed'); return; }
+      d=r;
+    } else {
+      d=demoPortalData();
+    }
+    await new Promise(r=>setTimeout(r,0));   /* let render() write the skeleton first (sync demo path) */
+    const el=document.getElementById('portalLive');
+    if(!el) return;
+    el.innerHTML=portalHtml(d);
+  }catch(e){ toast('Portal error: '+e.message); }
+}
+function demoPortalData(){
+  const tid=(DB.tenants||[]).find(x=>x.sub_email==='sultana@krtaker.com')?.id || (DB.tenants||[]).find(x=>x.name==='Sultana Rahman')?.id || 'T-002';
+  const leases=(DB.leases||[]).filter(l=>l.t===tid);
+  const leaseIds=leases.map(l=>l.id);
+  const unitIds=leases.map(l=>l.u).filter(Boolean);
+  const today=new Date();
+  const enrich=leases.map(l=>{
+    const u=(DB.units||[]).find(x=>x.id===l.u);
+    const p=u?(DB.properties||[]).find(x=>x.id===u.p):null;
+    let total=1,left=0,pct=0;
+    if(l.start&&l.end){
+      total=Math.max(1,Math.round((new Date(l.end)-new Date(l.start))/86400000));
+      left=Math.floor((new Date(l.end)-today)/86400000);
+      pct=Math.max(0,Math.min(100,Math.round((1-left/total)*100)));
+    }
+    return {id:l.id,start:l.start,end:l.end,rent:l.rent,adv:l.adv,status:l.status,res:!!l.res,
+      unit:u?{id:u.id,name:u.name,floor:u.floor}:null,
+      property:p?{id:p.id,name:p.name,jur:p.jur,holding:p.holding}:null,
+      days_left:left,total_days:total,pct,
+      reg_pending:(l.res===false)&&!l.reg};
+  });
+  const invoices=(DB.invoices||[]).filter(i=>leaseIds.includes(i.l));
+  const invIds=invoices.map(i=>i.id);
+  const payments=(DB.payments||[]).filter(p=>invIds.includes(p.inv)&&p.status==='Success');
+  const receipts=(DB.receipts||[]).filter(r=>invIds.includes(r.inv));
+  const paidBy={};
+  payments.forEach(p=>paidBy[p.inv]=(paidBy[p.inv]||0)+p.amount);
+  invoices.forEach(i=>{i.paid=paidBy[i.id]||0;i.due=Math.max(0,i.net-i.paid);});
+  const propIds=[...new Set((DB.units||[]).filter(u=>unitIds.includes(u.id)).map(u=>u.p).filter(Boolean))];
+  const docs=(DB.documents||[]).filter(d=>leaseIds.includes(d.ref)||propIds.includes(d.p));
+  const handover=(DB.handover_checklists||[]).filter(h=>leaseIds.includes(h.lease));
+  const tickets=(DB.tickets||[]).filter(x=>unitIds.includes(x.u));
+  const notices=(DB.notices||[]).slice(0,3);
+  const outstanding=invoices.reduce((s,i)=>s+i.due,0);
+  const paidTotal=payments.reduce((s,p)=>s+p.amount,0);
+  const next=invoices.find(i=>i.status!=='Paid'&&i.due>0)||null;
+  const active=leases.filter(l=>l.status==='Active'||l.status==='Pending Registration');
+  const minLeft=active.length?Math.min(...active.map(l=>{const e=enrich.find(x=>x.id===l.id);return e?e.days_left:0})):null;
+  return {tenant:{id:tid,name:(DB.tenants||[]).find(x=>x.id===tid)?.name||'Tenant'},
+    leases:enrich,invoices,payments,receipts,docs,handover,tickets,notices,
+    stats:{outstanding,paid_total:paidTotal,next_due:next?{id:next.id,m:next.m,amount:next.due}:null,tickets_open:tickets.filter(x=>x.status!=='Closed').length,min_days_left:minLeft}};
+}
+function portalHtml(d){
+  const S=d.stats||{};
+  const authed=!!(TOKEN&&!DEMO_MODE);
+  const docRows=(d.docs||[]).map(x=>`<div class="row-item" style="padding:7px 0"><div class="ri-ic">📄</div><div class="ri-body"><div class="ri-t">${esc(x.name)}</div><div class="ri-s">${esc(x.id)} · ${esc(x.cat||x.kind||'other')}${x.ref?' · '+esc(x.ref):''}</div></div>${authed?`<div class="ri-r" style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="viewDoc('${esc(x.id)}')">👁</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="downloadDoc('${esc(x.id)}')">⬇</button></div>`:''}</div>`).join('')||`<div class="empty">${t('No documents yet','এখনো কোনো ডকুমেন্ট নেই')}</div>`;
+  const tickRows=(d.tickets||[]).slice(0,4).map(x=>rowItem('🔧',esc(x.desc),esc(x.reported||''),badge(x.status))).join('')||`<div class="empty">${t('No open requests — all quiet 🎉','কোনো খোলা অনুরোধ নেই — সব শান্ত 🎉')}</div>`;
+  const noticeRows=(d.notices||[]).map(n=>`<div class="row-item"><div class="ri-ic">📢</div><div class="ri-body"><div class="ri-t">${esc(n.title)}</div><div class="ri-s">${esc(n.body||'')}${n.ts?' · '+esc(String(n.ts).slice(0,10)):''}</div></div></div>`).join('')||`<div class="empty">${t('No notices','কোনো নোটিশ নেই')}</div>`;
+  const invRows=(d.invoices||[]).map(i=>{
+    const rec=(d.receipts||[]).find(r=>r.inv===i.id);
+    return `<tr data-id="${esc(i.id)}"><td><span class="c-name">${esc(i.id)}</span></td><td>${esc(i.m)}</td><td class="t-amount">${money(i.net)}</td><td class="t-pos">${i.paid?money(i.paid):'—'}</td><td class="${i.due?'t-neg':'t-pos'}">${i.due?money(i.due):'0'}</td><td>${badge(i.status)}</td><td><div style="display:flex;gap:4px">${i.due>0?`<button class="btn-primary" style="padding:4px 10px;font-size:11px" onclick="gatewayPay('${esc(i.id)}')">${t('Pay','পরিশোধ')}</button>`:''}<button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="printInvoice('${esc(i.id)}')">🖨</button>${rec?`<button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="openDetail('receipts','${esc(rec.id)}')">📎</button>`:''}</div></td></tr>`;
+  }).join('')||`<tr><td colspan="7" class="c-sub">${t('No invoices yet','এখনো কোনো ইনভয়েস নেই')}</td></tr>`;
+  const payRows=(d.payments||[]).slice(0,5).map(p=>rowItem('💳',esc(p.id)+' · '+esc(p.method),esc(p.date)+' · '+esc(p.ref||''),`<span class="t-pos">+${money(p.amount)}</span>`)).join('');
+  let h=statsRow([
+    stat(t('Outstanding due','বকেয়া'),money(S.outstanding||0),S.outstanding?t('needs attention','মনোযোগ প্রয়োজন'):t('all settled','সব পরিশোধিত'),S.outstanding?'down':'up','💳'),
+    stat(t('Paid total','মোট পরিশোধিত'),money(S.paid_total||0),t('bKash · Nagad · bank','বিকাশ · নগদ · ব্যাংক'),'up','✅'),
+    stat(t('Next due','পরবর্তী বকেয়া'),S.next_due?money(S.next_due.amount):'—',S.next_due?(esc(S.next_due.m)+' · '+esc(S.next_due.id)):t('All settled 🎉','সব পরিশোধিত 🎉'),'','📅'),
+    stat(t('Lease countdown','লিজ কাউন্টডাউন'),S.min_days_left!=null?(S.min_days_left+' '+t('days','দিন')):'—',S.min_days_left!=null?(S.min_days_left<60?t('renews soon — plan ahead','শীঘ্রই মেয়াদ শেষ — আগাম পরিকল্পনা করুন'):t('of your tenancy','আপনার টেন্যান্সির')):t('no active lease','কোনো সক্রিয় লিজ নেই'),S.min_days_left!=null&&S.min_days_left<60?'warn':'up','⏳'),
+    stat(t('My tickets','আমার টিকিট'),S.tickets_open||0,t('repairs & requests','মেরামত ও অনুরোধ'),'','🔧')
+  ]);
+  h+=`<div class="grid grid-2">`;
+  h+=`<div>`;
+  (d.leases||[]).forEach(l=>{ h+=portalLeaseCard(l,d); });
+  h+=`<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📄</span>${t('My documents','আমার ডকুমেন্ট')}</div><span class="link" onclick="nav('documents')">${t('All','সব')} →</span></div><div class="panel-b">${docRows}</div></div>`;
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My maintenance','আমার মেরামত')}</div><span class="link" onclick="nav('maintenance')">${t('All','সব')} →</span></div><div class="panel-b">${tickRows}</div></div>`;
+  h+=`</div>`;
+  h+=`<div>`;
+  h+=`<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Payment history','পেমেন্ট ইতিহাস')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Month','মাস')}</th><th>${t('Net','নিট')}</th><th>${t('Paid','পরিশোধিত')}</th><th>${t('Due','বাকি')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>${invRows}</tbody></table></div>${payRows?`<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">${payRows}</div>`:''}</div>`;
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">📢</span>${t('Notices','নোটিশ')}</div></div><div class="panel-b">${noticeRows}</div></div>`;
+  h+=`</div>`;
+  h+=`</div>`;
+  return h;
+}
+function portalLeaseCard(l,d){
+  const days=l.days_left,pct=l.pct;
+  let leftBadge;
+  if(l.status!=='Active'&&l.status!=='Pending Registration') leftBadge=badge(l.status);
+  else if(days<0) leftBadge=`<span class="badge b-red">${t('Expired','মেয়াদ শেষ')} ${Math.abs(days)}d</span>`;
+  else if(days===0) leftBadge=`<span class="badge b-red">${t('Ends today','আজ শেষ')}</span>`;
+  else if(days<30) leftBadge=`<span class="badge b-red">${days} ${t('days left','দিন বাকি')}</span>`;
+  else if(days<90) leftBadge=`<span class="badge b-orange">${days} ${t('days left','দিন বাকি')}</span>`;
+  else leftBadge=`<span class="badge b-green">${days} ${t('days left','দিন বাকি')}</span>`;
+  const regBadge=l.reg_pending?`<span class="badge b-orange">${t('Needs registration','রেজিস্ট্রেশন প্রয়োজন')}</span>`:'';
+  const hovo=(d.handover||[]).find(h=>h.lease===l.id);
+  return `<div class="panel" style="margin-bottom:18px"><div class="panel-b">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px">
+      <div><div class="c-name" style="font-weight:700;font-size:15px">🏠 ${esc(l.unit?l.unit.name:'—')}</div><div class="c-sub">${esc(l.property?l.property.name:'')} · ${esc(l.id)}${l.unit&&l.unit.floor?(' · '+t('Floor','ফ্লোর')+' '+esc(l.unit.floor)):''}</div></div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">${badge(l.status)}${regBadge}</div>
+    </div>
+    <div class="kv"><span class="k">${t('Rent','ভাড়া')}</span><span class="v t-amount">${money(l.rent)}/mo</span></div>
+    <div class="kv"><span class="k">${t('Advance','অগ্রিম')}</span><span class="v">${money(l.adv)}</span></div>
+    <div class="kv"><span class="k">${t('Term','মেয়াদ')}</span><span class="v">${esc(l.start)} → ${esc(l.end)}</span></div>
+    <div style="margin-top:10px">
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-mute);margin-bottom:4px"><span>${t('Tenancy progress','টেন্যান্সি অগ্রগতি')}</span>${leftBadge}</div>
+      <div class="prog ${pct>85?'orange':''}"><i style="width:${pct}%"></i></div>
+    </div>
+    ${hovo?`<div style="margin-top:10px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11.5px;color:var(--text-mute)">✅ ${t('Handover','হ্যান্ডওভার')}: <b>${hovo.kind==='move_in'?t('Move-in','মুভ-ইন'):t('Move-out','মুভ-আউট')}</b> · ${esc(hovo.status)}</div>`:''}
+    <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn-primary" style="padding:6px 14px;font-size:12px" onclick="portalAgreement('${esc(l.id)}')">📄 ${t('Agreement','চুক্তি')}</button>
+      ${l.reg_pending?`<button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="toast('${t('Registration pending — contact your manager.','রেজিস্ট্রেশন বাকি — ম্যানেজারের সাথে যোগাযোগ করুন।')}')">⚖️ ${t('TPA §107','টিপিএ §১০৭')}</button>`:''}
+    </div>
+  </div></div>`;
+}
+async function portalAgreement(lid){
+  if(!TOKEN){ toast(t('Sign in to download your agreement.','আপনার চুক্তি ডাউনলোড করতে সাইন ইন করুন।')); return; }
+  try{
+    const res=await fetch(API+'app-portal-agreement?lease='+encodeURIComponent(lid),{headers:{Authorization:'Bearer '+TOKEN}});
+    if(!res.ok){ let msg='Cannot open: '+res.status; try{const j=await res.json(); if(j.error) msg=j.error;}catch(e){} toast(msg); return; }
+    const html=await res.text();
+    previewDoc(t('Lease agreement','লিজ চুক্তি')+' '+lid, html);
+  }catch(e){ toast('Agreement error: '+e.message); }
+}
+async function viewTenantPortal(tid){
+  if(!TOKEN){ toast(t('Sign in to preview tenant portals.','টেন্যান্ট পোর্টাল প্রিভিউ করতে সাইন ইন করুন।')); return; }
+  try{
+    const r=await apiCall('app-portal?t='+encodeURIComponent(tid));
+    if(!r.ok){ toast(r.error||'Portal failed'); return; }
+    openDrawer('👁 '+t('Tenant portal','টেন্যান্ট পোর্টাল')+' — '+esc((r.tenant&&r.tenant.name)||tid),
+      `<div style="max-height:62vh;overflow-y:auto">${portalHtml(r)}</div>`,
+      `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`);
+  }catch(e){ toast('Portal error: '+e.message); }
+}
+
 /* ═══ MODULE VIEWS ═══ */
 function invLbl(invId){const inv=invoiceById(invId);if(!inv)return '—';const l=leaseById(inv.l);return (l?unitById(l.u)?.name+' · ':'')+inv.m}
 
@@ -1623,7 +1742,8 @@ const renderers={
   },
   tenants(){
     let h=pageHead(t('Tenants','ভাড়াটিয়া'),t('Individuals, corporates and NRB tenants.','ব্যক্তি, কর্পোরেট ও এনআরবি ভাড়াটিয়া।'),`<button class="btn-primary" onclick="openNew('tenants')">＋ ${t('Add tenant','ভাড়াটিয়া যোগ করুন')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr data-id="${te.id}" onclick="openDetail('tenants','${te.id}')"><td><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    const canPortal=['superadmin','owner','manager'].includes(LIVE.user?LIVE.user.role:'');
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th>${canPortal?'<th></th>':''}</tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr data-id="${te.id}" onclick="openDetail('tenants','${te.id}')"><td><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td>${canPortal?`<td><button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation();viewTenantPortal('${te.id}')">👁 ${t('Portal','পোর্টাল')}</button></td>`:''}</tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   leases(){
