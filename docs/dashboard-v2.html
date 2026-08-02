@@ -849,6 +849,10 @@ const SEED = {
     {id:'AM-014',prop:'P-005',unit:'',name:'Generator backup',icon:'⚡',category:'Building',status:'Active'},
     {id:'AM-015',prop:'P-004',unit:'',name:'Cargo ramp',icon:'🚚',category:'Building',status:'Active'},
     {id:'AM-016',prop:'P-004',unit:'',name:'Loading bay',icon:'📦',category:'Building',status:'Active'}
+  ],
+  caretaker_invoices:[
+    {id:'CI-001',sub:'CS-DEMO1',user_email:'owner@krtaker.com',month:'2026-08',amount:4500,status:'Unpaid',property_name:'Green View Residency'},
+    {id:'CI-002',sub:'CS-DEMO1',user_email:'owner@krtaker.com',month:'2026-07',amount:4500,status:'Paid',ref:'BKASH-8F3A',property_name:'Green View Residency'}
   ]
 };
 
@@ -2297,16 +2301,37 @@ function renderCaretaker() {
 }
 async function caretakerLoad() {
   const host = document.getElementById('caretakerLive'); if (!host) return;
-  let plans = {}, subs = [];
+  let plans = {}, subs = [], invoices = [];
   if (TOKEN && !DEMO_MODE) {
     const p = await apiCall('app-premium-plans'); if (p.ok) plans = p.plans || {};
     const s = await apiCall('app-premium-sub-list'); if (s.ok) subs = s.subs || [];
+    const b = await apiCall('app-premium-billing'); if (b.ok) invoices = b.invoices || [];
   } else {
-    plans = demoPremiumPlans(); subs = DEMO_PREMIUM.subs;
+    plans = demoPremiumPlans(); subs = DEMO_PREMIUM.subs; invoices = DB.caretaker_invoices || [];
   }
-  host.innerHTML = caretakerHtml(plans, subs);
+  host.innerHTML = caretakerHtml(plans, subs, invoices);
 }
-function caretakerHtml(plans, subs) {
+function billingPanelHtml(invoices) {
+  const rows = (invoices || []).map(i => `<tr>
+    <td><span class="c-name">${esc(i.id)}</span><div class="c-sub">${esc(i.month)}</div></td>
+    <td>${esc(i.property_name || i.user_email || '—')}</td>
+    <td class="t-amount">${money(i.amount)}</td>
+    <td>${badge(i.status)}</td>
+    <td>${i.status !== 'Paid' ? `<button class="btn-primary" style="padding:3px 10px;font-size:11px" onclick="caretakerPayInvoice('${esc(i.id)}')">💳 ${t('Pay','পরিশোধ')}</button>` : (i.ref ? `<span class="c-sub">${esc(String(i.ref).slice(0,10))}</span>` : '—')}</td>
+  </tr>`).join('');
+  return `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Caretaker billing','কেয়ারটেকার বিলিং')}</div><button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="caretakerLoad()">⟳</button></div>
+  <div class="panel-b"><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead>
+  <tbody>${rows || '<tr><td colspan="5" class="c-sub">' + t('No caretaker invoices yet — they generate automatically each cycle.','এখনো কোনো কেয়ারটেকার ইনভয়েস নেই — প্রতিটি চক্রে স্বয়ংক্রিয়ভাবে তৈরি হয়।') + '</td></tr>'}</tbody></table></div></div></div>`;
+}
+async function caretakerPayInvoice(id){
+  if(!confirm(t('Pay this caretaker invoice?','এই কেয়ারটেকার ইনভয়েস পরিশোধ করবেন?'))) return;
+  const d = DEMO_MODE ? {ok:true,payment:'PAY-DEMO',invoice:id} : await apiCall('app-premium-billing', {action:'pay', id, method:'bKash'});
+  if(!d.ok){ toast(d.error||'Payment failed'); return; }
+  toast('Payment ' + d.payment + ' recorded · ' + d.invoice + ' paid');
+  if(DEMO_MODE){ const i = DB.caretaker_invoices.find(x=>x.id===id); if(i) i.status='Paid'; }
+  await refreshData(); caretakerLoad();
+}
+function caretakerHtml(plans, subs, invoices) {
   const active = (subs || []).find(s => s.status === 'active' || s.status === 'paused');
   const props = (DB.properties || []).map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('') || `<option value="">—</option>`;
   const cycleSel = (id) => `<select id="${id}" class="inp" style="flex:1;min-width:0"><option value="monthly">${t('Monthly','মাসিক')}</option><option value="quarterly">${t('Quarterly','ত্রৈমাসিক')}</option><option value="annual">${t('Annual','বার্ষিক')}</option></select>`;
@@ -2341,7 +2366,7 @@ function caretakerHtml(plans, subs) {
   const walkRows = (DEMO_PREMIUM.walkthroughs || []).map(w => rowItem('🎥', 'Video walkthrough', w, badge('Booked'))).join('') || `<div class="empty">${t('No walkthroughs booked yet.','এখনো কোনো ওয়াকথ্রু বুক হয়নি।')}</div>`;
   const tasks = [['w', t('Monthly video walkthrough','মাসিক ভিডিও ওয়াকথ্রু')], ['b', t('Utility bills reviewed & settled','ইউটিলিটি বিল পর্যালোচনা ও পরিশোধ')], ['r', t('Rent chase complete','ভাড়া আদায় সম্পন্ন')], ['h', t('Health report sent to owner','স্বাস্থ্য রিপোর্ট পাঠানো')]];
   const taskRows = tasks.map(([k, label]) => `<label style="display:flex;gap:10px;align-items:center;padding:7px 0;font-size:13px;cursor:pointer"><input type="checkbox" ${DEMO_PREMIUM.tasks[k] ? 'checked' : ''} onchange="DEMO_PREMIUM.tasks['${k}']=this.checked" style="accent-color:var(--accent)">${label}</label>`).join('');
-  return `${subCard}
+  return `${subCard}${billingPanelHtml(invoices)}
   <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">👑</span>${t('Caretaker tiers','কেয়ারটেকার টিয়ার')}</div></div>
     <div class="panel-b"><div style="display:flex;gap:6px;align-items:center;margin-bottom:10px"><span style="font-size:12.5px;color:var(--text-soft)">${t('Property under care','যত্নাধীন সম্পত্তি')}:</span><select id="cProp" class="inp" style="max-width:260px">${props}</select></div>
     <div style="display:flex;gap:14px;flex-wrap:wrap">${tierCards}</div></div></div>
