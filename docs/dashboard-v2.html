@@ -871,6 +871,22 @@ const SEED = {
   insurance_policies:[
     {id:'POL-001',tenant:'T-002',plan:'IP-001',lease:'L-007',premium:449,coverage:120000,score:72,status:'active',start:'2026-07-15',end:'2027-07-15',claim:'',claim_amt:0,plan_name:'Rent Guarantee',tenant_name:'Sultana Rahman'}
   ],
+
+  partner_invoices:[
+    {id:'PI-001',partner:'SP-01',job:'MR-001',amount:185000,desc:'Steel jacketing + reinforcement for roof crack — materials & labour',status:'Approved',submitted_by:'rahim@krtaker.com',decided_by:'Arif Chowdhury',decided_at:'2026-06-30 11:20:00',ts:'2026-06-28 14:05:00'},
+    {id:'PI-002',partner:'SP-02',job:'MR-002',amount:3500,desc:'Kitchen sink tap joint replacement + pipe sealant',status:'Submitted',submitted_by:'kazi.plumbing@gmail.com',decided_by:'',decided_at:'',ts:'2026-07-01 09:30:00'},
+    {id:'PI-003',partner:'SP-03',job:'MR-003',amount:8500,desc:'Rewiring hall socket + new MCB (hall socket sparking)',status:'Paid',submitted_by:'meghna.builders@gmail.com',decided_by:'Sohel Rana',decided_at:'2026-07-05 15:40:00',ts:'2026-07-03 12:00:00'}
+  ],
+  vendor_payouts:[
+    {id:'VP-001',partner:'SP-01',month:'2026-06',amount:185000,status:'Paid',method:'Bank',ref:'NPSB-33001',partner_name:'Rahim Steel Works'},
+    {id:'VP-002',partner:'SP-02',month:'2026-06',amount:3500,status:'Scheduled',method:'',ref:'',partner_name:'Kazi Plumbing'},
+    {id:'VP-003',partner:'SP-03',month:'2026-05',amount:8500,status:'Paid',method:'bKash',ref:'BK-88231',partner_name:'Meghna Builders'}
+  ],
+  remittances:[
+    {id:'RM-001',owner_email:'owner@krtaker.com',owner_name:'Rofiqul Islam',prop:'P-001',property_name:'Green View Residency',month:'2026-06',amount:186400,rate:118.5,amount_fx:1573,currency:'USD',method:'SWIFT',ref:'SW-BD-88412',form_c:'FC-88412',status:'Confirmed',confirmed_at:'2026-07-03 09:15:00',ts:'2026-07-01 10:00:00'},
+    {id:'RM-002',owner_email:'owner@krtaker.com',owner_name:'Rofiqul Islam',prop:'P-002',property_name:'Banani Commercial Tower',month:'2026-06',amount:883000,rate:118.5,amount_fx:7451,currency:'USD',method:'SWIFT',ref:'SW-BD-88415',form_c:'FC-88415',status:'Sent',confirmed_at:'',ts:'2026-07-01 10:10:00'},
+    {id:'RM-003',owner_email:'owner@krtaker.com',owner_name:'Rofiqul Islam',prop:'P-001',property_name:'Green View Residency',month:'2026-05',amount:181200,rate:118.0,amount_fx:1536,currency:'USD',method:'SWIFT',ref:'SW-BD-87840',form_c:'FC-87840',status:'Confirmed',confirmed_at:'2026-06-02 10:05:00',ts:'2026-06-01 09:00:00'}
+  ],
   statement_payouts:[
     {prop:'P-001',month:'2026-06',amount:186400,status:'Paid',method:'Bank',ref:'NPSB-88412'},
     {prop:'P-002',month:'2026-06',amount:883000,status:'Paid',method:'Bank',ref:'NPSB-88415'},
@@ -912,30 +928,30 @@ const SEED = {
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','utilities','maintenance','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','ai','notices','documents','analytics']},
-  {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai','analytics','notices','documents']},
+  {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','ai','notices','documents','referrals']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','utilities','ai','analytics','notices','documents','recon','templates']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
-  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['leads','📥','Leads'],['compliance','⚖️','Compliance']]},
+  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['leads','📥','Leads'],['compliance','⚖️','Compliance']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','utilities':'🔌','maintenance':'🔧','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','utilities':'Utilities','maintenance':'Maintenance','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -2364,6 +2380,179 @@ async function renewalRespond(id, action){
   await refreshData(); if(state.view==='portal'){ render(); }
 }
 
+/* ═══ Phase 36: vendor management & partner payouts ═══ */
+async function vendorsLoad(){
+  const host=document.getElementById('vendorsLive'); if(!host) return;
+  const isStaff=['superadmin','owner','manager','svc_mgr','accountant'].includes(role().id);
+  const partnerName=(DB.partners||[]).find(p=>p.sub_email===LIVE.user?.email)?.name||(ROLES.find(r=>r.id==='partner')?.name||'');
+  let partners=[],jobs=[],invoices=[],payouts=[];
+  if(TOKEN&&!DEMO_MODE){
+    const [a,b,c,d]=await Promise.all([
+      apiCall('app-vendors?action=list'),apiCall('app-vendors?action=jobs'),
+      apiCall('app-vendors?action=invoice-list'),apiCall('app-vendors?action=payout-list')]);
+    if(a.ok) partners=a.partners||[]; if(b.ok) jobs=b.jobs||[];
+    if(c.ok) invoices=c.invoices||[]; if(d.ok) payouts=d.payouts||[];
+  } else {
+    partners=(DB.partners||[]).map(p=>({...p,open_jobs:(DB.maintenance_requests||[]).filter(j=>j.vendor===p.name&&j.status!=='Closed').length,approved_total:(DB.partner_invoices||[]).filter(i=>i.partner===p.id&&i.status==='Approved').reduce((s,i)=>s+i.amount,0),paid_total:(DB.vendor_payouts||[]).filter(v=>v.partner===p.id&&v.status==='Paid').reduce((s,v)=>s+v.amount,0)}));
+    const demoPid=(DB.partners||[]).find(p=>p.name===partnerName)?.id||'SP-01';
+    jobs=(DB.maintenance_requests||[]).filter(j=>isStaff||j.vendor===partnerName).map(x=>({...x}));
+    invoices=(DB.partner_invoices||[]).filter(i=>isStaff||i.partner===demoPid).map(x=>({...x,partner_name:(DB.partners||[]).find(p=>p.id===x.partner)?.name||'',job_title:(DB.maintenance_requests||[]).find(m=>m.id===x.job)?.title||''}));
+    payouts=(DB.vendor_payouts||[]).filter(v=>isStaff||v.partner===demoPid).map(x=>({...x,partner_name:(DB.partners||[]).find(p=>p.id===x.partner)?.name||''}));
+  }
+  if(!isStaff){
+    const openJobs=jobs.filter(j=>j.status!=='Closed');
+    const approved=invoices.filter(i=>i.status==='Approved').reduce((s,i)=>s+i.amount,0);
+    const paid=payouts.filter(p=>p.status==='Paid').reduce((s,p)=>s+p.amount,0);
+    let h=statsRow([
+      stat(t('My open jobs','আমার খোলা কাজ'),openJobs.length,t('assigned to you','আপনাকে দেওয়া'),openJobs.length?'warn':'pos','🔧'),
+      stat(t('Awaiting payment','পেমেন্ট অপেক্ষা'),moneyC(approved),t('approved','অনুমোদিত'),'','🧾'),
+      stat(t('Paid to me','আমাকে পরিশোধিত'),moneyC(paid),t('total paid','মোট পরিশোধ'),'pos','💵')
+    ]);
+    h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My jobs','আমার কাজ')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Job','কাজ')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Priority','অগ্রাধিকার')}</th><th>${t('Cost est.','আনুমানিক খরচ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>${openJobs.map(j=>`<tr><td><span class="c-name">${esc(j.title)}</span><div class="c-sub">${j.id} · ${esc(j.category)}</div></td><td>${esc(j.unit_name||j.unit)}</td><td>${badge(j.priority)}</td><td class="t-amount">${j.cost_estimate?money(j.cost_estimate):'—'}</td><td>${badge(j.status)}</td><td>${j.status==='Assigned'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorJobStatus('${esc(j.id)}','In Progress')">▶ ${t('Start','শুরু')}</button>`:j.status==='In Progress'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorJobStatus('${esc(j.id)}','Resolved')">✓ ${t('Mark resolved','সমাধান হয়েছে')}</button>`:''}</td></tr>`).join('')||`<tr><td colspan="6" class="m">${t('No jobs assigned','কোনো কাজ দেওয়া হয়নি')}</td></tr>`}</tbody></table></div></div>`;
+    h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('My invoices','আমার ইনভয়েস')}</div><span class="link" onclick="vendorInvoiceForm()">＋ ${t('Submit invoice','ইনভয়েস জমা দিন')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Job','কাজ')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th></tr></thead><tbody>${invoices.map(i=>`<tr><td><span class="c-name">${i.id}</span></td><td>${esc(i.job_title||i.job)}</td><td class="t-amount">${money(i.amount)}</td><td>${badge(i.status)}</td></tr>`).join('')||`<tr><td colspan="4" class="m">${t('No invoices yet','এখনো কোনো ইনভয়েস নেই')}</td></tr>`}</tbody></table></div></div>`;
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">💵</span>${t('My payouts','আমার পেআউট')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Month','মাস')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Method','পদ্ধতি')}</th><th>${t('Ref','রেফ')}</th></tr></thead><tbody>${payouts.map(p=>`<tr><td>${p.month}</td><td class="t-amount">${money(p.amount)}</td><td>${badge(p.status)}</td><td>${esc(p.method||'—')}</td><td>${esc(p.ref||'—')}</td></tr>`).join('')||`<tr><td colspan="5" class="m">${t('No payouts yet','এখনো কোনো পেআউট নেই')}</td></tr>`}</tbody></table></div></div>`;
+    host.innerHTML=h; return;
+  }
+  const openJobs=jobs.filter(j=>j.status!=='Closed');
+  const pendingInv=invoices.filter(i=>i.status==='Submitted');
+  const pendingAmt=pendingInv.reduce((s,i)=>s+i.amount,0);
+  const paidMonth=payouts.filter(p=>p.status==='Paid').reduce((s,p)=>s+p.amount,0);
+  const canQc=['superadmin','owner','manager','svc_mgr'].includes(role().id);
+  const canReview=['superadmin','owner','manager','svc_mgr'].includes(role().id);
+  const canPay=['superadmin','owner','accountant'].includes(role().id);
+  const canRecord=['superadmin','owner','accountant'].includes(role().id);
+  let h=statsRow([
+    stat(t('Active vendors','সক্রিয় ভেন্ডর'),partners.filter(p=>p.status==='Active').length,t('onboarded','অনবোর্ডেড'),'','🧰'),
+    stat(t('Open jobs','খোলা কাজ'),openJobs.length,t('across vendors','সব ভেন্ডরে'),openJobs.length?'warn':'pos','🔧'),
+    stat(t('Pending invoices','অপেক্ষমাণ ইনভয়েস'),moneyC(pendingAmt),pendingInv.length+' '+t('to review','রিভিউ বাকি'),pendingInv.length?'warn':'pos','🧾'),
+    stat(t('Paid out','পরিশোধিত'),moneyC(paidMonth),t('total to vendors','ভেন্ডরদের মোট'),'pos','💵')
+  ]);
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧰</span>${t('Vendor directory','ভেন্ডর ডিরেক্টরি')}</div></div><div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${partners.map(p=>`<div class="panel"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div class="c-name" style="font-weight:700">${esc(p.name)}</div><div class="c-sub">${esc(p.trade)} · ★${p.rating} · ${p.jobs||0} ${t('jobs','কাজ')}</div></div>${badge(p.status)}</div><div class="kv"><span class="k">${t('Open jobs','খোলা কাজ')}</span><span class="v">${p.open_jobs||0}</span></div><div class="kv"><span class="k">${t('Approved invoices','অনুমোদিত ইনভয়েস')}</span><span class="v">${money(p.approved_total||0)}</span></div><div class="kv"><span class="k">${t('Paid total','মোট পরিশোধ')}</span><span class="v pos">${money(p.paid_total||0)}</span></div></div></div>`).join('')}</div></div>`;
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('Job board','জব বোর্ড')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Job','কাজ')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Estimate','আনুমানিক')}</th><th>${t('Actual','প্রকৃত')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canQc?'<th>QC</th>':''}</tr></thead><tbody>${jobs.map(j=>`<tr><td><span class="c-name">${esc(j.title)}</span><div class="c-sub">${j.id} · ${esc(j.category)}</div></td><td>${esc(j.vendor||'—')}</td><td>${esc(j.unit_name||j.unit)}</td><td class="t-amount">${j.cost_estimate?money(j.cost_estimate):'—'}</td><td class="t-amount">${j.actual_cost?money(j.actual_cost):'—'}</td><td>${badge(j.status)}</td>${canQc?`<td>${j.status==='Resolved'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorQc('${esc(j.id)}')">✅ ${t('QC sign-off','কিউসি সই')}</button>`:j.qc_by?`<span class="c-sub">${esc(j.qc_by)}</span>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Vendor invoices','ভেন্ডর ইনভয়েস')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Job','কাজ')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canReview?'<th>'+t('Review','রিভিউ')+'</th>':''}${canPay?'<th></th>':''}</tr></thead><tbody>${invoices.map(i=>`<tr><td><span class="c-name">${i.id}</span></td><td>${esc(i.partner_name||'')}</td><td>${esc(i.job_title||i.job)}</td><td class="t-amount">${money(i.amount)}</td><td>${badge(i.status)}</td>${canReview?`<td>${i.status==='Submitted'?`<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoiceDecide('${esc(i.id)}','approve')" title="${t('Approve','অনুমোদন')}">✓</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoiceDecide('${esc(i.id)}','reject')" title="${t('Reject','বাতিল')}">✕</button></div>`:'—'}</td>`:''}${canPay?`<td>${i.status==='Approved'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoicePay('${esc(i.id)}')">💵 ${t('Pay','পরিশোধ')}</button>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">💵</span>${t('Payout ledger','পেআউট লেজার')}</div>${canRecord?`<span class="link" onclick="vendorPayoutForm()">＋ ${t('Record payout','পেআউট রেকর্ড')}</span>`:''}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Month','মাস')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Method','পদ্ধতি')}</th><th>${t('Ref','রেফ')}</th></tr></thead><tbody>${payouts.map(p=>`<tr><td>${esc(p.partner_name||'')}</td><td>${p.month}</td><td class="t-amount">${money(p.amount)}</td><td>${badge(p.status)}</td><td>${esc(p.method||'—')}</td><td>${esc(p.ref||'—')}</td></tr>`).join('')||`<tr><td colspan="6" class="m">${t('No payouts yet','এখনো কোনো পেআউট নেই')}</td></tr>`}</tbody></table></div></div>`;
+  host.innerHTML=h;
+}
+async function vendorJobStatus(id,status){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-vendors',{action:'job-status',id,status});
+  if(!d.ok){ toast(d.error||'Update failed'); return; }
+  if(DEMO_MODE){ const j=(DB.maintenance_requests||[]).find(x=>x.id===id); if(j) j.status=status; }
+  toast(t('Job updated','কাজ আপডেট হয়েছে')); await refreshData(); if(state.view==='vendors'){ render(); }
+}
+async function vendorQc(id){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-vendors',{action:'job-qc',id});
+  if(!d.ok){ toast(d.error||'QC failed'); return; }
+  if(DEMO_MODE){ const j=(DB.maintenance_requests||[]).find(x=>x.id===id); if(j){ j.status='Closed'; j.qc_by=LIVE.user?.name||'Arif Chowdhury'; } }
+  toast(t('QC signed off ✅','কিউসি অনুমোদিত ✅')); await refreshData(); if(state.view==='vendors'){ render(); }
+}
+function vendorInvoiceForm(){
+  const pName=(DB.partners||[]).find(p=>p.sub_email===LIVE.user?.email)?.name||(ROLES.find(r=>r.id==='partner')?.name||'');
+  const jobs=(DB.maintenance_requests||[]).filter(j=>j.vendor===pName&&j.status!=='Closed'&&!((DB.partner_invoices||[]).some(i=>i.job===j.id&&i.status!=='Rejected')));
+  const opts=jobs.map(j=>`<option value="${esc(j.id)}">${esc(j.id)} · ${esc(j.title)}</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Job','কাজ')}</label><select id="vi_job">${opts||`<option value="">${t('No open jobs','কোনো খোলা কাজ নেই')}</option>`}</select></div>
+    <div class="form-field"><label>${t('Amount (৳)','পরিমাণ (৳)')}</label><input id="vi_amount" type="number" min="1"></div>
+    <div class="form-field full"><label>${t('Description','বিবরণ')}</label><input id="vi_desc" placeholder="${t('Materials, labour…','ম্যাটেরিয়াল, শ্রম…')}"></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="vendorInvoiceSubmit()">${t('Submit','জমা দিন')}</button></div>`;
+  openDrawer(`🧾 ${t('Submit vendor invoice','ভেন্ডর ইনভয়েস জমা দিন')}`, body, foot);
+}
+async function vendorInvoiceSubmit(){
+  const payload={action:'invoice-submit',job:document.getElementById('vi_job')?.value,amount:parseInt(document.getElementById('vi_amount')?.value||'0',10),desc:document.getElementById('vi_desc')?.value};
+  const d = DEMO_MODE ? {ok:true,id:'PI-'+Math.floor(Math.random()*900+100)} : await apiCall('app-vendors',payload);
+  if(!d.ok){ toast(d.error||'Submit failed'); return; }
+  if(DEMO_MODE){ (DB.partner_invoices=DB.partner_invoices||[]).push({id:d.id||'PI-100',partner:'SP-01',job:payload.job,amount:payload.amount,desc:payload.desc,status:'Submitted',submitted_by:LIVE.user?.email||'rahim@krtaker.com',ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+  toast(t('Invoice submitted 🧾','ইনভয়েস জমা হয়েছে 🧾')); closeDrawer(); await refreshData(); if(state.view==='vendors'){ render(); }
+}
+async function vendorInvoiceDecide(id,verdict){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-vendors',{action:'invoice-decide',id,verdict});
+  if(!d.ok){ toast(d.error||'Review failed'); return; }
+  if(DEMO_MODE){ const i=(DB.partner_invoices||[]).find(x=>x.id===id); if(i) i.status=verdict==='approve'?'Approved':'Rejected'; }
+  toast(verdict==='approve'?t('Invoice approved','ইনভয়েস অনুমোদিত'):t('Invoice rejected','ইনভয়েস বাতিল')); await refreshData(); if(state.view==='vendors'){ render(); }
+}
+async function vendorInvoicePay(id){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-vendors',{action:'invoice-pay',id});
+  if(!d.ok){ toast(d.error||'Payment failed'); return; }
+  if(DEMO_MODE){ const i=(DB.partner_invoices||[]).find(x=>x.id===id); if(i) i.status='Paid'; }
+  toast(t('Invoice paid 💵','ইনভয়েস পরিশোধিত 💵')); await refreshData(); if(state.view==='vendors'){ render(); }
+}
+function vendorPayoutForm(){
+  const opts=(DB.partners||[]).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Vendor','ভেন্ডর')}</label><select id="vp_partner">${opts}</select></div>
+    <div class="form-field"><label>${t('Month','মাস')}</label><input id="vp_month" type="month" value="${new Date().toISOString().slice(0,7)}"></div>
+    <div class="form-field"><label>${t('Amount (৳)','পরিমাণ (৳)')}</label><input id="vp_amount" type="number" min="0"></div>
+    <div class="form-field"><label>${t('Status','স্ট্যাটাস')}</label><select id="vp_status"><option value="Paid">${t('Paid','পরিশোধিত')}</option><option value="Scheduled">${t('Scheduled','নির্ধারিত')}</option></select></div>
+    <div class="form-field"><label>${t('Method','পদ্ধতি')}</label><select id="vp_method"><option value="Bank">🏦 ${t('Bank','ব্যাংক')}</option><option value="bKash">📱 bKash</option><option value="Cheque">Cheque</option></select></div>
+    <div class="form-field"><label>${t('Reference','রেফারেন্স')}</label><input id="vp_ref" placeholder="NPSB-…"></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="vendorPayoutRecord()">💵 ${t('Record','রেকর্ড')}</button></div>`;
+  openDrawer(`💵 ${t('Record vendor payout','ভেন্ডর পেআউট রেকর্ড')}`, body, foot);
+}
+async function vendorPayoutRecord(){
+  const payload={action:'payout-record',partner:document.getElementById('vp_partner')?.value,month:document.getElementById('vp_month')?.value,amount:parseInt(document.getElementById('vp_amount')?.value||'0',10),status:document.getElementById('vp_status')?.value,method:document.getElementById('vp_method')?.value,ref:document.getElementById('vp_ref')?.value};
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-vendors',payload);
+  if(!d.ok){ toast(d.error||'Record failed'); return; }
+  if(DEMO_MODE){ (DB.vendor_payouts=DB.vendor_payouts||[]).push({id:'VP-'+Math.floor(Math.random()*900+100),partner:payload.partner,month:payload.month,amount:payload.amount,status:payload.status,method:payload.method,ref:payload.ref,partner_name:(DB.partners||[]).find(p=>p.id===payload.partner)?.name||''}); }
+  toast(t('Payout recorded 💵','পেআউট রেকর্ড হয়েছে 💵')); closeDrawer(); await refreshData(); if(state.view==='vendors'){ render(); }
+}
+
+/* ═══ Phase 37: NRB remittance & payout tracking ═══ */
+async function remitLoad(){
+  const host=document.getElementById('remitLive'); if(!host) return;
+  let rows=[],groups=[],tot={};
+  if(TOKEN&&!DEMO_MODE){
+    const [a,b]=await Promise.all([apiCall('app-remit?action=list'),apiCall('app-remit?action=summary')]);
+    if(a.ok) rows=a.remittances||[]; if(b.ok){ groups=b.groups||[]; tot=b.total||{}; }
+  } else {
+    rows=(DB.remittances||[]).map(r=>({...r,property_name:(DB.properties||[]).find(p=>p.id===r.prop)?.name||''}));
+    groups=[]; const months=[...new Set(rows.map(r=>r.month))];
+    months.forEach(m=>{ const mm=rows.filter(r=>r.month===m); groups.push({month:m,bdt:mm.reduce((s,r)=>s+r.amount,0),fx:mm.reduce((s,r)=>s+r.amount_fx,0),n:mm.length,status:mm.some(r=>r.status==='Confirmed')?'Confirmed':'Sent',currency:'USD',method:'SWIFT'}); });
+    tot={bdt:rows.reduce((s,r)=>s+r.amount,0),fx:rows.reduce((s,r)=>s+r.amount_fx,0),count:rows.length,confirmed:rows.filter(r=>r.status==='Confirmed').length};
+  }
+  const monthSel=document.getElementById('remitMonth')?.value||'';
+  const shown=monthSel?rows.filter(r=>r.month===monthSel):rows;
+  const canConfirm=['superadmin','owner','accountant'].includes(role().id);
+  let h=statsRow([
+    stat(t('Sent','পাঠানো হয়েছে'),moneyC(tot.bdt||0),t('total BDT','মোট টাকা'),'','🌍'),
+    stat(t('FX value','বিদেশি মুদ্রা'),(tot.fx||0).toLocaleString('en-US')+' '+t('USD eq.','ডলার সমতুল্য'),t('across all months','সব মাস মিলিয়ে'),'','💱'),
+    stat(t('Remittances','রেমিট্যান্স'),tot.count||0,t('records','রেকর্ড'),'','🧾'),
+    stat(t('Confirmed','নিশ্চিত'),tot.confirmed||0,t('received','গৃহীত'),'pos','✅')
+  ]);
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🌍</span>${t('Remittance ledger','রেমিট্যান্স লেজার')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Ref','রেফ')}</th><th>${t('Owner','মালিক')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Month','মাস')}</th><th>BDT</th><th>${t('Rate','রেট')}</th><th>FX</th><th>${t('Method','পদ্ধতি')}</th><th>${t('Form C','ফর্ম সি')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canConfirm?'<th></th>':''}</tr></thead><tbody>${shown.map(r=>`<tr><td><span class="c-name">${r.id}</span><div class="c-sub">${esc(r.ref||'')}</div></td><td>${esc(r.owner_name||r.owner_email)}</td><td>${esc(r.property_name||r.prop)}</td><td>${r.month}</td><td class="t-amount">${money(r.amount)}</td><td>${r.rate}</td><td class="t-amount">${(r.amount_fx||0).toLocaleString()} ${esc(r.currency||'USD')}</td><td>${esc(r.method||'—')}</td><td>${esc(r.form_c||'—')}</td><td>${badge(r.status)}</td>${canConfirm?`<td>${r.status==='Sent'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="remitConfirm('${esc(r.id)}')">✅ ${t('Confirm','নিশ্চিত')}</button>`:''}</td>`:''}</tr>`).join('')||`<tr><td colspan="${canConfirm?11:10}" class="m">${t('No remittances','কোনো রেমিট্যান্স নেই')}</td></tr>`}</tbody></table></div></div>`;
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">📤</span>${t('Money sent home','দেশে পাঠানো টাকা')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Month','মাস')}</th><th>BDT</th><th>FX</th><th>${t('Records','রেকর্ড')}</th><th>${t('Status','স্ট্যাটাস')}</th></tr></thead><tbody>${groups.map(g=>`<tr><td class="c-name">${g.month}</td><td class="t-amount">${money(g.bdt)}</td><td class="t-amount">${(g.fx||0).toLocaleString()} ${esc(g.currency||'USD')}</td><td>${g.n}</td><td>${badge(g.status==='Confirmed'?'Confirmed':'Sent')}</td></tr>`).join('')||`<tr><td colspan="5" class="m">${t('Nothing sent yet','এখনো কিছু পাঠানো হয়নি')}</td></tr>`}</tbody></table></div></div>`;
+  host.innerHTML=h;
+}
+function remitForm(){
+  const props=(DB.properties||[]).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Owner email','মালিকের ইমেইল')}</label><input id="rm_email" value="${LIVE.user?.email||'owner@krtaker.com'}"></div>
+    <div class="form-field"><label>${t('Property','সম্পত্তি')}</label><select id="rm_prop">${props}</select></div>
+    <div class="form-field"><label>${t('Payout month','পেআউট মাস')}</label><input id="rm_month" type="month" value="${new Date().toISOString().slice(0,7)}"></div>
+    <div class="form-field"><label>${t('Amount (BDT)','পরিমাণ (বিডিটি)')}</label><input id="rm_amount" type="number" min="1"></div>
+    <div class="form-field"><label>${t('Rate (BDT per FX)','রেট (প্রতি ইউনিট বিডিটি)')}</label><input id="rm_rate" type="number" step="0.01" value="118.50"></div>
+    <div class="form-field"><label>${t('Currency','মুদ্রা')}</label><select id="rm_currency"><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="AED">AED</option><option value="SAR">SAR</option><option value="MYR">MYR</option></select></div>
+    <div class="form-field"><label>${t('Method','পদ্ধতি')}</label><select id="rm_method"><option value="SWIFT">SWIFT</option><option value="bKash">bKash</option><option value="Remitly">Remitly</option><option value="Western Union">Western Union</option><option value="Other">Other</option></select></div>
+    <div class="form-field"><label>${t('Reference','রেফারেন্স')}</label><input id="rm_ref" placeholder="SW-…"></div>
+    <div class="form-field full"><label>${t('Form C ref','ফর্ম সি রেফ')}</label><input id="rm_formc" placeholder="FC-…"></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="remitSubmit()">🌍 ${t('Record','রেকর্ড')}</button></div>`;
+  openDrawer(`🌍 ${t('Record remittance','রেমিট্যান্স রেকর্ড')}`, body, foot);
+}
+async function remitSubmit(){
+  const payload={action:'create',owner_email:document.getElementById('rm_email')?.value,prop:document.getElementById('rm_prop')?.value,month:document.getElementById('rm_month')?.value,amount:parseInt(document.getElementById('rm_amount')?.value||'0',10),rate:parseFloat(document.getElementById('rm_rate')?.value||'0'),currency:document.getElementById('rm_currency')?.value,method:document.getElementById('rm_method')?.value,ref:document.getElementById('rm_ref')?.value,form_c:document.getElementById('rm_formc')?.value};
+  const d = DEMO_MODE ? {ok:true,amount_fx:payload.rate>0?Math.round(payload.amount/payload.rate):0} : await apiCall('app-remit',payload);
+  if(!d.ok){ toast(d.error||'Record failed'); return; }
+  if(DEMO_MODE){ (DB.remittances=DB.remittances||[]).push({id:'RM-'+Math.floor(Math.random()*900+100),owner_email:payload.owner_email,owner_name:LIVE.user?.name||'Rofiqul Islam',prop:payload.prop,property_name:(DB.properties||[]).find(p=>p.id===payload.prop)?.name||'',month:payload.month,amount:payload.amount,rate:payload.rate,amount_fx:d.amount_fx,currency:payload.currency,method:payload.method,ref:payload.ref,form_c:payload.form_c,status:'Sent',ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+  toast(t('Remittance recorded 🌍','রেমিট্যান্স রেকর্ড হয়েছে 🌍')+' — '+(d.amount_fx||0)+' '+(payload.currency||'USD')); closeDrawer(); await refreshData(); if(state.view==='remit'){ render(); }
+}
+async function remitConfirm(id){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-remit',{action:'status',id,status:'Confirmed'});
+  if(!d.ok){ toast(d.error||'Confirm failed'); return; }
+  if(DEMO_MODE){ const r=(DB.remittances||[]).find(x=>x.id===id); if(r) r.status='Confirmed'; }
+  toast(t('Remittance confirmed ✅','রেমিট্যান্স নিশ্চিত ✅')); await refreshData(); if(state.view==='remit'){ render(); }
+}
+
 function demoPortalData(){
   const tid=(DB.tenants||[]).find(x=>x.sub_email==='sultana@krtaker.com')?.id || (DB.tenants||[]).find(x=>x.name==='Sultana Rahman')?.id || 'T-002';
   const leases=(DB.leases||[]).filter(l=>l.t===tid);
@@ -3300,6 +3489,20 @@ const renderers={
     let h=pageHead(t('Compliance','কমপ্লায়েন্স'),t('Licenses, certificates and expiries — auto-tracked from leases, policies and registrations.','লাইসেন্স, সার্টিফিকেট ও মেয়াদ — লিজ, পলিসি ও রেজিস্ট্রেশন থেকে অটো-ট্র্যাকিং।'),`<button class="btn-outline" onclick="complianceRemind()">📣 ${t('Send reminders','রিমাইন্ডার পাঠান')}</button>${canManage?`<button class="btn-primary" onclick="complianceForm()">＋ ${t('Add document','ডকুমেন্ট যোগ করুন')}</button>`:''}`);
     h+=`<div id="complianceLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>complianceLoad(),0);
+    return h;
+  },
+  vendors(){
+    const isStaff = ['superadmin','owner','manager','svc_mgr','accountant'].includes(role().id);
+    let h=pageHead(t('Vendors','ভেন্ডর'),isStaff?t('Partners, jobs, invoices and payouts — QC signed off by the service manager.','পার্টনার, কাজ, ইনভয়েস ও পেআউট — সার্ভিস ম্যানেজারের কিউসি অনুমোদনসহ।'):t('My jobs, invoices and payouts.','আমার কাজ, ইনভয়েস ও পেআউট।'));
+    h+=`<div id="vendorsLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>vendorsLoad(),0);
+    return h;
+  },
+  remit(){
+    const canWrite = ['superadmin','owner','accountant'].includes(role().id);
+    let h=pageHead(t('Remittances','রেমিট্যান্স'),t('NRB payouts sent abroad — SWIFT/bKash, exchange rate, Form C.','এনআরবি পেআউট বিদেশে পাঠানো — সুইফট/বিকাশ, এক্সচেঞ্জ রেট, ফর্ম সি।'),`${canWrite?`<button class="btn-primary" onclick="remitForm()">＋ ${t('Record remittance','রেমিট্যান্স রেকর্ড')}</button>`:''}`);
+    h+=`<div id="remitLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>remitLoad(),0);
     return h;
   },
   ai(){
