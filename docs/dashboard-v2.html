@@ -746,7 +746,7 @@ const SEED = {
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai','analytics','notices','documents','referrals'];
+const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai','analytics','notices','documents','referrals','recon'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions']},
@@ -756,19 +756,19 @@ const ROLES = [
   {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding',mods:['dashboard','maintenance','ai','notices','documents','referrals']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','ai','analytics','notices','documents']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','ai','analytics','notices','documents','recon']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['documents','📁','Documents'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
-  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
+  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
   {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['compliance','⚖️','Compliance']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','referrals':'🤝'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','referrals':'Referrals'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','referrals':'🤝','recon':'🔄'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','referrals':'Referrals','recon':'Reconciliation'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Referrals':'রেফারেল',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -1220,7 +1220,7 @@ function krSend(){
 function krBoot(){
   if(!$('krBody').children.length){
     $('krBody').innerHTML=`<div class="kr-msg ai">Hello 👋 I'm <b>KR</b> — your AI property caretaker. I can take actions (invoices, tickets, reminders) and answer Bangladeshi property law — try one below or type anything.<br><span style="font-size:10px;color:var(--text-mute)">${new Date().toLocaleDateString()} · ${window.krMode||''}</span></div>
-    <div class="kr-chips">${['Generate invoice for L-003','How much collected in June?','Monthly digest','Which units are vacant?','Rent roll','Which leases renew next month?','Portfolio summary','Who pays for a leaking roof?','Holding tax for P-001','Is my advance legal?','My referral link'].map(c=>`<button class="kr-chip" onclick="krQuick('${esc(c)}')">${esc(c)}</button>`).join('')}</div>`;
+    <div class="kr-chips">${['Generate invoice for L-003','How much collected in June?','Monthly digest','Which units are vacant?','Which invoices are overdue?','Reconciliation','Rent roll','Which leases renew next month?','Portfolio summary','Who pays for a leaking roof?','Holding tax for P-001','Is my advance legal?','My referral link'].map(c=>`<button class="kr-chip" onclick="krQuick('${esc(c)}')">${esc(c)}</button>`).join('')}</div>`;
   }
   apiCall('app-ai-meta').then(d=>{ if(d&&d.ok){ window.krMode=d.mode==='llm'?'KR · DeepSeek (function-calling)':'KR · Offline mode (legal KB)'; const ks=document.querySelector('.kr-head .ks'); if(ks)ks.textContent=window.krMode+' · 24/7'; } }).catch(()=>{});
 }
@@ -1573,7 +1573,7 @@ const renderers={
     return h;
   },
   invoices(){
-    let h=pageHead(t('Invoices','ইনভয়েস'),t('Monthly rent invoices with TDS computed where applicable.','প্রযোজ্য ক্ষেত্রে টিডিএসসহ মাসিক ভাড়ার ইনভয়েস।'),`<button class="btn-primary" onclick="openNew('invoices')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button>`);
+    let h=pageHead(t('Invoices','ইনভয়েস'),t('Monthly rent invoices with TDS computed where applicable.','প্রযোজ্য ক্ষেত্রে টিডিএসসহ মাসিক ভাড়ার ইনভয়েস।'),`${can('recon')?`<button class="btn-outline" onclick="runCollections(true)">📣 ${t('Send overdue reminders','বকেয়া রিমাইন্ডার পাঠান')}</button>`:''}<button class="btn-primary" onclick="openNew('invoices')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button>`);
     h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Unit</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${DB.invoices.map(i=>{const l=leaseById(i.l);return `<tr data-id="${i.id}" onclick="openDetail('invoices','${i.id}')"><td><span class="c-name">${i.id}</span></td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td>${i.m}</td><td>${money(i.gross)}</td><td>${i.tds?money(i.tds):'—'}</td><td class="t-amount">${money(i.net)}</td><td>${badge(i.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
@@ -1744,6 +1744,27 @@ const renderers={
     h+=`<div class="panel" style="margin-top:14px"><div class="panel-h"><div class="t"><span class="pi">🤝</span>${t('Referral history','রেফারেল ইতিহাস')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Referred','রেফারকৃত')}</th><th>${t('Email','ইমেইল')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Reward','রিওয়ার্ড')}</th><th>${t('Date','তারিখ')}</th></tr></thead><tbody>${
       refs.map(r=>`<tr><td><span class="c-name">${esc(r.referred_name||'—')}</span></td><td>${esc(r.referred_email||'—')}</td><td>${badge(r.status)}</td><td class="t-amount">${r.reward?money(r.reward):'—'}</td><td>${esc((r.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="5" class="c-sub">No referrals yet — share your code above.</td></tr>'
     }</tbody></table></div></div>`;
+    return h;
+  },
+  /* Phase 11: payment reconciliation + collections autopilot */
+  recon(){
+    const invs=DB.invoices||[], pays=DB.payments||[], gtx=DB.gateway_tx||[];
+    const success=pays.filter(p=>p.status==='Success');
+    const totPay=success.reduce((s,p)=>s+p.amount,0);
+    const refunds=pays.filter(p=>p.status==='Refunded').length;
+    const unpaid=invs.filter(i=>i.status!=='Paid');
+    const due=unpaid.reduce((s,i)=>s+i.net,0);
+    const pend=gtx.filter(g=>g.status==='pending').length;
+    let h=pageHead(t('Reconciliation','রিকনসিলিয়েশন'),t('Payments vs receipts vs gateway sessions — spot mismatches, refunds and stale checkouts.','পেমেন্ট বনাম রসিদ বনাম গেটওয়ে সেশন — অসঙ্গতি, রিফান্ড ও স্টেল চেকআউট চিহ্নিত করুন।'),
+      `<button class="btn-outline" onclick="cleanupGateways()">🧹 ${t('Cleanup stale','স্টেল মুছুন')}</button><button class="btn-primary" onclick="runCollections(true)">📣 ${t('Send overdue reminders','বকেয়া রিমাইন্ডার পাঠান')}</button>`);
+    h+=statsRow([
+      stat(t('Payments','পেমেন্ট'),pays.length,t('৳','')+moneyC(totPay)+' '+t('collected','আদায়'),'pos','💳'),
+      stat(t('Receipts','রসিদ'),(DB.receipts||[]).length,'', 'pos','📎'),
+      stat(t('Refunds','রিফান্ড'),refunds, refunds?'warn':'ok','pos','↩️'),
+      stat(t('Outstanding','বকেয়া'),unpaid.length,t('৳','')+moneyC(due)+' '+t('due','বাকি'),unpaid.length?'warn':'pos','🧾')
+    ]);
+    h+=`<div id="reconLive"><div class="panel"><div class="panel-b c-sub">${t('Loading live reconciliation…','লাইভ রিকনসিলিয়েশন লোড হচ্ছে…')}</div></div></div>`;
+    loadRecon();
     return h;
   },
   subscriptions(){
@@ -2174,6 +2195,77 @@ async function deleteDoc(id){
 function copyCode(link){
   if(navigator.clipboard){ navigator.clipboard.writeText(link).then(()=>toast('Share link copied 📋')).catch(()=>toast(link)); }
   else toast(link);
+}
+
+/* ═══ Phase 11: collections autopilot + reconciliation ═══ */
+async function loadRecon(){
+  await new Promise(r=>setTimeout(r,0));   /* let render() finish writing #reconLive first */
+  const el=document.getElementById('reconLive'); if(!el)return;
+  let coll={ok:false}, rec={ok:false};
+  try{
+    [coll, rec] = await Promise.all([apiCall('app-collections-summary'), apiCall('app-payment-recon')]);
+  }catch(e){}
+  if(!coll.ok||!rec.ok){ el.innerHTML=`<div class="panel"><div class="panel-b c-sub">${t('Live reconciliation unavailable — showing local data.','লাইভ রিকনসিলিয়েশন পাওয়া যায়নি — লোকাল ডেটা দেখানো হচ্ছে।')}</div></div>`; return; }
+  const invs=coll.invoices||[];
+  const byTen=coll.by_tenant||{};
+  const rows=invs.map(r=>`<tr><td><span class="c-name">${esc(r.inv)}</span><div class="c-sub">${esc(r.tenant)} · ${esc(r.property)}</div></td><td>${esc(r.m)}</td><td>${badge(r.status)}</td><td class="t-amount">${money(r.due)}</td><td><div style="display:flex;gap:4px">${r.phone?`<button class="btn-ghost" style="padding:2px 8px;font-size:11px" onclick="waRemind('${r.inv}')">🟢</button>`:''}<button class="btn-ghost" style="padding:2px 8px;font-size:11px" onclick="printInvoice('${r.inv}')">🖨</button></div></td></tr>`).join('');
+  const gtx=DB.gateway_tx||[];
+  const gtxRows=gtx.slice(0,20).map(g=>`<tr><td><span class="c-name">${esc(g.id)}</span><div class="c-sub">${esc(g.invoice_id)}</div></td><td>${esc(g.method)}</td><td class="t-amount">${money(g.amount)}</td><td>${badge(g.status==='redirecting'?'In Progress':g.status)}</td><td>${esc((g.created_at||'').slice(0,16))}</td></tr>`).join('')||'<tr><td colspan="5" class="c-sub">No gateway sessions.</td></tr>';
+  const st=rec.gateway_tx||{};
+  const gtxBadge=o=>`${o} <span class="badge ${o==='paid'?'b-green':o==='pending'?'b-orange':o==='failed'||o==='expired'?'b-red':'b-gray'}">${o}</span>`;
+  const stale=(rec.stale_sessions||[]);
+  const overpaid=(rec.overpaid||[]);
+  const orphan=(rec.orphan_payments||[]);
+  el.innerHTML=`
+    <div class="grid grid-2">
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📣</span>${t('Unpaid invoices','অপরিশোধিত ইনভয়েস')} · ${coll.unpaid||0} · ৳${(coll.total_due||0).toLocaleString('en-IN')}</div><span class="link" onclick="runCollections(true)">${t('Send reminders','রিমাইন্ডার পাঠান')} →</span></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Month</th><th>Status</th><th>Due</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="c-sub">All paid up 🎉</td></tr>'}</tbody></table></div>
+        <div class="panel-b" style="border-top:1px solid var(--border)"><div class="c-sub">${t('Last run','শেষ রান')}: ${esc(coll.last_run||'never')}</div></div>
+      </div>
+      <div>
+        <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🔄</span>${t('Gateway sessions','গেটওয়ে সেশন')} · ${Object.keys(st).map(k=>gtxBadge(k+':'+st[k])).join(' ')}</div></div>
+          <div class="tbl-wrap"><table><thead><tr><th>Session</th><th>Method</th><th>Amount</th><th>Status</th><th>Created</th></tr></thead><tbody>${gtxRows}</tbody></table></div>
+        </div>
+        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚠️</span>${t('Mismatches','অসঙ্গতি')}</div></div>
+          <div class="panel-b">
+            ${stale.length?`<div class="kv"><span class="k">${t('Stale pending','স্টেল পেন্ডিং')} (>24h)</span><span class="v warn">${stale.length}</span></div><button class="btn-outline" style="margin:6px 0 10px" onclick="cleanupGateways()">🧹 ${t('Mark expired','মেয়াদোত্তীর্ণ করুন')}</button>`:''}
+            ${overpaid.length?overpaid.map(o=>`<div class="kv"><span class="k">${t('Overpaid','অতিরিক্ত পরিশোধ')} ${esc(o.inv)}</span><span class="v warn">+${money(o.excess)}</span></div>`).join(''):''}
+            ${orphan.length?`<div class="kv"><span class="k">${t('Orphan payments','অনাথ পেমেন্ট')}</span><span class="v warn">${orphan.join(', ')}</span></div>`:''}
+            ${(!stale.length&&!overpaid.length&&!orphan.length)?'<div class="c-sub">'+t('No mismatches — everything reconciles. ✓','কোনো অসঙ্গতি নেই — সব মিলে গেছে। ✓')+'</div>':''}
+            <button class="btn-outline" style="margin-top:10px" onclick="refundForm()">↩️ ${t('Refund a payment','পেমেন্ট রিফান্ড')}</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+async function runCollections(send){
+  if(send&&!confirm(t('Send overdue-rent reminder emails to all tenants with unpaid invoices?','সব ভাড়াটিয়াকে বকেয়া ভাড়ার রিমাইন্ডার ইমেইল পাঠাবেন?')))return;
+  const d=await apiCall('app-collections-run',{send:!!send});
+  if(d.ok){ toast((send?('Sent '+d.sent+' reminder email(s) · '):(t('Dry-run','ড্রাই-রান')+': '))+d.unpaid+' '+t('unpaid','অপরিশোধিত')+' · ৳'+(d.total_due||0).toLocaleString('en-IN')); if(send){await refreshData(); if(state.view==='recon'){render();}} }
+  else toast(d.error||'Failed');
+}
+async function cleanupGateways(){
+  if(!confirm(t('Mark pending gateway sessions older than 24h as expired?','২৪ ঘণ্টার বেশি পুরনো পেন্ডিং গেটওয়ে সেশন মেয়াদোত্তীর্ণ করবেন?')))return;
+  const d=await apiCall('app-gateway-cleanup',{});
+  if(d.ok){ toast(d.expired+' '+t('session(s) expired','সেশন মেয়াদোত্তীর্ণ')); await refreshData(); if(state.view==='recon'){render();} }
+  else toast(d.error||'Failed');
+}
+function refundForm(){
+  const pays=(DB.payments||[]).filter(p=>p.status!=='Refunded');
+  if(!pays.length){toast(t('No refundable payments','রিফান্ডযোগ্য পেমেন্ট নেই'));return}
+  openDrawer('↩️ '+t('Refund a payment','পেমেন্ট রিফান্ড'),
+    `<div class="form-grid">
+      <div class="form-field full"><label>${t('Payment *','পেমেন্ট *')}</label><select id="rfPay">${pays.map(p=>`<option value="${esc(p.id)}">${esc(p.id)} · ${esc(p.inv)} · ${p.method} — ${money(p.amount)}</option>`).join('')}</select></div>
+      <div class="form-field full"><label>${t('Reason','কারণ')}</label><textarea id="rfReason" rows="3" placeholder="${t('e.g. duplicate payment, wrong amount','যেমন: ডুপ্লিকেট পেমেন্ট, ভুল পরিমাণ')}"></textarea></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-danger" onclick="doRefund()">↩️ ${t('Refund','রিফান্ড')}</button></div>`);
+}
+async function doRefund(){
+  const pid=document.getElementById('rfPay').value;
+  const reason=document.getElementById('rfReason').value.trim();
+  const d=await apiCall('app-refund',{payment_id:pid,reason});
+  if(d.ok){ toast(t('Refunded','রিফান্ডকৃত')+' '+pid); await refreshData(); closeDrawer(); }
+  else toast(d.error||'Failed');
 }
 
 /* ═══ Phase 4: payment gateways + activated actions ═══ */
