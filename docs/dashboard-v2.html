@@ -430,6 +430,22 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
 .dr-related .row-item{cursor:pointer;border-radius:10px;padding:9px 10px;border:1px solid transparent}
 .dr-related .row-item:hover{background:var(--primary-light);border-color:rgba(47,128,237,.25)}
 .dr-actions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}
+/* ── Phase 26: tab system (profile + property drawers) ── */
+.kr-tabs{display:flex;gap:4px;flex-wrap:wrap;background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:16px}
+.kr-tab{flex:1;min-width:88px;border:none;background:transparent;color:var(--text-soft);font:inherit;font-size:12px;font-weight:700;padding:8px 10px;border-radius:9px;cursor:pointer;transition:all .15s;text-align:center}
+.kr-tab:hover{color:var(--text)}
+.kr-tab.active{background:var(--grad);color:#fff;box-shadow:0 3px 10px rgba(47,128,237,.28)}
+[data-theme="dark"] .kr-tab.active{color:#fff}
+.kr-tab-panel{display:none}
+.kr-tab-panel.active{display:block;animation:krFade .18s ease}
+@keyframes krFade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.amen-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;background:var(--bg-alt);border:1px solid var(--border);font-size:12.5px;font-weight:600;margin:0 6px 6px 0}
+.amen-chip .del{cursor:pointer;color:var(--text-mute);font-weight:800;padding:0 2px}
+.amen-chip .del:hover{color:#EB5757}
+.mix-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px dashed var(--border);font-size:13px}
+.mix-row:last-child{border-bottom:none}
+.mix-row b{font-weight:800}
+.mix-total{background:var(--primary-light);border-radius:12px;margin-top:6px;font-weight:800}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .form-grid .full{grid-column:1/-1}
 .form-field{display:flex;flex-direction:column;gap:6px}
@@ -688,16 +704,16 @@ const SEED = {
     {id:'P-005',name:'Dhanmondi Apartment',type:'Flat',jur:'Dhaka South',holding:'Road 9/A, Dhanmondi',sqft:2450,value:18500000,status:'Active'}
   ],
   units:[
-    {id:'U-001',p:'P-001',name:'Flat 3B',floor:'3rd',sqft:1450,status:'Leased'},
-    {id:'U-002',p:'P-001',name:'Flat 4A',floor:'4th',sqft:1650,status:'Leased'},
-    {id:'U-003',p:'P-001',name:'Flat 5C',floor:'5th',sqft:1200,status:'Vacant'},
-    {id:'U-004',p:'P-002',name:'Floor 1 (Retail)',floor:'1st',sqft:6000,status:'Leased'},
-    {id:'U-005',p:'P-002',name:'Floor 2 (Office)',floor:'2nd',sqft:5200,status:'Leased'},
-    {id:'U-006',p:'P-002',name:'Floor 3 (Office)',floor:'3rd',sqft:5200,status:'Leased'},
-    {id:'U-007',p:'P-003',name:'Plot 7 (SE(D))',floor:'—',sqft:3600,status:'Vacant'},
-    {id:'U-008',p:'P-004',name:'Shed A',floor:'Ground',sqft:18000,status:'Leased'},
-    {id:'U-009',p:'P-004',name:'Shed B',floor:'Ground',sqft:12000,status:'Maintenance'},
-    {id:'U-010',p:'P-005',name:'Apartment 7B',floor:'7th',sqft:2450,status:'Leased'}
+    {id:'U-001',p:'P-001',name:'Flat 3B',floor:'3rd',sqft:1450,status:'Leased',rent:25000},
+    {id:'U-002',p:'P-001',name:'Flat 4A',floor:'4th',sqft:1650,status:'Leased',rent:32000},
+    {id:'U-003',p:'P-001',name:'Flat 5C',floor:'5th',sqft:1200,status:'Vacant',rent:28000},
+    {id:'U-004',p:'P-002',name:'Floor 1 (Retail)',floor:'1st',sqft:6000,status:'Leased',rent:450000},
+    {id:'U-005',p:'P-002',name:'Floor 2 (Office)',floor:'2nd',sqft:5200,status:'Leased',rent:380000},
+    {id:'U-006',p:'P-002',name:'Floor 3 (Office)',floor:'3rd',sqft:5200,status:'Leased',rent:350000},
+    {id:'U-007',p:'P-003',name:'Plot 7 (SE(D))',floor:'—',sqft:3600,status:'Vacant',rent:35000},
+    {id:'U-008',p:'P-004',name:'Shed A',floor:'Ground',sqft:18000,status:'Leased',rent:210000},
+    {id:'U-009',p:'P-004',name:'Shed B',floor:'Ground',sqft:12000,status:'Maintenance',rent:180000},
+    {id:'U-010',p:'P-005',name:'Apartment 7B',floor:'7th',sqft:2450,status:'Leased',rent:40000}
   ],
   tenants:[
     {id:'T-001',name:'Rafiqul Islam',phone:'01711-223344',nid:'1990123456789',nrb:false,kind:'Individual'},
@@ -808,6 +824,31 @@ const SEED = {
   referrals:[
     {id:'REF-A1B2C3',code:'KR-DEMO1',user_email:'owner@krtaker.com',role:'owner',referred_name:'Tanvir Hossain',referred_email:'tanvir.h@gmail.com',status:'Signed up',reward:5000,ts:'2026-06-15 10:00:00'},
     {id:'REF-D4E5F6',code:'KR-DEMO2',user_email:'owner@krtaker.com',role:'owner',referred_name:'Orbit Textiles Ltd',referred_email:'accounts@orbittextiles.com',status:'Paid',reward:15000,ts:'2026-07-02 14:30:00'}
+  ],
+  property_rent:[
+    {prop:'P-001',service_charge_pct:5,utility_advance:25000,parking_fee:4000,escalation_pct:8,advance_months:3,due_day:5,late_fee_pct:2,rent_per_sqft:1500,notes:'Community generator + lift maintenance shared 5%'},
+    {prop:'P-002',service_charge_pct:8,utility_advance:50000,parking_fee:15000,escalation_pct:6,advance_months:3,due_day:3,late_fee_pct:2,rent_per_sqft:7200,notes:'Commercial service charge 8%; 2 covered car parks'},
+    {prop:'P-003',service_charge_pct:2,utility_advance:20000,parking_fee:0,escalation_pct:10,advance_months:0,due_day:10,late_fee_pct:1,rent_per_sqft:9000,notes:'Plot only — no building utilities'},
+    {prop:'P-004',service_charge_pct:6,utility_advance:80000,parking_fee:6000,escalation_pct:5,advance_months:2,due_day:3,late_fee_pct:2,rent_per_sqft:6500,notes:'Factory common area + security 6%'},
+    {prop:'P-005',service_charge_pct:4,utility_advance:15000,parking_fee:2500,escalation_pct:7,advance_months:3,due_day:5,late_fee_pct:2,rent_per_sqft:7000,notes:'Apartment: lift, generator, caretaker 4%'}
+  ],
+  amenities:[
+    {id:'AM-001',prop:'P-001',unit:'',name:'Lift',icon:'🛗',category:'Building',status:'Active'},
+    {id:'AM-002',prop:'P-001',unit:'',name:'Standby generator',icon:'⚡',category:'Building',status:'Active'},
+    {id:'AM-003',prop:'P-001',unit:'',name:'CCTV security',icon:'📹',category:'Building',status:'Active'},
+    {id:'AM-004',prop:'P-001',unit:'U-001',name:'1 car parking',icon:'🚗',category:'Unit',status:'Active'},
+    {id:'AM-005',prop:'P-001',unit:'',name:'Rooftop terrace',icon:'🌇',category:'Building',status:'Active'},
+    {id:'AM-006',prop:'P-002',unit:'',name:'Central AC',icon:'❄️',category:'Building',status:'Active'},
+    {id:'AM-007',prop:'P-002',unit:'',name:'Fire safety system',icon:'🧯',category:'Building',status:'Active'},
+    {id:'AM-008',prop:'P-002',unit:'U-004',name:'2 car parks (retail)',icon:'🚗',category:'Unit',status:'Active'},
+    {id:'AM-009',prop:'P-002',unit:'',name:'24/7 security',icon:'🛡️',category:'Building',status:'Active'},
+    {id:'AM-010',prop:'P-003',unit:'',name:'Lake view',icon:'🏞️',category:'Plot',status:'Active'},
+    {id:'AM-011',prop:'P-005',unit:'',name:'Lift',icon:'🛗',category:'Building',status:'Active'},
+    {id:'AM-012',prop:'P-005',unit:'U-010',name:'1 car parking',icon:'🚗',category:'Unit',status:'Active'},
+    {id:'AM-013',prop:'P-005',unit:'',name:'Caretaker',icon:'🧑‍🔧',category:'Building',status:'Active'},
+    {id:'AM-014',prop:'P-005',unit:'',name:'Generator backup',icon:'⚡',category:'Building',status:'Active'},
+    {id:'AM-015',prop:'P-004',unit:'',name:'Cargo ramp',icon:'🚚',category:'Building',status:'Active'},
+    {id:'AM-016',prop:'P-004',unit:'',name:'Loading bay',icon:'📦',category:'Building',status:'Active'}
   ]
 };
 
@@ -2992,8 +3033,8 @@ const SCHEMAS = {
 };
 const CRUD_ACCESS = {
   superadmin:true,
-  owner:['properties','units','tenants','leases','invoices','tickets','partners'],
-  manager:['properties','units','tenants','leases','invoices','tickets'],
+  owner:['properties','units','tenants','leases','invoices','tickets','partners','amenities'],
+  manager:['properties','units','tenants','leases','invoices','tickets','amenities'],
   accountant:['invoices','tickets'],
   svc_mgr:['tickets','partners'],
   crm:['tickets','support'],
@@ -3051,6 +3092,127 @@ function relatedHtml(collection, row){
   }
   return h;
 }
+/* ── Phase 26: tab system ── */
+function krTabBar(tabs, prefix, active){
+  return `<div class="kr-tabs">${tabs.map(t=>`<button class="kr-tab ${t.id===active?'active':''}" data-p="${prefix}" data-tab="${t.id}" onclick="switchTab('${prefix}','${t.id}')">${t.l}</button>`).join('')}</div>`;
+}
+function switchTab(prefix, id){
+  document.querySelectorAll('.kr-tab-panel[data-p="'+prefix+'"]').forEach(p=>p.classList.toggle('active', p.dataset.tab===id));
+  document.querySelectorAll('.kr-tab[data-p="'+prefix+'"]').forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
+}
+function rentConfigFor(propId){
+  const c=(DB.property_rent||[]).find(x=>x.prop===propId)||{prop:propId,service_charge_pct:0,utility_advance:0,parking_fee:0,escalation_pct:0,advance_months:0,due_day:5,late_fee_pct:0,rent_per_sqft:0,notes:''};
+  return c;
+}
+function rentMixFor(propId, c){
+  const base=(DB.units||[]).filter(u=>u.p===propId).reduce((s,u)=>s+(u.rent||0),0);
+  const sc=Math.round(base*((c.service_charge_pct||0)/100));
+  const park=c.parking_fee||0;
+  return {base, service_charge:sc, parking:park, total:base+sc+park};
+}
+function rentConfigTab(propId){
+  const c=rentConfigFor(propId);
+  const m=rentMixFor(propId,c);
+  const canEdit=canCrud('properties');
+  const f=(k,l,v,st)=>`<div class="form-field"><label>${l}</label><input type="number" id="rc_${k}" value="${v}" step="any" style="${st||''}"></div>`;
+  return `<div class="tab-pad">
+    <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">🧮</span>${t('Rent mix','ভাড়া মিশ্রণ')}</div></div><div class="panel-b" style="padding:4px 12px">
+      <div class="mix-row"><span>${t('Base rent (all units)','মৌলিক ভাড়া (সব ইউনিট)')}</span><b>${money(m.base)}</b></div>
+      <div class="mix-row"><span>${t('Service charge','সার্ভিস চার্জ')} (${c.service_charge_pct||0}%)</span><b>${money(m.service_charge)}</b></div>
+      <div class="mix-row"><span>${t('Parking fee','পার্কিং ফি')}</span><b>${money(m.parking)}</b></div>
+      <div class="mix-row mix-total"><span>${t('Total monthly run-rate','মোট মাসিক রান-রেট')}</span><b>${money(m.total)}</b></div>
+    </div></div>
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚙️</span>${t('Rent configuration','ভাড়া কনফিগারেশন')}</div></div><div class="panel-b">
+      <div class="form-grid">
+        ${f('service_charge_pct','Service charge (%)',c.service_charge_pct||0)}
+        ${f('utility_advance','Utility advance (৳)',c.utility_advance||0)}
+        ${f('parking_fee','Parking fee (৳)',c.parking_fee||0)}
+        ${f('escalation_pct','Annual escalation (%)',c.escalation_pct||0)}
+        ${f('advance_months','Advance deposit (months)',c.advance_months||0)}
+        ${f('due_day','Rent due day',c.due_day||5)}
+        ${f('late_fee_pct','Late fee (% / mo)',c.late_fee_pct||0)}
+        ${f('rent_per_sqft','Rent per sqft (৳)',c.rent_per_sqft||0)}
+      </div>
+      <div class="form-field" style="margin-top:6px"><label>${t('Notes','নোট')}</label><textarea id="rc_notes" rows="2">${esc(c.notes||'')}</textarea></div>
+      ${canEdit?`<button class="btn-primary" style="width:100%;margin-top:10px" onclick="saveRentConfig('${propId}')">${t('Save rent configuration','ভাড়া কনফিগারেশন সংরক্ষণ')}</button>`:''}
+    </div></div>
+  </div>`;
+}
+async function saveRentConfig(propId){
+  const cfg={
+    service_charge_pct:parseFloat(document.getElementById('rc_service_charge_pct')?.value||0)||0,
+    utility_advance:parseInt(document.getElementById('rc_utility_advance')?.value||0,10)||0,
+    parking_fee:parseInt(document.getElementById('rc_parking_fee')?.value||0,10)||0,
+    escalation_pct:parseFloat(document.getElementById('rc_escalation_pct')?.value||0)||0,
+    advance_months:parseInt(document.getElementById('rc_advance_months')?.value||0,10)||0,
+    due_day:parseInt(document.getElementById('rc_due_day')?.value||5,10)||5,
+    late_fee_pct:parseFloat(document.getElementById('rc_late_fee_pct')?.value||0)||0,
+    rent_per_sqft:parseInt(document.getElementById('rc_rent_per_sqft')?.value||0,10)||0,
+    notes:document.getElementById('rc_notes')?.value.trim()||''
+  };
+  if(!DEMO_MODE&&TOKEN){
+    const d=await apiCall('app-rent-config-save',{prop:propId,config:cfg});
+    if(!d.ok){toast(d.error||'Failed to save');return}
+    const cur=(DB.property_rent||[]).find(x=>x.prop===propId);
+    if(cur) Object.assign(cur,cfg); else DB.property_rent.push(Object.assign({prop:propId},cfg));
+  } else {
+    const cur=(DB.property_rent||[]).find(x=>x.prop===propId);
+    if(cur) Object.assign(cur,cfg); else DB.property_rent.push(Object.assign({prop:propId},cfg));
+  }
+  toast('Rent configuration saved ✓');
+  openDetail('properties',propId);
+}
+function amenitiesTab(propId){
+  const items=(DB.amenities||[]).filter(a=>a.prop===propId);
+  const canEdit=canCrud('amenities');
+  const chips=items.map(a=>`<span class="amen-chip">${a.icon||'✨'} ${esc(a.name)}${a.unit?` <span style="color:var(--text-mute);font-size:11px">· ${esc(unitById(a.unit)?.name||a.unit)}</span>`:''}<span class="c-sub" style="font-size:10px;color:var(--text-mute)">${esc(a.category)}</span>${canEdit?`<span class="del" onclick="delAmenity('${a.id}','${propId}')">✕</span>`:''}</span>`).join('')||'<div class="c-sub" style="padding:8px 0">No amenities yet.</div>';
+  return `<div class="tab-pad">
+    <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">✨</span>${t('Amenities','সুবিধাসমূহ')}</div></div><div class="panel-b">${chips}</div></div>
+    ${canEdit?`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">＋</span>${t('Add amenity','সুবিধা যোগ করুন')}</div></div><div class="panel-b">
+      <div class="form-grid">
+        <div class="form-field"><label>${t('Name','নাম')}</label><input id="amName" placeholder="e.g. Gym"></div>
+        <div class="form-field"><label>${t('Icon','আইকন')}</label><input id="amIcon" placeholder="🏋️"></div>
+        <div class="form-field"><label>${t('Category','ক্যাটাগরি')}</label><select id="amCat"><option>Building</option><option>Unit</option><option>Plot</option></select></div>
+        <div class="form-field"><label>${t('Unit (optional)','ইউনিট (ঐচ্ছিক)')}</label><select id="amUnit"><option value="">—</option>${(DB.units||[]).filter(u=>u.p===propId).map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('')}</select></div>
+      </div>
+      <button class="btn-primary" style="width:100%;margin-top:10px" onclick="addAmenity('${propId}')">${t('Add amenity','সুবিধা যোগ করুন')}</button>
+    </div></div>`:''}
+  </div>`;
+}
+async function addAmenity(propId){
+  const name=document.getElementById('amName')?.value.trim();
+  if(!name){toast('Enter a name');return}
+  const data={prop:propId,unit:document.getElementById('amUnit')?.value||'',name,icon:document.getElementById('amIcon')?.value.trim()||'✨',category:document.getElementById('amCat')?.value||'Building',status:'Active'};
+  if(!DEMO_MODE&&TOKEN){
+    const d=await apiCall('app-crud',{action:'create',collection:'amenities',data});
+    if(!d.ok){toast(d.error||'Failed');return}
+  } else {
+    const max=(DB.amenities||[]).reduce((s,a)=>Math.max(s,parseInt((a.id||'AM-0').replace('AM-',''),10)||0),0);
+    DB.amenities.push(Object.assign({id:'AM-'+String(max+1).padStart(3,'0')},data));
+  }
+  toast('Amenity added ✓'); openDetail('properties',propId);
+}
+async function delAmenity(id, propId){
+  if(!confirm('Remove this amenity?'))return;
+  if(!DEMO_MODE&&TOKEN){
+    const d=await apiCall('app-crud',{action:'delete',collection:'amenities',id});
+    if(!d.ok){toast(d.error||'Failed');return}
+  }
+  DB.amenities=DB.amenities.filter(a=>a.id!==id);
+  toast('Amenity removed'); openDetail('properties',propId);
+}
+function unitsTab(propId){
+  const us=(DB.units||[]).filter(u=>u.p===propId);
+  const rows=us.map(u=>{const l=(DB.leases||[]).find(x=>x.u===u.id&&(x.status==='Active'||x.status==='Pending Registration'));const ten=l?(DB.tenants||[]).find(x=>x.id===l.t):null;return `<tr data-id="${u.id}" onclick="openDetail('units','${u.id}')"><td><span class="c-name">${esc(u.name)}</span><div class="c-sub">${u.id} · Floor ${esc(u.floor||'—')}</div></td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td class="t-amount">${u.rent?money(u.rent):'—'}</td><td>${ten?esc(ten.name):'—'}</td><td>${badge(u.status)}</td></tr>`}).join('');
+  return `<div class="tab-pad"><div class="tbl-wrap"><table><thead><tr><th>${t('Unit','ইউনিট')}</th><th>${t('Size','সাইজ')}</th><th>${t('Rent','ভাড়া')}</th><th>${t('Tenant','ভাড়াটিয়া')}</th><th>${t('Status','স্ট্যাটাস')}</th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="c-sub">No units.</td></tr>'}</tbody></table></div></div>`;
+}
+function propertyTabsHtml(propId){
+  return krTabBar([{id:'overview',l:'📋 '+t('Overview','ওভারভিউ')},{id:'units',l:'🚪 '+t('Units','ইউনিট')},{id:'rent',l:'🧮 '+t('Rent','ভাড়া')},{id:'amenities',l:'✨ '+t('Amenities','সুবিধা')}], 'prop', 'overview')
+    +`<div class="kr-tab-panel active" data-p="prop" data-tab="overview"><div class="dr-kv">${'__KV__'}</div>${'__REL__'}</div>`
+    +`<div class="kr-tab-panel" data-p="prop" data-tab="units">${unitsTab(propId)}</div>`
+    +`<div class="kr-tab-panel" data-p="prop" data-tab="rent">${rentConfigTab(propId)}</div>`
+    +`<div class="kr-tab-panel" data-p="prop" data-tab="amenities">${amenitiesTab(propId)}</div>`;
+}
 function openDetail(collection, id){
   const row=(DB[collection]||[]).find(x=>String(x.id)===String(id));
   if(!row){toast('Record not found');return}
@@ -3066,7 +3228,9 @@ function openDetail(collection, id){
   foot+='</div>';
   let extra='';
   if(collection==='tickets'){ extra=ticketThreadHtml(row.id); }
-  openDrawer(`${s.icon} ${s.label} — ${row.id}`, `<div class="dr-kv">${kvRows}</div>${related}${extra}`, foot);
+  let body=`<div class="dr-kv">${kvRows}</div>${related}${extra}`;
+  if(collection==='properties'){ body=propertyTabsHtml(row.id).replace('__KV__',kvRows).replace('__REL__',related); }
+  openDrawer(`${s.icon} ${s.label} — ${row.id}`, body, foot);
 }
 function ticketThreadHtml(ticketId){
   const rows=(DB.ticket_thread||[]).filter(x=>String(x.ticket)===String(ticketId));
@@ -3735,21 +3899,38 @@ async function openSettings(){
   const canOrg=['superadmin','owner','manager'].includes(rid);
   let ORG_CFG={inv_prefix:'INV-',org_name:'KRTaker',org_tagline:'AI CARETAKER',default_lease_months:12,khajna_calendar:[],invoice_footer:'This is a system-generated invoice from KRTaker — your AI caretaker.'};
   if(canOrg&&TOKEN&&!DEMO_MODE){ const r=await apiCall('app-org-settings-get'); if(r.ok) ORG_CFG=r.cfg; }
+  const sub=(DEMO_MODE?null:(LIVE.subscription||null));
+  const planInfo=sub?`<div class="row-item"><div class="ri-body"><div class="ri-t">${esc(sub.plan_name||'Trial')}</div><div class="ri-s">${t('Current plan','বর্তমান প্ল্যান')} · ${esc(sub.plan_code||'')}</div></div><div class="ri-r"><span class="badge b-blue">${esc(sub.status||'active')}</span></div></div>`:'';
+  const tabs=krTabBar([
+    {id:'profile',l:'👤 '+t('Profile','প্রোফাইল')},
+    {id:'prefs',l:'🎨 '+t('Preferences','পছন্দসমূহ')},
+    {id:'security',l:'🔑 '+t('Security','নিরাপত্তা')},
+    {id:'billing',l:'💳 '+t('Billing','বিলিং')},
+    {id:'data',l:'🗂️ '+t('Data','ডেটা')}
+  ],'set','profile');
   openDrawer(t('Settings','সেটিংস'),
-    `<div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">👤</span>${t('Profile','প্রোফাইল')}</div></div><div class="panel-b">
-      <div class="form-field"><label>${t('Name','নাম')}</label><input id="setName" value="${nameVal}"></div>
-      ${isStaff?`<div class="form-field"><label>${t('Department','বিভাগ')}</label><input id="setDept" value="${esc(u.dept||'')}"></div>
-         <div class="form-field"><label>${t('Avatar initials','অবতার আদ্যক্ষর')}</label><input id="setAvatar" maxlength="8" value="${esc(u.avatar||'')}" placeholder="e.g. RI"></div>`
-        :`<div class="form-field"><label>${t('Organization','প্রতিষ্ঠান')}</label><input id="setOrg" value="${orgVal}"></div>
-           <div class="form-field"><label>${t('Phone','ফোন')}</label><input id="setPhone" value="${phoneVal}"></div>`}
-      <button class="btn-primary" style="width:100%" onclick="saveProfile()">${t('Save profile','প্রোফাইল সংরক্ষণ')}</button>
-    </div></div>
-    <div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">🔑</span>${t('Change password','পাসওয়ার্ড পরিবর্তন')}</div></div><div class="panel-b">
-      <div class="form-field"><label>${t('Current password','বর্তমান পাসওয়ার্ড')}</label><input type="password" id="setOldPw" autocomplete="current-password"></div>
-      <div class="form-field"><label>${t('New password (min 6)','নতুন পাসওয়ার্ড (ন্যূনতম ৬)')}</label><input type="password" id="setNewPw" autocomplete="new-password"></div>
-      <button class="btn-outline" style="width:100%" onclick="changePw()">${t('Change password','পাসওয়ার্ড পরিবর্তন')}</button>
-    </div></div>
-    <div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">🎨</span>${t('Preferences','পছন্দসমূহ')}</div></div><div class="panel-b">
+    tabs+
+    `<div class="kr-tab-panel active" data-p="set" data-tab="profile">
+      <div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">👤</span>${t('Profile','প্রোফাইল')}</div></div><div class="panel-b">
+        <div class="form-field"><label>${t('Name','নাম')}</label><input id="setName" value="${nameVal}"></div>
+        ${isStaff?`<div class="form-field"><label>${t('Department','বিভাগ')}</label><input id="setDept" value="${esc(u.dept||'')}"></div>
+           <div class="form-field"><label>${t('Avatar initials','অবতার আদ্যক্ষর')}</label><input id="setAvatar" maxlength="8" value="${esc(u.avatar||'')}" placeholder="e.g. RI"></div>`
+          :`<div class="form-field"><label>${t('Organization','প্রতিষ্ঠান')}</label><input id="setOrg" value="${orgVal}"></div>
+             <div class="form-field"><label>${t('Phone','ফোন')}</label><input id="setPhone" value="${phoneVal}"></div>`}
+        <button class="btn-primary" style="width:100%" onclick="saveProfile()">${t('Save profile','প্রোফাইল সংরক্ষণ')}</button>
+      </div></div>
+      ${canOrg?`<div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">🏢</span>${t('Organization settings','প্রতিষ্ঠান সেটিংস')}</div></div><div class="panel-b">
+        <div class="form-field"><label>${t('Organization name','প্রতিষ্ঠানের নাম')}</label><input id="orgName" value="${esc(ORG_CFG.org_name||'')}"></div>
+        <div class="form-field"><label>${t('Tagline','ট্যাগলাইন')}</label><input id="orgTagline" value="${esc(ORG_CFG.org_tagline||'')}"></div>
+        <div class="form-field"><label>${t('Invoice prefix','ইনভয়েস প্রিফিক্স')}</label><input id="orgInvPrefix" value="${esc(ORG_CFG.inv_prefix||'INV-')}" placeholder="INV-"></div>
+        <div class="form-field"><label>${t('Default lease months','ডিফল্ট লিজ মাস')}</label><input id="orgLeaseMonths" type="number" min="1" max="120" value="${esc(String(ORG_CFG.default_lease_months||12))}"></div>
+        <div class="form-field"><label>${t('Khajna calendar (Property ID | due date)','খাজনা ক্যালেন্ডার (প্রপার্টি আইডি | তারিখ)')}</label><textarea id="orgKhajna" rows="3" placeholder="P-001 | 30 Jun">${esc((ORG_CFG.khajna_calendar||[]).map(k=>k.p+' | '+k.due).join('\n'))}</textarea></div>
+        <div class="form-field"><label>${t('Invoice footer','ইনভয়েস ফুটার')}</label><textarea id="orgFooter" rows="2">${esc(ORG_CFG.invoice_footer||'')}</textarea></div>
+        <button class="btn-primary" style="width:100%" onclick="saveOrgSettings()">${t('Save organization settings','প্রতিষ্ঠান সেটিংস সংরক্ষণ')}</button>
+      </div></div>`:''}
+    </div>
+    <div class="kr-tab-panel" data-p="set" data-tab="prefs">
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🎨</span>${t('Preferences','পছন্দসমূহ')}</div></div><div class="panel-b">
       <div class="row-item"><div class="ri-body"><div class="ri-t">${t('Theme','থিম')}</div><div class="ri-s">${t('Dark or light workspace','ডার্ক বা লাইট ওয়ার্কস্পেস')}</div></div><div class="ri-r">
         <button class="btn-ghost ${prefs.theme==='dark'?'btn-primary':''}" style="padding:5px 12px;font-size:11.5px" id="setThemeDark" onclick="pickPrefTheme('dark')">🌙 ${t('Dark','ডার্ক')}</button>
         <button class="btn-ghost ${prefs.theme==='light'?'btn-primary':''}" style="padding:5px 12px;font-size:11.5px" id="setThemeLight" onclick="pickPrefTheme('light')">☀️ ${t('Light','লাইট')}</button>
@@ -3768,19 +3949,23 @@ async function openSettings(){
         ${notifyRow('email_digest','Daily email digest','দৈনিক ইমেইল ডাইজেস্ট')}
         ${notifyRow('notify_premium','Caretaker updates','কেয়ারটেকার আপডেট')}
       </div>
-      ${rid==='tenant'?`<div class="panel" style="margin-top:10px"><div class="panel-h"><div class="t"><span class="pi">🗂️</span>${t('My data (GDPR)','আমার ডেটা (জিডিপিআর)')}</div></div><div class="panel-b"><div style="font-size:12px;color:var(--text-soft);margin-bottom:8px;line-height:1.6">${t('Download everything KRTaker holds about you — leases, invoices, payments, tickets, documents metadata.','আপনার সম্পর্কে KRTaker-এর কাছে থাকা সব ডেটা ডাউনলোড করুন — লিজ, ইনভয়েস, পেমেন্ট, টিকিট, ডকুমেন্ট মেটাডেটা।')}</div><button class="btn-outline" style="width:100%" onclick="gdprDownload()">⬇ ${t('Download my data (JSON)','আমার ডেটা ডাউনলোড (JSON)')}</button></div></div>`:''}
       <button class="btn-primary" style="width:100%;margin-top:10px" onclick="saveSettings()">${t('Save preferences','পছন্দ সংরক্ষণ')}</button>
-    </div></div>
-    ${canOrg?`<div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">🏢</span>${t('Organization settings','প্রতিষ্ঠান সেটিংস')}</div></div><div class="panel-b">
-      <div class="form-field"><label>${t('Organization name','প্রতিষ্ঠানের নাম')}</label><input id="orgName" value="${esc(ORG_CFG.org_name||'')}"></div>
-      <div class="form-field"><label>${t('Tagline','ট্যাগলাইন')}</label><input id="orgTagline" value="${esc(ORG_CFG.org_tagline||'')}"></div>
-      <div class="form-field"><label>${t('Invoice prefix','ইনভয়েস প্রিফিক্স')}</label><input id="orgInvPrefix" value="${esc(ORG_CFG.inv_prefix||'INV-')}" placeholder="INV-"></div>
-      <div class="form-field"><label>${t('Default lease months','ডিফল্ট লিজ মাস')}</label><input id="orgLeaseMonths" type="number" min="1" max="120" value="${esc(String(ORG_CFG.default_lease_months||12))}"></div>
-      <div class="form-field"><label>${t('Khajna calendar (Property ID | due date)','খাজনা ক্যালেন্ডার (প্রপার্টি আইডি | তারিখ)')}</label><textarea id="orgKhajna" rows="3" placeholder="P-001 | 30 Jun">${esc((ORG_CFG.khajna_calendar||[]).map(k=>k.p+' | '+k.due).join('\n'))}</textarea></div>
-      <div class="form-field"><label>${t('Invoice footer','ইনভয়েস ফুটার')}</label><textarea id="orgFooter" rows="2">${esc(ORG_CFG.invoice_footer||'')}</textarea></div>
-      <button class="btn-primary" style="width:100%" onclick="saveOrgSettings()">${t('Save organization settings','প্রতিষ্ঠান সেটিংস সংরক্ষণ')}</button>
-    </div></div>`:''}
-    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Payment gateways','পেমেন্ট গেটওয়ে')}</div></div><div class="panel-b" id="setGw"></div></div>`,
+      </div></div>
+    </div>
+    <div class="kr-tab-panel" data-p="set" data-tab="security">
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔑</span>${t('Change password','পাসওয়ার্ড পরিবর্তন')}</div></div><div class="panel-b">
+        <div class="form-field"><label>${t('Current password','বর্তমান পাসওয়ার্ড')}</label><input type="password" id="setOldPw" autocomplete="current-password"></div>
+        <div class="form-field"><label>${t('New password (min 6)','নতুন পাসওয়ার্ড (ন্যূনতম ৬)')}</label><input type="password" id="setNewPw" autocomplete="new-password"></div>
+        <button class="btn-outline" style="width:100%" onclick="changePw()">${t('Change password','পাসওয়ার্ড পরিবর্তন')}</button>
+      </div></div>
+    </div>
+    <div class="kr-tab-panel" data-p="set" data-tab="billing">
+      <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">💠</span>${t('Subscription','সাবস্ক্রিপশন')}</div></div><div class="panel-b">${planInfo||'<div class="c-sub">Subscription details available after login.</div>'}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Payment gateways','পেমেন্ট গেটওয়ে')}</div></div><div class="panel-b" id="setGw"></div></div>
+    </div>
+    <div class="kr-tab-panel" data-p="set" data-tab="data">
+      ${rid==='tenant'?`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🗂️</span>${t('My data (GDPR)','আমার ডেটা (জিডিপিআর)')}</div></div><div class="panel-b"><div style="font-size:12px;color:var(--text-soft);margin-bottom:8px;line-height:1.6">${t('Download everything KRTaker holds about you — leases, invoices, payments, tickets, documents metadata.','আপনার সম্পর্কে KRTaker-এর কাছে থাকা সব ডেটা ডাউনলোড করুন — লিজ, ইনভয়েস, পেমেন্ট, টিকিট, ডকুমেন্ট মেটাডেটা।')}</div><button class="btn-outline" style="width:100%" onclick="gdprDownload()">⬇ ${t('Download my data (JSON)','আমার ডেটা ডাউনলোড (JSON)')}</button></div></div>`:`<div class="panel"><div class="panel-b"><div class="c-sub">${t('No personal-data tools for this role.','এই রোলের জন্য ব্যক্তিগত-ডেটা টুল নেই।')}</div></div></div>`}
+    </div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`);
   gwConfig().then(gws=>{
     const el=document.getElementById('setGw'); if(!el)return;
