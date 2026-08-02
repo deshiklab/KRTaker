@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     log.addEventListener('submit', (e) => {
       e.preventDefault();
       krToast('Demo login — opening KRTaker workspace…');
-      setTimeout(() => { window.location.href = '../design-prototype.html'; }, 1200);
+      setTimeout(() => { window.location.href = 'dashboard-v2.html'; }, 1200);
     });
   }
 
