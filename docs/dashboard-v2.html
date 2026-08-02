@@ -1646,6 +1646,10 @@ function demoPortalData(){
     {id:'MR-100',unit:'U-010',tenant:tid,type:'electric',reading:4125,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
     {id:'MR-101',unit:'U-010',tenant:tid,type:'water',reading:185,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
     {id:'MR-102',unit:'U-010',tenant:tid,type:'electric',reading:3990,month:'2026-06',note:'',ts:'2026-06-27 09:00:00'}];
+  /* Phase 20: demo parity — utility bills */
+  const utility_bills=[
+    {id:'UB-100',unit:'U-010',tenant:tid,type:'electric',month:'2026-07',prev_reading:3990,curr_reading:4125,usage:135,rate:10,standing:0,amount:1350,status:'Unpaid',paid_at:'',note:''},
+    {id:'UB-101',unit:'U-010',tenant:tid,type:'water',month:'2026-07',prev_reading:150,curr_reading:185,usage:35,rate:20,standing:0,amount:700,status:'Paid',paid_at:'2026-08-01 10:00:00',note:''}];
   const outstanding=invoices.reduce((s,i)=>s+i.due,0);
   const paidTotal=payments.reduce((s,p)=>s+p.amount,0);
   const next=invoices.find(i=>i.status!=='Paid'&&i.due>0)||null;
@@ -1653,7 +1657,7 @@ function demoPortalData(){
   const minLeft=active.length?Math.min(...active.map(l=>{const e=enrich.find(x=>x.id===l.id);return e?e.days_left:0})):null;
   return {tenant:{id:tid,name:(DB.tenants||[]).find(x=>x.id===tid)?.name||'Tenant'},
     leases:enrich,invoices,payments,receipts,docs,handover,tickets,notices,
-    renewals,meters,
+    renewals,meters,utility_bills,
     score:demoScoreFor(tid),
     stats:{outstanding,paid_total:paidTotal,next_due:next?{id:next.id,m:next.m,amount:next.due}:null,tickets_open:tickets.filter(x=>x.status!=='Closed').length,min_days_left:minLeft}};
 }
@@ -1691,6 +1695,7 @@ function portalHtml(d){
   (d.leases||[]).forEach(l=>{ h+=portalLeaseCard(l,d); });
   h+=`<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📄</span>${t('My documents','আমার ডকুমেন্ট')}</div><span class="link" onclick="nav('documents')">${t('All','সব')} →</span></div><div class="panel-b">${docRows}</div></div>`;
   h+=meterPanelHtml(d);
+  h+=utilityBillPanelHtml(d);
   h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My maintenance','আমার মেরামত')}</div><span class="link" onclick="nav('maintenance')">${t('All','সব')} →</span></div><div class="panel-b">${tickRows}</div></div>`;
   h+=`</div>`;
   h+=`<div>`;
@@ -1805,6 +1810,113 @@ async function submitMeter(){
   if(!res.ok){toast(res.error||'Save failed');return}
   closeDrawer(); toast(t('Meter reading saved ✅','মিটার রিডিং সেভ হয়েছে ✅'));
   loadPortal();
+}
+
+/* ═══ Phase 20: utility billing (tariffs + generate + bills) ═══ */
+const UTIL_ICO={electric:'⚡',gas:'🔥',water:'💧'};
+function utilBadge(st){return st==='Paid'?'<span class="badge b-green">✓ '+t('Paid','পরিশোধিত')+'</span>':st==='Void'?'<span class="badge b-gray">'+t('Void','বাতিল')+'</span>':'<span class="badge b-orange">'+t('Unpaid','অপরিশোধিত')+'</span>'}
+function utilityBillPanelHtml(d){
+  const bills=(d.utility_bills||[]).slice().sort((a,b)=>String(b.month).localeCompare(String(a.month)));
+  const rows=bills.map(b=>`<tr><td>${UTIL_ICO[b.type]||''} ${esc(b.type)}</td><td>${esc(b.month)}</td><td class="t-amount">${(b.usage||0).toLocaleString()} ${esc(b.unit_label||(b.type==='electric'?'kWh':'m³'))}</td><td class="t-amount">${money(b.amount)}</td><td>${utilBadge(b.status)}</td>${b.status==='Unpaid'?`<td><button class="btn-primary" style="padding:3px 9px;font-size:11px" onclick="utilityBillPay('${esc(b.id)}')">${t('Pay','পরিশোধ')}</button></td>`:''}</tr>`).join('');
+  return `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('My utility bills','আমার ইউটিলিটি বিল')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Meter','মিটার')}</th><th>${t('Month','মাস')}</th><th>${t('Usage','ব্যবহার')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="6" class="c-sub">${t('No utility bills yet.','এখনো কোনো ইউটিলিটি বিল নেই।')}</td></tr>`}</tbody></table></div></div>`;
+}
+async function utilityBillPay(id){
+  if(!TOKEN||DEMO_MODE){toast(t('Sign in to pay your utility bill.','ইউটিলিটি বিল পরিশোধ করতে সাইন ইন করুন।'));return}
+  const res=await apiCall('app-utility-bill-pay',{id,action:'pay'});
+  if(!res.ok){toast(res.error||'Failed');return}
+  toast(t('Utility bill paid ✅','ইউটিলিটি বিল পরিশোধিত ✅'));
+  loadPortal();
+}
+async function utilityLoadBills(){
+  const host=document.getElementById('utilBillsHost'); if(!host) return;
+  let rows=[];
+  if(TOKEN&&!DEMO_MODE){
+    const res=await apiCall('app-utility-bill-list');
+    if(!res.ok){host.innerHTML=`<div class="c-sub">${esc(res.error||'Failed')}</div>`;return}
+    rows=res.bills||[];
+  } else {
+    rows=[{id:'UB-100',unit:'U-010',unit_name:'Apartment 7B',property_name:'Dhanmondi Apartment',type:'electric',month:'2026-07',usage:135,amount:1350,status:'Unpaid'},
+          {id:'UB-101',unit:'U-010',unit_name:'Apartment 7B',property_name:'Dhanmondi Apartment',type:'water',month:'2026-07',usage:35,amount:700,status:'Paid'}];
+  }
+  const canStaff=['superadmin','owner','manager','accountant'].includes(role().id);
+  host.innerHTML=rows.length?`<div class="tbl-wrap"><table><thead><tr><th>${t('Bill','বিল')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Meter','মিটার')}</th><th>${t('Month','মাস')}</th><th>${t('Usage','ব্যবহার')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canStaff?'<th></th>':''}</tr></thead><tbody>`+rows.map(b=>`<tr><td><span class="c-name">${esc(b.id)}</span></td><td>${esc(b.unit_name||b.unit)}<div class="c-sub">${esc(b.property_name||'')}</div></td><td>${UTIL_ICO[b.type]||''} ${esc(b.type)}</td><td>${esc(b.month)}</td><td class="t-amount">${(b.usage||0).toLocaleString()}</td><td class="t-amount">${money(b.amount)}</td><td>${utilBadge(b.status)}</td>${canStaff?`<td>${b.status==='Unpaid'?`<div style="display:flex;gap:4px"><button class="btn-primary" style="padding:3px 9px;font-size:11px" onclick="utilityBillAction('${esc(b.id)}','pay')">✓ ${t('Paid','পরিশোধ')}</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="utilityBillAction('${esc(b.id)}','void')">✕</button></div>`:''}</td>`:''}</tr>`).join('')+'</tbody></table></div>':`<div class="empty">${t('No utility bills yet — generate from meter readings.','এখনো কোনো ইউটিলিটি বিল নেই — মিটার রিডিং থেকে তৈরি করুন।')}</div>`;
+}
+async function utilityBillAction(id, action){
+  const res=await apiCall('app-utility-bill-pay',{id,action});
+  if(!res.ok){toast(res.error||'Failed');return}
+  toast(action==='pay'?t('Bill marked paid ✅','বিল পরিশোধিত ✅'):t('Bill voided','বিল বাতিল করা হয়েছে'));
+  utilityLoadBills();
+}
+let tars={};
+async function utilityLoadTariffs(){
+  if(!TOKEN||DEMO_MODE){ tars={electric:{rate:10,standing:0,enabled:1},gas:{rate:15,standing:0,enabled:1},water:{rate:20,standing:0,enabled:1}}; return; }
+  const res=await apiCall('app-utility-tariff-get');
+  if(res.ok&&res.tariffs) tars=res.tariffs;
+}
+function utilityBillingDrawer(){
+  utilityLoadTariffs().then(()=>{
+    const units=DB.units||[];
+    const monthNow=new Date().toISOString().slice(0,7);
+    let tarHtml='';
+    ['electric','gas','water'].forEach(ty=>{
+      tarHtml+=`<div class="row-item" style="padding:7px 0"><div class="ri-ic">${UTIL_ICO[ty]}</div><div class="ri-body"><div class="ri-t">${esc(ty)}</div><div class="ri-s">${t('Rate per unit + standing charge','প্রতি ইউনিট হার + স্থায়ী চার্জ')}</div></div><div class="ri-r" style="display:flex;gap:6px;align-items:center"><input id="tar_${ty}" type="number" min="0" step="0.5" style="width:74px" value="${tars[ty]?.rate??(ty==='electric'?10:ty==='gas'?15:20)}"> <span style="font-size:11px;color:var(--text-mute)">৳</span><input id="tarS_${ty}" type="number" min="0" style="width:64px" value="${tars[ty]?.standing??0}"><input type="checkbox" id="tarE_${ty}" ${tars[ty]?.enabled===0?'':'checked'} style="width:auto"></div></div>`;
+    });
+    openDrawer('⚡ '+t('Utility billing','ইউটিলিটি বিলিং'),
+      `<div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">💰</span>${t('Tariffs','ট্যারিফ')}</div></div><div class="panel-b">
+        ${tarHtml}
+        <button class="btn-outline" style="width:100%;margin-top:8px" onclick="utilitySaveTariffs()">${t('Save tariffs','ট্যারিফ সংরক্ষণ')}</button>
+      </div></div>
+      <div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">🧮</span>${t('Generate bill','বিল তৈরি')}</div></div><div class="panel-b">
+        <div class="form-field"><label>${t('Unit','ইউনিট')}</label><select id="utilUnit" class="fld">${units.map(u=>`<option value="${esc(u.id)}">${esc(u.name)} (${esc(u.id)})</option>`).join('')}</select></div>
+        <div class="form-field"><label>${t('Meter','মিটার')}</label><select id="utilType" class="fld"><option value="electric">⚡ ${t('Electric','বিদ্যুৎ')}</option><option value="gas">🔥 ${t('Gas','গ্যাস')}</option><option value="water">💧 ${t('Water','পানি')}</option></select></div>
+        <div class="form-field"><label>${t('Month','মাস')}</label><input id="utilMonth" type="month" value="${monthNow}"></div>
+        <div id="utilPrev" class="c-sub" style="min-height:20px"></div>
+        <div style="display:flex;gap:6px;margin-top:8px"><button class="btn-outline" style="flex:1" onclick="utilityPreview()">${t('Preview','প্রিভিউ')}</button><button class="btn-primary" style="flex:1" onclick="utilityGenerate()">${t('Generate bill','বিল তৈরি')}</button></div>
+      </div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Utility bills','ইউটিলিটি বিল')}</div><span class="link" onclick="utilityLoadBills()">${t('Refresh','রিফ্রেশ')} ↻</span></div><div class="panel-b" id="utilBillsHost"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div></div>`,
+      `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`);
+    utilityLoadBills();
+  });
+}
+async function utilitySaveTariffs(){
+  const cfg={};
+  ['electric','gas','water'].forEach(ty=>{
+    cfg[ty]={rate:parseFloat($('tar_'+ty).value)||0, standing:parseInt($('tarS_'+ty).value)||0, enabled:$('tarE_'+ty).checked?1:0};
+  });
+  if(TOKEN&&!DEMO_MODE){
+    const res=await apiCall('app-utility-tariff-save',{tariffs:cfg});
+    if(!res.ok){toast(res.error||'Failed');return}
+    tars=res.tariffs||cfg;
+    toast(t('Tariffs saved ✅','ট্যারিফ সংরক্ষিত ✅'));
+  } else { tars=cfg; toast(t('Tariffs saved ✅ (demo)','ট্যারিফ সংরক্ষিত ✅ (ডেমো)')); }
+}
+async function utilityPreview(){
+  const unit=$('utilUnit').value, type=$('utilType').value, month=$('utilMonth').value;
+  if(!unit||!month){toast(t('Select unit and month.','ইউনিট ও মাস নির্বাচন করুন।'));return}
+  const host=$('utilPrev');
+  host.textContent=t('Previewing…','প্রিভিউ হচ্ছে…');
+  if(TOKEN&&!DEMO_MODE){
+    const res=await apiCall('app-utility-bill-preview',{unit,type,month});
+    if(!res.ok){host.textContent=res.error||'Failed';return}
+    const b=res.bill;
+    host.innerHTML=`<b>${esc(b.type)}</b> · ${t('prev','পূর্ববর্তী')} ${b.prev_reading.toLocaleString()} → ${b.curr_reading.toLocaleString()} = <b>${b.usage.toLocaleString()} ${esc(b.unit_label)}</b> · ${t('bill','বিল')} <b style="color:var(--accent)">${money(b.amount)}</b>`;
+  } else {
+    const prev=Math.floor(Math.random()*900)+100, curr=prev+Math.floor(Math.random()*120)+20;
+    const rate=(type==='electric'?10:type==='gas'?15:20);
+    host.innerHTML=`<b>${esc(type)}</b> · ${t('prev','পূর্ববর্তী')} ${prev} → ${curr} = <b>${curr-prev}</b> · ${t('bill','বিল')} <b style="color:var(--accent)">${money((curr-prev)*rate)}</b>`;
+  }
+}
+async function utilityGenerate(){
+  const unit=$('utilUnit').value, type=$('utilType').value, month=$('utilMonth').value;
+  if(!unit||!month){toast(t('Select unit and month.','ইউনিট ও মাস নির্বাচন করুন।'));return}
+  if(TOKEN&&!DEMO_MODE){
+    const res=await apiCall('app-utility-bill-generate',{unit,type,month});
+    if(!res.ok){toast(res.error||'Failed');return}
+    toast(t('Utility bill generated ✅','ইউটিলিটি বিল তৈরি হয়েছে ✅'));
+    utilityLoadBills();
+  } else {
+    toast(t('Utility bill generated ✅ (demo)','ইউটিলিটি বিল তৈরি হয়েছে ✅ (ডেমো)'));
+  }
 }
 /* staff: renewal approvals (Leases view) + meter readings (Units view) */
 async function renewalsPanel(){
@@ -2001,7 +2113,7 @@ const renderers={
     return h;
   },
   units(){
-    let h=pageHead(t('Units','ইউনিট'),t('Every flat, floor, shed and plot.','প্রতিটি ফ্ল্যাট, ফ্লোর, শেড ও প্লট।'),`<button class="btn-outline" onclick="meterDrawer('')">📟 ${t('Meter readings','মিটার রিডিং')}</button><button class="btn-primary" onclick="openNew('units')">＋ ${t('Add unit','ইউনিট যোগ করুন')}</button>`);
+    let h=pageHead(t('Units','ইউনিট'),t('Every flat, floor, shed and plot.','প্রতিটি ফ্ল্যাট, ফ্লোর, শেড ও প্লট।'),`${['superadmin','owner','manager','accountant'].includes(role().id)?`<button class="btn-outline" onclick="utilityBillingDrawer()">⚡ ${t('Utility billing','ইউটিলিটি বিলিং')}</button>`:''}<button class="btn-outline" onclick="meterDrawer('')">📟 ${t('Meter readings','মিটার রিডিং')}</button><button class="btn-primary" onclick="openNew('units')">＋ ${t('Add unit','ইউনিট যোগ করুন')}</button>`);
     h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Unit</th><th>Property</th><th>Floor</th><th>Size</th><th>Tenant</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.units.map(u=>{const l=DB.leases.find(x=>x.u===u.id&&(x.status==='Active'||x.status==='Pending Registration'));const ten=l?tenantById(l.t):null;return `<tr data-id="${u.id}" onclick="openDetail('units','${u.id}')"><td><span class="c-name">${esc(u.name)}</span><div class="c-sub">${u.id}</div></td><td>${esc(propById(u.p)?.name||'—')}</td><td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td>${ten?esc(ten.name):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${badge(u.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
