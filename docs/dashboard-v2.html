@@ -2372,6 +2372,27 @@ function caretakerBook() {
   toast(t('Walkthrough booked ✅','ওয়াকথ্রু বুক হয়েছে ✅'));
   caretakerLoad();
 }
+/* Phase 24: GDPR — download my data (JSON) */
+async function gdprDownload() {
+  if (TOKEN && !DEMO_MODE) {
+    try {
+      const res = await fetch(API + 'app-gdpr-export', { headers: { Authorization: 'Bearer ' + TOKEN } });
+      if (!res.ok) { let m = 'Cannot export: ' + res.status; try { const j = await res.json(); if (j.error) m = j.error; } catch (e) {} toast(m); return; }
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = ((res.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/) || [])[1] || 'krtaker-data.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(a.href);
+      toast(t('Data export downloaded ✅','ডেটা এক্সপোর্ট ডাউনলোড হয়েছে ✅'));
+    } catch (e) { toast('Export error: ' + e.message); }
+  } else {
+    const d = demoPortalData('T-002');
+    const blob = new Blob([JSON.stringify({ generated_at: new Date().toISOString(), demo: true, tenant: d.tenant, leases: d.leases, invoices: d.invoices, payments: d.payments, receipts: d.receipts, tickets: d.tickets, documents: d.docs, handover: d.handover, meters: d.meters, utility_bills: d.utility_bills }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'krtaker-data-demo.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+    toast(t('Data export downloaded ✅ (demo)','ডেটা এক্সপোর্ট ডাউনলোড হয়েছে ✅ (ডেমো)'));
+  }
+}
 
 const renderers={
   dashboard:renderDashboard,
@@ -3747,6 +3768,7 @@ async function openSettings(){
         ${notifyRow('email_digest','Daily email digest','দৈনিক ইমেইল ডাইজেস্ট')}
         ${notifyRow('notify_premium','Caretaker updates','কেয়ারটেকার আপডেট')}
       </div>
+      ${rid==='tenant'?`<div class="panel" style="margin-top:10px"><div class="panel-h"><div class="t"><span class="pi">🗂️</span>${t('My data (GDPR)','আমার ডেটা (জিডিপিআর)')}</div></div><div class="panel-b"><div style="font-size:12px;color:var(--text-soft);margin-bottom:8px;line-height:1.6">${t('Download everything KRTaker holds about you — leases, invoices, payments, tickets, documents metadata.','আপনার সম্পর্কে KRTaker-এর কাছে থাকা সব ডেটা ডাউনলোড করুন — লিজ, ইনভয়েস, পেমেন্ট, টিকিট, ডকুমেন্ট মেটাডেটা।')}</div><button class="btn-outline" style="width:100%" onclick="gdprDownload()">⬇ ${t('Download my data (JSON)','আমার ডেটা ডাউনলোড (JSON)')}</button></div></div>`:''}
       <button class="btn-primary" style="width:100%;margin-top:10px" onclick="saveSettings()">${t('Save preferences','পছন্দ সংরক্ষণ')}</button>
     </div></div>
     ${canOrg?`<div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">🏢</span>${t('Organization settings','প্রতিষ্ঠান সেটিংস')}</div></div><div class="panel-b">
