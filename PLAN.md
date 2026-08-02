@@ -118,6 +118,7 @@ Core groups (v1 — ~20 modules):
 ### Phase 7 — Deploy
 - gunicorn systemd `krtaker-backend` + nginx (`krtaker.18.142.98.150.sslip.io`) + certbot; PWA on `app.…sslip.io`; Cloudflare tunnel for interim HTTPS. (Reuse REM deploy recipes.)
 - **PG cutover path**: install PostgreSQL 14+ on the VPS → `app-export` from cPanel → `tools/pg_import.py` → apply `docs/pg-migration.sql` → point backend at PG with `SET app.current_tenant` after each auth (RLS backstop; keep API WHERE-clause scoping primary).
+- **Status (2026-08-02)**: migration pipeline **validated locally** — PG 14, full import of the real export (23/23 tables), RLS proven (org isolation, cross-org INSERT blocked, staff BYPASSRLS). Verified snapshot at `/root/krtaker-backup/phase7-pre/krtaker_pg_dump_*.sql`. **VPS execution blocked on SSH** to `18.142.98.150` (keys denied) — see `docs/phase7-deploy.md` runbook + exact pubkey ask. Daily DB backup cron `934e56ba8240` live (00:00 UTC, 14-day rotation, watchdog).
 
 ---
 

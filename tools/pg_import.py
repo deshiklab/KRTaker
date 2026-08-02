@@ -42,6 +42,7 @@ def main():
 
     try:
         import psycopg
+        from psycopg import sql
     except ImportError:
         print('pip install psycopg[binary]', file=sys.stderr); sys.exit(1)
 
@@ -60,12 +61,22 @@ def main():
             cols = list(rows[0].keys())
             if t in ('plan_catalog',) and 'features' in cols and isinstance(rows[0]['features'], str):
                 for r in rows:
-                    try: r['features'] = json.loads(r['features'])
+                    try:
+                        r['features'] = json.dumps(json.loads(r['features']))  # JSON string for JSONB
                     except Exception: pass
             placeholders = ','.join(['%s'] * len(cols))
             conflict = ', '.join([c for c in cols if c in ('id','token','code','email','k')])
             if not conflict: conflict = 'id'
-            upsert = f'INSERT INTO {t} ({",".join(cols)}) VALUES ({placeholders}) ON CONFLICT ({conflict}) DO NOTHING'
+            idents = [sql.Identifier(c) for c in cols]
+            cident = sql.Identifier(conflict.split(',')[0].strip()) if ',' not in conflict else None
+            if cident:
+                upsert = sql.SQL('INSERT INTO {} ({}) VALUES ({}) ON CONFLICT ({}) DO NOTHING').format(
+                    sql.Identifier(t), sql.SQL(', ').join(idents),
+                    sql.SQL(', ').join([sql.Placeholder()] * len(cols)), cident)
+            else:
+                upsert = sql.SQL('INSERT INTO {} ({}) VALUES ({})').format(
+                    sql.Identifier(t), sql.SQL(', ').join(idents),
+                    sql.SQL(', ').join([sql.Placeholder()] * len(cols)))
             n = 0
             for r in rows:
                 try:
@@ -85,7 +96,10 @@ def main():
             if 'owner_id' not in cols:
                 cols = ['owner_id'] + cols
             placeholders = ','.join(['%s'] * len(cols))
-            upsert = f'INSERT INTO {t} ({",".join(cols)}) VALUES ({placeholders}) ON CONFLICT (id) DO NOTHING'
+            idents = [sql.Identifier(c) for c in cols]
+            upsert = sql.SQL('INSERT INTO {} ({}) VALUES ({}) ON CONFLICT (id) DO NOTHING').format(
+                sql.Identifier(t), sql.SQL(', ').join(idents),
+                sql.SQL(', ').join([sql.Placeholder()] * len(cols)))
             n = 0
             for r in rows:
                 vals = [args.owner_id] + [adapt(r.get(c)) for c in cols[1:]]
