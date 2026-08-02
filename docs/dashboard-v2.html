@@ -3213,6 +3213,100 @@ function propertyTabsHtml(propId){
     +`<div class="kr-tab-panel" data-p="prop" data-tab="rent">${rentConfigTab(propId)}</div>`
     +`<div class="kr-tab-panel" data-p="prop" data-tab="amenities">${amenitiesTab(propId)}</div>`;
 }
+/* ── Phase 27: move-out wizard ── */
+let MOVEOUT = null;
+async function moveOutWizard(leaseId){
+  const d = DEMO_MODE ? demoMoveOutPrepare(leaseId) : await apiCall('app-moveout?lease=' + leaseId);
+  if(!d.ok){ toast(d.error || 'Failed to load move-out'); return; }
+  MOVEOUT = d;
+  const h = d.handover || {items: []};
+  const items = (h.items||[]).map((it,i)=>`<label class="row-item" style="cursor:pointer;border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin-bottom:6px"><input type="checkbox" id="mo_it_${i}" style="margin-right:8px" ${it.checked?'checked':''}><div class="ri-body"><div class="ri-t" style="font-size:13px">${esc(it.label)}</div></div></label>`).join('');
+  const s = d.settlement || {};
+  const totals = s.totals || {};
+  const mix = `<div class="mix-row"><span>${t('Rent arrears','বকেয়া ভাড়া')}</span><b>${money(totals.rent||0)}</b></div>
+    <div class="mix-row"><span>${t('Utility dues','ইউটিলিটি বকেয়া')}</span><b>${money(totals.utility||0)}</b></div>
+    <div class="mix-row"><span>${t('Damage deductions','ক্ষতির কর্তন')}</span><b>${money(totals.damages||0)}</b></div>
+    <div class="mix-row"><span>${t('Advance deposit','অগ্রিম জমা')}</span><b>${money(s.deposit||0)}</b></div>
+    <div class="mix-row mix-total"><span>${t('Balance after deposit','জমার পর ব্যালেন্স')}</span><b>${money(totals.balance||0)}</b></div>`;
+  openDrawer('🚪 ' + t('Move-out wizard','স্থানান্তর উইজার্ড') + ' — ' + leaseId,
+    `<div class="tab-pad">
+      <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">📋</span>${t('Lease','লিজ')} ${esc(d.lease.id)}</div></div><div class="panel-b">
+        <div class="row-item"><div class="ri-body"><div class="ri-t">${esc(d.tenant.name)}</div><div class="ri-s">${esc(d.unit.name)} · ${esc(d.unit.property)} · ${money(d.lease.rent)}/mo</div></div><div class="ri-r">${badge(d.lease.status)}</div></div>
+        <div class="form-field" style="margin-top:10px"><label>${t('Move-out date','স্থানান্তরের তারিখ')}</label><input type="date" id="moDate" value="${new Date().toISOString().slice(0,10)}"></div>
+      </div></div>
+      <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">✅</span>${t('Handover checklist','হ্যান্ডওভার চেকলিস্ট')} (${h.id||''})</div></div><div class="panel-b">${items}</div></div>
+      <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">🧮</span>${t('Settlement preview','সেটেলমেন্ট প্রিভিউ')}</div></div><div class="panel-b" style="padding:4px 12px">${mix}
+        <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px">${t('Damage deductions','ক্ষতির কর্তন')}</div>
+          <div id="moDed"></div>
+          <button class="btn-ghost" style="width:100%;margin-top:6px" onclick="addDedRow()">＋ ${t('Add deduction','কর্তন যোগ করুন')}</button>
+        </div>
+      </div></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="moveOutClose('${leaseId}')">🚪 ${t('Complete move-out','স্থানান্তর সম্পন্ন')}</button></div>`);
+  const dedEl = document.getElementById('moDed');
+  if(dedEl) addDedRow();
+}
+function addDedRow(){
+  const el = document.getElementById('moDed'); if(!el) return;
+  const row = document.createElement('div');
+  row.className = 'mo-ded-row';
+  row.style.cssText = 'display:flex;gap:8px;margin-bottom:6px';
+  row.innerHTML = `<input class="mo-ded-l" placeholder="${t('Label','লেবেল')}" style="flex:2;padding:7px 10px;border:1px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);font-size:12.5px">
+    <input class="mo-ded-a" type="number" placeholder="৳" min="0" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);font-size:12.5px">
+    <button class="btn-ghost" style="padding:4px 9px;font-size:12px" onclick="this.parentElement.remove()">✕</button>`;
+  el.appendChild(row);
+}
+async function moveOutClose(leaseId){
+  if(!confirm(t('Complete this move-out? This terminates the lease and vacates the unit.','এই স্থানান্তর সম্পন্ন করবেন? লিজ শেষ হবে এবং ইউনিট খালি হবে।'))) return;
+  const deductions = [...document.querySelectorAll('#moDed .mo-ded-row')].map(d=>({label:d.querySelector('.mo-ded-l')?.value||'', amount:parseInt(d.querySelector('.mo-ded-a')?.value||0,10)||0})).filter(x=>x.label&&x.amount>0);
+  const move_out_date = document.getElementById('moDate')?.value || new Date().toISOString().slice(0,10);
+  const body = {action:'close', lease:leaseId, move_out_date, deductions};
+  const d = DEMO_MODE ? demoMoveOutClose(leaseId, body) : await apiCall('app-moveout', body);
+  if(!d.ok){ toast(d.error||'Move-out failed'); return; }
+  const s = d.settlement||{};
+  const col = s.status==='DUE' ? '#EB5757' : '#079455';
+  await refreshData();
+  openDrawer('🚪 ' + t('Move-out complete','স্থানান্তর সম্পন্ন'),
+    `<div style="text-align:center;padding:16px 6px">
+      <div style="font-size:44px">${s.status==='DUE'?'📋':'🎉'}</div>
+      <h3 style="margin:10px 0 4px">${t('Settlement','সেটেলমেন্ট')}: ${esc(s.status||'')}</h3>
+      <div style="font-size:13px;color:var(--text-mute);margin-bottom:14px">${t('Balance','ব্যালেন্স')} <b>${money(s.totals?.balance||0)}</b> · ${t('Refund','রিফান্ড')} <b>${money(s.totals?.refund||0)}</b></div>
+      <div style="font-size:12.5px;line-height:2;text-align:left;display:inline-block;color:var(--text-soft)">
+        ✅ ${t('Lease terminated','লিজ সমাপ্ত')} (${esc(d.lease||'')})<br>✅ ${t('Unit vacated','ইউনিট খালি')} (${esc(d.unit||'')})<br>✅ ${t('Handover checklist completed','হ্যান্ডওভার সম্পন্ন')} (${esc(d.handover||'')})<br>✅ ${t('Tickets closed','টিকিট বন্ধ')}: ${d.tickets_closed||0}<br>✅ ${t('Notice + settlement email sent','নোটিশ ও সেটেলমেন্ট ইমেইল পাঠানো হয়েছে')}
+      </div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Done</button></div>`);
+}
+/* demo-mode parity */
+function demoMoveOutPrepare(leaseId){
+  const l = (DB.leases||[]).find(x=>x.id===leaseId) || {id:leaseId,u:'',t:'',rent:0,adv:0,status:'Active'};
+  const u = unitById(l.u) || {id:'',name:'—',p:''};
+  const p = propById(u.p) || {name:'—'};
+  const ten = tenantById(l.t) || {name:'—'};
+  const items = (DB.handover_checklists||[]).filter(x=>x.lease===leaseId&&x.kind==='move_out');
+  const h = items[0] || {id:'HOV-DEMO',kind:'move_out',items:[
+    {id:'o1',label:'Keys returned (all sets)',checked:0,note:''},{id:'o2',label:'Electric / gas / water meter readings re-taken',checked:0,note:''},
+    {id:'o3',label:'All dues cleared (rent, service, utility recovery)',checked:0,note:''},{id:'o4',label:'Advance/security deposit refund processed (receipt issued)',checked:0,note:''},
+    {id:'o5',label:'Flat condition walkthrough done (photos)',checked:0,note:''},{id:'o6',label:'Furniture/inventory verified against move-in list',checked:0,note:''},
+    {id:'o7',label:'Utilities transferred out of tenant name',checked:0,note:''},{id:'o8',label:'Society/RWA clearance + NOC collected',checked:0,note:''},
+    {id:'o9',label:'Parking spot released',checked:0,note:''},{id:'o10',label:'Agreement formally terminated (lease record updated)',checked:0,note:''}],status:'In Progress'};
+  const arrears = (DB.invoices||[]).filter(i=>i.l===leaseId && i.status!=='Paid').reduce((s,i)=>s+(i.net||0),0);
+  const deposit = l.adv||0;
+  const balance = Math.max(0, arrears - deposit);
+  const status = arrears===0 ? 'NO_DUES' : (balance<=0 ? 'SETTLED' : 'DUE');
+  return {ok:true, lease:{id:l.id,status:l.status,start:l.start,end:l.end,rent:l.rent,adv:l.adv},
+    tenant:{id:ten.id,name:ten.name}, unit:{id:u.id,name:u.name,property:p.name},
+    handover:h, open_tickets:[],
+    settlement:{id:'SET-DEMO',status,totals:{rent:arrears,utility:0,damages:0,total_due:arrears,balance,refund:status==='NO_DUES'?deposit:Math.max(0,-balance)},deposit}};
+}
+function demoMoveOutClose(leaseId, body){
+  const l = DB.leases.find(x=>x.id===leaseId); if(l){ l.status='Terminated'; l.end=body.move_out_date; }
+  const u = l ? unitById(l.u) : null; if(u) u.status='Vacant';
+  const prep = demoMoveOutPrepare(leaseId);
+  prep.settlement.id='SET-DEMO';
+  return {ok:true, settlement:prep.settlement, lease:leaseId, unit:u?u.id:'', handover:'HOV-DEMO', notice:'NTC-DEMO', tickets_closed:0};
+}
 function openDetail(collection, id){
   const row=(DB[collection]||[]).find(x=>String(x.id)===String(id));
   if(!row){toast('Record not found');return}
@@ -3224,6 +3318,9 @@ function openDetail(collection, id){
   if(collection==='tickets' && !(LIVE.user && LIVE.user.role==='tenant')){ foot+=`<button class="btn-outline" onclick="ticketStatusForm('${row.id}')">🔧 Update status</button>`; }
   if(collection==='invoices' && row.status!=='Paid'){ foot+=`<button class="btn-outline" onclick="gatewayPay('${row.id}')">🔐 ${t('Pay online','অনলাইনে পরিশোধ')}</button><button class="btn-primary" onclick="payForm('${row.id}')">💳 Record payment</button>`; }
   if(collection==='invoices'){ foot+=`<button class="btn-outline" onclick="printInvoice('${row.id}')">🖨 ${t('Print / PDF','প্রিন্ট / পিডিএফ')}</button>`; if(LIVE.user&&['superadmin','owner','manager','accountant','crm'].includes(LIVE.user.role)){ foot+=`<button class="btn-outline" onclick="waRemind('${row.id}')">🟢 WhatsApp</button>`; } }
+  if(collection==='leases' && LIVE.user && ['superadmin','owner','manager'].includes(LIVE.user.role) && (row.status==='Active'||row.status==='Pending Registration')){
+    foot+=`<button class="btn-primary" onclick="moveOutWizard('${row.id}')">🚪 ${t('Move out','স্থানান্তর')}</button>`;
+  }
   if(canEdit){ foot+=`<button class="btn-outline" onclick="openForm('${collection}','${row.id}')">✏️ Edit</button><button class="btn-danger" onclick="deleteRow('${collection}','${row.id}')">🗑 Delete</button>`; }
   foot+='</div>';
   let extra='';
