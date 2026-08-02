@@ -884,34 +884,58 @@ const SEED = {
     {id:'CPL-003',entity_type:'property',entity_id:'P-002',item:'fire_safety',label:'Fire safety certificate — Banani Commercial Tower',ref_no:'BFSCD-2042',issue_date:'2025-08-01',expiry_date:'2026-08-01',status:'active',notes:'Annual inspection due now',entity_label:'Banani Commercial Tower'},
     {id:'CPL-004',entity_type:'tenant',entity_id:'T-002',item:'nid',label:'NID on file — Sultana Rahman',ref_no:'1992123456789',issue_date:'',expiry_date:'2036-12-31',status:'active',notes:'Identity document on file',entity_label:'Sultana Rahman'},
     {id:'CPL-005',entity_type:'lease',entity_id:'L-007',item:'lease_expiry',label:'Lease expiry — Sultana Rahman · Apartment 7B',ref_no:'L-007',issue_date:'',expiry_date:'2026-12-14',status:'active',notes:'Renew or vacate before this date',entity_label:'Apartment 7B'}
+  ],
+  utility_tariffs:[
+    {type:'electric',rate:10,standing:0,unit_label:'kWh',enabled:1},
+    {type:'gas',rate:15,standing:0,unit_label:'m³',enabled:1},
+    {type:'water',rate:20,standing:0,unit_label:'m³',enabled:1}
+  ],
+  meter_readings:[
+    {id:'MR-100',unit:'U-001',tenant:'T-001',type:'electric',reading:4125,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
+    {id:'MR-101',unit:'U-001',tenant:'T-001',type:'water',reading:185,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
+    {id:'MR-102',unit:'U-001',tenant:'T-001',type:'electric',reading:3990,month:'2026-06',note:'',ts:'2026-06-27 09:00:00'},
+    {id:'MR-105',unit:'U-010',tenant:'T-002',type:'electric',reading:4125,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
+    {id:'MR-106',unit:'U-010',tenant:'T-002',type:'water',reading:185,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
+    {id:'MR-107',unit:'U-010',tenant:'T-002',type:'electric',reading:3990,month:'2026-06',note:'',ts:'2026-06-27 09:00:00'}
+  ],
+  utility_bills:[
+    {id:'UB-100',unit:'U-001',tenant:'T-001',type:'electric',month:'2026-07',prev_reading:3990,curr_reading:4125,usage:135,rate:10,standing:0,amount:1350,status:'Unpaid',paid_at:'',note:''},
+    {id:'UB-101',unit:'U-001',tenant:'T-001',type:'water',month:'2026-07',prev_reading:150,curr_reading:185,usage:35,rate:20,standing:0,amount:700,status:'Paid',paid_at:'2026-08-01 10:00:00',note:''},
+    {id:'UB-103',unit:'U-010',tenant:'T-002',type:'electric',month:'2026-07',prev_reading:3990,curr_reading:4125,usage:135,rate:10,standing:0,amount:1350,status:'Unpaid',paid_at:'',note:''},
+    {id:'UB-104',unit:'U-010',tenant:'T-002',type:'water',month:'2026-07',prev_reading:150,curr_reading:185,usage:35,rate:20,standing:0,amount:700,status:'Paid',paid_at:'2026-08-01 10:00:00',note:''}
+  ],
+  renewal_requests:[
+    {id:'RR-100',lease:'L-007',tenant:'T-002',months:12,new_rent:44000,note:'Please renew',status:'Pending',decided_by:'',decided_at:'',ts:'2026-08-02 09:00:00'},
+    {id:'RR-101',lease:'L-003',tenant:'T-003',months:24,new_rent:460000,note:'',status:'Approved',decided_by:'Shakil Ahmed',decided_at:'2026-07-28 11:00:00',ts:'2026-07-25 10:00:00'},
+    {id:'RR-102',lease:'L-007',tenant:'T-002',months:12,new_rent:42800,note:'7% escalation per Dhanmondi policy',status:'Offered',decided_by:'Rofiqul Islam',decided_at:'2026-08-01 09:00:00',ts:'2026-08-01 09:00:00'}
   ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','statements','maintenance','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','utilities','maintenance','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
-  {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','maintenance','ai','notices','documents','analytics']},
+  {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','invoices','payments','ai','notices','documents','referrals']},
   {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','ai','notices','documents','referrals']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','ai','analytics','notices','documents','recon','templates']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','utilities','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
-  {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
+  {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['leads','📥','Leads'],['compliance','⚖️','Compliance']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['leads','📥','Leads'],['compliance','⚖️','Compliance']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','maintenance':'🔧','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','maintenance':'Maintenance','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','utilities':'🔌','maintenance':'🔧','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','utilities':'Utilities','maintenance':'Maintenance','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Maintenance':'রক্ষণাবেক্ষণ','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -2193,6 +2217,153 @@ async function complianceRemind(){
   await refreshData();
 }
 
+/* ═══ Phase 34: utilities & service billing ═══ */
+async function utilitiesLoad(){
+  const host = document.getElementById('utilitiesLive'); if(!host) return;
+  const month = document.getElementById('utilMonth')?.value || '2026-08';
+  const isStaff = ['superadmin','owner','manager','accountant'].includes(role().id);
+  const isTenant = role().id === 'tenant';
+  let bills=[], readings=[], tariffs={}, summary={};
+  if(TOKEN && !DEMO_MODE){
+    const [b, r, t, s] = await Promise.all([
+      apiCall('app-utility-bill-list'), apiCall('app-meter-list'),
+      apiCall('app-utility-tariff-get'), apiCall('app-utility-summary?month='+month)]);
+    if(b.ok) bills=b.bills||[]; if(r.ok) readings=r.readings||[]; if(t.ok) tariffs=t.tariffs||{};
+    if(s.ok) summary=s;
+  } else {
+    bills=(DB.utility_bills||[]).map(x=>({...x}));
+    readings=(DB.meter_readings||[]).map(x=>({...x}));
+    (DB.utility_tariffs||[]).forEach(t=>{tariffs[t.type]=t});
+    const rows=bills.filter(x=>x.month===month&&x.status!=='Void');
+    summary={month,bills:rows,billed:rows.reduce((s,x)=>s+x.amount,0),paid:rows.filter(x=>x.status==='Paid').reduce((s,x)=>s+x.amount,0),unpaid:rows.filter(x=>x.status==='Unpaid').reduce((s,x)=>s+x.amount,0),count:rows.length};
+  }
+  const mBills=bills.filter(x=>x.month===month&&x.status!=='Void');
+  if(isTenant){
+    const mine=(DB.units||[]).filter(u=>{const l=(DB.leases||[]).find(x=>x.u===u.id&&['Active','Pending Registration'].includes(x.status));return l&&l.t===(DB.tenants||[]).find(x=>x.sub_email===LIVE.user?.email)?.id}).map(u=>u.id);
+    // live tenant scoping already applied by API; demo: filter own units
+    if(DEMO_MODE){ const own=readings.filter(x=>x.unit==='U-010').map(x=>x.unit); }
+  }
+  const UT={'electric':'⚡','gas':'🔥','water':'💧'};
+  const billed=summary.billed||0, paid=summary.paid||0, unpaid=summary.unpaid||0;
+  let h=statsRow([
+    stat(t('Billed','বিল হয়েছে'),moneyC(billed),month,'','🧾'),
+    stat(t('Paid','পরিশোধিত'),moneyC(paid),t('collected','আদায় হয়েছে'),'pos','✅'),
+    stat(t('Unpaid','অপরিশোধিত'),moneyC(unpaid),unpaid?t('needs follow-up','ফলো-আপ প্রয়োজন'):t('all settled','সব পরিশোধিত'),unpaid?'warn':'pos','⏳'),
+    stat(t('Bills','বিল'),summary.count||0,t('this month','এই মাসে'),'','🔌')
+  ]);
+  if(isStaff){
+    const tarKeys=Object.keys(tariffs).length?Object.keys(tariffs):['electric','gas','water'];
+    h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">⚙️</span>${t('Tariffs','ট্যারিফ')}</div></div><div class="panel-b"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">${tarKeys.map(type=>{const t2=tariffs[type]||{rate:0,standing:0,unit_label:''};return `<div><div class="c-sub" style="margin-bottom:4px">${UT[type]||'🔌'} ${type.toUpperCase()}</div><div style="display:flex;gap:6px;align-items:center"><input id="tar_${type}" type="number" value="${t2.rate}" style="width:80px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg-alt)" ${['superadmin','owner','manager'].includes(role().id)?'':'disabled'}> <span class="c-sub">৳/${esc(t2.unit_label||'unit')}</span></div></div>`;}).join('')}${['superadmin','owner','manager'].includes(role().id)?`<button class="btn-outline" style="padding:7px 14px" onclick="utilityTariffSave()">${t('Save tariffs','ট্যারিফ সংরক্ষণ')}</button>`:''}</div></div></div>`;
+  }
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔌</span>${t('Bills','বিল')} — ${month}</div>${isTenant?`<span class="link" onclick="utilityReadingForm()">＋ ${t('Submit meter reading','মিটার রিডিং জমা দিন')}</span>`:''}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Unit','ইউনিট')}</th><th>${t('Type','ধরন')}</th><th>${t('Usage','ব্যবহার')}</th><th>${t('Rate','রেট')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th>${isStaff?'<th>'+t('Actions','অ্যাকশন')+'</th>':''}</tr></thead><tbody>${mBills.map(x=>`<tr><td>${esc(x.unit_name||x.unit)}${x.tenant_name?'<div class="c-sub">'+esc(x.tenant_name)+'</div>':''}</td><td>${UT[x.type]||''} ${esc(x.type)}</td><td class="t-amount">${(x.usage||0).toLocaleString()} ${esc(tariffs[x.type]?.unit_label||'')}</td><td>${x.rate}৳</td><td class="t-amount">${money(x.amount)}</td><td>${badge(x.status)}</td>${isStaff?`<td><div style="display:flex;gap:4px">${x.status==='Unpaid'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="utilityBillPay('${esc(x.id)}')">✓ ${t('Pay','পরিশোধ')}</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="utilityBillVoid('${esc(x.id)}')">✕</button>`:''}</div></td>`:''}</tr>`).join('')||`<tr><td colspan="${isStaff?7:6}" class="m">${t('No bills this month — run billing after readings are in.','এই মাসে কোনো বিল নেই — রিডিং জমা হলে বিলিং চালান।')}</td></tr>`}</tbody></table></div></div>`;
+  if(isTenant){
+    const mine=(DB.utility_bills||[]).filter(x=>x.unit==='U-010'&&x.status==='Unpaid');
+    const myDue=mine.reduce((s,x)=>s+x.amount,0);
+    if(myDue>0) h+=`<div class="panel" style="margin-top:14px"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><div><div class="c-name">${t('Your utility dues','আপনার ইউটিলিটি বকেয়া')}</div><div class="c-sub">${t('Pay along with next rent invoice','পরবর্তী ভাড়ার সাথে পরিশোধ করুন')}</div></div><div style="display:flex;align-items:center;gap:10px"><span class="t-amount" style="font-size:20px;font-weight:800;color:var(--warn)">${money(myDue)}</span></div></div></div></div>`;
+  }
+  host.innerHTML=h;
+}
+async function utilityRunMonth(){
+  const month=document.getElementById('utilMonth')?.value||'2026-08';
+  const d = DEMO_MODE ? {ok:true,generated:0,updated:0,skipped:0,total_amount:0} : await apiCall('app-utility-run',{month});
+  if(!d.ok){ toast(d.error||'Run failed'); return; }
+  toast(`⚡ ${t('Billing run','বিলিং রান')}: ${t('new','নতুন')} ${d.generated} · ${t('updated','আপডেট')} ${d.updated} · ৳${(d.total_amount||0).toLocaleString()}`);
+  await refreshData(); if(state.view==='utilities'){ render(); }
+}
+async function utilityTariffSave(){
+  const payload={action:'save',tariffs:{}};
+  ['electric','gas','water'].forEach(type=>{const el=document.getElementById('tar_'+type);if(el)payload.tariffs[type]={rate:parseFloat(el.value)||0,standing:0,unit_label:type==='electric'?'kWh':'m³',enabled:1};});
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-utility-tariff-save', payload);
+  if(!d.ok){ toast(d.error||'Save failed'); return; }
+  toast(t('Tariffs saved','ট্যারিফ সংরক্ষিত হয়েছে'));
+  await refreshData(); if(state.view==='utilities'){ render(); }
+}
+async function utilityBillPay_removed_unused(id){ /* superseded by Phase 20 context-aware utilityBillPay */ }
+async function utilityBillVoid(id){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-utility-bill-pay',{id,action:'void'});
+  if(!d.ok){ toast(d.error||'Void failed'); return; }
+  toast(t('Bill voided','বিল বাতিল হয়েছে'));
+  if(DEMO_MODE){ const x=(DB.utility_bills||[]).find(b=>b.id===id); if(x) x.status='Void'; }
+  await refreshData(); if(state.view==='utilities'){ render(); }
+}
+function utilityReadingForm(){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Meter','মিটার')}</label><select id="ur_type"><option value="electric">⚡ Electric (kWh)</option><option value="water">💧 Water (m³)</option><option value="gas">🔥 Gas (m³)</option></select></div>
+    <div class="form-field"><label>${t('Month','মাস')}</label><input id="ur_month" type="month" value="${document.getElementById('utilMonth')?.value||'2026-08'}"></div>
+    <div class="form-field full"><label>${t('Current reading','বর্তমান রিডিং')}</label><input id="ur_reading" type="number" placeholder="e.g. 4320"></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="utilityReadingSubmit()">${t('Submit reading','রিডিং জমা দিন')}</button></div>`;
+  openDrawer(`🔌 ${t('Submit meter reading','মিটার রিডিং জমা দিন')}`, body, foot);
+}
+async function utilityReadingSubmit(){
+  const payload={action:'submit',unit:(DB.units||[]).find(u=>{const l=(DB.leases||[]).find(x=>x.u===u.id&&['Active','Pending Registration'].includes(x.status));return l&&l.t===(DB.tenants||[]).find(x=>x.sub_email===LIVE.user?.email)?.id})?.id||'U-010',type:document.getElementById('ur_type')?.value,reading:parseInt(document.getElementById('ur_reading')?.value||'0',10),month:document.getElementById('ur_month')?.value};
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-meter-submit', payload);
+  if(!d.ok){ toast(d.error||'Submit failed'); return; }
+  toast(t('Reading submitted ✅','রিডিং জমা হয়েছে ✅'));
+  closeDrawer(); await refreshData(); if(state.view==='utilities'){ render(); }
+}
+
+/* ═══ Phase 35: renewals & escalation ═══ */
+async function renewalsLoad(){
+  const host=document.getElementById('renewalsLive'); if(!host) return;
+  let rows=[];
+  if(TOKEN&&!DEMO_MODE){
+    const res=await apiCall('app-renewal-list');
+    if(!res.ok){host.innerHTML=`<div class="c-sub">${esc(res.error||'Failed')}</div>`;return}
+    rows=res.requests||[];
+  } else {
+    rows=(DB.renewal_requests||[]).map(r=>{const l=(DB.leases||[]).find(x=>x.id===r.lease);const u=l?(DB.units||[]).find(x=>x.id===l.u):null;return {...r,tenant_name:(DB.tenants||[]).find(x=>x.id===r.tenant)?.name||'',property_name:u?(DB.properties||[]).find(x=>x.id===u.p)?.name||'':'' ,unit_name:u?.name||''};});
+  }
+  const pending=rows.filter(r=>r.status==='Pending');
+  const offered=rows.filter(r=>r.status==='Offered');
+  const other=rows.filter(r=>r.status!=='Pending'&&r.status!=='Offered');
+  const card=(r,extra)=>`<div class="row-item"><div class="ri-ic">🔄</div><div class="ri-body"><div class="ri-t">${esc(r.lease)} · ${esc(r.tenant_name||'')} · ${esc(r.property_name||'')} (${esc(r.unit_name||'—')})</div><div class="ri-s">+${r.months} ${t('months','মাস')}${r.new_rent?' · '+t('new rent','নতুন ভাড়া')+' '+money(r.new_rent):''}${r.note?' · '+esc(r.note):''}${r.status!=='Pending'?' · '+esc(r.status):''}</div></div>${extra||''}</div>`;
+  let h=statsRow([
+    stat(t('Pending requests','অপেক্ষমাণ'),pending.length,t('tenant asked','টেন্যান্ট চেয়েছে'),pending.length?'warn':'pos','📨'),
+    stat(t('Offered','অফার করা হয়েছে'),offered.length,t('awaiting tenant','টেন্যান্টের অপেক্ষায়'),offered.length?'warn':'pos','🤝'),
+    stat(t('Approved','অনুমোদিত'),rows.filter(r=>r.status==='Approved').length,t('extended','সম্প্রসারিত'),'pos','✅'),
+    stat(t('Active leases','সক্রিয় লিজ'),(DB.leases||[]).filter(l=>l.status==='Active'||l.status==='Pending Registration').length,t('eligible for offer','অফারের যোগ্য'),'','📄')
+  ]);
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t">${t('Pending tenant requests','অপেক্ষমাণ টেন্যান্ট অনুরোধ')}</div></div><div class="panel-b">${pending.length?pending.map(r=>card(r,`<div class="ri-r" style="display:flex;gap:4px"><button class="btn-primary" style="padding:3px 9px;font-size:11px" onclick="decideRenewal('${esc(r.id)}','approve')">✓ ${t('Approve','অনুমোদন')}</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="decideRenewal('${esc(r.id)}','reject')">✕ ${t('Reject','বাতিল')}</button></div>`)).join(''):`<div class="empty">${t('No pending requests 🎉','কোনো অপেক্ষমাণ অনুরোধ নেই 🎉')}</div>`}</div></div>`;
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t">${t('Owner offers (awaiting tenant)','মালিকের অফার (টেন্যান্টের অপেক্ষায়)')}</div></div><div class="panel-b">${offered.length?offered.map(r=>card(r,`<div class="ri-r" style="display:flex;gap:4px"><button class="btn-outline" style="padding:3px 9px;font-size:11px" onclick="decideRenewal('${esc(r.id)}','approve')">✓ ${t('Approve on behalf','পক্ষে অনুমোদন')}</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="decideRenewal('${esc(r.id)}','reject')">✕ ${t('Withdraw','প্রত্যাহার')}</button></div>`)).join(''):`<div class="empty">${t('No open offers','কোনো খোলা অফার নেই')}</div>`}</div></div>`;
+  h+=`<div class="panel"><div class="panel-h"><div class="t">${t('Recent','সাম্প্রতিক')}</div></div><div class="panel-b">${other.length?other.slice(0,6).map(r=>card(r)).join(''):`<div class="empty">${t('Nothing yet','এখনো কিছু নেই')}</div>`}</div></div>`;
+  host.innerHTML=h;
+}
+function renewalOfferForm(){
+  const active=(DB.leases||[]).filter(l=>l.status==='Active'||l.status==='Pending Registration');
+  const opts=active.map(l=>{const u=(DB.units||[]).find(x=>x.id===l.u);const p=u?(DB.properties||[]).find(x=>x.id===u.p):null;const esc0=p?(DB.property_rent||[]).find(x=>x.prop===p.id)?.escalation_pct||0:0;return `<option value="${esc(l.id)}" data-escal="${esc0}">${esc(l.id)} · ${esc((DB.tenants||[]).find(x=>x.id===l.t)?.name||'')} · ${esc(u?.name||'')} (${esc0}% escal)</option>`;}).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Lease','লিজ')}</label><select id="ro_lease" onchange="renewalEscalPrefill()">${opts}</select></div>
+    <div class="form-field"><label>${t('Months','মাস')}</label><input id="ro_months" type="number" value="12" min="1" max="36"></div>
+    <div class="form-field"><label>${t('Escalation %','এসকেলেশন %')}</label><input id="ro_escal" type="number" value="0" min="0" max="100"></div>
+    <div class="form-field full"><label>${t('New rent (৳, optional — overrides escalation)','নতুন ভাড়া (ঐচ্ছিক)')}</label><input id="ro_rent" type="number" placeholder="${t('auto from escalation','এসকেলেশন থেকে অটো')}"></div>
+    <div class="form-field full"><label>${t('Note','নোট')}</label><input id="ro_note" placeholder="e.g. market adjustment"></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="renewalOfferSubmit()">🤝 ${t('Send offer','অফার পাঠান')}</button></div>`;
+  openDrawer(`🔄 ${t('New renewal offer','নতুন রিনিউয়াল অফার')}`, body, foot);
+  setTimeout(renewalEscalPrefill,0);
+}
+function renewalEscalPrefill(){
+  const sel=document.getElementById('ro_lease');
+  const escEl=document.getElementById('ro_escal');
+  if(sel&&escEl){ const o=sel.options[sel.selectedIndex]; if(o&&o.dataset.escal!==undefined) escEl.value=o.dataset.escal; }
+}
+async function renewalOfferSubmit(){
+  const payload={action:'offer',lease:document.getElementById('ro_lease')?.value,months:parseInt(document.getElementById('ro_months')?.value||'12',10),escalation:parseFloat(document.getElementById('ro_escal')?.value||'0'),new_rent:parseInt(document.getElementById('ro_rent')?.value||'0',10),note:document.getElementById('ro_note')?.value};
+  const d = DEMO_MODE ? {ok:true,new_rent:payload.new_rent||Math.round(((DB.leases||[]).find(x=>x.id===payload.lease)?.rent||0)*(1+payload.escalation/100))} : await apiCall('app-renewal-offer', payload);
+  if(!d.ok){ toast(d.error||'Offer failed'); return; }
+  toast(`${t('Offer sent','অফার পাঠানো হয়েছে')} — ${t('new rent','নতুন ভাড়া')} ${money(d.new_rent||0)}`);
+  if(DEMO_MODE){ (DB.renewal_requests=DB.renewal_requests||[]).push({id:'RR-'+Math.floor(Math.random()*900+100),lease:payload.lease,tenant:(DB.leases||[]).find(x=>x.id===payload.lease)?.t||'',months:payload.months,new_rent:d.new_rent||payload.new_rent,note:payload.note,status:'Offered',decided_by:LIVE.user?.name||'Owner',decided_at:'',ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+  closeDrawer(); await refreshData(); if(state.view==='renewals'){ render(); }
+}
+async function renewalRespond(id, action){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-renewal-respond',{id,action});
+  if(!d.ok){ toast(d.error||'Response failed'); return; }
+  toast(action==='accept'?t('Renewal accepted 🎉','রিনিউয়াল গ্রহণ করা হয়েছে 🎉'):t('Offer declined','অফার বাতিল করা হয়েছে'));
+  if(DEMO_MODE){ const r=(DB.renewal_requests||[]).find(x=>x.id===id); if(r){ r.status=action==='accept'?'Approved':'Rejected'; if(action==='accept'){ const l=(DB.leases||[]).find(x=>x.id===r.lease); if(l){ const end=new Date((l.end||new Date().toISOString().slice(0,10))+'T00:00:00'); end.setMonth(end.getMonth()+(r.months||12)); l.end=end.toISOString().slice(0,10); if(r.new_rent>0) l.rent=r.new_rent; } } } }
+  await refreshData(); if(state.view==='portal'){ render(); }
+}
+
 function demoPortalData(){
   const tid=(DB.tenants||[]).find(x=>x.sub_email==='sultana@krtaker.com')?.id || (DB.tenants||[]).find(x=>x.name==='Sultana Rahman')?.id || 'T-002';
   const leases=(DB.leases||[]).filter(l=>l.t===tid);
@@ -2227,7 +2398,8 @@ function demoPortalData(){
   const tickets=(DB.tickets||[]).filter(x=>unitIds.includes(x.u));
   const notices=(DB.notices||[]).slice(0,3);
   /* Phase 16: demo parity — renewal requests + meter readings */
-  const renewals=[{id:'RR-100',lease:'L-007',tenant:tid,months:12,new_rent:44000,note:'Please renew',status:'Pending',decided_by:'',decided_at:'',ts:'2026-08-02 09:00:00'}];
+  const renewals=[{id:'RR-100',lease:'L-007',tenant:tid,months:12,new_rent:44000,note:'Please renew',status:'Pending',decided_by:'',decided_at:'',ts:'2026-08-02 09:00:00'},
+    {id:'RR-102',lease:'L-007',tenant:tid,months:12,new_rent:42800,note:'7% escalation per Dhanmondi policy',status:'Offered',decided_by:'Rofiqul Islam',decided_at:'2026-08-01 09:00:00',ts:'2026-08-01 09:00:00'}];
   const meters=[
     {id:'MR-100',unit:'U-010',tenant:tid,type:'electric',reading:4125,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
     {id:'MR-101',unit:'U-010',tenant:tid,type:'water',reading:185,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
@@ -2331,8 +2503,8 @@ function renewalChipHtml(l,d){
   if(!rr.length) return '';
   return `<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${rr.map(x=>{
     const col=x.status==='Approved'?'b-green':x.status==='Rejected'?'b-red':'b-orange';
-    const lbl=t('Renewal','রিনিউয়াল')+': '+(x.status==='Pending'?t('pending','অপেক্ষমাণ'):x.status==='Approved'?t('approved','অনুমোদিত'):t('rejected','বাতিল'));
-    return `<span class="badge ${col}">🔄 ${lbl}${x.status==='Approved'&&x.new_end?' · '+esc(String(x.new_end).slice(0,10)):''}</span>`;
+    const lbl=t('Renewal','রিনিউয়াল')+': '+(x.status==='Pending'?t('pending','অপেক্ষমাণ'):x.status==='Approved'?t('approved','অনুমোদিত'):x.status==='Offered'?t('offer','অফার'):t('rejected','বাতিল'));
+    return `<span class="badge ${col}">🔄 ${lbl}${x.status==='Approved'&&x.new_end?' · '+esc(String(x.new_end).slice(0,10)):''}${x.status==='Offered'&&x.new_rent?' · '+money(x.new_rent)+'/mo':''}</span>${x.status==='Offered'?`<button class="btn-primary" style="padding:3px 9px;font-size:11px" onclick="renewalRespond('${esc(x.id)}','accept')">✓ ${t('Accept','গ্রহণ')}</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="renewalRespond('${esc(x.id)}','decline')">✕</button>`:''}`;
   }).join('')}</div>`;
 }
 function meterPanelHtml(d){
@@ -2409,11 +2581,17 @@ function utilityBillPanelHtml(d){
   return `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('My utility bills','আমার ইউটিলিটি বিল')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Meter','মিটার')}</th><th>${t('Month','মাস')}</th><th>${t('Usage','ব্যবহার')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="6" class="c-sub">${t('No utility bills yet.','এখনো কোনো ইউটিলিটি বিল নেই।')}</td></tr>`}</tbody></table></div></div>`;
 }
 async function utilityBillPay(id){
-  if(!TOKEN||DEMO_MODE){toast(t('Sign in to pay your utility bill.','ইউটিলিটি বিল পরিশোধ করতে সাইন ইন করুন।'));return}
+  if(DEMO_MODE){
+    const x=(DB.utility_bills||[]).find(b=>b.id===id);
+    if(x){ x.status='Paid'; x.paid_at=new Date().toISOString(); }
+    toast(t('Utility bill paid ✅','ইউটিলিটি বিল পরিশোধিত ✅'));
+    if(document.getElementById('utilitiesLive')){ await refreshData(); utilitiesLoad(); } else { loadPortal(); }
+    return;
+  }
   const res=await apiCall('app-utility-bill-pay',{id,action:'pay'});
   if(!res.ok){toast(res.error||'Failed');return}
   toast(t('Utility bill paid ✅','ইউটিলিটি বিল পরিশোধিত ✅'));
-  loadPortal();
+  if(document.getElementById('utilitiesLive')){ await refreshData(); utilitiesLoad(); } else { loadPortal(); }
 }
 async function utilityLoadBills(){
   const host=document.getElementById('utilBillsHost'); if(!host) return;
@@ -2666,7 +2844,7 @@ async function decideRenewal(id, action){
   const res=await apiCall('app-renewal-decide',{id,action});
   if(!res.ok){toast(res.error||'Failed');return}
   toast(action==='approve'?t('Renewal approved ✅','রিনিউয়াল অনুমোদিত ✅'):t('Renewal rejected','রিনিউয়াল বাতিল করা হয়েছে'));
-  renewalsPanel();
+  if(document.getElementById('renewalsLive')){ await refreshData(); renewalsLoad(); } else { renewalsPanel(); }
 }
 async function meterDrawer(unitId){
   openDrawer(t('Meter readings','মিটার রিডিং')+(unitId?' — '+unitId:''), `<div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div>`);
@@ -3093,6 +3271,20 @@ const renderers={
     let h=pageHead(t('Leasing pipeline','লিজিং পাইপলাইন'),t('Every inquiry from listing to lease — assign, follow up, convert.','লিস্টিং থেকে লিজ পর্যন্ত প্রতিটি ইনকোয়ারি — অ্যাসাইন, ফলো-আপ, কনভার্ট করুন।'),`<button class="btn-primary" onclick="leadForm()">＋ ${t('Add lead','লিড যোগ করুন')}</button>`);
     h+=`<div id="leadsLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>leadsLoad(),0);
+    return h;
+  },
+  utilities(){
+    const isStaff = ['superadmin','owner','manager','accountant'].includes(role().id);
+    const months=['2026-07','2026-08'];
+    let h=pageHead(t('Utilities & service billing','ইউটিলিটি ও সার্ভিস বিলিং'),t('Meter readings → bills from tariffs → pay alongside rent.','মিটার রিডিং → ট্যারিফ থেকে বিল → ভাড়ার পাশাপাশি পরিশোধ।'),`<span style="display:inline-flex;align-items:center;gap:8px">${t('Month','মাস')} <select id="utilMonth" style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-alt);font-weight:600" onchange="utilitiesLoad()">${months.map(m=>`<option value="${m}">${m}</option>`).join('')}</select></span>${isStaff?`<button class="btn-primary" onclick="utilityRunMonth()">⚡ ${t('Run billing for month','মাসের বিলিং চালান')}</button>`:''}`);
+    h+=`<div id="utilitiesLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>utilitiesLoad(),0);
+    return h;
+  },
+  renewals(){
+    let h=pageHead(t('Renewals & escalation','রিনিউয়াল ও এসকেলেশন'),t('Renewal offers with auto escalation — approve, or let tenants accept from their portal.','অটো এসকেলেশনসহ রিনিউয়াল অফার — অনুমোদন করুন, বা টেন্যান্ট তাদের পোর্টাল থেকে গ্রহণ করুক।'),`<button class="btn-primary" onclick="renewalOfferForm()">＋ ${t('New renewal offer','নতুন রিনিউয়াল অফার')}</button>`);
+    h+=`<div id="renewalsLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>renewalsLoad(),0);
     return h;
   },
   statements(){
