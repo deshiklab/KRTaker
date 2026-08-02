@@ -989,7 +989,8 @@ function render(){
   const R = renderers[state.view] || renderDashboard;
   $('viewRoot').innerHTML=R();
   enhanceTables();
-  if(state.view==='leases' && ['superadmin','owner','manager'].includes(role().role)) setTimeout(renewalsPanel,0);
+  if(state.view==='leases' && ['superadmin','owner','manager'].includes(role().id)) setTimeout(renewalsPanel,0);
+  if(state.view==='tenants' && ['superadmin','owner','manager'].includes(role().id)) setTimeout(loadScores,0);
 }
 
 /* ═══ Table toolkit (REM-ERP style: search · status filter · sort · paginate · export · columns · refresh) ═══ */
@@ -1643,6 +1644,7 @@ function demoPortalData(){
   return {tenant:{id:tid,name:(DB.tenants||[]).find(x=>x.id===tid)?.name||'Tenant'},
     leases:enrich,invoices,payments,receipts,docs,handover,tickets,notices,
     renewals,meters,
+    score:demoScoreFor(tid),
     stats:{outstanding,paid_total:paidTotal,next_due:next?{id:next.id,m:next.m,amount:next.due}:null,tickets_open:tickets.filter(x=>x.status!=='Closed').length,min_days_left:minLeft}};
 }
 function portalHtml(d){
@@ -1663,6 +1665,17 @@ function portalHtml(d){
     stat(t('Lease countdown','লিজ কাউন্টডাউন'),S.min_days_left!=null?(S.min_days_left+' '+t('days','দিন')):'—',S.min_days_left!=null?(S.min_days_left<60?t('renews soon — plan ahead','শীঘ্রই মেয়াদ শেষ — আগাম পরিকল্পনা করুন'):t('of your tenancy','আপনার টেন্যান্সির')):t('no active lease','কোনো সক্রিয় লিজ নেই'),S.min_days_left!=null&&S.min_days_left<60?'warn':'up','⏳'),
     stat(t('My tickets','আমার টিকিট'),S.tickets_open||0,t('repairs & requests','মেরামত ও অনুরোধ'),'','🔧')
   ]);
+  if(d.score && d.score.score!=null){
+    const sc=d.score, col=SCORE_COLORS[sc.band]||'#8A94A6';
+    const tip=(sc.tips||[]).slice(0,3).map(x=>`<span style="display:inline-block;background:var(--bg-alt);border:1px solid var(--border);padding:4px 10px;border-radius:999px;font-size:11.5px;color:var(--text-soft);margin:3px 6px 0 0">💡 ${esc(x)}</span>`).join('');
+    h+=`<div class="panel" style="margin-bottom:18px"><div class="panel-b"><div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      ${donut(sc.score,col,sc.band,sc.score+'/100')}
+      <div style="flex:1;min-width:220px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:700">${t('My tenant score','আমার স্কোর')}</span>${badge(sc.band)}</div>
+      <div style="font-size:12.5px;color:var(--text-soft);margin-top:6px;line-height:1.6">${t('Your scorecard is built from payment history, lease stability, property care and compliance.','আপনার স্কোরকার্ড পেমেন্ট ইতিহাস, লিজ স্থিতিশীলতা, সম্পত্তি যত্ন ও সম্মতি থেকে তৈরি।')}</div>
+      ${tip?`<div style="margin-top:8px">${tip}</div>`:''}
+      ${authed?`<button class="btn-ghost" style="margin-top:10px;padding:5px 12px;font-size:11.5px" onclick="printVettingReport('${esc(d.tenant.id)}')">🖨 ${t('Print report','রিপোর্ট প্রিন্ট')}</button>`:''}
+      </div></div></div></div>`;
+  }
   h+=`<div class="grid grid-2">`;
   h+=`<div>`;
   (d.leases||[]).forEach(l=>{ h+=portalLeaseCard(l,d); });
@@ -1787,9 +1800,18 @@ async function submitMeter(){
 async function renewalsPanel(){
   const host=document.getElementById('renewalsHost');
   if(!host) return;
-  const res=await apiCall('app-renewal-list');
-  if(!res.ok){host.innerHTML=`<div class="c-sub">${esc(res.error||'Failed')}</div>`;return}
-  const rows=res.requests||[];
+  let rows=[];
+  if(TOKEN&&!DEMO_MODE){
+    const res=await apiCall('app-renewal-list');
+    if(!res.ok){host.innerHTML=`<div class="c-sub">${esc(res.error||'Failed')}</div>`;return}
+    rows=res.requests||[];
+  } else {
+    /* demo parity */
+    rows=[
+      {id:'RR-100',lease:'L-007',tenant_name:'Sultana Rahman',property_name:'Dhanmondi Apartment',unit_name:'Apartment 7B',months:12,new_rent:44000,note:'Please renew',status:'Pending'},
+      {id:'RR-101',lease:'L-003',tenant_name:'Orbit Textiles Ltd',property_name:'Banani Commercial Tower',unit_name:'Floor 1 (Retail)',months:24,new_rent:460000,note:'',status:'Approved'}
+    ];
+  }
   const pending=rows.filter(r=>r.status==='Pending');
   const other=rows.filter(r=>r.status!=='Pending');
   const card=r=>`<div class="row-item"><div class="ri-ic">🔄</div><div class="ri-body"><div class="ri-t">${esc(r.lease)} · ${esc(r.tenant_name||'')} · ${esc(r.property_name||'')} (${esc(r.unit_name||'—')})</div><div class="ri-s">+${r.months} ${t('months','মাস')}${r.new_rent?' · '+t('new rent','নতুন ভাড়া')+' '+money(r.new_rent):''}${r.note?' · '+esc(r.note):''}${r.status!=='Pending'?' · '+esc(r.status):''}</div></div>${r.status==='Pending'?`<div class="ri-r" style="display:flex;gap:4px"><button class="btn-primary" style="padding:3px 9px;font-size:11px" onclick="decideRenewal('${esc(r.id)}','approve')">✓ ${t('Approve','অনুমোদন')}</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="decideRenewal('${esc(r.id)}','reject')">✕ ${t('Reject','বাতিল')}</button></div>`:''}</div>`;
@@ -1836,6 +1858,124 @@ async function viewTenantPortal(tid){
 /* ═══ MODULE VIEWS ═══ */
 function invLbl(invId){const inv=invoiceById(invId);if(!inv)return '—';const l=leaseById(inv.l);return (l?unitById(l.u)?.name+' · ':'')+inv.m}
 
+/* ═══ Phase 17: tenant report card (renter risk score + landlord vetting) ═══ */
+const SCORE_COLORS={Excellent:'#059669',Good:'#2F80ED',Fair:'#D97706',Risky:'#B91C1C'};
+const SCORE_CLASS={Excellent:'b-green',Good:'b-blue',Fair:'b-orange',Risky:'b-red'};
+function scoreBand(s){return s>=80?'Excellent':s>=60?'Good':s>=40?'Fair':'Risky'}
+async function loadScores(){
+  let map={};
+  if(TOKEN&&!DEMO_MODE){
+    const r=await apiCall('app-score-list');
+    if(r.ok&&r.scores) r.scores.forEach(x=>{map[x.tenant.id]=x;});
+  } else {
+    (DB.tenants||[]).forEach(te=>{map[te.id]=demoScoreFor(te.id);});
+  }
+  Object.keys(map).forEach(tid=>{
+    const el=document.getElementById('sc-'+tid);
+    if(el) el.innerHTML=`<span class="badge ${SCORE_CLASS[map[tid].band]||'b-gray'}" title="${t('Tenant score','ভাড়াটিয়া স্কোর')}: ${map[tid].score}/100 · ${map[tid].band}">${map[tid].score}</span>`;
+  });
+}
+function demoScoreFor(tid){
+  const te=tenantById(tid); if(!te) return {score:0,band:'Risky',factors:{payment:0,stability:0,care:0,compliance:0},tips:[]};
+  const leases=(DB.leases||[]).filter(l=>l.t===tid);
+  const leaseIds=leases.map(l=>l.id);
+  const unitIds=leases.map(l=>l.u).filter(Boolean);
+  const invoices=(DB.invoices||[]).filter(i=>leaseIds.includes(i.l));
+  const invIds=invoices.map(i=>i.id);
+  const pays=(DB.payments||[]).filter(p=>invIds.includes(p.inv)&&p.status==='Success');
+  const paidBy={}; pays.forEach(p=>paidBy[p.inv]=(paidBy[p.inv]||0)+p.amount);
+  let paidCount=0,overdueCount=0;
+  invoices.forEach(iv=>{const paid=paidBy[iv.id]||0;if(iv.status==='Paid'||paid>=iv.net)paidCount++;else if(iv.m<new Date().toISOString().slice(0,7))overdueCount++;});
+  const totalInv=invoices.length;
+  const paidRatio=totalInv?paidCount/totalInv:0.5;
+  let onTime=0,lateSum=0;
+  pays.forEach(p=>{const iv=invoices.find(x=>x.id===p.inv);if(!iv)return;const daysLate=Math.floor((new Date(p.date)-new Date(iv.m+'-01'))/86400000)-3;if(daysLate<=0)onTime++;else lateSum+=daysLate;});
+  const payN=pays.length;
+  const onTimeRate=payN?onTime/payN:0.5;
+  const avgLate=payN?Math.round(lateSum/payN):0;
+  const payment=Math.max(0,Math.min(100,Math.round(100*paidRatio-Math.min(25,avgLate)-Math.min(25,overdueCount*10))));
+  let tenure=0,hasActive=false;
+  leases.forEach(l=>{if(l.status==='Active'||l.status==='Pending Registration')hasActive=true;if(l.start&&l.end){const mo=Math.floor((new Date(l.end)-new Date(l.start))/86400000/30.44);if(mo>tenure)tenure=Math.min(24,mo);}});
+  const renewals=(DB.renewals||[]).filter(r=>leaseIds.includes(r.lease)&&r.status==='Approved').length;
+  const stability=Math.max(0,Math.min(100,Math.round(tenure*4+renewals*10+(hasActive?0:-20))));
+  const tenantTickets=(DB.tickets||[]).filter(x=>unitIds.includes(x.u)&&x.liab==='Tenant');
+  const closedT=tenantTickets.filter(x=>x.status==='Closed').length;
+  const resolved=tenantTickets.length?closedT/tenantTickets.length:0.5;
+  const meters=(DB.meter_readings||[]).filter(m=>unitIds.includes(m.unit)).length;
+  const care=Math.max(0,Math.min(100,Math.round(50+50*resolved+Math.min(30,meters*2))));
+  let comp=50,handoverDone=false;
+  if(leaseIds.length&&(DB.handover_checklists||[]).some(h=>leaseIds.includes(h.lease)&&h.status==='Completed')){handoverDone=true;comp+=20;}
+  let regOk=true;
+  leases.forEach(l=>{if(l.res===false&&!l.reg)regOk=false;});
+  comp+=regOk?20:-20;
+  const propIds=[...new Set((DB.units||[]).filter(u=>unitIds.includes(u.id)).map(u=>u.p).filter(Boolean))];
+  const docN=(DB.documents||[]).filter(d=>leaseIds.includes(d.ref)||propIds.includes(d.p)).length;
+  if(docN>0)comp+=10;
+  const compliance=Math.max(0,Math.min(100,comp));
+  const score=Math.round(0.4*payment+0.2*stability+0.2*care+0.2*compliance);
+  const band=scoreBand(score);
+  const tips=[];
+  if(payment<60)tips.push('Pay invoices on or before the 1st — payment history is the heaviest factor ('+Math.round(onTimeRate*100)+'% on-time).');
+  if(overdueCount>0)tips.push('Clear '+overdueCount+' overdue invoice(s) to lift your payment factor.');
+  if(stability<50)tips.push('A longer lease term and an approved renewal improve your stability factor.');
+  if(care<60&&tenantTickets.length>0)tips.push('Resolve '+(tenantTickets.length-closedT)+' open maintenance ticket(s) to raise your care factor.');
+  if(meters===0)tips.push('Submit monthly meter readings — consistent readings boost your care factor.');
+  if(!regOk)tips.push('Complete registration for your non-residential lease (TPA §107).');
+  if(comp<60)tips.push('Complete the handover checklist and upload documents to lift compliance.');
+  if(!tips.length)tips.push('Excellent standing — keep it up!');
+  return {tenant:{id:tid,name:te.name,kind:te.kind,nrb:te.nrb},score,band,factors:{payment,stability,care,compliance},
+    stats:{on_time_rate:Math.round(onTimeRate*100),avg_days_late:avgLate,unpaid:totalInv-paidCount,overdue:overdueCount,tenure_months:tenure,renewals,tickets_open:tenantTickets.length-closedT,tickets_total:tenantTickets.length,meter_months:meters,handover_done:handoverDone,reg_ok:regOk,docs:docN},tips};
+}
+function scoreCardHtml(sc,opts){
+  opts=opts||{};
+  const col=SCORE_COLORS[sc.band]||'#8A94A6';
+  const f=sc.factors||{};
+  const bars=[['Payment','payment',40],['Stability','stability',20],['Care','care',20],['Compliance','compliance',20]].map(x=>{
+    const v=f[x[1]]||0;
+    return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span>${t(x[0],x[0]==='Payment'?'পেমেন্ট':x[0]==='Stability'?'স্থিতিশীলতা':x[0]==='Care'?'যত্ন':'সম্মতি')} <span class="c-sub">(${x[2]}%)</span></span><b>${v}</b></div><div class="prog ${v<50?'orange':''}"><i style="width:${v}%"></i></div></div>`;
+  }).join('');
+  const s=sc.stats||{};
+  const rows=kv(t('On-time rate','সময়মতো হার'),(s.on_time_rate!=null?s.on_time_rate+'%':'—'))+kv(t('Avg days late','গড় বিলম্ব দিন'),s.avg_days_late??'—')+kv(t('Unpaid invoices','অপরিশোধিত ইনভয়েস'),s.unpaid??'—')+kv(t('Overdue','অতিরিক্ত মেয়াদ'),s.overdue??'—')+kv(t('Lease tenure','লিজের মেয়াদ'),(s.tenure_months!=null?s.tenure_months+' '+t('months','মাস'):'—'))+kv(t('Renewals approved','অনুমোদিত রিনিউয়াল'),s.renewals??'—')+kv(t('Open tickets','খোলা টিকিট'),(s.tickets_open!=null?s.tickets_open+' / '+s.tickets_total:'—'))+kv(t('Meter readings','মিটার রিডিং'),s.meter_months??'—')+kv(t('Handover done','হ্যান্ডওভার সম্পন্ন'),s.handover_done?'✓':'—')+kv(t('Registration (TPA §107)','রেজিস্ট্রেশন (টিপিএ §১০৭)'),s.reg_ok?'✓':t('Needs attention','মনোযোগ প্রয়োজন'))+kv(t('Documents','ডকুমেন্ট'),s.docs??'—');
+  const tipRows=(sc.tips||[]).map(x=>rowItem('💡',x,'','')).join('')||`<div class="empty">${t('No tips','কোনো টিপস নেই')}</div>`;
+  return `<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:14px">${donut(sc.score,col,sc.band,sc.score+'/100')}<div style="flex:1;min-width:220px">${bars}</div></div>
+    <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">📊</span>${t('Key indicators','মূল সূচক')}</div></div><div class="panel-b">${rows}</div></div>
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💡</span>${t('How to improve','কীভাবে উন্নতি করবেন')}</div></div><div class="panel-b">${tipRows}</div></div>`;
+}
+async function scoreDrawer(tid){
+  const te=tenantById(tid);
+  openDrawer(`📊 ${t('Tenant score','ভাড়াটিয়া স্কোর')} — ${te?esc(te.name):tid}`, `<div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div>`);
+  try{
+    let sc=null;
+    if(TOKEN&&!DEMO_MODE){
+      const r=await apiCall('app-score-detail?t='+encodeURIComponent(tid));
+      if(!r.ok){toast(r.error||'Score failed');return;}
+      sc=r;
+    } else {
+      sc=demoScoreFor(tid);
+    }
+    $('drawerBody').innerHTML=scoreCardHtml(sc)+`<div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn-primary" style="padding:7px 14px;font-size:12px" onclick="printVettingReport('${esc(tid)}')">🖨 ${t('Print vetting report','ভেটিং রিপোর্ট প্রিন্ট')}</button><button class="btn-ghost" style="padding:7px 14px;font-size:12px" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`;
+  }catch(e){toast('Score error: '+e.message);}
+}
+async function printVettingReport(tid){
+  if(TOKEN&&!DEMO_MODE){
+    try{
+      const res=await fetch(API+'app-vetting-report?t='+encodeURIComponent(tid),{headers:{Authorization:'Bearer '+TOKEN}});
+      if(!res.ok){let msg='Cannot open: '+res.status;try{const j=await res.json();if(j.error)msg=j.error;}catch(e){}toast(msg);return;}
+      const html=await res.text();
+      previewDoc(t('Vetting report','ভেটিং রিপোর্ট'), html);
+    }catch(e){toast('Report error: '+e.message);}
+  } else {
+    const sc=demoScoreFor(tid);
+    const col=SCORE_COLORS[sc.band]||'#8A94A6';
+    const bars=[['Payment','payment',40],['Stability','stability',20],['Care','care',20],['Compliance','compliance',20]].map(x=>{
+      const v=sc.factors[x[1]];
+      return `<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><b>${x[0]} (${x[2]}%)</b><b>${v}</b></div><div style="background:#E4EAF3;border-radius:6px;height:8px"><div style="background:${col};height:8px;border-radius:6px;width:${v}%"></div></div></div>`;
+    }).join('');
+    const rows=(sc.tips||[]).map(x=>`<li>${x}</li>`).join('');
+    previewDoc(t('Vetting report','ভেটিং রিপোর্ট'), `<!doctype html><html><head><meta charset="utf-8"><title>Vetting Report</title><style>body{font-family:Inter,'Hind Siliguri',Arial,sans-serif;padding:32px;color:#101828;max-width:760px;margin:0 auto}h1{font-size:20px}table{width:100%;border-collapse:collapse;margin-top:8px}td{padding:6px 10px;border-bottom:1px solid #E4EAF3}li{line-height:1.7}</style></head><body><h1>🔑 KRTaker — Tenant Vetting Report</h1><p style="color:#8A94A6">${esc(sc.tenant.name)} · ${new Date().toDateString()}</p><p style="font-size:30px;font-weight:800;color:${col}">${sc.score} <span style="font-size:14px">/100 · ${sc.band}</span></p>${bars}<h3>How to improve</h3><ul>${rows}</ul></body></html>`);
+  }
+}
+
 const renderers={
   dashboard:renderDashboard,
   properties(){
@@ -1857,13 +1997,13 @@ const renderers={
   },
   tenants(){
     let h=pageHead(t('Tenants','ভাড়াটিয়া'),t('Individuals, corporates and NRB tenants.','ব্যক্তি, কর্পোরেট ও এনআরবি ভাড়াটিয়া।'),`<button class="btn-primary" onclick="openNew('tenants')">＋ ${t('Add tenant','ভাড়াটিয়া যোগ করুন')}</button>`);
-    const canPortal=['superadmin','owner','manager'].includes(LIVE.user?LIVE.user.role:'');
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th>${canPortal?'<th></th>':''}</tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr data-id="${te.id}" onclick="openDetail('tenants','${te.id}')"><td><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td>${canPortal?`<td><button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation();viewTenantPortal('${te.id}')">👁 ${t('Portal','পোর্টাল')}</button></td>`:''}</tr>`}).join('')}</tbody></table></div></div>`;
+    const canPortal=['superadmin','owner','manager'].includes(role().id);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th>${canPortal?'<th>Score</th>':''}${canPortal?'<th></th>':''}</tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr data-id="${te.id}" onclick="openDetail('tenants','${te.id}')"><td><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td>${canPortal?`<td><span class="score-chip" id="sc-${te.id}" data-tid="${te.id}" style="cursor:pointer" onclick="event.stopPropagation();scoreDrawer('${te.id}')">…</span></td>`:''}${canPortal?`<td><button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation();viewTenantPortal('${te.id}')">👁 ${t('Portal','পোর্টাল')}</button></td>`:''}</tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   leases(){
     let h=pageHead(t('Leases','লিজ'),t('Tenancy agreements with legal gates applied automatically.','আইনি গেটসহ টেন্যান্সি চুক্তি।'),`${can('templates')?`<button class="btn-outline" onclick="tplPrintFor('LSE-STD','${DB.leases[0]?DB.leases[0].id:''}')">📄 ${t('Print agreement','চুক্তি প্রিন্ট')}</button>`:''}<button class="btn-primary" onclick="openNew('leases')">＋ ${t('New lease','নতুন লিজ')}</button>`);
-    if(['superadmin','owner','manager'].includes(role().role)) h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔄</span>${t('Renewal requests','রিনিউয়াল অনুরোধ')}</div><span class="link" onclick="renewalsPanel()">${t('Refresh','রিফ্রেশ')} ↻</span></div><div class="panel-b" id="renewalsHost"><div class="c-sub">${t('Loading renewals…','রিনিউয়াল লোড হচ্ছে…')}</div></div></div>`;
+    if(['superadmin','owner','manager'].includes(role().id)) h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔄</span>${t('Renewal requests','রিনিউয়াল অনুরোধ')}</div><span class="link" onclick="renewalsPanel()">${t('Refresh','রিফ্রেশ')} ↻</span></div><div class="panel-b" id="renewalsHost"><div class="c-sub">${t('Loading renewals…','রিনিউয়াল লোড হচ্ছে…')}</div></div></div>`;
     h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th>${can('templates')||can('leases')?'<th>Actions</th>':''}</tr></thead><tbody>${DB.leases.map(l=>`<tr data-id="${l.id}" onclick="openDetail('leases','${l.id}')"><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td>${(can('templates')||can('leases'))?`<td><div style="display:flex;gap:4px">${can('templates')?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();tplPrintFor('LSE-STD','${l.id}')">📄 ${t('Agreement','চুক্তি')}</button>`:''}${can('leases')?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();openHando('${l.id}')">✅ ${t('Handover','হ্যান্ডওভার')}</button>`:''}</div></td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
