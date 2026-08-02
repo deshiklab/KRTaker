@@ -875,7 +875,8 @@ const SEED = {
   partner_invoices:[
     {id:'PI-001',partner:'SP-01',job:'MR-001',amount:185000,desc:'Steel jacketing + reinforcement for roof crack — materials & labour',status:'Approved',submitted_by:'rahim@krtaker.com',decided_by:'Arif Chowdhury',decided_at:'2026-06-30 11:20:00',ts:'2026-06-28 14:05:00'},
     {id:'PI-002',partner:'SP-02',job:'MR-002',amount:3500,desc:'Kitchen sink tap joint replacement + pipe sealant',status:'Submitted',submitted_by:'kazi.plumbing@gmail.com',decided_by:'',decided_at:'',ts:'2026-07-01 09:30:00'},
-    {id:'PI-003',partner:'SP-03',job:'MR-003',amount:8500,desc:'Rewiring hall socket + new MCB (hall socket sparking)',status:'Paid',submitted_by:'meghna.builders@gmail.com',decided_by:'Sohel Rana',decided_at:'2026-07-05 15:40:00',ts:'2026-07-03 12:00:00'}
+    {id:'PI-003',partner:'SP-03',job:'MR-003',amount:8500,desc:'Rewiring hall socket + new MCB (hall socket sparking)',status:'Paid',submitted_by:'meghna.builders@gmail.com',decided_by:'Sohel Rana',decided_at:'2026-07-05 15:40:00',ts:'2026-07-03 12:00:00'},
+    {id:'PI-004',partner:'SP-02',job:'MR-004',amount:4500,desc:'AC gas refill + filter deep clean (Floor 2)',status:'Approved',submitted_by:'electro@krtaker.com',decided_by:'Arif Chowdhury',decided_at:'2026-07-31 14:00:00',ts:'2026-07-31 13:30:00'}
   ],
   vendor_payouts:[
     {id:'VP-001',partner:'SP-01',month:'2026-06',amount:185000,status:'Paid',method:'Bank',ref:'NPSB-33001',partner_name:'Rahim Steel Works'},
@@ -902,6 +903,11 @@ const SEED = {
   vendor_ratings:[
     {id:'VR-001',partner:'SP-01',job:'MR-001',rating:5,comment:'Fast response, quality steelwork.',rated_by:'Arif Chowdhury',ts:'2026-07-20 10:00:00'},
     {id:'VR-002',partner:'SP-02',job:'MR-002',rating:4,comment:'Good work, slight delay on parts.',rated_by:'Shakil Ahmed',ts:'2026-07-22 10:00:00'}
+  ],
+  job_media:[
+    {id:'JM-DEMO1',job:'MR-004',kind:'before',name:'before-ac.jpg',size:81234,mime:'image/jpeg',uploaded_by:'ElectroCool BD',ts:'2026-07-31 09:30:00'},
+    {id:'JM-DEMO2',job:'MR-004',kind:'after',name:'after-ac.jpg',size:78451,mime:'image/jpeg',uploaded_by:'ElectroCool BD',ts:'2026-07-31 12:10:00'},
+    {id:'JM-DEMO3',job:'MR-004',kind:'memo',name:'memo-ac.pdf',size:45210,mime:'application/pdf',uploaded_by:'ElectroCool BD',ts:'2026-07-31 12:12:00'}
   ],
   statement_payouts:[
     {prop:'P-001',month:'2026-06',amount:186400,status:'Paid',method:'Bank',ref:'NPSB-88412'},
@@ -1093,7 +1099,7 @@ function invoiceById(id){return DB.invoices.find(x=>x.id===id)}
 function can(mod){const r=ROLES.find(x=>x.id===state.role);return r.mods.includes(mod)}
 function role(){return ROLES.find(r=>r.id===state.role)}
 function user(){return role()}
-function badge(st){const map={'Paid':'b-green','Active':'b-green','Success':'b-green','Leased':'b-green','Open':'b-red','Unpaid':'b-orange','Overdue':'b-red','In Progress':'b-blue','Awaiting Payment':'b-orange','Pending Registration':'b-orange','Vacant':'b-gray','Expired':'b-gray','Terminated':'b-red','Maintenance':'b-purple','Onboarding':'b-purple','Trial':'b-purple','Resolved':'b-green','Probation':'b-orange'};return `<span class="badge ${map[st]||'b-gray'}">${esc(st)}</span>`}
+function badge(st){const map={'Paid':'b-green','Active':'b-green','Success':'b-green','Leased':'b-green','Open':'b-red','Unpaid':'b-orange','Overdue':'b-red','In Progress':'b-blue','Awaiting Payment':'b-orange','Pending Registration':'b-orange','Vacant':'b-gray','Expired':'b-gray','Terminated':'b-red','Maintenance':'b-purple','Onboarding':'b-purple','Trial':'b-purple','Resolved':'b-green','Probation':'b-orange','Approved':'b-green','Payable':'b-orange','Submitted':'b-gray'};return `<span class="badge ${map[st]||'b-gray'}">${esc(st)}</span>`}
 function stat(label,value,trend,cls,ico){return `<div class="stat"><div class="s-label"><span class="s-ico">${ico||''}</span>${esc(label)}</div><div class="s-value">${value}</div>${trend?`<div class="s-trend ${cls||''}">${trend}</div>`:''}</div>`}
 function panel(title,body,ico,link){return `<div class="panel"><div class="panel-h"><div class="t"><span class="pi">${ico||''}</span>${title}</div>${link?`<span class="link" onclick="nav('${link}')">${t('View all','সব দেখুন')} →</span>`:''}</div><div class="panel-b">${body}</div></div>`}
 function kv(k,v,cls){return `<div class="kv"><span class="k">${k}</span><span class="v ${cls||''}">${v}</span></div>`}
@@ -2415,15 +2421,17 @@ async function vendorsLoad(){
   const partnerName=(DB.partners||[]).find(p=>p.sub_email===LIVE.user?.email)?.name||(ROLES.find(r=>r.id==='partner')?.name||'');
   let partners=[],jobs=[],invoices=[],payouts=[];
   if(TOKEN&&!DEMO_MODE){
-    const [a,b,c,d]=await Promise.all([
+    const [a,b,c,d,e]=await Promise.all([
       apiCall('app-vendors?action=list'),apiCall('app-vendors?action=jobs'),
-      apiCall('app-vendors?action=invoice-list'),apiCall('app-vendors?action=payout-list')]);
+      apiCall('app-vendors?action=invoice-list'),apiCall('app-vendors?action=payout-list'),
+      apiCall('app-vendors?action=market')]);
     if(a.ok) partners=a.partners||[]; if(b.ok) jobs=b.jobs||[];
     if(c.ok) invoices=c.invoices||[]; if(d.ok) payouts=d.payouts||[];
+    if(e.ok){ const pm={}; (e.pros||[]).forEach(p=>pm[p.id]=p); partners=partners.map(p=>({...p,avg_cost:pm[p.id]?pm[p.id].avg_cost:0,verified:pm[p.id]?pm[p.id].verified:(p.sub_email?1:0)})); }
   } else {
     partners=(DB.partners||[]).map(p=>({...p,open_jobs:(DB.maintenance_requests||[]).filter(j=>j.vendor===p.name&&j.status!=='Closed').length,approved_total:(DB.partner_invoices||[]).filter(i=>i.partner===p.id&&i.status==='Approved').reduce((s,i)=>s+i.amount,0),paid_total:(DB.vendor_payouts||[]).filter(v=>v.partner===p.id&&v.status==='Paid').reduce((s,v)=>s+v.amount,0)}));
     const demoPid=(DB.partners||[]).find(p=>p.name===partnerName)?.id||'SP-01';
-    jobs=(DB.maintenance_requests||[]).filter(j=>isStaff||j.vendor===partnerName).map(x=>({...x}));
+    jobs=(DB.maintenance_requests||[]).filter(j=>isStaff||j.vendor===partnerName).map(x=>{const jm=(DB.job_media||[]).filter(m=>m.job===x.id); return {...x, ev_before:jm.filter(m=>m.kind==='before').length, ev_after:jm.filter(m=>m.kind==='after').length, ev_memo:jm.filter(m=>m.kind==='memo').length, ev_total:jm.length, memo:x.memo||''};});
     invoices=(DB.partner_invoices||[]).filter(i=>isStaff||i.partner===demoPid).map(x=>({...x,partner_name:(DB.partners||[]).find(p=>p.id===x.partner)?.name||'',job_title:(DB.maintenance_requests||[]).find(m=>m.id===x.job)?.title||''}));
     payouts=(DB.vendor_payouts||[]).filter(v=>isStaff||v.partner===demoPid).map(x=>({...x,partner_name:(DB.partners||[]).find(p=>p.id===x.partner)?.name||''}));
   }
@@ -2436,7 +2444,7 @@ async function vendorsLoad(){
       stat(t('Awaiting payment','পেমেন্ট অপেক্ষা'),moneyC(approved),t('approved','অনুমোদিত'),'','🧾'),
       stat(t('Paid to me','আমাকে পরিশোধিত'),moneyC(paid),t('total paid','মোট পরিশোধ'),'pos','💵')
     ]);
-    h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My jobs','আমার কাজ')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Job','কাজ')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Priority','অগ্রাধিকার')}</th><th>${t('Cost est.','আনুমানিক খরচ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>${openJobs.map(j=>`<tr><td><span class="c-name">${esc(j.title)}</span><div class="c-sub">${j.id} · ${esc(j.category)}</div></td><td>${esc(j.unit_name||j.unit)}</td><td>${badge(j.priority)}</td><td class="t-amount">${j.cost_estimate?money(j.cost_estimate):'—'}</td><td>${badge(j.status)}</td><td>${j.status==='Assigned'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorJobStatus('${esc(j.id)}','In Progress')">▶ ${t('Start','শুরু')}</button>`:j.status==='In Progress'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorJobStatus('${esc(j.id)}','Resolved')">✓ ${t('Mark resolved','সমাধান হয়েছে')}</button>`:''}</td></tr>`).join('')||`<tr><td colspan="6" class="m">${t('No jobs assigned','কোনো কাজ দেওয়া হয়নি')}</td></tr>`}</tbody></table></div></div>`;
+    h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My jobs','আমার কাজ')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Job','কাজ')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Priority','অগ্রাধিকার')}</th><th>${t('Cost est.','আনুমানিক খরচ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>${openJobs.map(j=>`<tr><td><span class="c-name">${esc(j.title)}</span><div class="c-sub">${j.id} · ${esc(j.category)}</div></td><td>${esc(j.unit_name||j.unit)}</td><td>${badge(j.priority)}</td><td class="t-amount">${j.cost_estimate?money(j.cost_estimate):'—'}</td><td>${badge(j.status)}</td><td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="jobEvidenceDrawer('${esc(j.id)}')">📷 ${t('Evidence','প্রমাণ')}${(j.ev_total||0)?' '+j.ev_total:''}</button>${j.pay_release?` <span style="font-size:10.5px;color:var(--pos,#16a34a)">🔓 ${t('released','রিলিজড')}</span>`:''}${j.pay_paid?` <span style="font-size:10.5px;color:var(--pos,#16a34a)">💵 ${t('paid','পরিশোধিত')}</span>`:''}</td><td>${j.status==='Assigned'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorJobStatus('${esc(j.id)}','In Progress')">▶ ${t('Start','শুরু')}</button>`:j.status==='In Progress'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorJobStatus('${esc(j.id)}','Resolved')">✓ ${t('Mark resolved','সমাধান হয়েছে')}</button>`:''}</td></tr>`).join('')||`<tr><td colspan="7" class="m">${t('No jobs assigned','কোনো কাজ দেওয়া হয়নি')}</td></tr>`}</tbody></table></div></div>`;
     h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('My invoices','আমার ইনভয়েস')}</div><span class="link" onclick="vendorInvoiceForm()">＋ ${t('Submit invoice','ইনভয়েস জমা দিন')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Job','কাজ')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th></tr></thead><tbody>${invoices.map(i=>`<tr><td><span class="c-name">${i.id}</span></td><td>${esc(i.job_title||i.job)}</td><td class="t-amount">${money(i.amount)}</td><td>${badge(i.status)}</td></tr>`).join('')||`<tr><td colspan="4" class="m">${t('No invoices yet','এখনো কোনো ইনভয়েস নেই')}</td></tr>`}</tbody></table></div></div>`;
     h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">💵</span>${t('My payouts','আমার পেআউট')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Month','মাস')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Method','পদ্ধতি')}</th><th>${t('Ref','রেফ')}</th></tr></thead><tbody>${payouts.map(p=>`<tr><td>${p.month}</td><td class="t-amount">${money(p.amount)}</td><td>${badge(p.status)}</td><td>${esc(p.method||'—')}</td><td>${esc(p.ref||'—')}</td></tr>`).join('')||`<tr><td colspan="5" class="m">${t('No payouts yet','এখনো কোনো পেআউট নেই')}</td></tr>`}</tbody></table></div></div>`;
     host.innerHTML=h; return;
@@ -2455,9 +2463,9 @@ async function vendorsLoad(){
     stat(t('Pending invoices','অপেক্ষমাণ ইনভয়েস'),moneyC(pendingAmt),pendingInv.length+' '+t('to review','রিভিউ বাকি'),pendingInv.length?'warn':'pos','🧾'),
     stat(t('Paid out','পরিশোধিত'),moneyC(paidMonth),t('total to vendors','ভেন্ডরদের মোট'),'pos','💵')
   ]);
-  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧰</span>${t('Vendor directory','ভেন্ডর ডিরেক্টরি')}</div></div><div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${partners.map(p=>`<div class="panel"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div class="c-name" style="font-weight:700">${esc(p.name)}</div><div class="c-sub">${esc(p.trade)} · ★${p.avg_rating!=null?p.avg_rating:p.rating}${p.rating_count?` (${p.rating_count})`:''} · ${p.jobs||0} ${t('jobs','কাজ')}</div></div>${badge(p.status)}</div><div class="kv"><span class="k">${t('Open jobs','খোলা কাজ')}</span><span class="v">${p.open_jobs||0}</span></div><div class="kv"><span class="k">${t('Approved invoices','অনুমোদিত ইনভয়েস')}</span><span class="v">${money(p.approved_total||0)}</span></div><div class="kv"><span class="k">${t('Paid total','মোট পরিশোধ')}</span><span class="v pos">${money(p.paid_total||0)}</span></div></div></div>`).join('')}</div></div>`;
-  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('Job board','জব বোর্ড')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Job','কাজ')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Estimate','আনুমানিক')}</th><th>${t('Actual','প্রকৃত')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canQc?'<th>QC</th>':''}</tr></thead><tbody>${jobs.map(j=>`<tr><td><span class="c-name">${esc(j.title)}</span><div class="c-sub">${j.id} · ${esc(j.category)}</div></td><td>${esc(j.vendor||'—')}</td><td>${esc(j.unit_name||j.unit)}</td><td class="t-amount">${j.cost_estimate?money(j.cost_estimate):'—'}</td><td class="t-amount">${j.actual_cost?money(j.actual_cost):'—'}</td><td>${badge(j.status)}</td>${canQc?`<td>${j.status==='Resolved'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorQc('${esc(j.id)}')">✅ ${t('QC sign-off','কিউসি সই')} ★</button>`:j.qc_by?`<span class="c-sub">${esc(j.qc_by)}</span>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
-  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Vendor invoices','ভেন্ডর ইনভয়েস')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Job','কাজ')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canReview?'<th>'+t('Review','রিভিউ')+'</th>':''}${canPay?'<th></th>':''}</tr></thead><tbody>${invoices.map(i=>`<tr><td><span class="c-name">${i.id}</span></td><td>${esc(i.partner_name||'')}</td><td>${esc(i.job_title||i.job)}</td><td class="t-amount">${money(i.amount)}</td><td>${badge(i.status)}</td>${canReview?`<td>${i.status==='Submitted'?`<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoiceDecide('${esc(i.id)}','approve')" title="${t('Approve','অনুমোদন')}">✓</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoiceDecide('${esc(i.id)}','reject')" title="${t('Reject','বাতিল')}">✕</button></div>`:'—'}</td>`:''}${canPay?`<td>${i.status==='Approved'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoicePay('${esc(i.id)}')">💵 ${t('Pay','পরিশোধ')}</button>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧰</span>${t('Vendor directory','ভেন্ডর ডিরেক্টরি')}</div></div><div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${partners.map(p=>`<div class="panel"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div class="c-name" style="font-weight:700">${esc(p.name)}</div><div class="c-sub">${esc(p.trade)} · ★${p.avg_rating!=null?p.avg_rating:p.rating}${p.rating_count?` (${p.rating_count})`:''} · ${p.jobs||0} ${t('jobs','কাজ')}${p.verified?` · <span style="color:var(--pos,#16a34a)">✓ ${t('Vetted','ভেটেড')}</span>`:''}</div></div>${badge(p.status)}</div><div class="kv"><span class="k">${t('Open jobs','খোলা কাজ')}</span><span class="v">${p.open_jobs||0}</span></div><div class="kv"><span class="k">${t('Avg. job cost','গড় খরচ')}</span><span class="v">${p.avg_cost?money(p.avg_cost):'—'}</span></div><div class="kv"><span class="k">${t('Paid total','মোট পরিশোধ')}</span><span class="v pos">${money(p.paid_total||0)}</span></div><div style="margin-top:8px;display:flex;gap:6px"><button class="btn-ghost" style="padding:4px 10px;font-size:11px;flex:1" onclick="vendorQuoteForm('${esc(p.name)}')">🔧 ${t('Request quote','কোট চাও')}</button></div></div></div>`).join('')}</div></div>`;
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('Job board','জব বোর্ড')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Job','কাজ')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Estimate','আনুমানিক')}</th><th>${t('Actual','প্রকৃত')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Evidence','প্রমাণ')}</th>${canQc?'<th>QC</th>':''}</tr></thead><tbody>${jobs.map(j=>`<tr><td><span class="c-name">${esc(j.title)}</span><div class="c-sub">${j.id} · ${esc(j.category)}${j.pay_release?` · <span style="color:var(--pos,#16a34a)">🔓 ${t('released','রিলিজড')}</span>`:''}${j.pay_paid?` · <span style="color:var(--pos,#16a34a)">💵 ${t('paid','পরিশোধিত')}</span>`:''}</div></td><td>${esc(j.vendor||'—')}</td><td>${esc(j.unit_name||j.unit)}</td><td class="t-amount">${j.cost_estimate?money(j.cost_estimate):'—'}</td><td class="t-amount">${j.actual_cost?money(j.actual_cost):'—'}</td><td>${badge(j.status)}</td><td>${(j.ev_total||0)>0||j.memo?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="jobEvidenceDrawer('${esc(j.id)}')">📷 ${j.ev_total||0}</button>`:`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="jobEvidenceDrawer('${esc(j.id)}')">📷 ${t('Add','যোগ')}</button>`}</td>${canQc?`<td>${j.status==='Resolved'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorQc('${esc(j.id)}')">✅ ${t('QC sign-off','কিউসি সই')} ★</button>`:j.qc_by?`<span class="c-sub">${esc(j.qc_by)}</span>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Vendor invoices','ভেন্ডর ইনভয়েস')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Job','কাজ')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canReview?'<th>'+t('Review','রিভিউ')+'</th>':''}${canPay?'<th></th>':''}</tr></thead><tbody>${invoices.map(i=>`<tr><td><span class="c-name">${i.id}</span></td><td>${esc(i.partner_name||'')}</td><td>${esc(i.job_title||i.job)}</td><td class="t-amount">${money(i.amount)}</td><td>${badge(i.status)}</td>${canReview?`<td>${i.status==='Submitted'?`<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoiceDecide('${esc(i.id)}','approve')" title="${t('Approve','অনুমোদন')}">✓</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoiceDecide('${esc(i.id)}','reject')" title="${t('Reject','বাতিল')}">✕</button></div>`:'—'}</td>`:''}${canPay?`<td>${(i.status==='Approved'||i.status==='Payable')?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoicePay('${esc(i.id)}')">💵 ${t('Pay','পরিশোধ')}</button>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
   h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">💵</span>${t('Payout ledger','পেআউট লেজার')}</div>${canRecord?`<span class="link" onclick="vendorPayoutForm()">＋ ${t('Record payout','পেআউট রেকর্ড')}</span>`:''}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Month','মাস')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Method','পদ্ধতি')}</th><th>${t('Ref','রেফ')}</th></tr></thead><tbody>${payouts.map(p=>`<tr><td>${esc(p.partner_name||'')}</td><td>${p.month}</td><td class="t-amount">${money(p.amount)}</td><td>${badge(p.status)}</td><td>${esc(p.method||'—')}</td><td>${esc(p.ref||'—')}</td></tr>`).join('')||`<tr><td colspan="6" class="m">${t('No payouts yet','এখনো কোনো পেআউট নেই')}</td></tr>`}</tbody></table></div></div>`;
   host.innerHTML=h;
 }
@@ -2710,11 +2718,17 @@ async function slaConfigSave(){
 }
 function vendorQcDrawer(id){
   const j=(DB.maintenance_requests||[]).find(x=>x.id===id);
+  const jm=(DB.job_media||[]).filter(m=>m.job===id);
+  const evb=jm.filter(m=>m.kind==='before').length, eva=jm.filter(m=>m.kind==='after').length, evm=jm.filter(m=>m.kind==='memo').length;
+  const hasInv=(DB.partner_invoices||[]).some(i=>i.job===id&&i.status==='Approved');
+  const evReady=(evb>0&&eva>0&&(evm>0||(j?.memo||'').trim()!==''));
   const stars=[5,4,3,2,1].map(n=>`<span class="qc-star" data-v="${n}" onclick="qcStarPick(${n})" style="font-size:26px;cursor:pointer;color:var(--text-mute)">★</span>`).join('');
   const body=`<div class="form-grid">
     <div class="form-field full"><label>${t('Job','কাজ')}</label><div class="c-name">${esc(j?.title||id)}</div><div class="c-sub">${esc(j?.vendor||'')} · ${esc(j?.unit_name||'')}</div></div>
+    <div class="form-field full"><label>📷 ${t('Evidence','প্রমাণ')}</label><div class="c-sub">${t('Before','আগে')} ${evb} · ${t('After','পরে')} ${eva} · ${t('Memo','মেমো')} ${evm} ${evReady?'<span style="color:var(--pos,#16a34a)">✓ ready</span>':''}</div><span class="link" onclick="jobEvidenceDrawer('${esc(id)}')">📷 ${t('Manage evidence','প্রমাণ ব্যবস্থাপনা')}</span></div>
     <div class="form-field full"><label>${t('Rating','রেটিং')}</label><div id="qcStars" style="font-size:26px;letter-spacing:4px">${stars}</div><div class="c-sub" id="qcStarLbl">${t('Tap a star','একটি তারা নির্বাচন করুন')}</div></div>
     <div class="form-field full"><label>${t('Comment (optional)','মন্তব্য (ঐচ্ছিক)')}</label><input id="qc_comment" placeholder="${t('Quality, speed, materials…','গুণমান, গতি, ম্যাটেরিয়াল…')}"></div>
+    ${hasInv?`<div class="form-field full" style="display:flex;align-items:center;gap:8px;background:var(--bg-alt);border-radius:10px;padding:10px"><input type="checkbox" id="qc_release" ${evReady?'':'disabled'} style="width:16px;height:16px"><label for="qc_release" style="font-weight:600;margin:0">🔓 ${t('Release payment to vendor','ভেন্ডরকে পেমেন্ট রিলিজ')}</label></div>${evReady?'':`<div class="c-sub" style="padding:0 4px">${t('Upload before/after photos + memo to enable release.','রিলিজ চালু করতে আগে/পরে ছবি ও মেমো আপলোড করুন।')}</div>`}`:''}
   </div>`;
   const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="vendorQcConfirm('${esc(id)}')">✅ ${t('Sign off QC','কিউসি সই')}</button></div>`;
   openDrawer(`✅ ${t('QC sign-off & rate vendor','কিউসি সই ও ভেন্ডর রেটিং')}`, body, foot);
@@ -2728,11 +2742,12 @@ function qcStarPick(n){
 async function vendorQcConfirm(id){
   const rating=qcRatingPick||0;
   const comment=document.getElementById('qc_comment')?.value||'';
-  const d = DEMO_MODE ? {ok:true} : await apiCall('app-vendors',{action:'job-qc',id,rating,comment});
+  const release=document.getElementById('qc_release')?.checked?1:0;
+  const d = DEMO_MODE ? {ok:true,pay_release:release} : await apiCall('app-vendors',{action:'job-qc',id,rating,comment,release_payment:release});
   if(!d.ok){ toast(d.error||'QC failed'); return; }
   if(DEMO_MODE){
     const j=(DB.maintenance_requests||[]).find(x=>x.id===id);
-    if(j){ j.status='Closed'; j.qc_by=LIVE.user?.name||'Arif Chowdhury'; }
+    if(j){ j.status='Closed'; j.qc_by=LIVE.user?.name||'Arif Chowdhury'; if(release){ j.pay_release=1; j.pay_release_at=new Date().toISOString().slice(0,19).replace('T',' '); const i=(DB.partner_invoices||[]).find(x=>x.job===id&&x.status==='Approved'); if(i) i.status='Payable'; } }
     if(rating>=1&&rating<=5){
       const p=(DB.partners||[]).find(p=>p.name===j?.vendor);
       if(p){
@@ -2748,6 +2763,114 @@ async function vendorQcConfirm(id){
   closeDrawer(); await refreshData(); if(state.view==='vendors'){ render(); }
 }
 async function vendorQc(id){ vendorQcDrawer(id); }
+
+/* ═══ Phase 42: contractor marketplace v2 — evidence, pay-on-signoff, vetted pros ═══ */
+function vendorQuoteForm(vendor){
+  const units=(DB.units||[]).filter(u=>u.status==='Vacant'||['superadmin','owner','manager'].includes(role().id)).map(u=>`<option value="${esc(u.id)}">${esc(u.id)} · ${esc(u.name)}${u.rent?` (৳${(u.rent/1000).toFixed(0)}k)`:''}</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Vendor','ভেন্ডর')}</label><div class="c-name">${esc(vendor)}</div></div>
+    <div class="form-field"><label>${t('Unit','ইউনিট')} *</label><select id="vq_unit">${units||`<option value="">${t('No units','কোনো ইউনিট নেই')}</option>`}</select></div>
+    <div class="form-field"><label>${t('Category','ক্যাটাগরি')}</label><select id="vq_cat">${[['plumbing','🚰 Plumbing'],['electrical','⚡ Electrical'],['appliance','❄️ Appliance'],['structural','🏗️ Structural'],['pest','🐜 Pest'],['other','🔧 Other']].map(c=>`<option value="${c[0]}">${c[1]}</option>`).join('')}</select></div>
+    <div class="form-field full"><label>${t('Issue title','সমস্যার শিরোনাম')} *</label><input id="vq_title" placeholder="${t('e.g. Leaking kitchen pipe','যেমন: রান্নাঘরের পাইপ লিক')}"></div>
+    <div class="form-field full"><label>${t('Description','বিবরণ')}</label><textarea id="vq_desc" rows="2"></textarea></div>
+    <div class="form-field"><label>${t('Priority','অগ্রাধিকার')}</label><select id="vq_prio">${[['low','Low'],['medium','Medium'],['high','High'],['urgent','Urgent']].map(p=>`<option value="${p[0]}" ${p[0]==='medium'?'selected':''}>${p[1]}</option>`).join('')}</select></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="vendorQuoteSubmit()">🔧 ${t('Request quote','কোট চাও')}</button></div>`;
+  openDrawer(`🔧 ${t('Request quote from','কোট চাওয়া হচ্ছে')} ${esc(vendor)}`, body, foot);
+}
+async function vendorQuoteSubmit(){
+  const vendor=(document.querySelector('.dr-title')?.textContent||'').replace(/^.*from\s+/i,'').trim();
+  const unit=document.getElementById('vq_unit')?.value;
+  const title=document.getElementById('vq_title')?.value?.trim();
+  if(!unit||!title){ toast(t('Unit and title required','ইউনিট ও শিরোনাম প্রয়োজন')); return; }
+  const payload={action:'request-quote',vendor,unit,title,category:document.getElementById('vq_cat')?.value,desc:document.getElementById('vq_desc')?.value,priority:document.getElementById('vq_prio')?.value};
+  const d = DEMO_MODE ? {ok:true,id:'MR-'+String((DB.maintenance_requests||[]).length+6).padStart(3,'0')} : await apiCall('app-vendors',payload);
+  if(!d.ok){ toast(d.error||'Request failed'); return; }
+  if(DEMO_MODE){
+    const un=(DB.units||[]).find(u=>u.id===unit);
+    (DB.maintenance_requests=DB.maintenance_requests||[]).push({id:d.id,tenant:(DB.tenants||[]).find(x=>x.sub_email===LIVE.user?.email)?.id||'T-002',unit,prop:un?.p||'',category:payload.category,priority:payload.priority,title,desc:payload.desc,status:'Open',assigned_to:vendor,vendor,cost_estimate:0,actual_cost:0,charge_to:'owner',created_by:LIVE.user?.email||'owner@krtaker.com',tenant_name:'',unit_name:un?.name||'',property_name:(DB.properties||[]).find(p=>p.id===un?.p)?.name||'',ev_before:0,ev_after:0,ev_memo:0,ev_total:0});
+  }
+  toast(t('Quote requested 🔧','কোট চাওয়া হয়েছে 🔧')+' '+d.id);
+  closeDrawer(); await refreshData(); if(state.view==='vendors'||state.view==='maintenance'){ render(); }
+}
+async function jobEvidenceDrawer(id){
+  const j=(DB.maintenance_requests||[]).find(x=>x.id===id)||{title:id,vendor:'',memo:''};
+  let media=(DB.job_media||[]).filter(m=>m.job===id)||[];
+  if(TOKEN&&!DEMO_MODE){
+    const d=await apiCall('app-job-media?action=list&job='+id);
+    if(d.ok){ media=d.media||[]; j.memo=d.meta?.memo||''; }
+  }
+  const isStaff=['superadmin','owner','manager','svc_mgr','accountant'].includes(role().id);
+  const isPartner=role().id==='partner';
+  const canEdit=(isStaff||isPartner)&&j.status!=='Closed';
+  const kindLbl={'before':t('Before','আগে'),'after':t('After','পরে'),'memo':t('Memo','মেমো'),'other':t('Other','অন্যান্য')};
+  const thumbs=media.map(m=>`<div style="display:flex;align-items:center;gap:8px;background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;padding:8px 10px">
+    <span style="font-size:20px">${m.kind==='memo'?'🧾':(m.kind==='before'?'📷':'✅')}</span>
+    <div style="flex:1;min-width:0"><div class="c-name" style="font-size:12.5px">${esc(m.name)}</div><div class="c-sub">${kindLbl[m.kind]||m.kind} · ${(m.size||0)>1024?Math.round(m.size/1024)+' KB':(m.size||0)+' B'} · ${esc(m.uploaded_by||'')}</div></div>
+    ${TOKEN&&!DEMO_MODE?`<a class="btn-ghost" style="padding:3px 9px;font-size:11px;text-decoration:none" href="${API}app-job-media?action=view&id=${esc(m.id)}" target="_blank" rel="noopener">${t('View','দেখুন')}</a>`:''}
+    ${canEdit?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="jobEvidenceRemove('${esc(m.id)}')">✕</button>`:''}
+  </div>`).join('')||`<div class="c-sub">${t('No evidence yet','এখনো কোনো প্রমাণ নেই')}</div>`;
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Job','কাজ')}</label><div class="c-name">${esc(j.title)}</div><div class="c-sub">${esc(j.vendor||'')} ${j.pay_release?'· 🔓 '+t('payment released','পেমেন্ট রিলিজড'):''} ${j.pay_paid?'· 💵 '+t('paid','পরিশোধিত'):''}</div></div>
+    <div class="form-field full"><label>📷 ${t('Evidence files','প্রমাণ ফাইল')}</label><div style="display:flex;flex-direction:column;gap:6px">${thumbs}</div></div>
+    ${canEdit?`<div class="form-field full"><label>${t('Upload','আপলোড')}</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <input type="file" id="jeFile" accept=".png,.jpg,.jpeg,.webp,.gif,.pdf" style="flex:1;min-width:140px;font-size:12px">
+        <button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="jobEvidenceUpload('${esc(id)}','before')">📷 ${t('Before','আগে')}</button>
+        <button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="jobEvidenceUpload('${esc(id)}','after')">✅ ${t('After','পরে')}</button>
+        <button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="jobEvidenceUpload('${esc(id)}','memo')">🧾 ${t('Memo','মেমো')}</button>
+      </div>
+      <div class="c-sub" style="margin-top:4px">${t('Photos (JPG/PNG) or memo PDF — max 8MB. Payment releases only with before + after + memo.','ছবি (JPG/PNG) বা মেমো PDF — সর্বোচ্চ ৮MB। আগে+পরে+মেমো থাকলেই পেমেন্ট রিলিজ হয়।')}</div></div>
+      <div class="form-field full"><label>🧾 ${t('Digital memo (text)','ডিজিটাল মেমো (টেক্সট)')}</label><textarea id="jeMemo" rows="2" placeholder="${t('Materials, labour, qty…','ম্যাটেরিয়াল, শ্রম, পরিমাণ…')}">${esc(j.memo||'')}</textarea>
+      <button class="btn-ghost" style="padding:4px 10px;font-size:11px;margin-top:6px" onclick="jobEvidenceMemo('${esc(id)}')">💾 ${t('Save memo','মেমো সংরক্ষণ')}</button></div>`:''}
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`;
+  openDrawer(`📷 ${t('Job evidence','কাজের প্রমাণ')} — ${id}`, body, foot);
+}
+async function jobEvidenceUpload(id,kind){
+  const f=document.getElementById('jeFile')?.files?.[0];
+  if(!f){ toast(t('Choose a file first','আগে ফাইল নির্বাচন করুন')); return; }
+  if(DEMO_MODE){
+    (DB.job_media=DB.job_media||[]).push({id:'JM-DEMO'+Math.floor(Math.random()*900+100),job:id,kind,name:f.name,size:f.size,mime:f.type,uploaded_by:LIVE.user?.name||'ElectroCool BD',ts:new Date().toISOString().slice(0,19).replace('T',' ')});
+    toast(kind+' '+t('uploaded','আপলোড হয়েছে')); jobEvidenceDrawer(id); await refreshData(); return;
+  }
+  const fd=new FormData(); fd.append('job',id); fd.append('kind',kind); fd.append('file',f);
+  try{
+    const res=await fetch(API+'app-job-media',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
+    const d=await res.json();
+    if(!d.ok){ toast(d.error||'Upload failed'); return; }
+    toast(t('Uploaded','আপলোড হয়েছে')+' '+kind); jobEvidenceDrawer(id); await refreshData();
+  }catch(e){ toast(t('Upload failed','আপলোড ব্যর্থ')); }
+}
+async function jobEvidenceMemo(id){
+  const text=document.getElementById('jeMemo')?.value||'';
+  if(DEMO_MODE){
+    const j=(DB.maintenance_requests||[]).find(x=>x.id===id); if(j) j.memo=text;
+    toast(t('Memo saved','মেমো সংরক্ষিত')); jobEvidenceDrawer(id); return;
+  }
+  const d=await apiCall('app-job-media',{action:'memo',job:id,text});
+  if(!d.ok){ toast(d.error||'Save failed'); return; }
+  toast(t('Memo saved','মেমো সংরক্ষিত')); jobEvidenceDrawer(id); await refreshData();
+}
+async function jobEvidenceRemove(id){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-job-media',{action:'remove',id});
+  if(!d.ok){ toast(d.error||'Remove failed'); return; }
+  if(DEMO_MODE){ DB.job_media=(DB.job_media||[]).filter(m=>m.id!==id); }
+  toast(t('Evidence removed','প্রমাণ সরানো হয়েছে')); jobEvidenceDrawer(document.querySelector('.dr-title')?.textContent?.match(/—\s*(MR-\d+)/)?.[1]||''); await refreshData();
+}
+async function marketDrawer(){
+  let pros=[];
+  if(TOKEN&&!DEMO_MODE){ const d=await apiCall('app-vendors?action=market'); if(d.ok) pros=d.pros||[]; }
+  else { pros=(DB.partners||[]).filter(p=>p.status==='Active').map(p=>({...p,rating:p.avg_rating!=null?p.avg_rating:p.rating,rating_count:p.rating_count||0,verified:p.sub_email?1:0,open_jobs:(DB.maintenance_requests||[]).filter(j=>j.vendor===p.name&&j.status!=='Closed').length})); }
+  const cards=pros.map(p=>`<div class="panel"><div class="panel-b" style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+    <div style="flex:1"><div class="c-name" style="font-weight:700">${esc(p.name)}${p.verified?` <span style="color:var(--pos,#16a34a);font-size:11px">✓ ${t('Vetted','ভেটেড')}</span>`:''}</div>
+    <div class="c-sub">${esc(p.trade||'')} · ★${p.rating||0}${p.rating_count?` (${p.rating_count})`:''} · ${p.jobs||0} ${t('jobs','কাজ')} · ${p.avg_cost?t('avg','গড়')+' '+money(p.avg_cost):''}</div></div>
+    <button class="btn-primary" style="padding:5px 12px;font-size:11.5px" onclick="closeDrawer();vendorQuoteForm('${esc(p.name)}')">🔧 ${t('Quote','কোট')}</button>
+  </div></div>`).join('')||`<div class="c-sub">${t('No vetted pros yet','এখনো কোনো ভেটেড প্রো নেই')}</div>`;
+  const body=`<div class="form-grid"><div class="form-field full"><label>${t('Vetted contractor marketplace','ভেটেড কন্ট্রাক্টর মার্কেটপ্লেস')}</label><div class="c-sub">${t('Pre-vetted service partners with transparent ratings — request a quote in one tap.','রেটিংসহ প্রি-ভেটেড সার্ভিস পার্টনার — এক ট্যাপে কোট চান।')}</div></div><div style="display:flex;flex-direction:column;gap:8px">${cards}</div></div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`;
+  openDrawer(`🔧 ${t('Find a vetted pro','ভেটেড প্রো খুঁজুন')}`, body, foot);
+}
 
 function demoPortalData(){
   const tid=(DB.tenants||[]).find(x=>x.sub_email==='sultana@krtaker.com')?.id || (DB.tenants||[]).find(x=>x.name==='Sultana Rahman')?.id || 'T-002';
@@ -3737,7 +3860,7 @@ const renderers={
   },
   maintenance(){
     const isStaff = ['superadmin','owner','manager'].includes(role().id);
-    let h=pageHead(t('Maintenance & repairs','রক্ষণাবেক্ষণ ও মেরামত'),t('Report issues, assign vendors, track costs — from tenant report to closed work order.','সমস্যা জানান, ভেন্ডর নিয়োগ করুন, খরচ ট্র্যাক করুন — টেন্যান্ট রিপোর্ট থেকে বন্ধ ওয়ার্ক অর্ডার পর্যন্ত।'),`<button class="btn-primary" onclick="maintenanceForm()">＋ ${t('Report issue','সমস্যা জানান')}</button>`);
+    let h=pageHead(t('Maintenance & repairs','রক্ষণাবেক্ষণ ও মেরামত'),t('Report issues, assign vendors, track costs — from tenant report to closed work order.','সমস্যা জানান, ভেন্ডর নিয়োগ করুন, খরচ ট্র্যাক করুন — টেন্যান্ট রিপোর্ট থেকে বন্ধ ওয়ার্ক অর্ডার পর্যন্ত।'),`<span style="display:inline-flex;gap:8px">${role().id==='tenant'?`<button class="btn-outline" onclick="marketDrawer()">🔧 ${t('Find a vetted pro','ভেটেড প্রো খুঁজুন')}</button>`:''}<button class="btn-primary" onclick="maintenanceForm()">＋ ${t('Report issue','সমস্যা জানান')}</button></span>`);
     const reqs=(DB.maintenance_requests||[]);
     const open=reqs.filter(x=>x.status==='Open'||x.status==='Assigned').length;
     const inprog=reqs.filter(x=>x.status==='In Progress').length;
