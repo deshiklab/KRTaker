@@ -760,11 +760,11 @@ const SEED = {
     {id:'MT-004',u:'U-009',desc:'Flooring damage from tenant forklift',reported:'2026-06-27',liab:'Tenant',status:'Awaiting Payment',con:'Meghna Builders',cost:42000}
   ],
   maintenance_requests:[
-    {id:'MR-001',tenant:'T-006',unit:'U-008',prop:'P-004',category:'structural',priority:'high',title:'Roof structural crack over Shed A',desc:'Crack line widening after last storm; needs steel reinforcement assessment.',status:'Open',assigned_to:'',vendor:'Rahim Steel Works',cost_estimate:120000,actual_cost:0,charge_to:'owner',tenant_name:'Bengal Agro Foods',unit_name:'Shed A',property_name:'Chattogram Industrial Shed'},
-    {id:'MR-002',tenant:'T-002',unit:'U-010',prop:'P-005',category:'plumbing',priority:'medium',title:'Kitchen sink leakage',desc:'Water seeping under sink cabinet; tap joint leaking.',status:'Assigned',assigned_to:'Arif Chowdhury',vendor:'Kazi Plumbing',cost_estimate:3500,actual_cost:0,charge_to:'tenant',tenant_name:'Sultana Rahman',unit_name:'Apartment 7B',property_name:'Dhanmondi Apartment'},
-    {id:'MR-003',tenant:'T-001',unit:'U-001',prop:'P-001',category:'electrical',priority:'medium',title:'Hall socket sparking',desc:'Main hall wall socket sparks when used; suspect wiring.',status:'In Progress',assigned_to:'Arif Chowdhury',vendor:'',cost_estimate:8000,actual_cost:8500,charge_to:'owner',tenant_name:'Rafiqul Islam',unit_name:'Flat 3B',property_name:'Green View Residency'},
-    {id:'MR-004',tenant:'T-005',unit:'U-005',prop:'P-002',category:'appliance',priority:'low',title:'AC cooling weak (Floor 2)',desc:'Split AC not cooling below 26°C; gas refill likely.',status:'Resolved',assigned_to:'',vendor:'ElectroCool BD',cost_estimate:4500,actual_cost:4500,charge_to:'tenant',tenant_name:'Orbit Textiles',unit_name:'Floor 2 (Office)',property_name:'Banani Commercial Tower'},
-    {id:'MR-005',tenant:'T-003',unit:'U-004',prop:'P-002',category:'other',priority:'low',title:'Common lobby light flickering',desc:'Lobby tube lights flickering; replace ballast.',status:'Closed',assigned_to:'',vendor:'',cost_estimate:1500,actual_cost:1500,charge_to:'owner',tenant_name:'Agro Foods Ltd',unit_name:'Floor 1 (Retail)',property_name:'Banani Commercial Tower'}
+    {id:'MR-001',tenant:'T-006',unit:'U-008',prop:'P-004',category:'structural',priority:'high',title:'Roof structural crack over Shed A',desc:'Crack line widening after last storm; needs steel reinforcement assessment.',status:'Open',assigned_to:'',vendor:'Rahim Steel Works',cost_estimate:120000,actual_cost:0,charge_to:'owner',tenant_name:'Bengal Agro Foods',unit_name:'Shed A',property_name:'Chattogram Industrial Shed',ts:'2026-07-13 09:00:00'},
+    {id:'MR-002',tenant:'T-002',unit:'U-010',prop:'P-005',category:'plumbing',priority:'medium',title:'Kitchen sink leakage',desc:'Water seeping under sink cabinet; tap joint leaking.',status:'Assigned',assigned_to:'Arif Chowdhury',vendor:'Kazi Plumbing',cost_estimate:3500,actual_cost:0,charge_to:'tenant',tenant_name:'Sultana Rahman',unit_name:'Apartment 7B',property_name:'Dhanmondi Apartment',ts:'2026-07-29 09:00:00'},
+    {id:'MR-003',tenant:'T-001',unit:'U-001',prop:'P-001',category:'electrical',priority:'medium',title:'Hall socket sparking',desc:'Main hall wall socket sparks when used; suspect wiring.',status:'In Progress',assigned_to:'Arif Chowdhury',vendor:'',cost_estimate:8000,actual_cost:8500,charge_to:'owner',tenant_name:'Rafiqul Islam',unit_name:'Flat 3B',property_name:'Green View Residency',ts:'2026-07-27 09:00:00'},
+    {id:'MR-004',tenant:'T-005',unit:'U-005',prop:'P-002',category:'appliance',priority:'low',title:'AC cooling weak (Floor 2)',desc:'Split AC not cooling below 26°C; gas refill likely.',status:'Resolved',assigned_to:'',vendor:'ElectroCool BD',cost_estimate:4500,actual_cost:4500,charge_to:'tenant',tenant_name:'Orbit Textiles',unit_name:'Floor 2 (Office)',property_name:'Banani Commercial Tower',ts:'2026-07-31 09:00:00'},
+    {id:'MR-005',tenant:'T-003',unit:'U-004',prop:'P-002',category:'other',priority:'low',title:'Common lobby light flickering',desc:'Lobby tube lights flickering; replace ballast.',status:'Closed',assigned_to:'',vendor:'',cost_estimate:1500,actual_cost:1500,charge_to:'owner',tenant_name:'Agro Foods Ltd',unit_name:'Floor 1 (Retail)',property_name:'Banani Commercial Tower',ts:'2026-07-03 09:00:00'}
   ],
   leads:[
     {id:'LD-001',name:'Tanvir Hossain',phone:'01712-998877',email:'tanvir.h@gmail.com',prop:'P-001',source:'listing',message:'Interested in Flat 3B (1450 sqft). When can I view?',status:'New',assigned_to:'',property_name:'Green View Residency'},
@@ -887,6 +887,22 @@ const SEED = {
     {id:'RM-002',owner_email:'owner@krtaker.com',owner_name:'Rofiqul Islam',prop:'P-002',property_name:'Banani Commercial Tower',month:'2026-06',amount:883000,rate:118.5,amount_fx:7451,currency:'USD',method:'SWIFT',ref:'SW-BD-88415',form_c:'FC-88415',status:'Sent',confirmed_at:'',ts:'2026-07-01 10:10:00'},
     {id:'RM-003',owner_email:'owner@krtaker.com',owner_name:'Rofiqul Islam',prop:'P-001',property_name:'Green View Residency',month:'2026-05',amount:181200,rate:118.0,amount_fx:1536,currency:'USD',method:'SWIFT',ref:'SW-BD-87840',form_c:'FC-87840',status:'Confirmed',confirmed_at:'2026-06-02 10:05:00',ts:'2026-06-01 09:00:00'}
   ],
+
+  onboarding_apps:[
+    {id:'OB-001',lead:'LD-002',name:'Farhana Yasmin',email:'farhana.y@outlook.com',phone:'01811-223344',nid:'198706224411',unit:'U-003',prop:'P-001',rent:28000,adv:56000,months:12,start:'2026-09-01',status:'Started',notes:'Referred by Sultana. Awaiting application docs.',lead_name:'Farhana Yasmin',ts:'2026-07-25 10:00:00'},
+    {id:'OB-002',lead:'LD-001',name:'Tanvir Hossain',email:'tanvir.h@gmail.com',phone:'01712-998877',nid:'199205144523',unit:'U-003',prop:'P-001',rent:28000,adv:56000,months:12,start:'2026-09-01',status:'Submitted',notes:'NID + bank statement uploaded — KYC review pending',lead_name:'Tanvir Hossain',ts:'2026-07-28 11:30:00'},
+    {id:'OB-003',lead:'LD-004',name:'Rima Sultana',email:'rima.s@gmail.com',phone:'01611-556677',nid:'199011305566',unit:'U-007',prop:'P-003',rent:35000,adv:70000,months:12,start:'2026-08-15',status:'Verified',notes:'KYC approved — ready to complete move-in',lead_name:'Rima Sultana',ts:'2026-07-30 14:00:00'}
+  ],
+  sla_config:[
+    {priority:'urgent',response_hours:4,resolve_hours:24,enabled:1},
+    {priority:'high',response_hours:24,resolve_hours:72,enabled:1},
+    {priority:'medium',response_hours:72,resolve_hours:168,enabled:1},
+    {priority:'low',response_hours:120,resolve_hours:240,enabled:1}
+  ],
+  vendor_ratings:[
+    {id:'VR-001',partner:'SP-01',job:'MR-001',rating:5,comment:'Fast response, quality steelwork.',rated_by:'Arif Chowdhury',ts:'2026-07-20 10:00:00'},
+    {id:'VR-002',partner:'SP-02',job:'MR-002',rating:4,comment:'Good work, slight delay on parts.',rated_by:'Shakil Ahmed',ts:'2026-07-22 10:00:00'}
+  ],
   statement_payouts:[
     {prop:'P-001',month:'2026-06',amount:186400,status:'Paid',method:'Bank',ref:'NPSB-88412'},
     {prop:'P-002',month:'2026-06',amount:883000,status:'Paid',method:'Bank',ref:'NPSB-88415'},
@@ -928,7 +944,7 @@ const SEED = {
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
@@ -937,21 +953,21 @@ const ROLES = [
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
   {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents','templates']},
-  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','ai','notices','documents','referrals']},
+  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['leads','📥','Leads'],['compliance','⚖️','Compliance']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -2427,8 +2443,8 @@ async function vendorsLoad(){
     stat(t('Pending invoices','অপেক্ষমাণ ইনভয়েস'),moneyC(pendingAmt),pendingInv.length+' '+t('to review','রিভিউ বাকি'),pendingInv.length?'warn':'pos','🧾'),
     stat(t('Paid out','পরিশোধিত'),moneyC(paidMonth),t('total to vendors','ভেন্ডরদের মোট'),'pos','💵')
   ]);
-  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧰</span>${t('Vendor directory','ভেন্ডর ডিরেক্টরি')}</div></div><div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${partners.map(p=>`<div class="panel"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div class="c-name" style="font-weight:700">${esc(p.name)}</div><div class="c-sub">${esc(p.trade)} · ★${p.rating} · ${p.jobs||0} ${t('jobs','কাজ')}</div></div>${badge(p.status)}</div><div class="kv"><span class="k">${t('Open jobs','খোলা কাজ')}</span><span class="v">${p.open_jobs||0}</span></div><div class="kv"><span class="k">${t('Approved invoices','অনুমোদিত ইনভয়েস')}</span><span class="v">${money(p.approved_total||0)}</span></div><div class="kv"><span class="k">${t('Paid total','মোট পরিশোধ')}</span><span class="v pos">${money(p.paid_total||0)}</span></div></div></div>`).join('')}</div></div>`;
-  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('Job board','জব বোর্ড')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Job','কাজ')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Estimate','আনুমানিক')}</th><th>${t('Actual','প্রকৃত')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canQc?'<th>QC</th>':''}</tr></thead><tbody>${jobs.map(j=>`<tr><td><span class="c-name">${esc(j.title)}</span><div class="c-sub">${j.id} · ${esc(j.category)}</div></td><td>${esc(j.vendor||'—')}</td><td>${esc(j.unit_name||j.unit)}</td><td class="t-amount">${j.cost_estimate?money(j.cost_estimate):'—'}</td><td class="t-amount">${j.actual_cost?money(j.actual_cost):'—'}</td><td>${badge(j.status)}</td>${canQc?`<td>${j.status==='Resolved'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorQc('${esc(j.id)}')">✅ ${t('QC sign-off','কিউসি সই')}</button>`:j.qc_by?`<span class="c-sub">${esc(j.qc_by)}</span>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧰</span>${t('Vendor directory','ভেন্ডর ডিরেক্টরি')}</div></div><div class="grid grid-2" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${partners.map(p=>`<div class="panel"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div class="c-name" style="font-weight:700">${esc(p.name)}</div><div class="c-sub">${esc(p.trade)} · ★${p.avg_rating!=null?p.avg_rating:p.rating}${p.rating_count?` (${p.rating_count})`:''} · ${p.jobs||0} ${t('jobs','কাজ')}</div></div>${badge(p.status)}</div><div class="kv"><span class="k">${t('Open jobs','খোলা কাজ')}</span><span class="v">${p.open_jobs||0}</span></div><div class="kv"><span class="k">${t('Approved invoices','অনুমোদিত ইনভয়েস')}</span><span class="v">${money(p.approved_total||0)}</span></div><div class="kv"><span class="k">${t('Paid total','মোট পরিশোধ')}</span><span class="v pos">${money(p.paid_total||0)}</span></div></div></div>`).join('')}</div></div>`;
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('Job board','জব বোর্ড')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Job','কাজ')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Estimate','আনুমানিক')}</th><th>${t('Actual','প্রকৃত')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canQc?'<th>QC</th>':''}</tr></thead><tbody>${jobs.map(j=>`<tr><td><span class="c-name">${esc(j.title)}</span><div class="c-sub">${j.id} · ${esc(j.category)}</div></td><td>${esc(j.vendor||'—')}</td><td>${esc(j.unit_name||j.unit)}</td><td class="t-amount">${j.cost_estimate?money(j.cost_estimate):'—'}</td><td class="t-amount">${j.actual_cost?money(j.actual_cost):'—'}</td><td>${badge(j.status)}</td>${canQc?`<td>${j.status==='Resolved'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorQc('${esc(j.id)}')">✅ ${t('QC sign-off','কিউসি সই')} ★</button>`:j.qc_by?`<span class="c-sub">${esc(j.qc_by)}</span>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
   h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Vendor invoices','ভেন্ডর ইনভয়েস')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Job','কাজ')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canReview?'<th>'+t('Review','রিভিউ')+'</th>':''}${canPay?'<th></th>':''}</tr></thead><tbody>${invoices.map(i=>`<tr><td><span class="c-name">${i.id}</span></td><td>${esc(i.partner_name||'')}</td><td>${esc(i.job_title||i.job)}</td><td class="t-amount">${money(i.amount)}</td><td>${badge(i.status)}</td>${canReview?`<td>${i.status==='Submitted'?`<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoiceDecide('${esc(i.id)}','approve')" title="${t('Approve','অনুমোদন')}">✓</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoiceDecide('${esc(i.id)}','reject')" title="${t('Reject','বাতিল')}">✕</button></div>`:'—'}</td>`:''}${canPay?`<td>${i.status==='Approved'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="vendorInvoicePay('${esc(i.id)}')">💵 ${t('Pay','পরিশোধ')}</button>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
   h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">💵</span>${t('Payout ledger','পেআউট লেজার')}</div>${canRecord?`<span class="link" onclick="vendorPayoutForm()">＋ ${t('Record payout','পেআউট রেকর্ড')}</span>`:''}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Month','মাস')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Method','পদ্ধতি')}</th><th>${t('Ref','রেফ')}</th></tr></thead><tbody>${payouts.map(p=>`<tr><td>${esc(p.partner_name||'')}</td><td>${p.month}</td><td class="t-amount">${money(p.amount)}</td><td>${badge(p.status)}</td><td>${esc(p.method||'—')}</td><td>${esc(p.ref||'—')}</td></tr>`).join('')||`<tr><td colspan="6" class="m">${t('No payouts yet','এখনো কোনো পেআউট নেই')}</td></tr>`}</tbody></table></div></div>`;
   host.innerHTML=h;
@@ -2552,6 +2568,174 @@ async function remitConfirm(id){
   if(DEMO_MODE){ const r=(DB.remittances||[]).find(x=>x.id===id); if(r) r.status='Confirmed'; }
   toast(t('Remittance confirmed ✅','রেমিট্যান্স নিশ্চিত ✅')); await refreshData(); if(state.view==='remit'){ render(); }
 }
+
+/* ═══ Phase 38: tenant onboarding & e-KYC ═══ */
+async function onboardingLoad(){
+  const host=document.getElementById('onboardingLive'); if(!host) return;
+  const canManage=['superadmin','owner','manager'].includes(role().id);
+  let apps=[];
+  if(TOKEN&&!DEMO_MODE){
+    const res=await apiCall('app-onboarding?action=list');
+    if(res.ok) apps=res.apps||[];
+  } else {
+    apps=(DB.onboarding_apps||[]).map(a=>({...a,unit_name:(DB.units||[]).find(u=>u.id===a.unit)?.name||'',property_name:(DB.properties||[]).find(p=>p.id===a.prop)?.name||'',lead_name:(DB.leads||[]).find(l=>l.id===a.lead)?.name||''}));
+  }
+  const counts={Started:0,Submitted:0,Verified:0,Rejected:0,Completed:0};
+  apps.forEach(a=>{ counts[a.status]=(counts[a.status]||0)+1; });
+  const ST={Started:'b-gray',Submitted:'b-blue',Verified:'b-green',Rejected:'b-red',Completed:'b-purple'};
+  let h=statsRow([
+    stat(t('Started','শুরু হয়েছে'),counts.Started||0,t('application drafts','ড্রাফট'),'','📋'),
+    stat(t('Submitted','জমা হয়েছে'),counts.Submitted||0,t('KYC review','কেওয়াইসি রিভিউ'),counts.Submitted?'warn':'pos','🪪'),
+    stat(t('Verified','ভেরিফাইড'),counts.Verified||0,t('ready to move in','মুভ-ইনের প্রস্তুত'),counts.Verified?'warn':'pos','✅'),
+    stat(t('Completed','সম্পন্ন'),counts.Completed||0,t('tenants onboarded','অনবোর্ডেড'),'pos','🎉')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">📋</span>${t('Onboarding pipeline','অনবোর্ডিং পাইপলাইন')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Application','আবেদন')}</th><th>${t('Applicant','আবেদনকারী')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Rent','ভাড়া')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Actions','অ্যাকশন')}</th></tr></thead><tbody>${apps.map(a=>`<tr><td><span class="c-name">${a.id}</span><div class="c-sub">${esc(a.lead_name?'Lead '+a.lead_name:'')} ${a.start?'· starts '+esc(a.start):''}</div></td><td>${esc(a.name)}<div class="c-sub">${esc(a.nid||'')}${a.email?' · '+esc(a.email):''}</div></td><td>${esc(a.unit_name||a.unit||'—')}<div class="c-sub">${esc(a.property_name||'')}</div></td><td class="t-amount">${a.rent?money(a.rent)+'<div class="c-sub">adv '+money(a.adv)+' · '+a.months+'mo</div>':'—'}</td><td>${badge(a.status)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap">${a.status==='Started'||a.status==='Rejected'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="onboardingAction('${esc(a.id)}','submit')">🪪 ${t('Submit KYC','কেওয়াইসি জমা')}</button>`:''}${a.status==='Submitted'&&canManage?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="onboardingAction('${esc(a.id)}','approve')">✓ ${t('Verify','ভেরিফাই')}</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="onboardingAction('${esc(a.id)}','reject')">✕</button>`:''}${a.status==='Verified'&&canManage?`<button class="btn-primary" style="padding:3px 9px;font-size:11px" onclick="onboardingAction('${esc(a.id)}','complete')">🎉 ${t('Complete move-in','মুভ-ইন সম্পন্ন')}</button>`:''}${a.status==='Completed'?`<span class="c-sub">${esc(a.tenant_id||'')} · ${esc(a.lease_id||'')} · ${esc(a.invoice_id||'')}</span>`:''}</div></td></tr>`).join('')||`<tr><td colspan="6" class="m">${t('No applications','কোনো আবেদন নেই')}</td></tr>`}</tbody></table></div></div>`;
+  host.innerHTML=h;
+}
+function onboardingForm(){
+  const leads=(DB.leads||[]).filter(l=>!['Leased','Lost'].includes(l.status));
+  const opts=leads.map(l=>`<option value="${esc(l.id)}">${esc(l.id)} · ${esc(l.name)}</option>`).join('');
+  const units=(DB.units||[]).filter(u=>u.status==='Vacant');
+  const uopts=units.map(u=>`<option value="${esc(u.id)}" data-p="${esc(u.p)}" data-rent="${u.rent||0}">${esc(u.name)} · ${esc((DB.properties||[]).find(p=>p.id===u.p)?.name||'')} (৳${(u.rent||0).toLocaleString()})</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('From lead (optional)','লিড থেকে (ঐচ্ছিক)')}</label><select id="ob_lead" onchange="onboardingLeadPrefill()"><option value="">${t('— manual entry —','— ম্যানুয়াল —')}</option>${opts}</select></div>
+    <div class="form-field"><label>${t('Name','নাম')}</label><input id="ob_name"></div>
+    <div class="form-field"><label>${t('Email','ইমেইল')}</label><input id="ob_email" type="email"></div>
+    <div class="form-field"><label>${t('Phone','ফোন')}</label><input id="ob_phone"></div>
+    <div class="form-field"><label>${t('NID','এনআইডি')}</label><input id="ob_nid"></div>
+    <div class="form-field full"><label>${t('Target unit','টার্গেট ইউনিট')}</label><select id="ob_unit">${uopts||`<option value="">${t('No vacant units','কোনো খালি ইউনিট নেই')}</option>`}</select></div>
+    <div class="form-field"><label>${t('Rent (৳)','ভাড়া (৳)')}</label><input id="ob_rent" type="number" min="0"></div>
+    <div class="form-field"><label>${t('Advance (৳)','অগ্রিম (৳)')}</label><input id="ob_adv" type="number" min="0"></div>
+    <div class="form-field"><label>${t('Months','মাস')}</label><input id="ob_months" type="number" value="12" min="1" max="36"></div>
+    <div class="form-field"><label>${t('Start date','শুরুর তারিখ')}</label><input id="ob_start" type="date"></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="onboardingSubmit()">＋ ${t('Start','শুরু')}</button></div>`;
+  openDrawer(`📋 ${t('Start onboarding','অনবোর্ডিং শুরু')}`, body, foot);
+}
+function onboardingLeadPrefill(){
+  const sel=document.getElementById('ob_lead');
+  const lead=(DB.leads||[]).find(l=>l.id===sel?.value);
+  if(!lead) return;
+  const n=document.getElementById('ob_name'); if(n&&!n.value) n.value=lead.name||'';
+  const e=document.getElementById('ob_email'); if(e&&!e.value) e.value=lead.email||'';
+  const p=document.getElementById('ob_phone'); if(p&&!p.value) p.value=lead.phone||'';
+}
+async function onboardingSubmit(){
+  const unitSel=document.getElementById('ob_unit');
+  const payload={action:'start',lead:document.getElementById('ob_lead')?.value,name:document.getElementById('ob_name')?.value,email:document.getElementById('ob_email')?.value,phone:document.getElementById('ob_phone')?.value,nid:document.getElementById('ob_nid')?.value,unit:unitSel?.value,rent:parseInt(document.getElementById('ob_rent')?.value||(unitSel?.selectedOptions[0]?.dataset.rent)||'0',10),adv:parseInt(document.getElementById('ob_adv')?.value||'0',10),months:parseInt(document.getElementById('ob_months')?.value||'12',10),start:document.getElementById('ob_start')?.value||new Date().toISOString().slice(0,10)};
+  const d = DEMO_MODE ? {ok:true,id:'OB-'+Math.floor(Math.random()*900+100)} : await apiCall('app-onboarding',payload);
+  if(!d.ok){ toast(d.error||'Start failed'); return; }
+  if(DEMO_MODE){ (DB.onboarding_apps=DB.onboarding_apps||[]).push({id:d.id||'OB-100',lead:payload.lead,name:payload.name,email:payload.email,phone:payload.phone,nid:payload.nid,unit:payload.unit,prop:(DB.units||[]).find(u=>u.id===payload.unit)?.p||'',rent:payload.rent,adv:payload.adv,months:payload.months,start:payload.start,status:'Started',ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+  toast(t('Onboarding started 📋','অনবোর্ডিং শুরু হয়েছে 📋')); closeDrawer(); await refreshData(); if(state.view==='onboarding'){ render(); }
+}
+async function onboardingAction(id, action){
+  if(action==='complete'){
+    const d = DEMO_MODE ? {ok:true,tenant:'T-0'+Math.floor(Math.random()*90+10),lease:'L-0'+Math.floor(Math.random()*90+10),handover:'HOV-'+Math.floor(Math.random()*900+100),invoice:'INV-2026-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0')} : await apiCall('app-onboarding',{action:'complete',id});
+    if(!d.ok){ toast(d.error||'Complete failed'); return; }
+    if(DEMO_MODE){
+      const a=(DB.onboarding_apps||[]).find(x=>x.id===id);
+      if(a){
+        a.status='Completed'; a.tenant_id=d.tenant; a.lease_id=d.lease; a.invoice_id=d.invoice;
+        const u=(DB.units||[]).find(x=>x.id===a.unit); if(u) u.status='Leased';
+        (DB.tenants=DB.tenants||[]).push({id:d.tenant,name:a.name,phone:a.phone,email:a.email,nid:a.nid,nrb:0,kind:'Individual',sub_email:a.email});
+        (DB.leases=DB.leases||[]).push({id:d.lease,u:a.unit,t:d.tenant,start:a.start||new Date().toISOString().slice(0,10),end:new Date(new Date((a.start||new Date().toISOString().slice(0,10))+'T00:00:00').getTime()+(a.months||12)*30.44*86400000).toISOString().slice(0,10),rent:a.rent,adv:a.adv,res:1,reg_office:'',reg_deed:'',status:'Active'});
+        (DB.handover_checklists=DB.handover_checklists||[]).push({id:d.handover,lease:d.lease,kind:'move_in',items:[],status:'In Progress',created_by:LIVE.user?.name||'',ts:new Date().toISOString().slice(0,19).replace('T',' '),updated_at:new Date().toISOString().slice(0,19).replace('T',' ')});
+        (DB.invoices=DB.invoices||[]).push({id:d.invoice,l:d.lease,m:(a.start||new Date().toISOString().slice(0,7)).slice(0,7),gross:a.rent,tds:0,net:a.rent,status:'Unpaid'});
+      }
+    }
+    toast(`🎉 ${t('Onboarded','অনবোর্ড সম্পন্ন')}: ${d.tenant} · ${d.lease} · ${d.invoice}`);
+    await refreshData(); if(state.view==='onboarding'){ render(); }
+    return;
+  }
+  const map={submit:'submit',approve:'verify',reject:'verify'};
+  const payload={action:map[action],id};
+  if(action==='approve'||action==='reject') payload.verdict=action;
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-onboarding',payload);
+  if(!d.ok){ toast(d.error||'Action failed'); return; }
+  if(DEMO_MODE){ const a=(DB.onboarding_apps||[]).find(x=>x.id===id); if(a) a.status=action==='submit'?'Submitted':(action==='approve'?'Verified':'Rejected'); }
+  toast(action==='submit'?t('KYC submitted 🪪','কেওয়াইসি জমা হয়েছে 🪪'):action==='approve'?t('KYC verified ✅','কেওয়াইসি ভেরিফাইড ✅'):t('Application rejected','আবেদন বাতিল করা হয়েছে'));
+  await refreshData(); if(state.view==='onboarding'){ render(); }
+}
+
+/* ═══ Phase 39: SLA + vendor ratings helpers ═══ */
+function slaStateFor(row, cfg){
+  const c=cfg[row.priority]||{response_hours:24,resolve_hours:72,enabled:1};
+  const created=new Date(String(row.ts||'').replace(' ','T')).getTime();
+  if(!created) return {status:'on_track',elapsed_hours:0};
+  const now=Date.now();
+  const respDue=created+c.response_hours*3600000;
+  const resvDue=created+c.resolve_hours*3600000;
+  const elapsed=Math.max(0,(now-created)/3600000);
+  const done=['Resolved','Closed'].includes(row.status);
+  let st='on_track';
+  if(done) st='done';
+  else if(now>resvDue) st='breached';
+  else if(now>respDue&&['Open','Assigned'].includes(row.status)) st='breached';
+  else if(now>resvDue-c.resolve_hours*900000) st='at_risk';
+  return {status:st,elapsed_hours:Math.round(elapsed*10)/10};
+}
+function slaBadge(st){
+  const m={'on_track':['On track','b-green'],'at_risk':['At risk','b-orange'],'breached':['Breached','b-red'],'done':['Done','b-gray']}[st]||['—','b-gray'];
+  return `<span class="badge ${m[1]}" style="font-size:10.5px">${m[0]}</span>`;
+}
+function slaConfigForm(){
+  const cfg={}; (DB.sla_config||[]).forEach(x=>cfg[x.priority]=x);
+  const PRIO=['urgent','high','medium','low'];
+  const body=`<div class="form-grid">${PRIO.map(p=>{const c=cfg[p]||{response_hours:24,resolve_hours:72};return `<div class="form-field"><label>${p.toUpperCase()}</label><div style="display:flex;gap:6px;align-items:center"><input id="sla_${p}_r" type="number" min="1" max="720" value="${c.response_hours}" style="width:70px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg-alt)"><span class="c-sub">h</span><input id="sla_${p}_v" type="number" min="1" max="720" value="${c.resolve_hours}" style="width:70px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg-alt)"><span class="c-sub">h</span></div><div class="c-sub" style="margin-top:2px">${t('response / resolve','রেসপন্স / সমাধান')}</div></div>`;}).join('')}</div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="slaConfigSave()">${t('Save SLA','এসএলএ সংরক্ষণ')}</button></div>`;
+  openDrawer(`⚙️ ${t('SLA configuration','এসএলএ কনফিগারেশন')}`, body, foot);
+}
+async function slaConfigSave(){
+  const cfg={};
+  ['urgent','high','medium','low'].forEach(p=>{
+    const r=document.getElementById('sla_'+p+'_r'), v=document.getElementById('sla_'+p+'_v');
+    if(r&&v) cfg[p]={response_hours:parseInt(r.value)||24,resolve_hours:parseInt(v.value)||72,enabled:1};
+  });
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-sla',{action:'config-save',config:cfg});
+  if(!d.ok){ toast(d.error||'Save failed'); return; }
+  if(DEMO_MODE){ (DB.sla_config=DB.sla_config||[]); Object.keys(cfg).forEach(p=>{const ex=(DB.sla_config||[]).find(x=>x.priority===p); if(ex){ex.response_hours=cfg[p].response_hours;ex.resolve_hours=cfg[p].resolve_hours;}else DB.sla_config.push({priority:p,response_hours:cfg[p].response_hours,resolve_hours:cfg[p].resolve_hours,enabled:1});}); }
+  toast(t('SLA config saved ⚙️','এসএলএ কনফিগ সংরক্ষিত ⚙️')); closeDrawer(); if(state.view==='maintenance'){ render(); }
+}
+function vendorQcDrawer(id){
+  const j=(DB.maintenance_requests||[]).find(x=>x.id===id);
+  const stars=[5,4,3,2,1].map(n=>`<span class="qc-star" data-v="${n}" onclick="qcStarPick(${n})" style="font-size:26px;cursor:pointer;color:var(--text-mute)">★</span>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Job','কাজ')}</label><div class="c-name">${esc(j?.title||id)}</div><div class="c-sub">${esc(j?.vendor||'')} · ${esc(j?.unit_name||'')}</div></div>
+    <div class="form-field full"><label>${t('Rating','রেটিং')}</label><div id="qcStars" style="font-size:26px;letter-spacing:4px">${stars}</div><div class="c-sub" id="qcStarLbl">${t('Tap a star','একটি তারা নির্বাচন করুন')}</div></div>
+    <div class="form-field full"><label>${t('Comment (optional)','মন্তব্য (ঐচ্ছিক)')}</label><input id="qc_comment" placeholder="${t('Quality, speed, materials…','গুণমান, গতি, ম্যাটেরিয়াল…')}"></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="vendorQcConfirm('${esc(id)}')">✅ ${t('Sign off QC','কিউসি সই')}</button></div>`;
+  openDrawer(`✅ ${t('QC sign-off & rate vendor','কিউসি সই ও ভেন্ডর রেটিং')}`, body, foot);
+}
+let qcRatingPick=0;
+function qcStarPick(n){
+  qcRatingPick=n;
+  document.querySelectorAll('#qcStars .qc-star').forEach(s=>{s.style.color=parseInt(s.dataset.v)<=n?'#F5A623':'var(--text-mute)';});
+  document.getElementById('qcStarLbl').textContent='★ '.repeat(n)+'· '+(['','Poor','Fair','Good','Very good','Excellent'][n]||'');
+}
+async function vendorQcConfirm(id){
+  const rating=qcRatingPick||0;
+  const comment=document.getElementById('qc_comment')?.value||'';
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-vendors',{action:'job-qc',id,rating,comment});
+  if(!d.ok){ toast(d.error||'QC failed'); return; }
+  if(DEMO_MODE){
+    const j=(DB.maintenance_requests||[]).find(x=>x.id===id);
+    if(j){ j.status='Closed'; j.qc_by=LIVE.user?.name||'Arif Chowdhury'; }
+    if(rating>=1&&rating<=5){
+      const p=(DB.partners||[]).find(p=>p.name===j?.vendor);
+      if(p){
+        const ex=(DB.vendor_ratings=DB.vendor_ratings||[]).find(v=>v.partner===p.id&&v.job===id);
+        if(ex){ ex.rating=rating; ex.comment=comment; }
+        else DB.vendor_ratings.push({id:'VR-'+Math.floor(Math.random()*900+100),partner:p.id,job:id,rating,comment,rated_by:LIVE.user?.name||'Arif Chowdhury',ts:new Date().toISOString().slice(0,19).replace('T',' ')});
+        const rs=DB.vendor_ratings.filter(v=>v.partner===p.id);
+        p.rating=Math.round(rs.reduce((s,v)=>s+v.rating,0)/rs.length*10)/10;
+      }
+    }
+  }
+  toast(t('QC signed off ✅','কিউসি অনুমোদিত ✅')+(rating?` ★${rating}`:''));
+  closeDrawer(); await refreshData(); if(state.view==='vendors'){ render(); }
+}
+async function vendorQc(id){ vendorQcDrawer(id); }
 
 function demoPortalData(){
   const tid=(DB.tenants||[]).find(x=>x.sub_email==='sultana@krtaker.com')?.id || (DB.tenants||[]).find(x=>x.name==='Sultana Rahman')?.id || 'T-002';
@@ -3436,7 +3620,17 @@ const renderers={
     const open=reqs.filter(x=>x.status==='Open'||x.status==='Assigned').length;
     const inprog=reqs.filter(x=>x.status==='In Progress').length;
     const done=reqs.filter(x=>x.status==='Resolved'||x.status==='Closed').length;
-    h+=`<div class="grid grid-3" style="margin-bottom:18px">
+    const slaCfg={}; (DB.sla_config||[]).forEach(x=>slaCfg[x.priority]=x);
+    const sla={on_track:0,at_risk:0,breached:0,done:0};
+    reqs.forEach(x=>{const s=slaStateFor(x,slaCfg).status; sla[s]=(sla[s]||0)+1;});
+    const canSla=['superadmin','owner','manager','svc_mgr'].includes(role().id);
+    h+=`<div class="grid grid-4" style="margin-bottom:14px">
+      <div class="panel"><div class="panel-b"><div class="kv"><span class="k">🟢 ${t('On track','সঠিক পথে')}</span><span class="v" style="font-size:20px;font-weight:800">${sla.on_track||0}</span></div><div class="c-sub">${t('within SLA','এসএলএ-র মধ্যে')}</div></div></div>
+      <div class="panel"><div class="panel-b"><div class="kv"><span class="k">🟠 ${t('At risk','ঝুঁকিতে')}</span><span class="v" style="font-size:20px;font-weight:800;color:var(--warn)">${sla.at_risk||0}</span></div><div class="c-sub">${t('last 25% of resolve window','সমাধান সময়ের শেষ ২৫%')}</div></div></div>
+      <div class="panel"><div class="panel-b"><div class="kv"><span class="k">🔴 ${t('Breached','মেয়াদোত্তীর্ণ')}</span><span class="v" style="font-size:20px;font-weight:800;color:var(--danger,#e5484d)">${sla.breached||0}</span></div><div class="c-sub">${t('response or resolve missed','রেসপন্স/সমাধান মিস')}</div></div></div>
+      <div class="panel"><div class="panel-b"><div class="kv"><span class="k">⚪ ${t('Done','সম্পন্ন')}</span><span class="v" style="font-size:20px;font-weight:800">${sla.done||0}</span></div><div class="c-sub">${canSla?`<span class="link" onclick="slaConfigForm()">⚙️ ${t('SLA config','এসএলএ কনফিগ')}</span>`:''}</div></div></div>
+    </div>
+    <div class="grid grid-3" style="margin-bottom:18px">
       <div class="panel"><div class="panel-b"><div class="kv"><span class="k">${t('Open','খোলা')}</span><span class="v" style="font-size:20px;font-weight:800">${open}</span></div><div class="c-sub">${t('Awaiting assignment / action','অ্যাসাইনমেন্ট/কাজের অপেক্ষায়')}</div></div></div>
       <div class="panel"><div class="panel-b"><div class="kv"><span class="k">${t('In progress','চলমান')}</span><span class="v" style="font-size:20px;font-weight:800">${inprog}</span></div><div class="c-sub">${t('Vendor on site','ভেন্ডর কাজ করছে')}</div></div></div>
       <div class="panel"><div class="panel-b"><div class="kv"><span class="k">${t('Resolved / closed','সমাধান/বন্ধ')}</span><span class="v" style="font-size:20px;font-weight:800">${done}</span></div><div class="c-sub">${t('Cost: ৳'+reqs.reduce((s,x)=>s+(x.actual_cost||0),0).toLocaleString(),'খরচ: ৳'+reqs.reduce((s,x)=>s+(x.actual_cost||0),0).toLocaleString())}</div></div></div>
@@ -3449,7 +3643,7 @@ const renderers={
       ${x.tenant_name?`<div class="kv"><span class="k">${t('Tenant','ভাড়াটিয়া')}</span><span class="v">${esc(x.tenant_name)}</span></div>`:''}
       ${x.assigned_to?`<div class="kv"><span class="k">${t('Assigned','নিযুক্ত')}</span><span class="v">${esc(x.assigned_to)}${x.vendor?' · '+esc(x.vendor):''}</span></div>`:''}
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
-        <span class="badge ${PRIO_CLS[x.priority]||'b-gray'}" style="font-size:10.5px">${esc(String(x.priority||'medium').toUpperCase())}</span>
+        <span style="display:inline-flex;gap:4px;align-items:center"><span class="badge ${PRIO_CLS[x.priority]||'b-gray'}" style="font-size:10.5px">${esc(String(x.priority||'medium').toUpperCase())}</span>${slaBadge(slaStateFor(x,slaCfg).status)}</span>
         <span class="c-sub">${x.actual_cost?money(x.actual_cost):(x.cost_estimate?t('Est.','আনুমানিক')+' '+money(x.cost_estimate):'')}</span>
       </div></div></div>`;
     h+=`<div id="maintenanceLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
@@ -3503,6 +3697,13 @@ const renderers={
     let h=pageHead(t('Remittances','রেমিট্যান্স'),t('NRB payouts sent abroad — SWIFT/bKash, exchange rate, Form C.','এনআরবি পেআউট বিদেশে পাঠানো — সুইফট/বিকাশ, এক্সচেঞ্জ রেট, ফর্ম সি।'),`${canWrite?`<button class="btn-primary" onclick="remitForm()">＋ ${t('Record remittance','রেমিট্যান্স রেকর্ড')}</button>`:''}`);
     h+=`<div id="remitLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>remitLoad(),0);
+    return h;
+  },
+  onboarding(){
+    const canManage = ['superadmin','owner','manager'].includes(role().id);
+    let h=pageHead(t('Onboarding','অনবোর্ডিং'),t('Lead → e-KYC → verified → move-in: tenant, lease, checklist and first invoice in one click.','লিড → ই-কেওয়াইসি → ভেরিফাইড → মুভ-ইন: এক ক্লিকে টেন্যান্ট, লিজ, চেকলিস্ট ও প্রথম ইনভয়েস।'),`<button class="btn-primary" onclick="onboardingForm()">＋ ${t('Start onboarding','অনবোর্ডিং শুরু')}</button>`);
+    h+=`<div id="onboardingLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>onboardingLoad(),0);
     return h;
   },
   ai(){
