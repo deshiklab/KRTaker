@@ -472,6 +472,43 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
   .page-head h1{font-size:19px}
   .tb-user .u-name,.tb-user .u-role{display:none}
 }
+/* ── Phase 12: Templates module ── */
+.tpl-sec{margin-bottom:22px}
+.tpl-sec-h{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px}
+.tpl-sec-h h3{margin:0;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-mute)}
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.tpl-card{background:var(--bg-alt);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:border-color .15s}
+.tpl-card:hover{border-color:var(--accent)}
+.tpl-card .tc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.tpl-card .tc-ic{width:38px;height:38px;border-radius:10px;background:rgba(47,128,237,.1);display:flex;align-items:center;justify-content:center;font-size:17px}
+.tpl-card .tc-name{font-weight:700;font-size:13.5px;line-height:1.35}
+.tpl-card .tc-sub{font-size:11px;color:var(--text-mute);margin-top:2px}
+.tpl-card .tc-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.tpl-card .tc-acts button{font:600 11.5px Inter;padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--text)}
+.tpl-card .tc-acts button.p{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tpl-card .tc-acts button.danger{color:var(--danger);border-color:rgba(231,76,60,.3)}
+.email-card{background:var(--bg-alt);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.email-card .ec-ic{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.email-card .ec-body{flex:1;min-width:0}
+.email-card .ec-name{font-weight:700;font-size:13px}
+.email-card .ec-sub{font-size:11.5px;color:var(--text-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.email-card .ec-acts{display:flex;gap:6px}
+.email-card .ec-acts button{font:600 11.5px Inter;padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer}
+.tpl-field-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.tpl-field{font:600 11px Inter;padding:5px 9px;border-radius:7px;border:1px dashed var(--accent);background:rgba(47,128,237,.06);color:var(--accent);cursor:pointer}
+.tpl-field:hover{background:rgba(47,128,237,.16)}
+.wf-chip{display:inline-flex;align-items:center;gap:5px;font:600 11.5px Inter;padding:5px 10px;border-radius:999px;border:1px solid var(--accent);background:rgba(47,128,237,.08);color:var(--accent);cursor:pointer;margin:3px}
+.wf-chip:hover{background:rgba(47,128,237,.18)}
+.wf-inline{display:inline;border-bottom:2px dashed var(--accent);cursor:pointer;color:var(--accent);font-weight:600}
+.wf-inline:hover{background:rgba(47,128,237,.12)}
+.prev-frame{background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px;font:13px/1.8 Inter,"Hind Siliguri",sans-serif;color:#1A2433;white-space:pre-wrap;max-height:380px;overflow:auto}
+.email-frame{background:#EDF1F7;border:1px solid var(--border);border-radius:12px;padding:18px}
+.email-frame iframe{width:100%;height:420px;border:0;border-radius:10px;background:#fff;box-shadow:0 2px 10px rgba(16,24,40,.08)}
+.tpl-editor-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-mute);margin:14px 0 6px}
+.tpl-editor-label:first-child{margin-top:0}
+.tpl-editor input[type=text],.tpl-editor textarea{width:100%;box-sizing:border-box;font:13px Inter;padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text);outline:none}
+.tpl-editor textarea{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.6;min-height:220px;resize:vertical}
+.tpl-editor select{width:100%;font:13px Inter;padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text)}
 </style>
 </head>
 <body>
@@ -746,7 +783,7 @@ const SEED = {
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai','analytics','notices','documents','referrals','recon'];
+const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions']},
@@ -754,21 +791,21 @@ const ROLES = [
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','maintenance','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','invoices','payments','ai','notices','documents','referrals']},
   {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai','analytics','notices','documents']},
-  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents']},
+  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding',mods:['dashboard','maintenance','ai','notices','documents','referrals']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','ai','analytics','notices','documents','recon']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
-  {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['documents','📁','Documents'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
+  {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
   {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['compliance','⚖️','Compliance']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','referrals':'🤝','recon':'🔄'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','referrals':'Referrals','recon':'Reconciliation'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -1568,8 +1605,8 @@ const renderers={
     return h;
   },
   leases(){
-    let h=pageHead(t('Leases','লিজ'),t('Tenancy agreements with legal gates applied automatically.','আইনি গেটসহ টেন্যান্সি চুক্তি।'),`<button class="btn-primary" onclick="openNew('leases')">＋ ${t('New lease','নতুন লিজ')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th></tr></thead><tbody>${DB.leases.map(l=>`<tr data-id="${l.id}" onclick="openDetail('leases','${l.id}')"><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+    let h=pageHead(t('Leases','লিজ'),t('Tenancy agreements with legal gates applied automatically.','আইনি গেটসহ টেন্যান্সি চুক্তি।'),`${can('templates')?`<button class="btn-outline" onclick="tplPrintFor('LSE-STD','${DB.leases[0]?DB.leases[0].id:''}')">📄 ${t('Print agreement','চুক্তি প্রিন্ট')}</button>`:''}<button class="btn-primary" onclick="openNew('leases')">＋ ${t('New lease','নতুন লিজ')}</button>`);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th>${can('templates')?'<th>Docs</th>':''}</tr></thead><tbody>${DB.leases.map(l=>`<tr data-id="${l.id}" onclick="openDetail('leases','${l.id}')"><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td>${can('templates')?`<td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();tplPrintFor('LSE-STD','${l.id}')">📄 ${t('Agreement','চুক্তি')}</button></td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
   invoices(){
@@ -1579,12 +1616,12 @@ const renderers={
   },
   receipts(){
     let h=pageHead(t('Receipts','রসিদ'),t('Digitally signed receipts for every payment.','প্রতিটি পেমেন্টের ডিজিটাল সই করা রসিদ।'));
-    h+=`<div class="grid grid-2eq">${DB.receipts.map(r=>`<div class="panel" data-id="${r.id}"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div class="c-name" style="font-size:14px;font-weight:700">${r.id}</div><div class="c-sub">${r.date} · ${r.method}</div></div>${badge('Paid')}</div><div class="t-amount" style="font-size:20px">${money(r.amount)}</div><div class="c-sub" style="margin-top:8px">${invLbl(r.inv)}</div><div style="margin-top:12px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-mute);font-family:monospace">${r.sig} — verified ✓</div></div></div>`).join('')}</div>`;
+    h+=`<div class="grid grid-2eq">${DB.receipts.map(r=>`<div class="panel" data-id="${r.id}"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div class="c-name" style="font-size:14px;font-weight:700">${r.id}</div><div class="c-sub">${r.date} · ${r.method}</div></div>${badge('Paid')}</div><div class="t-amount" style="font-size:20px">${money(r.amount)}</div><div class="c-sub" style="margin-top:8px">${invLbl(r.inv)}</div><div style="margin-top:12px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-mute);font-family:monospace">${r.sig} — verified ✓</div>${can('templates')?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn-ghost" style="padding:5px 12px;font-size:11.5px" onclick="tplPrintFor('RCP-RENT','${r.id}')">🖨 ${t('Print receipt','রসিদ প্রিন্ট')}</button><button class="btn-ghost" style="padding:5px 12px;font-size:11.5px" onclick="tplPrintFor('RCP-ADV','${r.id}')">${t('Advance','অগ্রিম')}</button></div>`:''}</div></div>`).join('')}</div>`;
     return h;
   },
   payments(){
     let h=pageHead(t('Payments','পেমেন্ট'),t('bKash, Nagad, bank and cheque — reconciled automatically.','বিকাশ, নগদ, ব্যাংক ও চেক — স্বয়ংক্রিয়ভাবে রিকনসাইলড।'),`<button class="btn-primary" onclick="paymentsForm()">＋ ${t('Record payment','পেমেন্ট রেকর্ড')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Payment</th><th>Invoice</th><th>Method</th><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>${DB.payments.map(p=>`<tr data-id="${p.id}"><td><span class="c-name">${p.id}</span></td><td>${esc(p.inv||'—')}</td><td>${p.method==='bKash'?'📱 bKash':p.method==='Nagad'?'📱 Nagad':'🏦 Bank'}</td><td>${esc(p.ref)}</td><td>${p.date}</td><td class="t-pos">+${money(p.amount)}</td><td>${badge(p.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Payment</th><th>Invoice</th><th>Method</th><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th>${can('templates')?'<th>Docs</th>':''}</tr></thead><tbody>${DB.payments.map(p=>`<tr data-id="${p.id}"><td><span class="c-name">${p.id}</span></td><td>${esc(p.inv||'—')}</td><td>${p.method==='bKash'?'📱 bKash':p.method==='Nagad'?'📱 Nagad':'🏦 Bank'}</td><td>${esc(p.ref)}</td><td>${p.date}</td><td class="t-pos">+${money(p.amount)}</td><td>${badge(p.status)}</td>${can('templates')?`<td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();tplPrintFor('RCP-RENT','${p.id}')">🖨 ${t('Receipt','রসিদ')}</button></td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
   taxes(){
@@ -1801,8 +1838,233 @@ const renderers={
           : `<button class="pc-btn go" onclick="changePlan('${p.code}')">${t('Switch to','সুইচ করুন')} ${esc(p.name)}</button>`}
       </div>`;}).join('')}</div>`;
     return h;
+  },
+  /* Phase 12: document + email templates (customizable, wireframe-linked) */
+  templates(){
+    let h=pageHead(t('Templates','টেমপ্লেট'),t('Lease agreements, service contracts, money receipts and email templates — customize, wireframe-preview and link to live records.','লিজ চুক্তি, সার্ভিস কন্ট্রাক্ট, টাকা রসিদ ও ইমেইল টেমপ্লেট — কাস্টমাইজ, ওয়্যারফ্রেম প্রিভিউ ও লাইভ রেকর্ডের সাথে লিংক।'),
+      `<button class="btn-primary" onclick="openTplEditor('new','lease')">＋ ${t('New template','নতুন টেমপ্লেট')}</button>`);
+    if(DEMO_MODE || !TOKEN){
+      h+=`<div class="panel"><div class="panel-b c-sub">${t('Templates need a signed-in workspace — log in to customize documents and emails.','টেমপ্লেটের জন্য সাইন-ইন প্রয়োজন — ডকুমেন্ট ও ইমেইল কাস্টমাইজ করতে লগ ইন করুন।')}</div></div>`;
+      return h;
+    }
+    h+=`<div id="tplLive"><div class="panel"><div class="panel-b c-sub">${t('Loading templates…','টেমপ্লেট লোড হচ্ছে…')}</div></div></div>`;
+    loadTemplates();
+    return h;
   }
 };
+
+/* ═══ Phase 12: templates engine (front-end) ═══ */
+let TPL = { templates: [], email: [], palettes: {}, refs: {}, current: null, currentEmail: null };
+const TPL_META = {
+  lease:  { ic:'📄', label:'Lease agreements',  bn:'লিজ চুক্তি',     kind:'lease',   newName:'New Lease Agreement',   refLbl:'Link a lease',    refCol:'leases' },
+  service:{ ic:'🤝', label:'Service contracts', bn:'সার্ভিস কন্ট্রাক্ট', kind:'service', newName:'New Service Contract',  refLbl:'Link a partner',  refCol:'partners' },
+  receipt:{ ic:'🧾', label:'Money receipts',    bn:'টাকা রসিদ',      kind:'receipt', newName:'New Money Receipt',     refLbl:'Link a payment',  refCol:'payments' }
+};
+async function loadTemplates(){
+  let d;
+  try{ d=await apiCall('app-tpl-list'); }catch(e){ toast('Templates unavailable'); return; }
+  if(!d.ok){ toast(d.error||'Failed to load templates'); return; }
+  TPL.templates=d.templates||[]; TPL.email=d.email||[]; TPL.palettes=d.palettes||{}; TPL.refs=d.refs||{};
+  const el=$('tplLive'); if(el) el.innerHTML=tplListHTML();
+}
+function tplKindOf(id){ const t=TPL.templates.find(x=>x.id===id); return t?t.kind:'lease'; }
+function tplListHTML(){
+  const emailCards=TPL.email.map(e=>{
+    const ic=e.id==='otp'?'🔐':e.id==='welcome'?'🎉':e.id==='collections'?'📊':'🔔';
+    return `<div class="email-card">
+      <div class="ec-ic">${ic}</div>
+      <div class="ec-body"><div class="ec-name">${esc(e.name)}</div><div class="ec-sub">${esc(e.subject)}</div></div>
+      <div class="ec-acts"><button onclick="openEmailEditor('${e.id}')">✏️ ${t('Edit','এডিট')}</button><button onclick="emailReset('${e.id}')" title="Reset to default">↺</button></div>
+    </div>`;
+  }).join('');
+  const secs=['lease','service','receipt'].map(k=>{
+    const m=TPL_META[k];
+    const cards=TPL.templates.filter(x=>x.kind===k).map(x=>{
+      const sub=(x.is_default?'★ Default · ':'')+(x.updated_by==='system'?'seeded':'edited by '+esc(x.updated_by));
+      return `<div class="tpl-card">
+        <div class="tc-top"><div class="tc-ic">${m.ic}</div>
+          <div style="flex:1;min-width:0"><div class="tc-name">${esc(x.name)}</div><div class="tc-sub">${esc(x.id)} · ${sub}</div></div>
+          ${x.is_default?'<span class="badge b-blue">Default</span>':''}
+        </div>
+        <div class="tc-acts">
+          <button class="p" onclick="openTplEditor('edit','${x.id}')">✏️ ${t('Edit','এডিট')}</button>
+          <button onclick="openTplEditor('wire','${x.id}')">🪄 ${t('Wireframe','ওয়্যারফ্রেম')}</button>
+          <button onclick="tplDup('${x.id}')" title="Duplicate">⧉</button>
+          ${x.is_default?`<button onclick="tplReset('${x.id}')" title="Reset to default">↺</button>`:`<button class="danger" onclick="tplDelete('${x.id}')">🗑</button>`}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="tpl-sec"><div class="tpl-sec-h"><h3>${m.ic} ${t(m.label,m.bn)} (${TPL.templates.filter(x=>x.kind===k).length})</h3>
+      <button class="btn-ghost" style="padding:5px 10px;font-size:11.5px" onclick="openTplEditor('new','${k}')">＋ ${t('New','নতুন')}</button></div>
+      <div class="tpl-grid">${cards||`<div class="c-sub">${t('No templates yet.','এখনো কোনো টেমপ্লেট নেই।')}</div>`}</div></div>`;
+  }).join('');
+  return `<div class="tpl-sec"><div class="tpl-sec-h"><h3>📧 ${t('Email templates','ইমেইল টেমপ্লেট')}</h3></div><div style="display:grid;gap:10px">${emailCards}</div></div>${secs}`;
+}
+function tplRefOptions(kind, selected){
+  let opts='';
+  if(kind==='lease') opts=DB.leases.map(l=>{const ten=tenantById(l.t);return `<option value="${l.id}" ${l.id===selected?'selected':''}>${l.id} — ${esc(unitById(l.u)?.name||'')} · ${esc(ten?ten.name:'')}</option>`}).join('');
+  else if(kind==='service') opts=DB.partners.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.id} — ${esc(p.name)}</option>`).join('');
+  else if(kind==='receipt') opts=DB.payments.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.id} — ${esc(p.inv)} · ${money(p.amount)}</option>`).join('');
+  return opts||'<option value="">No records</option>';
+}
+async function openTplEditor(mode, id){
+  let tpl={id:'',kind:'lease',name:'',title:'',body:''};
+  if(mode!=='new'){
+    const d=await apiCall('app-tpl-get?id='+id);
+    if(!d.ok){ toast(d.error||'Cannot load template'); return; }
+    tpl=d.tpl;
+  } else { tpl.kind=id; }
+  TPL.current=tpl;
+  const m=TPL_META[tpl.kind];
+  const palette=(TPL.palettes[tpl.kind]||[]).map(f=>`<button class="tpl-field" onclick="tplInsertField('${f[0]}')" title="${esc(f[1])}">{{${f[0]}}}</button>`).join('');
+  const body=`
+    <div class="tpl-editor">
+      <div class="tpl-editor-label">${t('Template name','টেমপ্লেট নাম')}</div>
+      <input type="text" id="tplName" value="${esc(tpl.name)}" placeholder="e.g. Rent Receipt — Corporate">
+      <div class="tpl-editor-label">${t('Header title','হেডার টাইটেল')}</div>
+      <input type="text" id="tplTitle" value="${esc(tpl.title)}" placeholder="e.g. Money Receipt — Rent">
+      <div class="tpl-editor-label">${t('Merge fields (click to insert)','মার্জ ফিল্ড (ক্লিক করে যোগ করুন)')}</div>
+      <div class="tpl-field-grid">${palette}</div>
+      <div class="tpl-editor-label">${t('Body (HTML / plain text with {{placeholders}})','বডি ({{প্লেসহোল্ডার}}সহ টেক্সট)')}</div>
+      <textarea id="tplBody" spellcheck="false">${esc(tpl.body)}</textarea>
+      <div class="tpl-editor-label">${t(m.refLbl,'রেকর্ড লিংক করুন')} — ${t('wireframe preview with live data','লাইভ ডেটাসহ ওয়্যারফ্রেম প্রিভিউ')}</div>
+      <select id="tplRef">${tplRefOptions(tpl.kind,'')}</select>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn-primary" onclick="tplRenderPreview()">🪄 ${t('Preview with live data','লাইভ ডেটাসহ প্রিভিউ')}</button>
+        <button class="btn-outline" onclick="tplPrintCurrent()">🖨 ${t('Print','প্রিন্ট')}</button>
+      </div>
+      <div id="tplPrevWrap" style="margin-top:12px"></div>
+    </div>`;
+  const foot=`<div class="dr-actions" style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>
+    ${mode!=='new'?`<button class="btn-outline" onclick="tplDup('${tpl.id}')">⧉ ${t('Duplicate','কপি')}</button>`:''}
+    ${mode!=='new'&&tpl.is_default?`<button class="btn-outline" onclick="tplReset('${tpl.id}')">↺ ${t('Reset','রিসেট')}</button>`:''}
+    ${mode!=='new'&&!tpl.is_default?`<button class="btn-outline danger" onclick="tplDelete('${tpl.id}')">🗑 ${t('Delete','মুছুন')}</button>`:''}
+    <button class="btn-primary" onclick="tplSave()">💾 ${t('Save template','টেমপ্লেট সেভ')}</button>
+  </div>`;
+  openDrawer(tpl.name||(m.label.slice(0,-1)+' — new'), body, foot, tpl.id||('new '+tpl.kind));
+  if(mode==='wire'){ tplRenderPreview(); }
+}
+function tplInsertField(f){
+  const ta=$('tplBody'); if(!ta) return;
+  const s=ta.selectionStart||ta.value.length, e=ta.selectionEnd||ta.value.length;
+  const tok='{{'+f+'}}';
+  ta.value=ta.value.slice(0,s)+tok+ta.value.slice(e);
+  ta.focus(); ta.selectionStart=ta.selectionEnd=s+tok.length;
+}
+async function tplSave(){
+  const id=TPL.current.id, kind=TPL.current.kind;
+  const name=$('tplName').value.trim(), title=$('tplTitle').value.trim(), body=$('tplBody').value;
+  if(!name||!body.trim()){ toast('Name and body are required'); return; }
+  const d=await apiCall('app-tpl-save',{id,kind,name,title,body});
+  if(d.ok){ toast('Template saved — '+d.id); closeDrawer(); loadTemplates(); }
+  else toast(d.error||'Save failed');
+}
+async function tplDup(id){
+  const d=await apiCall('app-tpl-dup',{id});
+  if(d.ok){ toast('Duplicated → '+d.id); closeDrawer(); loadTemplates(); } else toast(d.error||'Duplicate failed');
+}
+async function tplDelete(id){
+  if(!confirm('Delete this template?')) return;
+  const d=await apiCall('app-tpl-delete',{id});
+  if(d.ok){ toast('Template deleted'); closeDrawer(); loadTemplates(); } else toast(d.error||'Delete failed');
+}
+async function tplReset(id){
+  const d=await apiCall('app-tpl-reset',{id});
+  if(d.ok){ toast('Template reset to default'); closeDrawer(); loadTemplates(); } else toast(d.error||'Reset failed');
+}
+async function tplRenderPreview(){
+  const id=TPL.current.id, kind=TPL.current.kind, ref=$('tplRef')?$('tplRef').value:'';
+  if(!ref){ toast('Pick a '+TPL_META[kind].refLbl); return; }
+  const d=await apiCall('app-tpl-render',{id,ref});
+  const wrap=$('tplPrevWrap'); if(!wrap) return;
+  if(!d.ok){ wrap.innerHTML=`<div class="panel"><div class="panel-b c-sub">${esc(d.error||'Cannot render')}</div></div>`; return; }
+  TPL.lastRender=d;
+  /* wireframe: rebuild body client-side so every linked field is clickable */
+  let wf=d.preview||'';
+  const raw=$('tplBody')?$('tplBody').value:'';
+  const links=d.links||{};
+  const valFor=k=>(d.vars||{})[k];
+  wf=raw.replace(/\{\{(\w+)\}\}/g,(mm,k)=>{
+    const v=valFor(k);
+    if(v===undefined) return mm;
+    const ln=links[k];
+    return ln&&ln[1]?`<span class="wf-inline" title="${esc(k)} → ${esc(ln[0])} ${esc(ln[1])}" onclick="jumpTo('${ln[0]}','${ln[1]}')">${esc(v)}</span>`:esc(v);
+  });
+  const chips=Object.keys(links).filter(k=>links[k]&&links[k][1]).map(k=>{
+    const ln=links[k]; const v=valFor(k);
+    return `<button class="wf-chip" onclick="jumpTo('${ln[0]}','${ln[1]}')">${ln[2]||'🔗'} ${esc(k)}: <b>${esc(v)}</b> → ${esc(ln[0])} ${esc(ln[1])}</button>`;
+  }).join('');
+  wrap.innerHTML=`
+    <div class="panel" style="margin:0"><div class="panel-h"><div class="t">🪄 ${t('Wireframe — click any highlighted field to open its record','ওয়্যারফ্রেম — যেকোনো হাইলাইটেড ফিল্ডে ক্লিক করে রেকর্ড খুলুন')}</div>
+      <button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="tplPrintCurrent()">🖨 ${t('Print','প্রিন্ট')}</button></div>
+    <div class="panel-b">
+      <div style="margin-bottom:10px">${chips||'<span class="c-sub">No linkable fields for this record.</span>'}</div>
+      <div class="prev-frame">${wf}</div>
+    </div></div>`;
+}
+function tplPrintCurrent(){
+  if(!TPL.lastRender){ toast('Render a preview first'); return; }
+  const w=window.open('','_blank'); if(!w){ toast('Popup blocked'); return; }
+  w.document.write(TPL.lastRender.html); w.document.close();
+}
+async function tplPrintFor(id, ref){
+  try{
+    const res=await fetch(API+'app-tpl-render',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify({id,ref})});
+    const d=await res.json();
+    if(!d.ok){ toast(d.error||'Cannot render'); return; }
+    const w=window.open('','_blank'); if(!w){ toast('Popup blocked'); return; }
+    w.document.write(d.html); w.document.close();
+  }catch(e){ toast('Print failed: '+e.message); }
+}
+function jumpTo(mod,id){
+  closeDrawer();
+  if(!can(mod)){ toast('Not available for your role'); return; }
+  state.view=mod; renderNav(); render(); updateCrumb();
+  if(id) setTimeout(()=>openDetail(mod,id),90);
+}
+/* email template editor */
+async function openEmailEditor(id){
+  const d=await apiCall('app-email-tpl-get?id='+id);
+  if(!d.ok){ toast(d.error||'Cannot load'); return; }
+  TPL.currentEmail=d.tpl;
+  const body=`
+    <div class="tpl-editor">
+      <div class="tpl-editor-label">${t('Email type','ইমেইল টাইপ')}</div>
+      <div style="font-size:13px;font-weight:700">${esc(d.tpl.name)} <span class="c-sub">(${esc(d.tpl.id)})</span></div>
+      <div class="tpl-editor-label">${t('Subject ({{placeholders}} allowed)','সাবজেক্ট ({{প্লেসহোল্ডার}} দেওয়া যায়)')}</div>
+      <input type="text" id="emlSubject" value="${esc(d.tpl.subject)}">
+      <div class="tpl-editor-label">${t('HTML body','এইচটিএমএল বডি')}</div>
+      <textarea id="emlBody" spellcheck="false" style="min-height:300px">${esc(d.tpl.body)}</textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn-primary" onclick="emailPreview()">👁 ${t('Preview with sample data','নমুনা ডেটাসহ প্রিভিউ')}</button>
+        <button class="btn-outline" onclick="emailReset('${d.tpl.id}')">↺ ${t('Reset to default','ডিফল্টে রিসেট')}</button>
+      </div>
+      <div class="email-frame" id="emlPrev" style="margin-top:12px;display:none"><iframe id="emlFrame" srcdoc=""></iframe></div>
+    </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>
+    <button class="btn-primary" onclick="emailSave('${d.tpl.id}')">💾 ${t('Save email template','ইমেইল টেমপ্লেট সেভ')}</button></div>`;
+  openDrawer(d.tpl.name, body, foot, d.tpl.id);
+}
+async function emailPreview(){
+  const id=TPL.currentEmail.id;
+  const d=await apiCall('app-email-preview?id='+id);
+  if(!d.ok){ toast(d.error||'Preview failed'); return; }
+  const frame=$('emlFrame'); if(!frame) return;
+  frame.srcdoc=d.html;
+  $('emlPrev').style.display='block';
+  toast('Subject: '+d.subject);
+}
+async function emailSave(id){
+  const subject=$('emlSubject').value.trim(), body=$('emlBody').value;
+  if(!subject||!body.trim()){ toast('Subject and body are required'); return; }
+  const d=await apiCall('app-email-tpl-save',{id,subject,body});
+  if(d.ok){ toast('Email template saved'); closeDrawer(); loadTemplates(); } else toast(d.error||'Save failed');
+}
+async function emailReset(id){
+  const d=await apiCall('app-email-tpl-reset',{id});
+  if(d.ok){ toast('Email template reset'); closeDrawer(); loadTemplates(); } else toast(d.error||'Reset failed');
+}
 
 /* ═══ Phase 2: subscription actions ═══ */
 const DEFAULT_PLANS = [
