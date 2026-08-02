@@ -3,18 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2F80ED">
 <title>Property Listings — KRTaker</title>
-<meta name="description" content="Browse verified rental properties in Dhaka and Chattogram managed by KRTaker — flats, commercial floors and industrial sheds with vacant units ready to lease.">
+<meta name="description" content="Browse verified rental properties in Dhaka and Chattogram managed by KRTaker — flats, commercial floors and industrial sheds with vacant units ready to lease. No broker fee.">
 <link rel="canonical" href="https://krtaker.com/listings.html">
 <meta property="og:title" content="Property Listings — KRTaker">
-<meta property="og:description" content="Verified rental properties across Dhaka & Chattogram — flats, commercial floors and sheds.">
+<meta property="og:description" content="Verified rental properties across Dhaka & Chattogram — flats, commercial floors and sheds. Managed end-to-end, no broker fee.">
 <meta property="og:url" content="https://krtaker.com/listings.html">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="KRTaker">
 <meta property="og:image" content="https://krtaker.com/assets/img/og-card.webp">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="bn_BD">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@krtaker">
+<meta name="twitter:title" content="Property Listings — KRTaker">
+<meta name="twitter:description" content="Verified rental properties across Dhaka & Chattogram — managed end-to-end, no broker fee.">
+<meta name="twitter:image" content="https://krtaker.com/assets/img/og-card.webp">
 <link rel="icon" href="assets/img/favicon.png" type="image/png">
-<link rel="stylesheet" href="css/landing.css?v=3.12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=3.13">
 <style>
-.listing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;margin:28px 0}
+/* ── Phase 16 listings v2: search, city/type filters, sort, rent-first cards ── */
+.listing-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:20px 0 6px}
+.ls-search{flex:1 1 220px;min-width:200px;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:9px 16px;transition:border-color .15s}
+.ls-search:focus-within{border-color:#2F80ED;box-shadow:0 0 0 3px rgba(47,128,237,.12)}
+.ls-search input{border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:13.5px;width:100%}
+.ls-search .ico{opacity:.5}
+.ls-sort{margin-left:auto}
+.ls-sort select{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:9px 14px;font-size:12.5px;font-weight:600;outline:0;cursor:pointer;font-family:inherit}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.filter-chip{border:1px solid var(--border);background:var(--card);border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;color:var(--text)}
+.filter-chip.active,.filter-chip:hover{border-color:#2F80ED;color:#2F80ED;background:rgba(47,128,237,.06)}
+.filters .fsep{width:1px;background:var(--border);margin:2px 6px;align-self:stretch}
+.listing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px;margin:24px 0}
 .listing-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column}
 .listing-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(47,128,237,.12)}
 .lc-top{padding:18px 18px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
@@ -25,19 +49,28 @@
 .lc-row:last-child{border-bottom:0}
 .lc-row .k{color:var(--muted)}
 .lc-row .v{font-weight:700}
+.lc-unit{background:rgba(47,128,237,.05);border:1px solid rgba(47,128,237,.18);border-radius:12px;padding:10px 12px;margin-top:10px}
+.lc-unit .u-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700}
+.lc-unit .u-rent{color:#2F80ED;font-size:15px;font-weight:800}
+.lc-unit .u-meta{display:flex;gap:12px;font-size:11.5px;color:var(--muted);margin-top:4px}
 .lc-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px}
 .lc-foot .btn{flex:1;text-align:center;font-size:12.5px;padding:9px 10px}
-.badge-v{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(16,185,129,.12);color:#059669}
-.badge-f{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(47,128,237,.1);color:#2F80ED}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
-.filter-chip{border:1px solid var(--border);background:var(--card);border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s}
-.filter-chip.active,.filter-chip:hover{border-color:#2F80ED;color:#2F80ED;background:rgba(47,128,237,.06)}
+.badge-v{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(16,185,129,.12);color:#059669;white-space:nowrap}
+.badge-f{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(47,128,237,.1);color:#2F80ED;white-space:nowrap}
+.badge-n{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(148,163,184,.14);color:#64748B;white-space:nowrap}
 .lc-count{font-size:12.5px;color:var(--muted)}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
 #listRoot.loading{opacity:.5;pointer-events:none}
-@media(max-width:640px){.listing-grid{grid-template-columns:1fr}}
+.usp-band{background:linear-gradient(135deg,rgba(47,128,237,.06),rgba(16,185,129,.06));border:1px solid var(--border);border-radius:18px;padding:26px 22px;margin:30px 0 8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px}
+.usp-item{display:flex;gap:12px;align-items:flex-start}
+.usp-item .u-ic{font-size:22px;line-height:1.2}
+.usp-item h4{margin:0 0 3px;font-size:13.5px;font-weight:800}
+.usp-item p{margin:0;font-size:12px;color:var(--muted);line-height:1.55}
+.how-line{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:18px 0 4px;font-size:12.5px;color:var(--muted)}
+.how-line b{color:var(--text)}
+@media(max-width:640px){.listing-grid{grid-template-columns:1fr}.ls-sort{margin-left:0;width:100%}.ls-sort select{width:100%}}
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"KRTaker Property Listings","url":"https://krtaker.com/listings.html","description":"Verified rental properties across Dhaka and Chattogram."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"KRTaker Property Listings","url":"https://krtaker.com/listings.html","description":"Verified rental properties across Dhaka and Chattogram managed by KRTaker.","isPartOf":{"@type":"WebSite","name":"KRTaker","url":"https://krtaker.com"}}</script>
 </head>
 <body>
 <!-- ===== NAVBAR ===== -->
@@ -102,13 +135,20 @@
   <div class="container">
     <h1 data-i18n="page.hero.listings">Property listings</h1>
     <p data-i18n="page.hero.listingsSub">Verified rental properties across Dhaka &amp; Chattogram — every building managed end-to-end by KRTaker. Enquire directly on WhatsApp.</p>
-    <div class="filters" id="filters">
-      <button class="filter-chip active" data-f="all">All</button>
-      <button class="filter-chip" data-f="Flat">🏢 Flats</button>
-      <button class="filter-chip" data-f="Commercial">🏬 Commercial</button>
-      <button class="filter-chip" data-f="Industrial">🏭 Industrial</button>
-      <button class="filter-chip" data-f="Plot">🌳 Plots</button>
+    <div class="listing-toolbar">
+      <label class="ls-search"><span class="ico">🔍</span><input id="lsQ" type="search" placeholder="Search by name, area or holding…" data-i18n-ph="ls.placeholder"></label>
+      <label class="ls-sort">
+        <select id="lsSort">
+          <option value="default">Sort: featured</option>
+          <option value="rentAsc">Rent: low → high</option>
+          <option value="rentDesc">Rent: high → low</option>
+          <option value="sizeDesc">Largest first</option>
+          <option value="name">Name A–Z</option>
+        </select>
+      </label>
     </div>
+    <div class="filters" id="filters"></div>
+    <div class="how-line"><span>💡</span><span><b data-i18n="ls.how">How it works:</b> <span data-i18n="ls.howBody">pick a unit → WhatsApp the KRTaker team → signed digital agreement + receipt, no broker fee.</span></span></div>
   </div>
 </div>
 
@@ -117,6 +157,14 @@
     <div class="lc-count" id="listCount"></div>
     <div class="listing-grid" id="listRoot">
       <div class="empty-state">Loading listings…</div>
+    </div>
+
+    <!-- USP / value-add strip (why rent through KRTaker) -->
+    <div class="usp-band">
+      <div class="usp-item"><span class="u-ic">✅</span><div><h4 data-i18n="ls.usp1t">Verified, managed buildings</h4><p data-i18n="ls.usp1b">Every unit is in a building KRTaker actively manages — rent, maintenance, compliance and handover are all digital.</p></div></div>
+      <div class="usp-item"><span class="u-ic">📜</span><div><h4 data-i18n="ls.usp2t">Digital agreement + receipt</h4><p data-i18n="ls.usp2b">Signed standard tenancy agreement, instant money receipt after every payment. No more "advance lost" disputes.</p></div></div>
+      <div class="usp-item"><span class="u-ic">💳</span><div><h4 data-i18n="ls.usp3t">Pay rent by bKash / Nagad</h4><p data-i18n="ls.usp3b">Payment link per invoice — pay in 30 seconds, get a receipt instantly, reminders handled by the AI caretaker.</p></div></div>
+      <div class="usp-item"><span class="u-ic">🏡</span><div><h4 data-i18n="ls.usp4t">No broker fee</h4><p data-i18n="ls.usp4b">Enquire directly, deal directly. Tenants keep the advance that usually goes to a dalal.</p></div></div>
     </div>
   </div>
 </div>
@@ -195,55 +243,115 @@
   <a href="https://wa.me/8801722759646?text=Hi%2C%20I%27m%20interested%20in%20a%20KRTaker%20listing" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><span>WhatsApp</span></a>
 </div>
 
-<script src="js/landing.js?v=3.12"></script>
+<script src="i18n/i18n-dict.js?v=3.13"></script>
+<script src="js/i18n.js?v=3.13"></script>
+<script src="js/main.js?v=3.13"></script>
 <script>
-/* Phase 10: public listings — fetch + render + filter (bilingual) */
+/* Phase 16: listings v2 — search + city/type filters + sort + rent-first cards (bilingual) */
 (function(){
   const root=document.getElementById('listRoot');
   const countEl=document.getElementById('listCount');
-  const BN={Flat:'ফ্ল্যাট',Commercial:'কমার্শিয়াল',Industrial:'ইন্ডাস্ট্রিয়াল',Plot:'প্লট','Dhaka North':'ঢাকা উত্তর','Dhaka South':'ঢাকা দক্ষিণ','Chattogram':'চট্টগ্রাম','sqft':'বর্গফুট','vacant units':'খালি ইউনিট','No vacancies right now':'এই মুহূর্তে কোনো খালি ইউনিট নেই','Ask about this property':'এই সম্পত্তি সম্পর্কে জানুন','List your property':'আপনার সম্পত্তি লিস্ট করুন','Manage this building with KRTaker':'এই বিল্ডিং KRTaker দিয়ে ম্যানেজ করুন'};
+  const qEl=document.getElementById('lsQ');
+  const sortEl=document.getElementById('lsSort');
+  const filtersEl=document.getElementById('filters');
+  const BN={Flat:'ফ্ল্যাট',Commercial:'কমার্শিয়াল',Industrial:'ইন্ডাস্ট্রিয়াল',Plot:'প্লট','Dhaka North':'ঢাকা উত্তর','Dhaka South':'ঢাকা দক্ষিণ',Chattogram:'চট্টগ্রাম',All:'সব',sqft:'বর্গফুট','No vacancies right now':'এই মুহূর্তে কোনো খালি ইউনিট নেই','Enquire on WhatsApp':'হোয়াটসঅ্যাপে জানুন','List your property':'আপনার সম্পত্তি লিস্ট করুন','per month':'প্রতি মাসে','Floor':'তলা','Available units':'উপলব্ধ ইউনিট','Loading listings…':'লিস্টিং লোড হচ্ছে…','No listings available right now.':'এই মুহূর্তে কোনো লিস্টিং নেই।','Could not load listings. Please try again.':'লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।','No listings match your search.':'আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।','Clear filters':'ফিল্টার মুছুন','property':'সম্পত্তি','properties':'সম্পত্তি','Search by name, area or holding…':'নাম, এলাকা বা হোল্ডিং দিয়ে খুঁজুন…','Sort: featured':'সাজান: ফিচার্ড','Rent: low → high':'ভাড়া: কম → বেশি','Rent: high → low':'ভাড়া: বেশি → কম','Largest first':'বড় আগে','Name A–Z':'নাম A–Z','Featured':'ফিচার্ড'};
   const bn=()=>document.documentElement.lang==='bn'||localStorage.getItem('krtaker_lang')==='bn';
   const T=(en,b)=>bn()?(b||en):en;
-  let all=[],type='all';
-  fetch('api/listings').then(r=>r.json()).then(d=>{
-    if(!d.ok||!Array.isArray(d.properties)){root.innerHTML=`<div class="empty-state">${T('No listings available right now.','এই মুহূর্তে কোনো লিস্টিং নেই।')}</div>`;return}
-    all=d.properties;
-    if(bn())document.querySelectorAll('[data-i18n]').forEach(el=>{}); /* i18n handled by landing.js on lang toggle; keep simple */
-    render();
-  }).catch(()=>{root.innerHTML=`<div class="empty-state">${T('Could not load listings. Please try again.','লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।')}</div>`});
-  document.getElementById('filters').addEventListener('click',e=>{
-    const chip=e.target.closest('.filter-chip'); if(!chip)return;
-    document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
-    chip.classList.add('active'); type=chip.dataset.f; render();
-  });
+  let all=[],type='all',city='all';
+  const TYPES=['Flat','Commercial','Industrial','Plot'];
+  const ICONS={Flat:'🏢',Commercial:'🏬',Industrial:'🏭',Plot:'🌳'};
+  function buildFilters(){
+    const cities=['all',...new Set(all.map(p=>p.jur))];
+    filtersEl.innerHTML='';
+    TYPES.forEach(t=>{
+      const b=document.createElement('button');
+      b.className='filter-chip'+(type===t?' active':'');
+      b.dataset.f=t; b.textContent=ICONS[t]+' '+T(t,BN[t]);
+      b.onclick=()=>{type=t;renderFilters();render();};
+      filtersEl.appendChild(b);
+    });
+    const sep=document.createElement('div'); sep.className='fsep'; filtersEl.appendChild(sep);
+    cities.forEach(c=>{
+      const b=document.createElement('button');
+      b.className='filter-chip'+(city===c?' active':'');
+      b.dataset.c=c; b.textContent=T(c=== 'all'?'All':c, c==='all'?'সব':BN[c]);
+      b.onclick=()=>{city=c;renderFilters();render();};
+      filtersEl.appendChild(b);
+    });
+    const allB=document.createElement('button');
+    allB.className='filter-chip'+(type==='all'&&city==='all'?' active':'');
+    allB.textContent=T('All','সব');
+    allB.onclick=()=>{type='all';city='all';renderFilters();render();};
+    filtersEl.insertBefore(allB, filtersEl.firstChild);
+  }
+  function renderFilters(){
+    filtersEl.querySelectorAll('[data-f]').forEach(c=>c.classList.toggle('active',c.dataset.f===type));
+    filtersEl.querySelectorAll('[data-c]').forEach(c=>c.classList.toggle('active',c.dataset.c===city));
+    filtersEl.querySelectorAll('.filter-chip').forEach(c=>{
+      if(!c.dataset.f&&!c.dataset.c)c.classList.toggle('active',type==='all'&&city==='all');
+    });
+  }
   function fmt(n){return '৳'+(Math.round(n)).toLocaleString('en-IN')}
+  function minRent(p){const v=p.vacant_units||[];return v.length?Math.min(...v.map(u=>u.rent||0)):0}
+  function visible(){
+    let list=all.filter(p=>p.type===type||type==='all').filter(p=>p.jur===city||city==='all');
+    const q=(qEl.value||'').trim().toLowerCase();
+    if(q)list=list.filter(p=>(p.name+' '+p.holding+' '+p.jur).toLowerCase().includes(q));
+    const s=sortEl.value;
+    if(s==='rentAsc')list.sort((a,b)=>minRent(a)-minRent(b));
+    else if(s==='rentDesc')list.sort((a,b)=>minRent(b)-minRent(a));
+    else if(s==='sizeDesc')list.sort((a,b)=>b.sqft-a.sqft);
+    else if(s==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
+    return list;
+  }
   function render(){
-    const list=type==='all'?all:all.filter(p=>p.type===type);
+    const list=visible();
     root.classList.add('loading');
-    countEl.textContent=list.length+' '+T('property','সম্পত্তি')+(list.length===1?'':'s');
-    if(!list.length){root.innerHTML=`<div class="empty-state">${T('No listings in this category.','এই ক্যাটাগরিতে কোনো লিস্টিং নেই।')}</div>`;root.classList.remove('loading');return}
+    const n=list.length;
+    countEl.textContent=n+' '+T(n===1?'property':'properties',n===1?'সম্পত্তি':'সম্পত্তি')+(type!=='all'||city!=='all'?' · '+T(type==='all'?'All':type,type==='all'?'সব':BN[type])+(city!=='all'?' · '+T(city,BN[city]):''):'');
+    if(!n){root.innerHTML=`<div class="empty-state">${T('No listings match your search.','আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।')}<br><a href="register.html" class="btn btn-primary" style="margin-top:16px">${T('List your property','আপনার সম্পত্তি লিস্ট করুন')}</a></div>`;root.classList.remove('loading');return}
     root.innerHTML=list.map(p=>{
       const vu=p.vacant_units||[];
-      const icon=p.type==='Flat'?'🏢':p.type==='Commercial'?'🏬':p.type==='Industrial'?'🏭':'🌳';
-      const vac=vu.length?`<span class="badge-v">${vu.length} ${T('vacant','খালি')}</span>`:`<span class="badge-f">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')}</span>`;
-      const unitsHtml=vu.length?`<div class="lc-row"><span class="k">${T('Available units','উপলব্ধ ইউনিট')}</span><span class="v">${vu.map(u=>u.name).join(' · ')}</span></div>`:'';
-      const msg=encodeURIComponent('Hi, I am interested in '+p.name+' ('+p.id+') listed on krtaker.com. Is the '+((vu[0]&&vu[0].name)||'unit')+' still available?');
+      const icon=ICONS[p.type]||'🏘️';
+      const vac=vu.length?`<span class="badge-v">${vu.length} ${T('available','খালি')}</span>`:`<span class="badge-f">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')}</span>`;
+      const unitsHtml=vu.length?vu.map(u=>{
+        const msg=encodeURIComponent('Hi, I am interested in '+u.name+' ('+u.id+') at '+p.name+' listed on krtaker.com. Monthly rent ৳'+((u.rent||0).toLocaleString('en-IN'))+'. Is it still available?');
+        const pm=T('per month','প্রতি মাসে');
+        const rentHtml=u.rent?'<span class="u-rent">'+fmt(u.rent)+' <span style="font-size:11px;font-weight:600;color:var(--muted)">'+pm+'</span></span>':'<span class="u-rent">—</span>';
+        return `<div class="lc-unit">
+          <div class="u-head"><span>${u.name}</span>${rentHtml}</div>
+          <div class="u-meta"><span>🏢 ${u.floor||'—'}</span><span>📐 ${u.sqft?u.sqft.toLocaleString('en-IN')+' '+T('sqft','বর্গফুট'):'—'}</span></div>
+          <a class="btn btn-primary" style="margin-top:10px;text-align:center;font-size:12px;padding:8px 10px" href="https://wa.me/8801722759646?text=${msg}" target="_blank" rel="noopener">💬 ${T('Enquire on WhatsApp','হোয়াটসঅ্যাপে জানুন')}</a>
+        </div>`;
+      }).join(''):'';
+      const msg2=encodeURIComponent('Hi, I am interested in '+p.name+' ('+p.id+') listed on krtaker.com. Please share the available units and rent.');
       return `<div class="listing-card">
-        <div class="lc-top"><div><div class="lc-name">${icon} ${p.name}</div><div class="lc-sub">${p.type} · ${p.jur}</div></div>${vac}</div>
+        <div class="lc-top"><div><div class="lc-name">${icon} ${p.name}</div><div class="lc-sub">${T(p.type,BN[p.type])} · ${T(p.jur,BN[p.jur])} · ${p.holding||'—'}</div></div>${vac}</div>
         <div class="lc-body">
-          <div class="lc-row"><span class="k">${T('Holding','হোল্ডিং')}</span><span class="v">${p.holding||'—'}</span></div>
-          <div class="lc-row"><span class="k">${T('Area','এলাকা')}</span><span class="v">${p.sqft?p.sqft.toLocaleString('en-IN')+' '+T('sqft','বর্গফুট'):'—'}</span></div>
-          <div class="lc-row"><span class="k">${T('Value','মূল্য')}</span><span class="v">${fmt(p.value)}</span></div>
+          <div class="lc-row"><span class="k">${T('Building area','বিল্ডিং আয়তন')}</span><span class="v">${p.sqft?p.sqft.toLocaleString('en-IN')+' '+T('sqft','বর্গফুট'):'—'}</span></div>
+          <div class="lc-row"><span class="k">${T('Property value','সম্পত্তির মূল্য')}</span><span class="v">${fmt(p.value)}</span></div>
           ${unitsHtml}
         </div>
         <div class="lc-foot">
-          <a class="btn btn-primary" href="https://wa.me/8801722759646?text=${msg}" target="_blank" rel="noopener">💬 ${T('Enquire on WhatsApp','হোয়াটসঅ্যাপে জানুন')}</a>
+          <a class="btn btn-ghost" href="https://wa.me/8801722759646?text=${msg2}" target="_blank" rel="noopener">${T('Ask about this property','এই সম্পত্তি সম্পর্কে জানুন')}</a>
         </div>
       </div>`;
     }).join('');
     root.classList.remove('loading');
   }
+  fetch('api/listings').then(r=>r.json()).then(d=>{
+    if(!d.ok||!Array.isArray(d.properties)){root.innerHTML=`<div class="empty-state">${T('No listings available right now.','এই মুহূর্তে কোনো লিস্টিং নেই।')}</div>`;return}
+    all=d.properties;
+    buildFilters();
+    render();
+  }).catch(()=>{root.innerHTML=`<div class="empty-state">${T('Could not load listings. Please try again.','লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।')}</div>`});
+  qEl.addEventListener('input',render);
+  sortEl.addEventListener('change',render);
+  document.addEventListener('kri18n',()=>{if(all.length){buildFilters();render();}});
 })();
+</script>
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 </script>
 </body>
 </html>

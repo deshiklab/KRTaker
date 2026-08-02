@@ -989,6 +989,7 @@ function render(){
   const R = renderers[state.view] || renderDashboard;
   $('viewRoot').innerHTML=R();
   enhanceTables();
+  if(state.view==='leases' && ['superadmin','owner','manager'].includes(role().role)) setTimeout(renewalsPanel,0);
 }
 
 /* ═══ Table toolkit (REM-ERP style: search · status filter · sort · paginate · export · columns · refresh) ═══ */
@@ -1628,6 +1629,12 @@ function demoPortalData(){
   const handover=(DB.handover_checklists||[]).filter(h=>leaseIds.includes(h.lease));
   const tickets=(DB.tickets||[]).filter(x=>unitIds.includes(x.u));
   const notices=(DB.notices||[]).slice(0,3);
+  /* Phase 16: demo parity — renewal requests + meter readings */
+  const renewals=[{id:'RR-100',lease:'L-007',tenant:tid,months:12,new_rent:44000,note:'Please renew',status:'Pending',decided_by:'',decided_at:'',ts:'2026-08-02 09:00:00'}];
+  const meters=[
+    {id:'MR-100',unit:'U-010',tenant:tid,type:'electric',reading:4125,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
+    {id:'MR-101',unit:'U-010',tenant:tid,type:'water',reading:185,month:'2026-07',note:'',ts:'2026-07-28 09:00:00'},
+    {id:'MR-102',unit:'U-010',tenant:tid,type:'electric',reading:3990,month:'2026-06',note:'',ts:'2026-06-27 09:00:00'}];
   const outstanding=invoices.reduce((s,i)=>s+i.due,0);
   const paidTotal=payments.reduce((s,p)=>s+p.amount,0);
   const next=invoices.find(i=>i.status!=='Paid'&&i.due>0)||null;
@@ -1635,6 +1642,7 @@ function demoPortalData(){
   const minLeft=active.length?Math.min(...active.map(l=>{const e=enrich.find(x=>x.id===l.id);return e?e.days_left:0})):null;
   return {tenant:{id:tid,name:(DB.tenants||[]).find(x=>x.id===tid)?.name||'Tenant'},
     leases:enrich,invoices,payments,receipts,docs,handover,tickets,notices,
+    renewals,meters,
     stats:{outstanding,paid_total:paidTotal,next_due:next?{id:next.id,m:next.m,amount:next.due}:null,tickets_open:tickets.filter(x=>x.status!=='Closed').length,min_days_left:minLeft}};
 }
 function portalHtml(d){
@@ -1659,6 +1667,7 @@ function portalHtml(d){
   h+=`<div>`;
   (d.leases||[]).forEach(l=>{ h+=portalLeaseCard(l,d); });
   h+=`<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📄</span>${t('My documents','আমার ডকুমেন্ট')}</div><span class="link" onclick="nav('documents')">${t('All','সব')} →</span></div><div class="panel-b">${docRows}</div></div>`;
+  h+=meterPanelHtml(d);
   h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My maintenance','আমার মেরামত')}</div><span class="link" onclick="nav('maintenance')">${t('All','সব')} →</span></div><div class="panel-b">${tickRows}</div></div>`;
   h+=`</div>`;
   h+=`<div>`;
@@ -1692,11 +1701,117 @@ function portalLeaseCard(l,d){
       <div class="prog ${pct>85?'orange':''}"><i style="width:${pct}%"></i></div>
     </div>
     ${hovo?`<div style="margin-top:10px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11.5px;color:var(--text-mute)">✅ ${t('Handover','হ্যান্ডওভার')}: <b>${hovo.kind==='move_in'?t('Move-in','মুভ-ইন'):t('Move-out','মুভ-আউট')}</b> · ${esc(hovo.status)}</div>`:''}
+    ${renewalChipHtml(l,d)}
     <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">
       <button class="btn-primary" style="padding:6px 14px;font-size:12px" onclick="portalAgreement('${esc(l.id)}')">📄 ${t('Agreement','চুক্তি')}</button>
+      ${(l.status==='Active'||l.status==='Pending Registration')?`<button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="openRenewalDrawer('${esc(l.id)}')">🔄 ${t('Renew my lease','লিজ রিনিউ করুন')}</button>`:''}
       ${l.reg_pending?`<button class="btn-ghost" style="padding:6px 14px;font-size:12px" onclick="toast('${t('Registration pending — contact your manager.','রেজিস্ট্রেশন বাকি — ম্যানেজারের সাথে যোগাযোগ করুন।')}')">⚖️ ${t('TPA §107','টিপিএ §১০৭')}</button>`:''}
     </div>
   </div></div>`;
+}
+/* ── Phase 16: lease renewal + utility meters (tenant portal + staff) ── */
+function renewalChipHtml(l,d){
+  const rr=(d.renewals||[]).filter(x=>x.lease===l.id);
+  if(!rr.length) return '';
+  return `<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${rr.map(x=>{
+    const col=x.status==='Approved'?'b-green':x.status==='Rejected'?'b-red':'b-orange';
+    const lbl=t('Renewal','রিনিউয়াল')+': '+(x.status==='Pending'?t('pending','অপেক্ষমাণ'):x.status==='Approved'?t('approved','অনুমোদিত'):t('rejected','বাতিল'));
+    return `<span class="badge ${col}">🔄 ${lbl}${x.status==='Approved'&&x.new_end?' · '+esc(String(x.new_end).slice(0,10)):''}</span>`;
+  }).join('')}</div>`;
+}
+function meterPanelHtml(d){
+  const meters=(d.meters||[]).slice().sort((a,b)=>String(b.month).localeCompare(String(a.month)));
+  const ICO={electric:'⚡',gas:'🔥',water:'💧'};
+  const TY={electric:t('Electric','বিদ্যুৎ'),gas:t('Gas','গ্যাস'),water:t('Water','পানি')};
+  const rows=meters.map(m=>{
+    const prev=meters.find(x=>x.unit===m.unit&&x.type===m.type&&x.month<m.month);
+    const use=(prev&&m.reading>prev.reading)?(m.reading-prev.reading):null;
+    return `<tr><td>${ICO[m.type]||'📟'} ${TY[m.type]||esc(m.type)}</td><td>${esc(m.month)}</td><td class="t-amount">${m.reading.toLocaleString()}</td><td class="${use?'t-pos':'c-sub'}">${use!=null?use.toLocaleString()+' '+t('units','ইউনিট'):'—'}</td></tr>`;
+  }).join('')||`<tr><td colspan="4" class="c-sub">${t('No readings yet — submit your first meter reading.','এখনো কোনো রিডিং নেই — প্রথম মিটার রিডিং জমা দিন।')}</td></tr>`;
+  const unitIds=[...new Set((d.leases||[]).map(l=>l.unit&&l.unit.id).filter(Boolean))];
+  const sel=unitIds.length?`<select id="meterUnit" style="display:none">${unitIds.map(id=>{const l=(d.leases||[]).find(x=>x.unit&&x.unit.id===id);return `<option value="${esc(id)}">${esc(l?l.unit.name:id)}</option>`}).join('')}</select>`:'';
+  return `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📟</span>${t('My utility meters','আমার ইউটিলিটি মিটার')}</div><button class="btn-ghost" style="padding:4px 12px;font-size:11px" onclick="openMeterDrawer()">＋ ${t('Submit reading','রিডিং জমা')}</button></div><div class="tbl-wrap"><table><thead><tr><th>${t('Meter','মিটার')}</th><th>${t('Month','মাস')}</th><th>${t('Reading','রিডিং')}</th><th>${t('Usage','ব্যবহার')}</th></tr></thead><tbody>${rows}</tbody></table></div>${sel}</div>`;
+}
+function openRenewalDrawer(leaseId){
+  const lease=(DB.leases||[]).find(x=>x.id===leaseId);
+  if(!lease){toast('Lease not found');return}
+  if(!TOKEN){toast(t('Sign in to request a renewal.','রিনিউয়ালের জন্য সাইন ইন করুন।'));return}
+  const body=`<div class="c-sub" style="margin-bottom:12px">${t('Your lease','আপনার লিজ')}: <b>${esc(lease.id)}</b> · ${t('ends','শেষ')} ${esc(lease.end)} · ${t('current rent','বর্তমান ভাড়া')} ${money(lease.rent)}</div>
+  <label class="lbl">${t('Extend by (months)','কত মাস বাড়াবেন')}</label>
+  <select id="rrMonths" class="fld">${[6,12,18,24].map(m=>`<option value="${m}" ${m===12?'selected':''}>${m} ${t('months','মাস')}</option>`).join('')}</select>
+  <label class="lbl" style="margin-top:12px">${t('New monthly rent (optional)','নতুন মাসিক ভাড়া (ঐচ্ছিক)')}</label>
+  <input id="rrRent" class="fld" type="number" min="0" placeholder="${money(lease.rent)}" />
+  <label class="lbl" style="margin-top:12px">${t('Note to the owner','মালিকের জন্য নোট')}</label>
+  <textarea id="rrNote" class="fld" rows="3" placeholder="${t('Anything the owner should know…','মালিকের জানা দরকার এমন কিছু…')}"></textarea>`;
+  openDrawer(t('Renew my lease','লিজ রিনিউ করুন')+' — '+leaseId, body,
+    `<button class="btn-primary" style="flex:1" onclick="submitRenewal('${esc(leaseId)}')">${t('Send renewal request','রিনিউয়াল অনুরোধ পাঠান')}</button>
+     <button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button>`);
+}
+async function submitRenewal(leaseId){
+  const months=parseInt($('rrMonths').value||'12',10);
+  const newRent=parseInt($('rrRent').value||'0',10)||0;
+  const note=$('rrNote').value||'';
+  const res=await apiCall('app-renewal-create',{lease:leaseId,months,new_rent:newRent,note});
+  if(!res.ok){toast(res.error||'Request failed');return}
+  closeDrawer(); toast(t('Renewal request sent ✅','রিনিউয়াল অনুরোধ পাঠানো হয়েছে ✅'));
+  loadPortal();
+}
+function openMeterDrawer(){
+  const hidden=document.getElementById('meterUnit');
+  const multi=(hidden&&hidden.options.length>1);
+  const unitSel=multi?`<div style="margin-bottom:10px"><label class="lbl">${t('Unit','ইউনিট')}</label><select id="mUnit2" class="fld">${Array.from(hidden.options).map(o=>`<option value="${esc(o.value)}">${esc(o.text)}</option>`).join('')}</select></div>`:'';
+  const body=`${unitSel}<div class="grid grid-2" style="grid-template-columns:1fr 1fr">
+    <div><label class="lbl">${t('Meter','মিটার')}</label>
+      <select id="mType" class="fld"><option value="electric">⚡ ${t('Electric','বিদ্যুৎ')}</option><option value="gas">🔥 ${t('Gas','গ্যাস')}</option><option value="water">💧 ${t('Water','পানি')}</option></select></div>
+    <div><label class="lbl">${t('Month','মাস')}</label><input id="mMonth" class="fld" type="month" value="${new Date().toISOString().slice(0,7)}" /></div>
+  </div>
+  <label class="lbl" style="margin-top:12px">${t('Current meter reading','বর্তমান মিটার রিডিং')}</label>
+  <input id="mReading" class="fld" type="number" min="0" placeholder="e.g. 4125" />
+  <label class="lbl" style="margin-top:12px">${t('Note (optional)','নোট (ঐচ্ছিক)')}</label>
+  <input id="mNote" class="fld" placeholder="${t('Any remark…','কোনো মন্তব্য…')}" />`;
+  openDrawer(t('Submit meter reading','মিটার রিডিং জমা দিন'), body,
+    `<button class="btn-primary" style="flex:1" onclick="submitMeter()">${t('Save reading','রিডিং সেভ করুন')}</button>
+     <button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button>`);
+}
+async function submitMeter(){
+  const unit=$('mUnit2')?.value || $('meterUnit')?.value || '';
+  const type=$('mType').value, month=$('mMonth').value, reading=parseInt($('mReading').value||'-1',10), note=$('mNote').value||'';
+  if(!unit){toast(t('Unit required','ইউনিট লাগবে'));return}
+  if(reading<0){toast(t('Enter the current reading.','বর্তমান রিডিং লিখুন।'));return}
+  const res=await apiCall('app-meter-submit',{unit,type,reading,month,note});
+  if(!res.ok){toast(res.error||'Save failed');return}
+  closeDrawer(); toast(t('Meter reading saved ✅','মিটার রিডিং সেভ হয়েছে ✅'));
+  loadPortal();
+}
+/* staff: renewal approvals (Leases view) + meter readings (Units view) */
+async function renewalsPanel(){
+  const host=document.getElementById('renewalsHost');
+  if(!host) return;
+  const res=await apiCall('app-renewal-list');
+  if(!res.ok){host.innerHTML=`<div class="c-sub">${esc(res.error||'Failed')}</div>`;return}
+  const rows=res.requests||[];
+  const pending=rows.filter(r=>r.status==='Pending');
+  const other=rows.filter(r=>r.status!=='Pending');
+  const card=r=>`<div class="row-item"><div class="ri-ic">🔄</div><div class="ri-body"><div class="ri-t">${esc(r.lease)} · ${esc(r.tenant_name||'')} · ${esc(r.property_name||'')} (${esc(r.unit_name||'—')})</div><div class="ri-s">+${r.months} ${t('months','মাস')}${r.new_rent?' · '+t('new rent','নতুন ভাড়া')+' '+money(r.new_rent):''}${r.note?' · '+esc(r.note):''}${r.status!=='Pending'?' · '+esc(r.status):''}</div></div>${r.status==='Pending'?`<div class="ri-r" style="display:flex;gap:4px"><button class="btn-primary" style="padding:3px 9px;font-size:11px" onclick="decideRenewal('${esc(r.id)}','approve')">✓ ${t('Approve','অনুমোদন')}</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="decideRenewal('${esc(r.id)}','reject')">✕ ${t('Reject','বাতিল')}</button></div>`:''}</div>`;
+  host.innerHTML=(pending.length?`<div class="c-sub" style="margin:2px 0 6px">${t('Pending','অপেক্ষমাণ')} (${pending.length})</div>`+pending.map(card).join(''):`<div class="empty">${t('No pending renewal requests 🎉','কোনো অপেক্ষমাণ রিনিউয়াল নেই 🎉')}</div>`)+(other.length?`<div class="c-sub" style="margin:12px 0 6px">${t('Recent','সাম্প্রতিক')}</div>`+other.map(card).join(''):'');
+}
+async function decideRenewal(id, action){
+  const res=await apiCall('app-renewal-decide',{id,action});
+  if(!res.ok){toast(res.error||'Failed');return}
+  toast(action==='approve'?t('Renewal approved ✅','রিনিউয়াল অনুমোদিত ✅'):t('Renewal rejected','রিনিউয়াল বাতিল করা হয়েছে'));
+  renewalsPanel();
+}
+async function meterDrawer(unitId){
+  openDrawer(t('Meter readings','মিটার রিডিং')+(unitId?' — '+unitId:''), `<div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div>`);
+  const res=await apiCall('app-meter-list');
+  if(!res.ok){$('drawerBody').innerHTML=`<div class="empty">${esc(res.error||'Failed')}</div>`;return}
+  const rows=(res.readings||[]).filter(r=>!unitId||r.unit===unitId);
+  const body=rows.length?`<div class="tbl-wrap"><table><thead><tr><th>${t('Unit','ইউনিট')}</th><th>${t('Meter','মিটার')}</th><th>${t('Month','মাস')}</th><th>${t('Reading','রিডিং')}</th><th>${t('Usage','ব্যবহার')}</th></tr></thead><tbody>`+rows.map(m=>{
+    const prev=rows.find(x=>x.unit===m.unit&&x.type===m.type&&x.month<m.month);
+    const use=(prev&&m.reading>prev.reading)?(m.reading-prev.reading):null;
+    return `<tr><td>${esc(m.unit_name||m.unit)}${m.property_name?'<div class="c-sub">'+esc(m.property_name)+'</div>':''}</td><td>${esc(m.type)}</td><td>${esc(m.month)}</td><td class="t-amount">${m.reading.toLocaleString()}</td><td class="${use?'t-pos':'c-sub'}">${use!=null?use.toLocaleString()+' '+t('units','ইউনিট'):'—'}</td></tr>`;
+  }).join('')+'</tbody></table></div>':`<div class="empty">${t('No readings yet','এখনো কোনো রিডিং নেই')}</div>`;
+  $('drawerBody').innerHTML=body;
 }
 async function portalAgreement(lid){
   if(!TOKEN){ toast(t('Sign in to download your agreement.','আপনার চুক্তি ডাউনলোড করতে সাইন ইন করুন।')); return; }
@@ -1736,7 +1851,7 @@ const renderers={
     return h;
   },
   units(){
-    let h=pageHead(t('Units','ইউনিট'),t('Every flat, floor, shed and plot.','প্রতিটি ফ্ল্যাট, ফ্লোর, শেড ও প্লট।'),`<button class="btn-primary" onclick="openNew('units')">＋ ${t('Add unit','ইউনিট যোগ করুন')}</button>`);
+    let h=pageHead(t('Units','ইউনিট'),t('Every flat, floor, shed and plot.','প্রতিটি ফ্ল্যাট, ফ্লোর, শেড ও প্লট।'),`<button class="btn-outline" onclick="meterDrawer('')">📟 ${t('Meter readings','মিটার রিডিং')}</button><button class="btn-primary" onclick="openNew('units')">＋ ${t('Add unit','ইউনিট যোগ করুন')}</button>`);
     h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Unit</th><th>Property</th><th>Floor</th><th>Size</th><th>Tenant</th><th>Rent</th><th>Status</th></tr></thead><tbody>${DB.units.map(u=>{const l=DB.leases.find(x=>x.u===u.id&&(x.status==='Active'||x.status==='Pending Registration'));const ten=l?tenantById(l.t):null;return `<tr data-id="${u.id}" onclick="openDetail('units','${u.id}')"><td><span class="c-name">${esc(u.name)}</span><div class="c-sub">${u.id}</div></td><td>${esc(propById(u.p)?.name||'—')}</td><td>${u.floor}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td>${ten?esc(ten.name):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${badge(u.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
@@ -1748,6 +1863,7 @@ const renderers={
   },
   leases(){
     let h=pageHead(t('Leases','লিজ'),t('Tenancy agreements with legal gates applied automatically.','আইনি গেটসহ টেন্যান্সি চুক্তি।'),`${can('templates')?`<button class="btn-outline" onclick="tplPrintFor('LSE-STD','${DB.leases[0]?DB.leases[0].id:''}')">📄 ${t('Print agreement','চুক্তি প্রিন্ট')}</button>`:''}<button class="btn-primary" onclick="openNew('leases')">＋ ${t('New lease','নতুন লিজ')}</button>`);
+    if(['superadmin','owner','manager'].includes(role().role)) h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔄</span>${t('Renewal requests','রিনিউয়াল অনুরোধ')}</div><span class="link" onclick="renewalsPanel()">${t('Refresh','রিফ্রেশ')} ↻</span></div><div class="panel-b" id="renewalsHost"><div class="c-sub">${t('Loading renewals…','রিনিউয়াল লোড হচ্ছে…')}</div></div></div>`;
     h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th>${can('templates')||can('leases')?'<th>Actions</th>':''}</tr></thead><tbody>${DB.leases.map(l=>`<tr data-id="${l.id}" onclick="openDetail('leases','${l.id}')"><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td>${(can('templates')||can('leases'))?`<td><div style="display:flex;gap:4px">${can('templates')?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();tplPrintFor('LSE-STD','${l.id}')">📄 ${t('Agreement','চুক্তি')}</button>`:''}${can('leases')?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();openHando('${l.id}')">✅ ${t('Handover','হ্যান্ডওভার')}</button>`:''}</div></td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
