@@ -138,6 +138,12 @@ Core groups (v1 — ~20 modules):
 - Phase-by-phase zips to Telegram (≤50 MB)
 - Demo script + walkthrough like REM ERP
 
+### Demo-complete batch (2026-08-02, commit `06d4245`, `?v=3.6` / SW v14)
+- **KR AI: 6 → 15 tools** — added `rent_roll` (per-property/portfolio expected·collected·outstanding), `portfolio_summary` (props/units/occupancy/asset value/MRR/unpaid), `upcoming_renewals` (N-month lookahead), `collection_summary` (issued vs collected per month), `capital_gains` (IT Act §128 + surcharge brackets), `tds_summary` (by-month), `property_details`, `lease_details`, `tenant_details`. Offline intents expanded EN+বাংলা with `ai_month()` (YYYY-MM / English / Bengali month names → current year); intents reordered so month/analytics queries win over generic arrears; ভাড়াটে/ভাড়া regex disambiguated.
+- **`app-profile`** — update name/org/phone (subs) or dept (staff) + password change (old-pw verified, sessions invalidated, forces re-login). Wired into a new **Settings drawer** (profile · password · gateway status) from the Org admin panel.
+- **Real gateway adapters** — `gateway_init`/`gateway_verify` for SSLCommerz (init + validator API), bKash (token grant → create → execute), Nagad (DFS init/complete); active only when credentials are set in `GATEWAYS()` (otherwise simulated demo checkout). `app-payment-confirm` verifies via the gateway when `gw_ref` exists. Dashboard: real checkouts redirect to the gateway and auto-confirm on return (`gatewayReturn()` parses `?gw=&sid=&val_id/paymentID/order_id`).
+- Verified locally + live (owner: rent roll ৳22.7L expected/৳17.6L collected; June collection ৳13.37L/৳13.69L; renewals; Bengali intents; profile flow; simulated gateway PAY-009/RCP-0010; 15 tools in `app-ai-meta`).
+
 ## 7. Open questions for Belal
 1. **Repo:** push to `deshiklab/KRTaker` (public) or private `kabirswe/KRTaker`?
 2. **AI provider:** DeepSeek (cheap, current) or OpenAI-compatible endpoint for the agent?
