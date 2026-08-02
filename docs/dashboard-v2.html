@@ -433,6 +433,12 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .form-grid .full{grid-column:1/-1}
 .form-field{display:flex;flex-direction:column;gap:6px}
+.kr-sw{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;cursor:pointer}
+.kr-sw input{opacity:0;width:0;height:0;position:absolute}
+.kr-sw span{position:absolute;inset:0;background:var(--border);border-radius:999px;transition:.2s}
+.kr-sw span:before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.kr-sw input:checked+span{background:var(--primary)}
+.kr-sw input:checked+span:before{transform:translateX(18px)}
 .form-field.check{flex-direction:row;align-items:center;gap:9px;padding-top:22px}
 .form-field label{font-size:11.5px;font-weight:600;color:var(--text-soft)}
 .form-field input,.form-field select,.form-field textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:9.5px 12px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--text);outline:none;transition:border .15s}
@@ -598,6 +604,7 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
           <button class="icon-btn tb-search-btn" onclick="toggleMobSearch()" aria-label="Search">🔍</button>
           <button class="icon-btn" id="langBtn" onclick="toggleLang()">বাংলা</button>
           <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
+          <button class="icon-btn" onclick="openSettings()" id="settingsBtn" title="Settings">⚙️</button>
           <div class="tb-bell" onclick="toast('3 new notifications — 2 tickets escalated, 1 invoice overdue')">🔔<span class="dot"></span></div>
           <div class="tb-user" onclick="openRoles()">
             <div class="role-ava" id="tbAva" style="width:34px;height:34px;font-size:12px">–</div>
@@ -965,8 +972,11 @@ function renderNav(){
     items.forEach(i=>{const dot=i[0]==='dashboard'&&DB.tickets.filter(x=>x.status==='Open').length?`<span class="chip">${DB.tickets.filter(x=>x.status==='Open').length}</span>`:'';h.push(`<div class="sb-item ${active===i[0]?'active':''}" onclick="nav('${i[0]}')"><span class="ic">${i[1]}</span>${t(i[2],BN[i[2]])}${dot}</div>`)});
   });
   $('sbNav').innerHTML=h.join('');
-  $('rcAva').textContent=role().ava;$('rcName').textContent=LIVE.user&&LIVE.user.name?LIVE.user.name:user().name;$('rcRole').textContent=t(role().role,role().role);
-  $('tbAva').textContent=role().ava;$('tbName').textContent=LIVE.user&&LIVE.user.name?LIVE.user.name:user().name;$('tbRole').textContent=t(role().role,role().role);
+  $('rcAva').textContent=(LIVE.user&&LIVE.user.avatar)?LIVE.user.avatar:role().ava;$('rcName').textContent=LIVE.user&&LIVE.user.name?LIVE.user.name:user().name;$('rcRole').textContent=t(role().role,role().role);
+  const tbAva=$('tbAva'), tbName=$('tbName');
+  if(tbAva) tbAva.textContent=(LIVE.user&&LIVE.user.avatar)?LIVE.user.avatar:role().ava;
+  if(tbName) tbName.textContent=LIVE.user&&LIVE.user.name?LIVE.user.name:user().name;
+  const tbRole=$('tbRole'); if(tbRole) tbRole.textContent=t(role().role,role().role);
   renderMobBar();
 }
 function renderMobBar(){
@@ -3295,15 +3305,28 @@ async function gatewayConfirm(sid,amount){
   } else toast(d.error||'Payment failed');
 }
 async function gatewayCancel(sid){ await apiCall('app-payment-cancel',{session_id:sid}); closeDrawer(); toast('Checkout cancelled'); }
-/* ── Settings: profile + password + gateway status ── */
-function openSettings(){
+/* ── Settings: profile + password + preferences + gateway status ── */
+async function openSettings(){
   const u=LIVE.user||{};
   const isStaff=!!u.is_staff;
   const nameVal=esc(u.name||''); const orgVal=esc(u.org||''); const phoneVal=esc(u.phone||'');
+  const prefs = {theme:'light',lang:'en',notify_rent:true,notify_collections:true,notify_renewal:true,notify_docs:true,wa_reminders:true,email_digest:true};
+  let authed=false;
+  if(TOKEN&&!DEMO_MODE){
+    const r=await apiCall('app-settings-get');
+    if(r.ok){ Object.assign(prefs, r.settings||{}); authed=true; }
+  } else {
+    Object.assign(prefs, {
+      theme: state.theme||'light', lang: state.lang||'en',
+    });
+  }
+  const notifyRow=(key,label,bn)=>{const on=!!prefs[key];return `<div class="row-item"><div class="ri-body"><div class="ri-t">${t(label,bn)}</div></div><div class="ri-r"><label class="kr-sw"><input type="checkbox" id="set_${key}" ${on?'checked':''}><span></span></label></div></div>`};
+  PREF_THEME=prefs.theme||'light'; PREF_LANG=prefs.lang||'en';
   openDrawer(t('Settings','সেটিংস'),
     `<div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">👤</span>${t('Profile','প্রোফাইল')}</div></div><div class="panel-b">
       <div class="form-field"><label>${t('Name','নাম')}</label><input id="setName" value="${nameVal}"></div>
-      ${isStaff?`<div class="form-field"><label>${t('Department','বিভাগ')}</label><input id="setDept" value="${esc(u.dept||'')}"></div>`
+      ${isStaff?`<div class="form-field"><label>${t('Department','বিভাগ')}</label><input id="setDept" value="${esc(u.dept||'')}"></div>
+         <div class="form-field"><label>${t('Avatar initials','অবতার আদ্যক্ষর')}</label><input id="setAvatar" maxlength="8" value="${esc(u.avatar||'')}" placeholder="e.g. RI"></div>`
         :`<div class="form-field"><label>${t('Organization','প্রতিষ্ঠান')}</label><input id="setOrg" value="${orgVal}"></div>
            <div class="form-field"><label>${t('Phone','ফোন')}</label><input id="setPhone" value="${phoneVal}"></div>`}
       <button class="btn-primary" style="width:100%" onclick="saveProfile()">${t('Save profile','প্রোফাইল সংরক্ষণ')}</button>
@@ -3312,6 +3335,26 @@ function openSettings(){
       <div class="form-field"><label>${t('Current password','বর্তমান পাসওয়ার্ড')}</label><input type="password" id="setOldPw" autocomplete="current-password"></div>
       <div class="form-field"><label>${t('New password (min 6)','নতুন পাসওয়ার্ড (ন্যূনতম ৬)')}</label><input type="password" id="setNewPw" autocomplete="new-password"></div>
       <button class="btn-outline" style="width:100%" onclick="changePw()">${t('Change password','পাসওয়ার্ড পরিবর্তন')}</button>
+    </div></div>
+    <div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">🎨</span>${t('Preferences','পছন্দসমূহ')}</div></div><div class="panel-b">
+      <div class="row-item"><div class="ri-body"><div class="ri-t">${t('Theme','থিম')}</div><div class="ri-s">${t('Dark or light workspace','ডার্ক বা লাইট ওয়ার্কস্পেস')}</div></div><div class="ri-r">
+        <button class="btn-ghost ${prefs.theme==='dark'?'btn-primary':''}" style="padding:5px 12px;font-size:11.5px" id="setThemeDark" onclick="pickPrefTheme('dark')">🌙 ${t('Dark','ডার্ক')}</button>
+        <button class="btn-ghost ${prefs.theme==='light'?'btn-primary':''}" style="padding:5px 12px;font-size:11.5px" id="setThemeLight" onclick="pickPrefTheme('light')">☀️ ${t('Light','লাইট')}</button>
+      </div></div>
+      <div class="row-item"><div class="ri-body"><div class="ri-t">${t('Language','ভাষা')}</div><div class="ri-s">${t('Interface language','ইন্টারফেস ভাষা')}</div></div><div class="ri-r">
+        <button class="btn-ghost ${prefs.lang==='en'?'btn-primary':''}" style="padding:5px 12px;font-size:11.5px" id="setLangEn" onclick="pickPrefLang('en')">EN</button>
+        <button class="btn-ghost ${prefs.lang==='bn'?'btn-primary':''}" style="padding:5px 12px;font-size:11.5px" id="setLangBn" onclick="pickPrefLang('bn')">বাংলা</button>
+      </div></div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px">${t('Notifications','নোটিফিকেশন')}</div>
+        ${notifyRow('notify_rent','Rent reminders','ভাড়া রিমাইন্ডার')}
+        ${notifyRow('notify_collections','Collections digest','আদায় ডাইজেস্ট')}
+        ${notifyRow('notify_renewal','Renewal updates','রিনিউয়াল আপডেট')}
+        ${notifyRow('notify_docs','Document & receipt emails','ডকুমেন্ট ও রসিদ ইমেইল')}
+        ${notifyRow('wa_reminders','WhatsApp reminders','হোয়াটসঅ্যাপ রিমাইন্ডার')}
+        ${notifyRow('email_digest','Daily email digest','দৈনিক ইমেইল ডাইজেস্ট')}
+      </div>
+      <button class="btn-primary" style="width:100%;margin-top:10px" onclick="saveSettings()">${t('Save preferences','পছন্দ সংরক্ষণ')}</button>
     </div></div>
     <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Payment gateways','পেমেন্ট গেটওয়ে')}</div></div><div class="panel-b" id="setGw"></div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`);
@@ -3324,7 +3367,7 @@ function openSettings(){
 async function saveProfile(){
   const body={name:document.getElementById('setName').value};
   const u=LIVE.user||{};
-  if(u.is_staff){ body.dept=document.getElementById('setDept').value; }
+  if(u.is_staff){ body.dept=document.getElementById('setDept').value; body.avatar=document.getElementById('setAvatar').value; }
   else { body.org=document.getElementById('setOrg').value; body.phone=document.getElementById('setPhone').value; }
   const d=await apiCall('app-profile',body);
   if(d.ok){ toast('Profile updated ✓'); if(d.user) LIVE.user=d.user; renderNav(); }
@@ -3340,6 +3383,25 @@ async function changePw(){
     TOKEN=''; try{localStorage.removeItem('krtaker_dash_token');}catch(x){}
     closeDrawer(); doLogout();
   } else toast(d.error||'Failed to change password');
+}
+let PREF_THEME='light', PREF_LANG='en';
+function pickPrefTheme(v){ PREF_THEME=v; const d=$('setThemeDark'), l=$('setThemeLight'); if(d)d.classList.toggle('btn-primary',v==='dark'); if(l)l.classList.toggle('btn-primary',v==='light'); }
+function pickPrefLang(v){ PREF_LANG=v; const e=$('setLangEn'), b=$('setLangBn'); if(e)e.classList.toggle('btn-primary',v==='en'); if(b)b.classList.toggle('btn-primary',v==='bn'); }
+async function saveSettings(){
+  const prefs={theme:PREF_THEME,lang:PREF_LANG};
+  ['notify_rent','notify_collections','notify_renewal','notify_docs','wa_reminders','email_digest'].forEach(k=>{
+    const el=document.getElementById('set_'+k); if(el) prefs[k]=el.checked;
+  });
+  let saved=prefs;
+  if(TOKEN&&!DEMO_MODE){
+    const d=await apiCall('app-settings-save',{settings:prefs});
+    if(!d.ok){ toast(d.error||'Failed to save'); return; }
+    saved=d.settings||prefs;
+  }
+  /* apply immediately */
+  state.theme=saved.theme||state.theme; applyTheme();
+  if((saved.lang||state.lang)!==state.lang){ state.lang=saved.lang; localStorage.setItem('krtaker_dash_lang',state.lang); $('langBtn').textContent=state.lang==='en'?'বাংলা':'EN'; renderNav(); render(); updateCrumb(); }
+  toast('Preferences saved ✓');
 }
 function gatewayPayTenant(){
   const mine=DB.invoices.filter(i=>i.status!=='Paid');
