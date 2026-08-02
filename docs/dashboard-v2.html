@@ -218,6 +218,10 @@ td .c-sub{font-size:11px;color:var(--text-mute)}
 .kr-input{display:flex;gap:8px;padding:11px 13px;border-top:1px solid var(--border)}
 .kr-input input{flex:1;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:12.5px;background:var(--bg-alt);color:var(--text);outline:none}
 .kr-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 4px}
+.th-bubble{background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:8px}
+.th-head{font-size:11px;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.th-ts{font-weight:400;color:var(--text-mute);font-size:10px}
+.th-body{font-size:12.5px;color:var(--text-soft);margin-top:4px;line-height:1.5}
 .kr-chip{font-family:inherit;font-size:11px;font-weight:600;color:var(--primary);background:var(--primary-light);border:1px solid transparent;border-radius:999px;padding:5px 11px;cursor:pointer;transition:all .15s}
 .kr-chip:hover{border-color:var(--primary)}
 .kr-typing{display:flex;gap:4px;align-items:center;padding:13px 14px}
@@ -718,33 +722,53 @@ const SEED = {
       {type:'TDS collected (platform)',amount:152000,status:'Payable'},
       {type:'Legal add-on revenue',amount:180000,status:'Invoiced'},
       {type:'Hosting & infra',amount:-78000,status:'Paid'}
-    ]}
+    ]},
+  ticket_thread:[
+    {id:1,ticket:'MT-001',author:'Rahim Steel Works',body:'Inspection done — crack is load-bearing; steel jacketing proposed. Cost estimate ৳1,85,000.',ts:'2026-06-19 10:12:00'},
+    {id:2,ticket:'MT-001',author:'Rofiqul Islam',body:'Approved. Start next week; coordinate with tenant for access.',ts:'2026-06-20 09:40:00'},
+    {id:3,ticket:'MT-003',author:'Kazi Plumbing',body:'Pump replaced; testing pressure now.',ts:'2026-06-25 16:05:00'},
+    {id:4,ticket:'MT-004',author:'Meghna Builders',body:'Quote sent: ৳42,000 incl. materials. Awaiting tenant confirmation.',ts:'2026-06-28 11:22:00'}
+  ],
+  notices:[
+    {id:'NTC-001',title:'Utility schedule for July',body:'Electricity & gas bills will be shared by the 10th of each month. Please check the Documents tab for your copies.',author:'Rofiqul Islam',ts:'2026-06-30 09:00:00',pinned:1},
+    {id:'NTC-002',title:'Annual fire-safety inspection',body:'Dhaka Fire Service inspection is scheduled for 18–20 July. Access to common areas required 9am–5pm.',author:'Arif Chowdhury',ts:'2026-07-01 11:30:00',pinned:1},
+    {id:'NTC-003',title:'Generator maintenance — 26 July',body:'Standby generator service from 10am–2pm on 26 July. Expect brief water-pump interruptions.',author:'Shakil Ahmed',ts:'2026-07-05 15:20:00',pinned:0}
+  ],
+  documents:[
+    {id:'DOC-DEMO1',kind:'lease',ref:'L-001',name:'lease-deed-green-view.pdf',size:284112,mime:'application/pdf',uploaded_by:'Rofiqul Islam',ts:'2026-06-28 10:00:00'},
+    {id:'DOC-DEMO2',kind:'lease',ref:'L-007',name:'tenancy-agreement-dhanmondi.pdf',size:198774,mime:'application/pdf',uploaded_by:'Sultana Rahman',ts:'2026-06-29 12:15:00'},
+    {id:'DOC-DEMO3',kind:'ticket',ref:'MT-001',name:'qc-photos-MT001.zip',size:8420336,mime:'application/zip',uploaded_by:'Rahim Steel Works',ts:'2026-06-30 17:40:00'}
+  ],
+  referrals:[
+    {id:'REF-A1B2C3',code:'KR-DEMO1',user_email:'owner@krtaker.com',role:'owner',referred_name:'Tanvir Hossain',referred_email:'tanvir.h@gmail.com',status:'Signed up',reward:5000,ts:'2026-06-15 10:00:00'},
+    {id:'REF-D4E5F6',code:'KR-DEMO2',user_email:'owner@krtaker.com',role:'owner',referred_name:'Orbit Textiles Ltd',referred_email:'accounts@orbittextiles.com',status:'Paid',reward:15000,ts:'2026-07-02 14:30:00'}
+  ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai'];
+const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai','analytics','notices','documents','referrals'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:ALL},
-  {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','maintenance','ai']},
-  {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','invoices','payments','ai']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai']},
-  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai']},
-  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding',mods:['dashboard','maintenance','ai']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','ai']},
-  {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai']}
+  {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','maintenance','ai','notices','documents','analytics']},
+  {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','invoices','payments','ai','notices','documents','referrals']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai','analytics','notices','documents']},
+  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents']},
+  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding',mods:['dashboard','maintenance','ai','notices','documents','referrals']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','ai','analytics','notices','documents']},
+  {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
-  {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases']]},
-  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['subscriptions','💠','Subscriptions']]},
+  {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['documents','📁','Documents'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
+  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
   {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['compliance','⚖️','Compliance']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','subscriptions':'💠','ai':'🤖'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','referrals':'🤝'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','referrals':'Referrals'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Referrals':'রেফারেল',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -1196,7 +1220,7 @@ function krSend(){
 function krBoot(){
   if(!$('krBody').children.length){
     $('krBody').innerHTML=`<div class="kr-msg ai">Hello 👋 I'm <b>KR</b> — your AI property caretaker. I can take actions (invoices, tickets, reminders) and answer Bangladeshi property law — try one below or type anything.<br><span style="font-size:10px;color:var(--text-mute)">${new Date().toLocaleDateString()} · ${window.krMode||''}</span></div>
-    <div class="kr-chips">${['Generate invoice for L-003','How much collected in June?','Rent roll','Which leases renew next month?','Portfolio summary','Who pays for a leaking roof?','Holding tax for P-001','Is my advance legal?'].map(c=>`<button class="kr-chip" onclick="krQuick('${esc(c)}')">${esc(c)}</button>`).join('')}</div>`;
+    <div class="kr-chips">${['Generate invoice for L-003','How much collected in June?','Monthly digest','Which units are vacant?','Rent roll','Which leases renew next month?','Portfolio summary','Who pays for a leaking roof?','Holding tax for P-001','Is my advance legal?','My referral link'].map(c=>`<button class="kr-chip" onclick="krQuick('${esc(c)}')">${esc(c)}</button>`).join('')}</div>`;
   }
   apiCall('app-ai-meta').then(d=>{ if(d&&d.ok){ window.krMode=d.mode==='llm'?'KR · DeepSeek (function-calling)':'KR · Offline mode (legal KB)'; const ks=document.querySelector('.kr-head .ks'); if(ks)ks.textContent=window.krMode+' · 24/7'; } }).catch(()=>{});
 }
@@ -1624,6 +1648,104 @@ const renderers={
     </div>`;
     return h;
   },
+  /* Phase 9: analytics — pure client-side from loaded data (works in demo + live) */
+  analytics(){
+    const isTenant = LIVE.user && LIVE.user.role==='tenant';
+    const invs = DB.invoices||[];
+    const months = [...new Set(invs.map(i=>i.m))].sort();
+    const issuedBy={},collBy={};
+    months.forEach(m=>{issuedBy[m]=0;collBy[m]=0});
+    invs.forEach(i=>{issuedBy[i.m]=(issuedBy[i.m]||0)+i.net});
+    (DB.payments||[]).forEach(p=>{const inv=invoiceById(p.inv);if(inv)collBy[inv.m]=(collBy[inv.m]||0)+p.amount});
+    const labels=months.map(m=>m.slice(5)+'/'+m.slice(2,4));
+    const issuedD=months.map(m=>issuedBy[m]||0), collD=months.map(m=>collBy[m]||0);
+    const totIssued=issuedD.reduce((a,b)=>a+b,0), totColl=collD.reduce((a,b)=>a+b,0);
+    const rate=totIssued?Math.round(totColl/totIssued*100):0;
+    const activeLeases=(DB.leases||[]).filter(l=>l.status==='Active'||l.status==='Pending Registration');
+    const mrr=activeLeases.reduce((s,l)=>s+l.rent,0);
+    const units=DB.units||[], leased=units.filter(u=>u.status==='Leased').length;
+    const occ=units.length?Math.round(leased/units.length*100):0;
+    const unpaid=invs.filter(i=>i.status!=='Paid').length;
+    // aging buckets (by invoice month vs latest month)
+    const cur=months[months.length-1]||'2026-07';
+    const curY=parseInt(cur.slice(0,4),10),curM=parseInt(cur.slice(5),10);
+    const ageM=m=>{const y=parseInt(m.slice(0,4),10),mo=parseInt(m.slice(5),10);return (curY-y)*12+(curM-mo)};
+    const buckets={Current:0,'30–60d':0,'60–90d':0,'90d+':0};
+    invs.filter(i=>i.status!=='Paid').forEach(i=>{const a=ageM(i.m);if(a<=0)buckets.Current+=i.net;else if(a===1)buckets['30–60d']+=i.net;else if(a===2)buckets['60–90d']+=i.net;else buckets['90d+']+=i.net});
+    // forecast: collection rate × next-month issuance (MRR)
+    const nextM=new Date(curY,curM,1); nextM.setMonth(nextM.getMonth()+1);
+    const nextLbl=String(nextM.getFullYear())+'-'+String(nextM.getMonth()+1).padStart(2,'0');
+    const forecast=Math.round(mrr*rate/100);
+    const occByProp=(DB.properties||[]).map(p=>{const us=units.filter(u=>u.p===p.id);const lc=us.filter(u=>u.status==='Leased').length;const pct=us.length?Math.round(lc/us.length*100):0;return {p,pct,n:us.length,lc,name:p.name}});
+    const occBars=occByProp.map(o=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>${esc(o.name)}</span><span class="${o.pct<50?'warn':''}">${o.lc}/${o.n} · ${o.pct}%</span></div><div class="prog ${o.pct<50?'orange':''}"><i style="width:${o.pct}%"></i></div></div>`).join('');
+    let h=pageHead(t('Analytics','অ্যানালিটিক্স'),t('Revenue, occupancy and collection trends — computed live from your data.','রাজস্ব, দখল ও আদায়ের প্রবণতা — আপনার ডেটা থেকে লাইভ হিসাব।'));
+    h+=statsRow([
+      stat(t('Monthly rent (MRR)','মাসিক ভাড়া (এমআরআর)'),money(mrr),'+'+rate+'% collection', 'pos','🏠'),
+      stat(t('Occupancy','দখল'),occ+'%',leased+'/'+units.length+' '+t('units leased','ইউনিট লিজড'),'pos','🚪'),
+      stat(t('Collection rate','আদায়ের হার'),rate+'%',moneyC(totColl)+' '+t('of','এর মধ্যে')+' '+moneyC(totIssued),(rate>70?'pos':'warn'),'💳'),
+      stat(t('Unpaid invoices','অপরিশোধিত ইনভয়েস'),unpaid, t('needs follow-up','ফলো-আপ প্রয়োজন'), unpaid?'warn':'pos','🧾')
+    ]);
+    h+=`<div class="grid grid-2">
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Issued by month','মাসভিত্তিক ইস্যু')}</div></div><div class="panel-b">${months.length?barChart(issuedD,labels):'<div class="c-sub">No invoice data yet.</div>'}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Collected by month','মাসভিত্তিক আদায়')}</div></div><div class="panel-b">${months.length?barChart(collD,labels,'#34C77B'):'<div class="c-sub">No payment data yet.</div>'}</div></div>
+    </div>`;
+    h+=`<div class="grid grid-2">
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📊</span>${t('Occupancy by property','সম্পত্তিভিত্তিক দখল')}</div></div><div class="panel-b">${occBars||'<div class="c-sub">No properties.</div>'}</div></div>
+      <div>
+        <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Receivables aging','প্রাপ্য এজিং')}</div></div><div class="panel-b">${Object.entries(buckets).map(([k,v])=>kv(k,v?money(v):'—',v?'warn':'')).join('')}${kv('<b>'+t('Total outstanding','মোট বকেয়া')+'</b>','<b>'+money(Object.values(buckets).reduce((a,b)=>a+b,0))+'</b>')}</div></div>
+        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔮</span>${t('Next-month projection','আগামী মাসের প্রক্ষেপণ')}</div></div><div class="panel-b"><div style="font-size:22px;font-weight:800;color:var(--accent)">${money(forecast)}</div><div class="c-sub" style="margin-top:6px">${t('Expected collection for','জন্য প্রত্যাশিত আদায়')} ${nextLbl} ${t('at your','আপনার')} ${rate}% ${t('historical rate','ঐতিহাসিক হারে')}</div></div></div>
+      </div>
+    </div>`;
+    return h;
+  },
+  /* Phase 8: notice board */
+  notices(){
+    const canPost=!LIVE.user||LIVE.user.is_staff||['superadmin','owner','manager','svc_mgr','crm','legal','accountant','hr'].includes(LIVE.user.role);
+    let h=pageHead(t('Notice Board','নোটিশ বোর্ড'),t('Announcements for owners, tenants and partners.','মালিক, ভাড়াটিয়া ও পার্টনারদের জন্য ঘোষণা।'),canPost?`<button class="btn-primary" onclick="noticeForm()">＋ ${t('Post notice','নোটিশ পোস্ট')}</button>`:'');
+    const list=(DB.notices||[]).slice().sort((a,b)=>(b.pinned||0)-(a.pinned||0));
+    h+=`<div class="grid grid-2">${list.map(n=>`<div class="panel"><div class="panel-b">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div style="font-weight:700;font-size:14.5px">${n.pinned?'📌 ':''}${esc(n.title)}</div><div style="display:flex;gap:6px">${canDeleteNotice(n)?`<button class="btn-ghost" style="padding:2px 8px;font-size:11px" onclick="deleteNotice('${n.id}')">🗑</button>`:''}</div></div>
+      <div style="font-size:13px;color:var(--text-soft);line-height:1.6;margin-top:8px">${esc(n.body)}</div>
+      <div style="margin-top:12px;font-size:11px;color:var(--text-mute)">${esc(n.author)} · ${esc((n.ts||'').slice(0,16))}</div>
+      </div></div>`).join('')||'<div class="panel"><div class="panel-b c-sub">No notices yet.</div></div>'}</div>`;
+    return h;
+  },
+  /* Phase 8: documents */
+  documents(){
+    const isPartner=LIVE.user&&LIVE.user.role==='partner';
+    const refs=isPartner?((DB.tickets||[]).map(x=>x.id)):((DB.leases||[]).map(x=>x.id));
+    const kinds=['lease','agreement','nid','utility','ticket','notice','other'];
+    let h=pageHead(t('Documents','ডকুমেন্ট'),t('Lease deeds, agreements, NID copies and QC files — stored securely.','লিজ ডিড, চুক্তি, এনআইডি কপি ও কিউসি ফাইল — নিরাপদে সংরক্ষিত।'),`<button class="btn-primary" onclick="docForm('${isPartner?'ticket':'lease'}')">＋ ${t('Upload','আপলোড')}</button>`);
+    const docs=(DB.documents||[]).slice().sort((a,b)=>(b.ts||'').localeCompare(a.ts||''));
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>${t('Document','ডকুমেন্ট')}</th><th>${t('Kind','ধরন')}</th><th>${t('Ref','রেফ')}</th><th>${t('Uploaded by','আপলোডকারী')}</th><th>${t('Size','সাইজ')}</th><th></th></tr></thead><tbody>${
+      docs.map(d=>`<tr><td><span class="c-name">📄 ${esc(d.name)}</span><div class="c-sub">${esc(d.id)} · ${esc((d.ts||'').slice(0,16))}</div></td><td>${esc(d.kind)}</td><td>${esc(d.ref)}</td><td>${esc(d.uploaded_by)}</td><td>${d.size?(d.size/1024).toFixed(0)+' KB':'—'}</td><td><div style="display:flex;gap:6px"><button class="btn-ghost" style="padding:3px 10px;font-size:11px" onclick="downloadDoc('${d.id}')">⬇</button>${canDeleteDoc(d)?`<button class="btn-ghost" style="padding:3px 10px;font-size:11px" onclick="deleteDoc('${d.id}')">🗑</button>`:''}</div></td></tr>`).join('')||'<tr><td colspan="6" class="c-sub">No documents yet.</td></tr>'
+    }</tbody></table></div></div>`;
+    h+=`<div class="panel" style="margin-top:14px"><div class="panel-b" style="font-size:12.5px;color:var(--text-mute)">🔒 ${t('Files are stored outside the public web root and served only to authorised roles via the API — tenants see only their own lease documents.','ফাইল পাবলিক ওয়েব রুটের বাইরে রাখা হয় এবং শুধুমাত্র অনুমোদিত রোল API-এর মাধ্যমে দেখে — ভাড়াটিয়ারা শুধু নিজেদের লিজ ডকুমেন্ট দেখতে পারে।')}</div></div>`;
+    return h;
+  },
+  /* Phase 10: referrals */
+  referrals(){
+    const refs=(DB.referrals||[]).filter(r=>!LIVE.user||r.user_email===LIVE.user.email||LIVE.user.role==='superadmin');
+    const mine=refs[0]||null;
+    const code=mine?mine.code:'';
+    const link='https://krtaker.com/register.html?ref='+code;
+    let h=pageHead(t('Referrals','রেফারেল'),t('Refer a property owner or tenant — earn ৳5,000 per paid subscription.','একজন মালিক বা ভাড়াটিয়াকে রেফার করুন — প্রতিটি পেইড সাবস্ক্রিপশনে ৳৫,০০০ উপার্জন।'));
+    h+=`<div class="panel"><div class="panel-b">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div><div class="c-name" style="font-size:15px">${t('Your referral code','আপনার রেফারেল কোড')}</div>
+        <div style="font-size:26px;font-weight:800;color:var(--accent);letter-spacing:2px;margin:6px 0">${code||'—'}</div>
+        <div style="font-size:12.5px;color:var(--text-mute);word-break:break-all">${esc(link||'')}</div></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn-primary" onclick="copyCode('${esc(link)}')">📋 ${t('Copy share link','শেয়ার লিংক কপি')}</button>
+          ${code?`<button class="btn-outline" onclick="waShare('${esc(link)}')">🟢 ${t('Share on WhatsApp','হোয়াটসঅ্যাপে শেয়ার')}</button>`:''}
+        </div>
+      </div>
+    </div></div>`;
+    h+=`<div class="panel" style="margin-top:14px"><div class="panel-h"><div class="t"><span class="pi">🤝</span>${t('Referral history','রেফারেল ইতিহাস')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Referred','রেফারকৃত')}</th><th>${t('Email','ইমেইল')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Reward','রিওয়ার্ড')}</th><th>${t('Date','তারিখ')}</th></tr></thead><tbody>${
+      refs.map(r=>`<tr><td><span class="c-name">${esc(r.referred_name||'—')}</span></td><td>${esc(r.referred_email||'—')}</td><td>${badge(r.status)}</td><td class="t-amount">${r.reward?money(r.reward):'—'}</td><td>${esc((r.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="5" class="c-sub">No referrals yet — share your code above.</td></tr>'
+    }</tbody></table></div></div>`;
+    return h;
+  },
   subscriptions(){
     const sub = LIVE.subscription || { plan: 'Trial', trial_end: '' };
     const catalog = (LIVE.catalog && LIVE.catalog.length) ? LIVE.catalog : DEFAULT_PLANS;
@@ -1836,9 +1958,27 @@ function openDetail(collection, id){
   let foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button>`;
   if(collection==='tickets' && !(LIVE.user && LIVE.user.role==='tenant')){ foot+=`<button class="btn-outline" onclick="ticketStatusForm('${row.id}')">🔧 Update status</button>`; }
   if(collection==='invoices' && row.status!=='Paid'){ foot+=`<button class="btn-outline" onclick="gatewayPay('${row.id}')">🔐 ${t('Pay online','অনলাইনে পরিশোধ')}</button><button class="btn-primary" onclick="payForm('${row.id}')">💳 Record payment</button>`; }
+  if(collection==='invoices'){ foot+=`<button class="btn-outline" onclick="printInvoice('${row.id}')">🖨 ${t('Print / PDF','প্রিন্ট / পিডিএফ')}</button>`; if(LIVE.user&&['superadmin','owner','manager','accountant','crm'].includes(LIVE.user.role)){ foot+=`<button class="btn-outline" onclick="waRemind('${row.id}')">🟢 WhatsApp</button>`; } }
   if(canEdit){ foot+=`<button class="btn-outline" onclick="openForm('${collection}','${row.id}')">✏️ Edit</button><button class="btn-danger" onclick="deleteRow('${collection}','${row.id}')">🗑 Delete</button>`; }
   foot+='</div>';
-  openDrawer(`${s.icon} ${s.label} — ${row.id}`, `<div class="dr-kv">${kvRows}</div>${related}`, foot);
+  let extra='';
+  if(collection==='tickets'){ extra=ticketThreadHtml(row.id); }
+  openDrawer(`${s.icon} ${s.label} — ${row.id}`, `<div class="dr-kv">${kvRows}</div>${related}${extra}`, foot);
+}
+function ticketThreadHtml(ticketId){
+  const rows=(DB.ticket_thread||[]).filter(x=>String(x.ticket)===String(ticketId));
+  const bubbles=rows.map(r=>`<div class="th-bubble"><div class="th-head">${esc(r.author)}<span class="th-ts">${esc((r.ts||'').slice(0,16))}</span></div><div class="th-body">${esc(r.body)}</div></div>`).join('');
+  return `<div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--text-mute);margin-bottom:8px">💬 ${t('Ticket thread','টিকিট আলোচনা')}</div>
+    ${bubbles||'<div class="c-sub">No updates yet.</div>'}
+    <div style="display:flex;gap:8px;margin-top:10px"><input id="thComment" class="tb-search" style="flex:1" placeholder="${t('Add an update…','আপডেট যোগ করুন…')}"><button class="btn-primary" onclick="addTicketComment('${ticketId}')">${t('Post','পোস্ট')}</button></div>
+  </div>`;
+}
+async function addTicketComment(ticketId){
+  const el=document.getElementById('thComment'); if(!el||!el.value.trim()){toast('Write something first');return}
+  const d=await apiCall('app-ticket-comment',{ticket:ticketId,body:el.value.trim()});
+  if(d.ok){ toast('Comment posted'); await refreshData(); openDetail('tickets',ticketId); }
+  else toast(d.error||'Failed');
 }
 function fieldHtml(f, data){
   const val=data[f.k]!=null?data[f.k]:'';
@@ -1923,6 +2063,117 @@ async function saveTicketStatus(id){
   const d=await apiCall('app-ticket-status',{id,status,cost});
   if(d.ok){ toast('Ticket '+id+' → '+status); await refreshData(); closeDrawer(); }
   else toast(d.error||'Update failed');
+}
+
+/* ═══ Phase 8: invoice print + WhatsApp reminder ═══ */
+async function printInvoice(id){
+  try{
+    const res=await fetch(API+'app-invoice-print?id='+id,{headers:{Authorization:'Bearer '+TOKEN}});
+    if(!res.ok){ toast('Cannot print: '+res.status); return; }
+    const html=await res.text();
+    const w=window.open('','_blank'); if(!w){toast('Popup blocked');return}
+    w.document.write(html); w.document.close();
+  }catch(e){ toast('Print failed: '+e.message); }
+}
+async function waRemind(invId){
+  const inv=invoiceById(invId); if(!inv){toast('Not found');return}
+  const l=leaseById(inv.l); if(!l){toast('No lease');return}
+  const ten=tenantById(l.t);
+  const unit=unitById(l.u);
+  const phone=(ten&&ten.phone)||'';
+  if(!phone){toast('No tenant phone on file');return}
+  const txt=encodeURIComponent('Dear '+((ten&&ten.name)||'Tenant')+', invoice '+invId+' ('+inv.m+') for ৳'+inv.net.toLocaleString('en-IN')+' is due. Please pay from your KRTaker tenant portal. Thank you.');
+  let p=phone.replace(/[^0-9]/g,''); if(p.length===10)p='880'+p; else if(p[0]==='0'&&p.length===11)p='88'+p;
+  window.open('https://wa.me/'+p+'?text='+txt,'_blank');
+  toast('WhatsApp reminder opened');
+}
+async function waShare(link){
+  const txt=encodeURIComponent('I use KRTaker — an AI caretaker for rental properties in Bangladesh. Try it free: '+link);
+  window.open('https://wa.me/?text='+txt,'_blank');
+}
+
+/* ═══ Phase 8: notice board actions ═══ */
+function canDeleteNotice(n){
+  if(!LIVE.user) return true; /* demo mode */
+  if(['superadmin','owner','manager'].includes(LIVE.user.role)) return true;
+  return n.author===LIVE.user.name;
+}
+function noticeForm(){
+  openDrawer('📢 '+t('Post notice','নোটিশ পোস্ট'),
+    `<div class="form-grid">
+      <div class="form-field full"><label>${t('Title *','শিরোনাম *')}</label><input id="ntTitle" placeholder="e.g. Generator maintenance — 26 July"></div>
+      <div class="form-field full"><label>${t('Details','বিস্তারিত')}</label><textarea id="ntBody" rows="4" placeholder="${t('What everyone needs to know…','সবাইকে কী জানানো দরকার…')}"></textarea></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="postNotice()">📢 ${t('Publish','প্রকাশ')}</button></div>`);
+}
+async function postNotice(){
+  const title=document.getElementById('ntTitle').value.trim();
+  const body=document.getElementById('ntBody').value.trim();
+  if(!title){toast('Title required');return}
+  const d=await apiCall('app-notice-create',{title,body});
+  if(d.ok){ toast('Notice '+d.id+' published'); await refreshData(); closeDrawer(); }
+  else toast(d.error||'Failed');
+}
+async function deleteNotice(id){
+  if(!confirm('Delete this notice?'))return;
+  const d=await apiCall('app-notice-delete',{id});
+  if(d.ok){ toast('Notice deleted'); await refreshData(); }
+  else toast(d.error||'Failed');
+}
+
+/* ═══ Phase 8: document upload / download / delete ═══ */
+function canDeleteDoc(d){
+  if(!LIVE.user) return true;
+  if(['superadmin','owner','manager'].includes(LIVE.user.role)) return true;
+  return d.uploaded_by===LIVE.user.name;
+}
+function docForm(defaultKind){
+  const isPartner=LIVE.user&&LIVE.user.role==='partner';
+  const refs=isPartner?(DB.tickets||[]):(DB.leases||[]);
+  const refLbl=isPartner?t('Job (ticket)','জব (টিকিট)'):t('Lease','লিজ');
+  openDrawer('📁 '+t('Upload document','ডকুমেন্ট আপলোড'),
+    `<div class="form-grid">
+      <div class="form-field"><label>${t('Kind','ধরন')}</label><select id="dcKind">${['lease','agreement','nid','utility','ticket','notice','other'].map(k=>`<option ${k===defaultKind?'selected':''}>${k}</option>`).join('')}</select></div>
+      <div class="form-field"><label>${refLbl}</label><select id="dcRef">${refs.map(x=>`<option value="${esc(x.id)}">${esc(x.id)}${x.name?' · '+esc(x.name):''}</option>`).join('')||'<option value="">—</option>'}</select></div>
+      <div class="form-field full"><label>${t('File *','ফাইল *')} (PDF, JPG, PNG, DOCX… max 8MB)</label><input type="file" id="dcFile" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.doc,.docx,.xls,.xlsx,.txt,.csv"></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="uploadDoc()">⬆ ${t('Upload','আপলোড')}</button></div>`);
+}
+async function uploadDoc(){
+  const file=document.getElementById('dcFile').files[0];
+  const ref=document.getElementById('dcRef').value;
+  const kind=document.getElementById('dcKind').value;
+  if(!file){toast('Choose a file');return}
+  if(!ref){toast('Pick a '+kind+' reference');return}
+  const fd=new FormData();
+  fd.append('file',file); fd.append('kind',kind); fd.append('ref',ref);
+  try{
+    const res=await fetch(API+'app-doc-upload',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
+    const d=await res.json();
+    if(d.ok){ toast('Uploaded '+d.id); await refreshData(); closeDrawer(); }
+    else toast(d.error||'Upload failed');
+  }catch(e){ toast('Upload error: '+e.message); }
+}
+async function downloadDoc(id){
+  try{
+    const res=await fetch(API+'app-doc-download?id='+id,{headers:{Authorization:'Bearer '+TOKEN}});
+    if(!res.ok){ toast('Download failed: '+res.status); return; }
+    const blob=await res.blob();
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='document-'+id+'.download'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  }catch(e){ toast('Download error: '+e.message); }
+}
+async function deleteDoc(id){
+  if(!confirm('Delete this document?'))return;
+  const d=await apiCall('app-doc-delete',{id});
+  if(d.ok){ toast('Document deleted'); await refreshData(); }
+  else toast(d.error||'Failed');
+}
+
+/* ═══ Phase 10: referral copy/share ═══ */
+function copyCode(link){
+  if(navigator.clipboard){ navigator.clipboard.writeText(link).then(()=>toast('Share link copied 📋')).catch(()=>toast(link)); }
+  else toast(link);
 }
 
 /* ═══ Phase 4: payment gateways + activated actions ═══ */

@@ -33,6 +33,8 @@
   $('backTo2').addEventListener('click', () => go(2));
 
   // Account submit → register API (plan NOT collected — chosen later in dashboard)
+  const refCode = new URLSearchParams(location.search).get('ref') || '';
+  if (refCode) { try { localStorage.setItem('krtaker_ref', refCode); } catch (x) {} }
   $('acctForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const d = dict() || {};
@@ -45,9 +47,12 @@
     const btn = $('regSubmit');
     btn.disabled = true; btn.textContent = d['reg.working'] || 'Please wait…';
     try {
+      const body = { name, org: $('rOrg').value.trim(), email, phone: $('rPhone').value.trim(), role: state.role, pass };
+      const ref = refCode || (function(){ try { return localStorage.getItem('krtaker_ref') || ''; } catch (x) { return ''; } })();
+      if (ref) body.ref = ref;
       const res = await fetch(API + 'register', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, org: $('rOrg').value.trim(), email, phone: $('rPhone').value.trim(), role: state.role, pass })
+        body: JSON.stringify(body)
       });
       const data = await res.json();
       if (data.ok) {

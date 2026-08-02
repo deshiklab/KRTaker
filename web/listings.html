@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Property Listings — KRTaker</title>
+<meta name="description" content="Browse verified rental properties in Dhaka and Chattogram managed by KRTaker — flats, commercial floors and industrial sheds with vacant units ready to lease.">
+<link rel="canonical" href="https://krtaker.com/listings.html">
+<meta property="og:title" content="Property Listings — KRTaker">
+<meta property="og:description" content="Verified rental properties across Dhaka & Chattogram — flats, commercial floors and sheds.">
+<meta property="og:url" content="https://krtaker.com/listings.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://krtaker.com/assets/img/og-card.webp">
+<link rel="icon" href="assets/img/favicon.png" type="image/png">
+<link rel="stylesheet" href="css/landing.css?v=3.7">
+<style>
+.listing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;margin:28px 0}
+.listing-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column}
+.listing-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(47,128,237,.12)}
+.lc-top{padding:18px 18px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.lc-name{font-weight:800;font-size:16px;line-height:1.3}
+.lc-sub{font-size:12.5px;color:var(--muted);margin-top:3px}
+.lc-body{padding:14px 18px;flex:1}
+.lc-row{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--border)}
+.lc-row:last-child{border-bottom:0}
+.lc-row .k{color:var(--muted)}
+.lc-row .v{font-weight:700}
+.lc-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px}
+.lc-foot .btn{flex:1;text-align:center;font-size:12.5px;padding:9px 10px}
+.badge-v{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(16,185,129,.12);color:#059669}
+.badge-f{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(47,128,237,.1);color:#2F80ED}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.filter-chip{border:1px solid var(--border);background:var(--card);border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s}
+.filter-chip.active,.filter-chip:hover{border-color:#2F80ED;color:#2F80ED;background:rgba(47,128,237,.06)}
+.lc-count{font-size:12.5px;color:var(--muted)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+#listRoot.loading{opacity:.5;pointer-events:none}
+@media(max-width:640px){.listing-grid{grid-template-columns:1fr}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"KRTaker Property Listings","url":"https://krtaker.com/listings.html","description":"Verified rental properties across Dhaka and Chattogram."}</script>
+</head>
+<body>
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container">
+    <a class="nav-logo" href="index.html"><span class="logo-mark">KR</span> KRTaker</a>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <ul class="nav-links">
+      <li class="mega-li">
+        <a href="features.html" class="mega-trigger " data-i18n="nav.platform">Platform <span class="chev">▾</span></a>
+        <div class="mega-dropdown mega-wide mega-center">
+          <div class="mega-featured">
+            <h4 data-i18n="nav.mfPlatform">Everything a building needs</h4>
+            <p data-i18n="nav.mfPlatformSub">Nine modules working as one digital caretaker.</p>
+          </div>
+          <a href="features.html"><span class="mega-ico">🧾</span><span data-i18n="nav.features">Features</span></a>
+          <a href="how-it-works.html"><span class="mega-ico">🗺️</span><span data-i18n="nav.how">How it works</span></a>
+          <a href="legal-compliance.html"><span class="mega-ico">⚖️</span><span data-i18n="footer.legal">Legal &amp; Compliance</span></a>
+        </div>
+      </li>
+      <li class="mega-li">
+        <a href="for-owners.html" class="mega-trigger " data-i18n="nav.forYou">For you <span class="chev">▾</span></a>
+        <div class="mega-dropdown mega-wide mega-center">
+          <div class="mega-featured">
+            <h4 data-i18n="nav.mfForYou">One platform, nine roles</h4>
+            <p data-i18n="nav.mfForYouSub">From owner to field crew — everyone in the same system.</p>
+          </div>
+          <a href="for-owners.html"><span class="mega-ico">🏠</span><span data-i18n="footer.owners">Property Owners</span></a>
+          <a href="for-tenants.html"><span class="mega-ico">👤</span><span data-i18n="footer.tenants">Tenants</span></a>
+          <a href="for-partners.html"><span class="mega-ico">🛠️</span><span data-i18n="footer.partners">Service Partners</span></a>
+          <a href="for-nrb.html"><span class="mega-ico">🌍</span><span data-i18n="footer.nrb">NRB Investors</span></a>
+          <a href="register.html"><span class="mega-ico">📝</span><span data-i18n="footer.register">Register</span></a>
+          <a href="login.html"><span class="mega-ico">🔐</span><span data-i18n="footer.login">Log in</span></a>
+        </div>
+      </li>
+      <li class="mega-li">
+        <a href="listings.html" class="mega-trigger active" data-i18n="nav.listings">Listings <span class="chev">▾</span></a>
+        <div class="mega-dropdown mega-center">
+          <div class="mega-featured">
+            <h4 data-i18n="nav.mfListings">Rent a verified property</h4>
+            <p data-i18n="nav.mfListingsSub">Flats, offices and sheds with vacant units, managed end-to-end by KRTaker.</p>
+          </div>
+          <a href="listings.html"><span class="mega-ico">🏘️</span><span data-i18n="nav.listings">Browse listings</span></a>
+          <a href="register.html"><span class="mega-ico">🔑</span><span data-i18n="nav.tenants">Become a tenant</span></a>
+          <a href="for-owners.html"><span class="mega-ico">📢</span><span data-i18n="nav.publish">List my property</span></a>
+          <a href="contact.html"><span class="mega-ico">📞</span><span data-i18n="footer.contact">Contact</span></a>
+        </div>
+      </li>
+      <li><a href="pricing.html" class="" data-i18n="nav.pricing">Pricing</a></li>
+      <li><a href="ai-caretaker.html" class="" data-i18n="nav.ai">AI Caretaker</a></li>
+    </ul>
+    <div class="nav-cta">
+      <button class="icon-btn" data-lang-toggle aria-label="Language">বাং</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      <a href="login.html" class="btn btn-ghost nav-ghost" data-i18n="nav.login">Log in</a>
+      <a href="register.html" class="btn btn-primary nav-primary" data-i18n="nav.getStarted">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="container">
+    <h1 data-i18n="page.hero.listings">Property listings</h1>
+    <p data-i18n="page.hero.listingsSub">Verified rental properties across Dhaka &amp; Chattogram — every building managed end-to-end by KRTaker. Enquire directly on WhatsApp.</p>
+    <div class="filters" id="filters">
+      <button class="filter-chip active" data-f="all">All</button>
+      <button class="filter-chip" data-f="Flat">🏢 Flats</button>
+      <button class="filter-chip" data-f="Commercial">🏬 Commercial</button>
+      <button class="filter-chip" data-f="Industrial">🏭 Industrial</button>
+      <button class="filter-chip" data-f="Plot">🌳 Plots</button>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  <div class="container">
+    <div class="lc-count" id="listCount"></div>
+    <div class="listing-grid" id="listRoot">
+      <div class="empty-state">Loading listings…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CTA SECTION ===== -->
+<section class="cta-section">
+  <div class="container">
+    <h2 data-i18n="cta.title">Ready to put your property on autopilot?</h2>
+    <p data-i18n="cta.sub">Join 128 subscribers managing ৳74.55 Cr in property with KRTaker.</p>
+    <div class="cta-actions">
+      <a href="register.html" class="btn btn-white btn-lg" data-i18n="cta.btn">Start free trial</a>
+      <a href="contact.html" class="btn btn-outline btn-lg" data-i18n="shared.ctaBtn2">Talk to us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo"><span class="logo-mark">KR</span> KRTaker</div>
+        <p data-i18n="footer.blurb">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
+        <div class="footer-socials">
+          <a href="https://www.facebook.com/krtaker" class="soc" aria-label="Facebook" target="_blank" rel="noopener">f</a>
+          <a href="https://www.linkedin.com/company/krtaker" class="soc" aria-label="LinkedIn" target="_blank" rel="noopener">in</a>
+          <a href="https://x.com/krtaker" class="soc" aria-label="X (Twitter)" target="_blank" rel="noopener">𝕏</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.product">Product</h4>
+        <ul>
+          <li><a href="features.html" data-i18n="nav.features">Features</a></li>
+          <li><a href="how-it-works.html" data-i18n="nav.how">How it works</a></li>
+          <li><a href="pricing.html" data-i18n="nav.pricing">Pricing</a></li>
+          <li><a href="listings.html" data-i18n="nav.listings">Listings</a></li>
+          <li><a href="ai-caretaker.html" data-i18n="nav.ai">AI Caretaker</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.audience">For you</h4>
+        <ul>
+          <li><a href="for-owners.html" data-i18n="footer.owners">Property Owners</a></li>
+          <li><a href="for-tenants.html" data-i18n="footer.tenants">Tenants</a></li>
+          <li><a href="for-partners.html" data-i18n="footer.partners">Service Partners</a></li>
+          <li><a href="for-nrb.html" data-i18n="footer.nrb">NRB Investors</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.resources">Resources</h4>
+        <ul>
+          <li><a href="blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
+          <li><a href="tools.html" data-i18n="misc.calculators">Calculators</a></li>
+          <li><a href="case-studies.html" data-i18n="footer.caseStudies">Case studies</a></li>
+          <li><a href="faq.html" data-i18n="footer.faq">FAQ</a></li>
+          <li><a href="about.html" data-i18n="footer.about">About us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.legal2">Legal</h4>
+        <ul>
+          <li><a href="terms.html" data-i18n="footer.terms">Terms of Service</a></li>
+          <li><a href="privacy.html" data-i18n="footer.privacy">Privacy Policy</a></li>
+          <li><a href="legal-compliance.html" data-i18n="footer.legal">Legal &amp; Compliance</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 KRTaker. All rights reserved.</span>
+      <span data-i18n="footer.made">Made in Bangladesh 🇧🇩</span>
+    </div>
+  </div>
+</footer>
+
+<div class="wa-float">
+  <a href="https://wa.me/8801722759646?text=Hi%2C%20I%27m%20interested%20in%20a%20KRTaker%20listing" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><span>WhatsApp</span></a>
+</div>
+
+<script src="js/landing.js?v=3.7"></script>
+<script>
+/* Phase 10: public listings — fetch + render + filter (bilingual) */
+(function(){
+  const root=document.getElementById('listRoot');
+  const countEl=document.getElementById('listCount');
+  const BN={Flat:'ফ্ল্যাট',Commercial:'কমার্শিয়াল',Industrial:'ইন্ডাস্ট্রিয়াল',Plot:'প্লট','Dhaka North':'ঢাকা উত্তর','Dhaka South':'ঢাকা দক্ষিণ','Chattogram':'চট্টগ্রাম','sqft':'বর্গফুট','vacant units':'খালি ইউনিট','No vacancies right now':'এই মুহূর্তে কোনো খালি ইউনিট নেই','Ask about this property':'এই সম্পত্তি সম্পর্কে জানুন','List your property':'আপনার সম্পত্তি লিস্ট করুন','Manage this building with KRTaker':'এই বিল্ডিং KRTaker দিয়ে ম্যানেজ করুন'};
+  const bn=()=>document.documentElement.lang==='bn'||localStorage.getItem('krtaker_lang')==='bn';
+  const T=(en,b)=>bn()?(b||en):en;
+  let all=[],type='all';
+  fetch('api/listings').then(r=>r.json()).then(d=>{
+    if(!d.ok||!Array.isArray(d.properties)){root.innerHTML=`<div class="empty-state">${T('No listings available right now.','এই মুহূর্তে কোনো লিস্টিং নেই।')}</div>`;return}
+    all=d.properties;
+    if(bn())document.querySelectorAll('[data-i18n]').forEach(el=>{}); /* i18n handled by landing.js on lang toggle; keep simple */
+    render();
+  }).catch(()=>{root.innerHTML=`<div class="empty-state">${T('Could not load listings. Please try again.','লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।')}</div>`});
+  document.getElementById('filters').addEventListener('click',e=>{
+    const chip=e.target.closest('.filter-chip'); if(!chip)return;
+    document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active'); type=chip.dataset.f; render();
+  });
+  function fmt(n){return '৳'+(Math.round(n)).toLocaleString('en-IN')}
+  function render(){
+    const list=type==='all'?all:all.filter(p=>p.type===type);
+    root.classList.add('loading');
+    countEl.textContent=list.length+' '+T('property','সম্পত্তি')+(list.length===1?'':'s');
+    if(!list.length){root.innerHTML=`<div class="empty-state">${T('No listings in this category.','এই ক্যাটাগরিতে কোনো লিস্টিং নেই।')}</div>`;root.classList.remove('loading');return}
+    root.innerHTML=list.map(p=>{
+      const vu=p.vacant_units||[];
+      const icon=p.type==='Flat'?'🏢':p.type==='Commercial'?'🏬':p.type==='Industrial'?'🏭':'🌳';
+      const vac=vu.length?`<span class="badge-v">${vu.length} ${T('vacant','খালি')}</span>`:`<span class="badge-f">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')}</span>`;
+      const unitsHtml=vu.length?`<div class="lc-row"><span class="k">${T('Available units','উপলব্ধ ইউনিট')}</span><span class="v">${vu.map(u=>u.name).join(' · ')}</span></div>`:'';
+      const msg=encodeURIComponent('Hi, I am interested in '+p.name+' ('+p.id+') listed on krtaker.com. Is the '+((vu[0]&&vu[0].name)||'unit')+' still available?');
+      return `<div class="listing-card">
+        <div class="lc-top"><div><div class="lc-name">${icon} ${p.name}</div><div class="lc-sub">${p.type} · ${p.jur}</div></div>${vac}</div>
+        <div class="lc-body">
+          <div class="lc-row"><span class="k">${T('Holding','হোল্ডিং')}</span><span class="v">${p.holding||'—'}</span></div>
+          <div class="lc-row"><span class="k">${T('Area','এলাকা')}</span><span class="v">${p.sqft?p.sqft.toLocaleString('en-IN')+' '+T('sqft','বর্গফুট'):'—'}</span></div>
+          <div class="lc-row"><span class="k">${T('Value','মূল্য')}</span><span class="v">${fmt(p.value)}</span></div>
+          ${unitsHtml}
+        </div>
+        <div class="lc-foot">
+          <a class="btn btn-primary" href="https://wa.me/8801722759646?text=${msg}" target="_blank" rel="noopener">💬 ${T('Enquire on WhatsApp','হোয়াটসঅ্যাপে জানুন')}</a>
+        </div>
+      </div>`;
+    }).join('');
+    root.classList.remove('loading');
+  }
+})();
+</script>
+</body>
+</html>
