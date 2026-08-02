@@ -853,6 +853,9 @@ const SEED = {
   caretaker_invoices:[
     {id:'CI-001',sub:'CS-DEMO1',user_email:'owner@krtaker.com',month:'2026-08',amount:4500,status:'Unpaid',property_name:'Green View Residency'},
     {id:'CI-002',sub:'CS-DEMO1',user_email:'owner@krtaker.com',month:'2026-07',amount:4500,status:'Paid',ref:'BKASH-8F3A',property_name:'Green View Residency'}
+  ],
+  insurance_policies:[
+    {id:'POL-001',tenant:'T-002',plan:'IP-001',lease:'L-007',premium:449,coverage:120000,score:72,status:'active',start:'2026-07-15',end:'2027-07-15',claim:'',claim_amt:0,plan_name:'Rent Guarantee',tenant_name:'Sultana Rahman'}
   ]
 };
 
@@ -1652,7 +1655,89 @@ async function loadPortal(){
     const el=document.getElementById('portalLive');
     if(!el) return;
     el.innerHTML=portalHtml(d);
+    insurancePortalPanel(el);
   }catch(e){ toast('Portal error: '+e.message); }
+}
+/* ── Phase 29: tenant insurance / rent guarantee panel (tenant portal + staff portal view) ── */
+let INS_CACHE = null;
+async function insurancePortalPanel(el, scopeTid){
+  if(!el) return;
+  let plans = [], policies = [];
+  try{
+    if(TOKEN && !DEMO_MODE){
+      const p = await apiCall('app-insurance?action=plans'); if(p.ok) plans = p.plans || [];
+      const l = await apiCall('app-insurance?action=list'); if(l.ok) policies = l.policies || [];
+      if(scopeTid) policies = policies.filter(x=>x.tenant===scopeTid);
+    } else {
+      plans = INS_CACHE && INS_CACHE.plans ? INS_CACHE.plans : demoInsurancePlans();
+      policies = (DB.insurance_policies||[]).filter(x=>x.tenant===(DB.tenants||[]).find(t=>t.sub_email==='sultana@krtaker.com')?.id || x.tenant==='T-002');
+    }
+    const isStaff = !DEMO_MODE && LIVE.user && ['superadmin','owner','manager'].includes(LIVE.user.role);
+    const planCards = plans.map(p=>{
+      const prem = p.your_premium || p.premium || 0;
+      const feats = (p.features||[]).map(f=>`<div style="display:flex;gap:8px;font-size:12px;color:var(--text-soft);padding:2px 0"><span style="color:var(--accent)">✓</span>${esc(f)}</div>`).join('');
+      const have = policies.find(x=>x.plan===p.id && ['active','claimed','paid'].includes(x.status));
+      const cta = policyCtaHtml(have, isStaff, p.id, prem);
+      return `<div class="panel" style="flex:1;min-width:240px"><div class="panel-b">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:14px;font-weight:800">🛡️ ${esc(p.name)}</span>${have?badge(have.status):''}</div>
+        <div style="font-size:11px;color:var(--text-mute);margin-bottom:6px">${esc(p.coverage_label||'')}</div>
+        <div style="font-size:18px;font-weight:800">৳${Number(prem).toLocaleString()}<span style="font-size:11px;color:var(--text-mute);font-weight:500">/${t('mo','মাস')}</span>${p.score&&p.your_premium<p.premium?` <span class="badge b-green">${t('score discount','স্কোর ডিসকাউন্ট')}</span>`:''}</div>
+        <div style="font-size:11px;color:var(--text-mute);margin-bottom:6px">${t('Coverage','কভারেজ')}: <b>${money(p.coverage)}</b> · ${t('Your score','আপনার স্কোর')}: ${p.score||'—'}</div>
+        ${feats}
+        <div style="margin-top:10px">${cta}</div>
+      </div></div>`;
+    }).join('');
+    const myPol = policies.map(x=>`<div class="row-item"><div class="ri-ic">🛡️</div><div class="ri-body"><div class="ri-t">${esc(x.plan_name||x.plan)} <span style="color:var(--text-mute);font-size:11px">· ${esc(x.tenant_name||'you')}</span></div><div class="ri-s">${esc(x.id)} · ৳${Number(x.premium||0).toLocaleString()}/mo · ${x.claim?esc(String(x.claim).slice(0,60)):''}</div></div><div class="ri-r">${badge(x.status)}</div></div>`).join('')||`<div class="c-sub">${t('No policies yet.','এখনো কোনো পলিসি নেই।')}</div>`;
+    el.insertAdjacentHTML('beforeend', `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🛡️</span>${t('Tenant insurance','ভাড়াটিয়া ইনশ্যুরেন্স')}</div><span class="c-sub">${t('Backed by your tenant score','আপনার টেন্যান্ট স্কোরের ভিত্তিতে')}</span></div>
+      <div class="panel-b"><div style="display:flex;gap:12px;flex-wrap:wrap">${planCards}</div>
+      <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:10px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">${t('My policies','আমার পলিসি')}</div>${myPol}</div></div></div>`);
+  }catch(e){ /* panel is optional */ }
+}
+function policyCtaHtml(have, isStaff, planId, prem){
+  if(!have) return `<button class="btn-primary" style="width:100%;padding:7px 10px;font-size:12px" onclick="insuranceApply('${esc(planId)}')">${t('Get covered','কভার নিন')} · ৳${Number(prem).toLocaleString()}</button>`;
+  if(have.status==='active') return `<div style="display:flex;gap:6px"><button class="btn-outline" style="flex:1;padding:6px 10px;font-size:11.5px" onclick="insuranceClaim('${esc(have.id)}')">📋 ${t('Claim','ক্লেইম')}</button><button class="btn-ghost" style="padding:6px 10px;font-size:11.5px" onclick="insuranceCancel('${esc(have.id)}')">✕</button></div>`;
+  if(have.status==='claimed') return isStaff ? `<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn-primary" style="flex:1;padding:6px 10px;font-size:11.5px" onclick="insuranceDecide('${esc(have.id)}','approve')">✓ ${t('Approve','অনুমোদন')}</button><button class="btn-ghost" style="padding:6px 10px;font-size:11.5px" onclick="insuranceDecide('${esc(have.id)}','reject')">✕ ${t('Reject','বাতিল')}</button></div>` : `<span class="c-sub">${t('Claim under review','ক্লেইম পর্যালোচনায়')}</span>`;
+  return `<div class="c-sub" style="text-align:center;padding:6px 0">${t('Claim settled','ক্লেইম নিষ্পত্তি')} · ৳${Number(have.claim_amt||0).toLocaleString()}</div>`;
+}
+function demoInsurancePlans(){
+  return [
+    {id:'IP-001',name:'Rent Guarantee',type:'rent_guarantee',premium:499,coverage:120000,coverage_label:'Up to 3 months rent',your_premium:449,score:72,features:['Covers rent if you lose your income','Landlord paid directly (no advance needed)','Up to 3 months rent covered','Claim in 48 hours with job-loss proof']},
+    {id:'IP-002',name:'Deposit Shield',type:'deposit_shield',premium:299,coverage:40000,coverage_label:'Full advance deposit',your_premium:269,score:72,features:['Protects your advance deposit','Covers unfair withholding','Free legal notice on dispute','Refund gap paid within 7 days']},
+    {id:'IP-003',name:'Damage Cover',type:'damage_cover',premium:199,coverage:50000,coverage_label:'Up to ৳50,000 per incident',your_premium:179,score:72,features:['Accidental damage to the unit','Covers furniture & fittings','Claims settled in 5 working days','No-fault claims do not raise premium']}
+  ];
+}
+async function insuranceApply(planId){
+  const d = DEMO_MODE ? {ok:true, policy:{id:'POL-DEMO',premium:449,coverage:120000,score:72}} : await apiCall('app-insurance', {action:'apply', plan:planId});
+  if(!d.ok){ toast(d.error||'Apply failed'); return; }
+  toast('Policy ' + d.policy.id + ' active · ৳' + d.policy.premium + '/mo');
+  if(DEMO_MODE) DB.insurance_policies.push({id:d.policy.id,tenant:'T-002',plan:planId,premium:d.policy.premium,coverage:d.policy.coverage,score:d.policy.score,status:'active',plan_name:planId==='IP-001'?'Rent Guarantee':planId==='IP-002'?'Deposit Shield':'Damage Cover'});
+  await refreshData(); loadPortal();
+}
+async function insuranceClaim(id){
+  const reason = prompt(t('Claim reason (e.g. lost my job — rent guarantee)','ক্লেইমের কারণ (যেমন: চাকরি হারিয়েছি — ভাড়া গ্যারান্টি)'));
+  if(!reason) return;
+  const d = DEMO_MODE ? {ok:true, amount:40000} : await apiCall('app-insurance', {action:'claim', id, reason});
+  if(!d.ok){ toast(d.error||'Claim failed'); return; }
+  toast('Claim filed — ৳' + (d.amount||0) + ' under review');
+  if(DEMO_MODE){ const p = DB.insurance_policies.find(x=>x.id===id); if(p){p.status='claimed';p.claim=reason;p.claim_amt=d.amount||p.coverage;} }
+  await refreshData(); loadPortal();
+}
+async function insuranceCancel(id){
+  if(!confirm(t('Cancel this policy?','এই পলিসি বাতিল করবেন?'))) return;
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-insurance', {action:'cancel', id});
+  if(!d.ok){ toast(d.error||'Cancel failed'); return; }
+  toast('Policy cancelled');
+  if(DEMO_MODE){ const p = DB.insurance_policies.find(x=>x.id===id); if(p) p.status='cancelled'; }
+  await refreshData(); loadPortal();
+}
+async function insuranceDecide(id, verdict){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-insurance', {action:'decide', id, verdict});
+  if(!d.ok){ toast(d.error||'Decision failed'); return; }
+  toast(verdict==='approve' ? 'Claim approved — payout recorded' : 'Claim rejected');
+  if(DEMO_MODE){ const p = DB.insurance_policies.find(x=>x.id===id); if(p) p.status = verdict==='approve'?'paid':'active'; }
+  await refreshData(); loadPortal();
+  const tb = document.getElementById('tPortalBody');
+  if(tb){ closeDrawer(); const tid = (DB.insurance_policies||[]).find(x=>x.id===id)?.tenant || 'T-002'; viewTenantPortal(tid); }
 }
 function demoPortalData(){
   const tid=(DB.tenants||[]).find(x=>x.sub_email==='sultana@krtaker.com')?.id || (DB.tenants||[]).find(x=>x.name==='Sultana Rahman')?.id || 'T-002';
@@ -2156,8 +2241,10 @@ async function viewTenantPortal(tid){
     const r=await apiCall('app-portal?t='+encodeURIComponent(tid));
     if(!r.ok){ toast(r.error||'Portal failed'); return; }
     openDrawer('👁 '+t('Tenant portal','টেন্যান্ট পোর্টাল')+' — '+esc((r.tenant&&r.tenant.name)||tid),
-      `<div style="max-height:62vh;overflow-y:auto">${portalHtml(r)}</div>`,
+      `<div id="tPortalBody" style="max-height:62vh;overflow-y:auto">${portalHtml(r)}</div>`,
       `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`);
+    const host=document.getElementById('tPortalBody');
+    if(host) insurancePortalPanel(host, r.tenant ? r.tenant.id : '');
   }catch(e){ toast('Portal error: '+e.message); }
 }
 
