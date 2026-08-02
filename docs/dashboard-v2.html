@@ -759,6 +759,20 @@ const SEED = {
     {id:'MT-003',u:'U-010',desc:'Water pump failure (common line)',reported:'2026-06-24',liab:'Landlord',status:'In Progress',con:'Kazi Plumbing',cost:8500},
     {id:'MT-004',u:'U-009',desc:'Flooring damage from tenant forklift',reported:'2026-06-27',liab:'Tenant',status:'Awaiting Payment',con:'Meghna Builders',cost:42000}
   ],
+  maintenance_requests:[
+    {id:'MR-001',tenant:'T-006',unit:'U-008',prop:'P-004',category:'structural',priority:'high',title:'Roof structural crack over Shed A',desc:'Crack line widening after last storm; needs steel reinforcement assessment.',status:'Open',assigned_to:'',vendor:'Rahim Steel Works',cost_estimate:120000,actual_cost:0,charge_to:'owner',tenant_name:'Bengal Agro Foods',unit_name:'Shed A',property_name:'Chattogram Industrial Shed'},
+    {id:'MR-002',tenant:'T-002',unit:'U-010',prop:'P-005',category:'plumbing',priority:'medium',title:'Kitchen sink leakage',desc:'Water seeping under sink cabinet; tap joint leaking.',status:'Assigned',assigned_to:'Arif Chowdhury',vendor:'Kazi Plumbing',cost_estimate:3500,actual_cost:0,charge_to:'tenant',tenant_name:'Sultana Rahman',unit_name:'Apartment 7B',property_name:'Dhanmondi Apartment'},
+    {id:'MR-003',tenant:'T-001',unit:'U-001',prop:'P-001',category:'electrical',priority:'medium',title:'Hall socket sparking',desc:'Main hall wall socket sparks when used; suspect wiring.',status:'In Progress',assigned_to:'Arif Chowdhury',vendor:'',cost_estimate:8000,actual_cost:8500,charge_to:'owner',tenant_name:'Rafiqul Islam',unit_name:'Flat 3B',property_name:'Green View Residency'},
+    {id:'MR-004',tenant:'T-005',unit:'U-005',prop:'P-002',category:'appliance',priority:'low',title:'AC cooling weak (Floor 2)',desc:'Split AC not cooling below 26°C; gas refill likely.',status:'Resolved',assigned_to:'',vendor:'ElectroCool BD',cost_estimate:4500,actual_cost:4500,charge_to:'tenant',tenant_name:'Orbit Textiles',unit_name:'Floor 2 (Office)',property_name:'Banani Commercial Tower'},
+    {id:'MR-005',tenant:'T-003',unit:'U-004',prop:'P-002',category:'other',priority:'low',title:'Common lobby light flickering',desc:'Lobby tube lights flickering; replace ballast.',status:'Closed',assigned_to:'',vendor:'',cost_estimate:1500,actual_cost:1500,charge_to:'owner',tenant_name:'Agro Foods Ltd',unit_name:'Floor 1 (Retail)',property_name:'Banani Commercial Tower'}
+  ],
+  leads:[
+    {id:'LD-001',name:'Tanvir Hossain',phone:'01712-998877',email:'tanvir.h@gmail.com',prop:'P-001',source:'listing',message:'Interested in Flat 3B (1450 sqft). When can I view?',status:'New',assigned_to:'',property_name:'Green View Residency'},
+    {id:'LD-002',name:'Farhana Yasmin',phone:'01811-223344',email:'farhana.y@outlook.com',prop:'P-005',source:'referral',message:'Referred by Sultana. Looking for 2-bed apartment under ৳45k.',status:'Contacted',assigned_to:'Mithila Rahman',property_name:'Dhanmondi Apartment'},
+    {id:'LD-003',name:'Nabil Ahmed',phone:'01922-334455',email:'nabil@bizmail.com',prop:'P-002',source:'listing',message:'Need 2 floors for office expansion, 5k sqft each.',status:'Viewing',assigned_to:'Shakil Islam',property_name:'Banani Commercial Tower'},
+    {id:'LD-004',name:'Rima Sultana',phone:'01611-556677',email:'rima.s@gmail.com',prop:'P-003',source:'other',message:'Plot inquiry — is it for lease or sale?',status:'Applied',assigned_to:'',property_name:'Gulshan Lakeside Plot'},
+    {id:'LD-005',name:'Kamal Uddin',phone:'01555-667788',email:'kamal.u@yahoo.com',prop:'P-001',source:'referral',message:'Referred by Dr. Nadia. Flat 4A availability?',status:'Lost',assigned_to:'',property_name:'Green View Residency'}
+  ],
   payments:[
     {id:'PAY-001',inv:'INV-2026-001',amount:25000,method:'bKash',ref:'BK-7f2a',date:'2026-06-05',status:'Success'},
     {id:'PAY-002',inv:'INV-2026-003',amount:405000,method:'bKash',ref:'BK-91cd',date:'2026-06-10',status:'Success'},
@@ -860,7 +874,7 @@ const SEED = {
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
@@ -869,21 +883,21 @@ const ROLES = [
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','invoices','payments','ai','notices','documents','referrals']},
   {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents','templates']},
-  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding',mods:['dashboard','maintenance','ai','notices','documents','referrals']},
+  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['compliance','⚖️','Compliance']]},
+  {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['leads','📥','Leads'],['compliance','⚖️','Compliance']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -1029,7 +1043,7 @@ function renderNav(){
   renderMobBar();
 }
 function renderMobBar(){
-  const items=[['dashboard','📊'],['properties','🏢'],['invoices','🧾'],['maintenance','🔧'],['ai','🤖']].filter(i=>can(i[0]));
+  const items=[['dashboard','📊'],['properties','🏢'],['invoices','🧾'],['maintenance','🔧'],['leads','📥'],['ai','🤖']].filter(i=>can(i[0]));
   $('mobBar')||(function(){const d=document.createElement('div');d.className='mob-bar';d.id='mobBar';document.body.appendChild(d)})();
   $('mobBar').innerHTML=items.map(i=>`<div class="mb ${state.view===i[0]?'active':''}" onclick="nav('${i[0]}')"><span class="mi">${i[1]}</span>${t(MOD_TITLE[i[0]],BN[MOD_TITLE[i[0]]])}</div>`).join('');
 }
@@ -1656,7 +1670,26 @@ async function loadPortal(){
     if(!el) return;
     el.innerHTML=portalHtml(d);
     insurancePortalPanel(el);
+    maintenancePortalPanel(el);
   }catch(e){ toast('Portal error: '+e.message); }
+}
+/* ── Phase 30: tenant portal maintenance panel (report + track own requests) ── */
+async function maintenancePortalPanel(el){
+  if(!el) return;
+  try{
+    let reqs = [];
+    if(TOKEN && !DEMO_MODE){
+      const d = await apiCall('app-maintenance?action=list');
+      if(d.ok) reqs = d.requests || [];
+    } else {
+      const tid=(DB.tenants||[]).find(x=>x.sub_email==='sultana@krtaker.com')?.id || 'T-002';
+      const unitIds=(DB.leases||[]).filter(l=>l.t===tid).map(l=>l.u).filter(Boolean);
+      reqs = (DB.maintenance_requests||[]).filter(x=>unitIds.includes(x.unit));
+    }
+    if(!reqs.length && DEMO_MODE) reqs = (DB.maintenance_requests||[]).filter(x=>x.unit==='U-010');
+    const rows = reqs.map(x=>`<div class="row-item"><div class="ri-ic">${x.status==='Resolved'||x.status==='Closed'?'✅':'🔧'}</div><div class="ri-body"><div class="ri-t">${esc(x.title)} <span style="color:var(--text-mute);font-size:11px">· ${esc(x.id)}</span></div><div class="ri-s">${esc(x.status)}${x.assigned_to?' · '+esc(x.assigned_to):''}${x.actual_cost?' · ৳'+Number(x.actual_cost).toLocaleString():''}</div></div><div class="ri-r">${badge(x.status)}</div></div>`).join('')||`<div class="c-sub">${t('No maintenance requests.','কোনো রক্ষণাবেক্ষণ রিকোয়েস্ট নেই।')}</div>`;
+    el.insertAdjacentHTML('beforeend', `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('Maintenance & repairs','রক্ষণাবেক্ষণ ও মেরামত')}</div><button class="btn-outline" style="padding:4px 10px;font-size:11px" onclick="maintenanceForm()">＋ ${t('Report issue','সমস্যা জানান')}</button></div><div class="panel-b">${rows}</div></div>`);
+  }catch(e){ /* panel is optional */ }
 }
 /* ── Phase 29: tenant insurance / rent guarantee panel (tenant portal + staff portal view) ── */
 let INS_CACHE = null;
@@ -1739,6 +1772,228 @@ async function insuranceDecide(id, verdict){
   const tb = document.getElementById('tPortalBody');
   if(tb){ closeDrawer(); const tid = (DB.insurance_policies||[]).find(x=>x.id===id)?.tenant || 'T-002'; viewTenantPortal(tid); }
 }
+
+/* ═══ Phase 30: maintenance & repairs ═══ */
+function maintenanceForm(){
+  const isStaff = ['superadmin','owner','manager'].includes(role().id);
+  const units = (DB.units||[]).map(u=>`<option value="${esc(u.id)}">${esc(u.name)}${propById(u.p)?' · '+esc(propById(u.p).name):''}</option>`).join('');
+  const cats = [['plumbing','🚰 Plumbing'],['electrical','⚡ Electrical'],['appliance','❄️ Appliance'],['structural','🏗️ Structural'],['pest','🐜 Pest'],['other','🔧 Other']];
+  const prios = [['low','🟢 Low'],['medium','🟡 Medium'],['high','🔴 High'],['urgent','⛔ Urgent']];
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Title','শিরোনাম')} *</label><input id="mf_title" placeholder="${t('e.g. Kitchen sink leakage','যেমন: রান্নাঘরের সিঙ্ক লিক')}"></div>
+    ${isStaff?`<div class="form-field"><label>${t('Unit','ইউনিট')}</label><select id="mf_unit">${units}</select></div>`:''}
+    <div class="form-field"><label>${t('Category','ক্যাটাগরি')}</label><select id="mf_cat">${cats.map(c=>`<option value="${c[0]}">${c[1]}</option>`).join('')}</select></div>
+    <div class="form-field"><label>${t('Priority','জরুরিতা')}</label><select id="mf_prio">${prios.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('')}</select></div>
+    <div class="form-field full"><label>${t('Description','বিবরণ')}</label><textarea id="mf_desc" rows="3" placeholder="${t('What is broken, since when, any urgency?','কী ভাঙা, কখন থেকে, কোনো জরুরি বিষয়?')}"></textarea></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="maintenanceSubmit()">${t('Submit request','রিকোয়েস্ট পাঠান')}</button></div>`;
+  openDrawer('🔧 '+t('Report maintenance issue','রক্ষণাবেক্ষণ সমস্যা জানান'), body, foot);
+}
+async function maintenanceSubmit(){
+  const title = document.getElementById('mf_title')?.value?.trim();
+  if(!title){ toast(t('Title is required','শিরোনাম প্রয়োজন')); return; }
+  const payload = {action:'create', title, category: document.getElementById('mf_cat')?.value, priority: document.getElementById('mf_prio')?.value, desc: document.getElementById('mf_desc')?.value};
+  const u = document.getElementById('mf_unit'); if(u) payload.unit = u.value;
+  const d = DEMO_MODE ? {ok:true, id:'MR-'+String((DB.maintenance_requests||[]).length+6).padStart(3,'0')} : await apiCall('app-maintenance', payload);
+  if(!d.ok){ toast(d.error||'Submit failed'); return; }
+  toast(t('Request submitted','রিকোয়েস্ট পাঠানো হয়েছে')+' '+d.id);
+  if(DEMO_MODE){ DB.maintenance_requests.push({id:d.id,title,category:payload.category,priority:payload.priority,desc:payload.desc,status:'Open',unit:u?u.value:(DB.units||[]).find(x=>x.status==='Leased')?.id||'U-010',tenant_name:(LIVE.user&&LIVE.user.name)||'Sultana Rahman',assigned_to:'',vendor:'',cost_estimate:0,actual_cost:0,charge_to:'tenant'}); }
+  closeDrawer(); await refreshData(); if(state.view==='maintenance'){ render(); }
+}
+async function maintenanceLoad(seedReqs, card){
+  const host = document.getElementById('maintenanceLive'); if(!host) return;
+  let reqs = seedReqs || [];
+  if(TOKEN && !DEMO_MODE){
+    const d = await apiCall('app-maintenance?action=list');
+    if(d.ok) reqs = d.requests || [];
+  }
+  const groups = [['Open',t('Open','খোলা'),'#FEE2E2'],['Assigned',t('Assigned','নিযুক্ত'),'#FEF3C7'],['In Progress',t('In progress','চলমান'),'#DBEAFE'],['Resolved',t('Resolved','সমাধান'),'#D1FAE5'],['Closed',t('Closed','বন্ধ'),'#E5E7EB']];
+  host.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">` + groups.map(([st,label,color])=>{
+    const items = reqs.filter(x=>x.status===st);
+    return `<div style="background:var(--bg-alt);border:1px solid var(--border);border-radius:14px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-weight:700;font-size:13px">${label}</span><span class="badge" style="background:${color};color:#333">${items.length}</span></div>
+      ${items.map(card).join('')||`<div class="c-sub" style="text-align:center;padding:14px 0">${t('Nothing here','এখানে কিছু নেই')}</div>`}
+    </div>`;
+  }).join('') + `</div>`;
+}
+async function maintenanceDetail(id){
+  const isStaff = ['superadmin','owner','manager'].includes(role().id);
+  let x = (DB.maintenance_requests||[]).find(r=>r.id===id);
+  if(TOKEN && !DEMO_MODE){
+    const d = await apiCall('app-maintenance?action=list');
+    x = (d.requests||[]).find(r=>r.id===id) || x;
+  }
+  if(!x){ toast('Not found'); return; }
+  const CAT={'plumbing':'🚰','electrical':'⚡','appliance':'❄️','structural':'🏗️','pest':'🐜','other':'🔧'};
+  const body=`<div class="dr-kv">
+    <div class="kv"><span class="k">${t('Title','শিরোনাম')}</span><span class="v">${CAT[x.category]||'🔧'} ${esc(x.title)}</span></div>
+    <div class="kv"><span class="k">${t('Status','স্ট্যাটাস')}</span><span class="v">${badge(x.status)}</span></div>
+    <div class="kv"><span class="k">${t('Unit','ইউনিট')}</span><span class="v">${esc(x.unit_name||unitById(x.unit)?.name||'—')}</span></div>
+    ${x.tenant_name?`<div class="kv"><span class="k">${t('Tenant','ভাড়াটিয়া')}</span><span class="v">${esc(x.tenant_name)}</span></div>`:''}
+    ${x.property_name?`<div class="kv"><span class="k">${t('Property','সম্পত্তি')}</span><span class="v">${esc(x.property_name)}</span></div>`:''}
+    <div class="kv"><span class="k">${t('Priority','জরুরিতা')}</span><span class="v">${esc(String(x.priority||'medium').toUpperCase())}</span></div>
+    <div class="kv"><span class="k">${t('Assigned to','নিযুক্ত')}</span><span class="v">${esc(x.assigned_to||'—')}${x.vendor?' · '+esc(x.vendor):''}</span></div>
+    <div class="kv"><span class="k">${t('Est. cost','আনুমানিক খরচ')}</span><span class="v">${x.cost_estimate?money(x.cost_estimate):'—'}</span></div>
+    <div class="kv"><span class="k">${t('Actual cost','প্রকৃত খরচ')}</span><span class="v">${x.actual_cost?money(x.actual_cost):'—'}</span></div>
+    <div class="kv"><span class="k">${t('Charge to','চার্জ')}</span><span class="v">${esc(String(x.charge_to||'owner').toUpperCase())}</span></div>
+    ${x.desc?`<div style="margin-top:8px;padding:10px;background:var(--bg-alt);border-radius:10px;font-size:12.5px;color:var(--text-soft);line-height:1.6">${esc(x.desc)}</div>`:''}
+  </div>`;
+  let foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>`;
+  if(isStaff){
+    foot+=`<button class="btn-outline" onclick="maintenanceAssignForm('${esc(id)}')">🔧 ${t('Assign','নিয়োগ')}</button>`;
+    if(x.status!=='Resolved' && x.status!=='Closed') foot+=`<button class="btn-outline" onclick="maintenanceStatusForm('${esc(id)}')">${t('Update status','স্ট্যাটাস আপডেট')}</button>`;
+    foot+=`<button class="btn-outline" onclick="maintenanceCostForm('${esc(id)}')">💰 ${t('Set cost','খরচ নির্ধারণ')}</button>`;
+  }
+  foot+='</div>';
+  openDrawer(`🔧 ${t('Maintenance','রক্ষণাবেক্ষণ')} — ${id}`, body, foot);
+}
+function maintenanceAssignForm(id){
+  const staff = (DB.staff||[]).map(s=>`<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');
+  const vendors = (DB.partners||[]).map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Assign to','নিযুক্ত করুন')}</label><select id="ma_staff">${staff}</select></div>
+    <div class="form-field"><label>${t('Vendor / contractor','ভেন্ডর/কন্ট্রাক্টর')}</label><select id="ma_vendor"><option value="">${t('None','কিছুই না')}</option>${vendors}</select></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="maintenanceDetail('${esc(id)}')">${t('Back','ফিরুন')}</button><button class="btn-primary" onclick="maintenanceAssign('${esc(id)}')">${t('Save','সংরক্ষণ')}</button></div>`;
+  openDrawer(`🔧 ${t('Assign work','কাজ নিয়োগ')} — ${id}`, body, foot);
+}
+async function maintenanceAssign(id){
+  const payload = {action:'assign', id, assigned_to: document.getElementById('ma_staff')?.value, vendor: document.getElementById('ma_vendor')?.value};
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-maintenance', payload);
+  if(!d.ok){ toast(d.error||'Assign failed'); return; }
+  toast(t('Assigned','নিযুক্ত হয়েছে'));
+  if(DEMO_MODE){ const r=(DB.maintenance_requests||[]).find(x=>x.id===id); if(r){ r.assigned_to=payload.assigned_to; r.vendor=payload.vendor; if(r.status==='Open') r.status='Assigned'; } }
+  closeDrawer(); await refreshData(); if(state.view==='maintenance'){ render(); }
+}
+function maintenanceStatusForm(id){
+  const opts = ['Open','Assigned','In Progress','Resolved','Closed'].map(s=>`<option value="${s}">${s}</option>`).join('');
+  const body=`<div class="form-grid"><div class="form-field"><label>${t('Status','স্ট্যাটাস')}</label><select id="ms_status">${opts}</select></div></div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="maintenanceDetail('${esc(id)}')">${t('Back','ফিরুন')}</button><button class="btn-primary" onclick="maintenanceStatus('${esc(id)}')">${t('Update','আপডেট')}</button></div>`;
+  openDrawer(`🔧 ${t('Update status','স্ট্যাটাস আপডেট')} — ${id}`, body, foot);
+}
+async function maintenanceStatus(id){
+  const payload = {action:'status', id, status: document.getElementById('ms_status')?.value};
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-maintenance', payload);
+  if(!d.ok){ toast(d.error||'Update failed'); return; }
+  toast(t('Status updated','স্ট্যাটাস আপডেট হয়েছে'));
+  if(DEMO_MODE){ const r=(DB.maintenance_requests||[]).find(x=>x.id===id); if(r) r.status=payload.status; }
+  closeDrawer(); await refreshData(); if(state.view==='maintenance'){ render(); }
+}
+function maintenanceCostForm(id){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Est. cost (৳)','আনুমানিক খরচ (৳)')}</label><input type="number" id="mc_est" value="0"></div>
+    <div class="form-field"><label>${t('Actual cost (৳)','প্রকৃত খরচ (৳)')}</label><input type="number" id="mc_act" value="0"></div>
+    <div class="form-field"><label>${t('Charge to','চার্জ')}</label><select id="mc_charge">${[['owner','Owner'],['tenant','Tenant'],['service','Service charge'],['insurance','Insurance']].map(c=>`<option value="${c[0]}">${c[1]}</option>`).join('')}</select></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="maintenanceDetail('${esc(id)}')">${t('Back','ফিরুন')}</button><button class="btn-primary" onclick="maintenanceCost('${esc(id)}')">${t('Save','সংরক্ষণ')}</button></div>`;
+  openDrawer(`💰 ${t('Set cost','খরচ নির্ধারণ')} — ${id}`, body, foot);
+}
+async function maintenanceCost(id){
+  const payload = {action:'cost', id, cost_estimate: parseInt(document.getElementById('mc_est')?.value||'0',10), actual_cost: parseInt(document.getElementById('mc_act')?.value||'0',10), charge_to: document.getElementById('mc_charge')?.value};
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-maintenance', payload);
+  if(!d.ok){ toast(d.error||'Save failed'); return; }
+  toast(t('Cost saved','খরচ সংরক্ষিত'));
+  if(DEMO_MODE){ const r=(DB.maintenance_requests||[]).find(x=>x.id===id); if(r){ r.cost_estimate=payload.cost_estimate; r.actual_cost=payload.actual_cost; r.charge_to=payload.charge_to; if(r.actual_cost>0 && ['Open','Assigned','In Progress'].includes(r.status)) r.status='Resolved'; } }
+  closeDrawer(); await refreshData(); if(state.view==='maintenance'){ render(); }
+}
+
+/* ═══ Phase 31: leasing pipeline (leads) ═══ */
+function leadForm(){
+  const props = (DB.properties||[]).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Name','নাম')} *</label><input id="lf_name"></div>
+    <div class="form-field"><label>${t('Phone','ফোন')}</label><input id="lf_phone"></div>
+    <div class="form-field"><label>${t('Email','ইমেইল')}</label><input id="lf_email" type="email"></div>
+    <div class="form-field"><label>${t('Interested property','আগ্রহী সম্পত্তি')}</label><select id="lf_prop"><option value="">${t('Any / not sure','যেকোনো/নিশ্চিত নই')}</option>${props}</select></div>
+    <div class="form-field"><label>${t('Source','সোর্স')}</label><select id="lf_source">${[['listing','Listing'],['referral','Referral'],['organic','Organic'],['other','Other']].map(s=>`<option value="${s[0]}">${s[1]}</option>`).join('')}</select></div>
+    <div class="form-field full"><label>${t('Message / notes','মেসেজ/নোট')}</label><textarea id="lf_msg" rows="3"></textarea></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="leadSubmit()">${t('Save lead','লিড সংরক্ষণ')}</button></div>`;
+  openDrawer('📥 '+t('New lead','নতুন লিড'), body, foot);
+}
+async function leadSubmit(){
+  const name = document.getElementById('lf_name')?.value?.trim();
+  if(!name){ toast(t('Name is required','নাম প্রয়োজন')); return; }
+  const payload = {action:'submit', name, phone: document.getElementById('lf_phone')?.value, email: document.getElementById('lf_email')?.value, prop: document.getElementById('lf_prop')?.value, source: document.getElementById('lf_source')?.value, message: document.getElementById('lf_msg')?.value};
+  const d = DEMO_MODE ? {ok:true, id:'LD-'+String((DB.leads||[]).length+6).padStart(3,'0')} : await apiCall('app-leads', payload);
+  if(!d.ok){ toast(d.error||'Save failed'); return; }
+  toast(t('Lead saved','লিড সংরক্ষিত')+' '+d.id);
+  if(DEMO_MODE){ DB.leads.push({id:d.id,name,phone:payload.phone,email:payload.email,prop:payload.prop,source:payload.source,message:payload.message,status:'New',assigned_to:'',property_name:(DB.properties||[]).find(p=>p.id===payload.prop)?.name||''}); }
+  closeDrawer(); await refreshData(); if(state.view==='leads'){ render(); }
+}
+async function leadsLoad(){
+  const host = document.getElementById('leadsLive'); if(!host) return;
+  let leads = DB.leads || [];
+  if(TOKEN && !DEMO_MODE){
+    const d = await apiCall('app-leads?action=list');
+    if(d.ok) leads = d.leads || [];
+  }
+  const STAGES = [['New','b-blue'],['Contacted','b-orange'],['Viewing','b-purple'],['Applied','b-green'],['Leased','b-green'],['Lost','b-gray']];
+  const total = leads.length;
+  host.innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">${STAGES.map(([st])=>`<div class="panel" style="padding:10px 16px;flex:1;min-width:120px"><div class="kv" style="margin:0"><span class="k">${st}</span><span class="v" style="font-size:18px;font-weight:800">${leads.filter(x=>x.status===st).length}</span></div></div>`).join('')}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px">` + STAGES.map(([st,cls])=>{
+    const items = leads.filter(x=>x.status===st);
+    return `<div style="background:var(--bg-alt);border:1px solid var(--border);border-radius:14px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-weight:700;font-size:13px">📥 ${st}</span><span class="badge ${cls}">${items.length}</span></div>
+      ${items.map(x=>`<div class="panel" style="cursor:pointer;margin-bottom:10px" onclick="leadDetail('${esc(x.id)}')"><div class="panel-b">
+        <div style="font-weight:700;font-size:13px;margin-bottom:2px">${esc(x.name)}</div>
+        <div class="c-sub" style="font-size:11px">${esc(x.property_name||'Any property')} · ${esc(String(x.source||'').toUpperCase())}</div>
+        ${x.message?`<div style="font-size:11.5px;color:var(--text-soft);margin-top:6px;line-height:1.5">${esc(String(x.message).slice(0,70))}</div>`:''}
+        ${x.assigned_to?`<div style="font-size:11px;color:var(--accent);margin-top:6px">👤 ${esc(x.assigned_to)}</div>`:''}
+      </div></div>`).join('')||`<div class="c-sub" style="text-align:center;padding:14px 0">${t('Empty','খালি')}</div>`}
+    </div>`;
+  }).join('') + `</div>`;
+}
+async function leadDetail(id){
+  let x = (DB.leads||[]).find(l=>l.id===id);
+  if(TOKEN && !DEMO_MODE){
+    const d = await apiCall('app-leads?action=list');
+    x = (d.leads||[]).find(l=>l.id===id) || x;
+  }
+  if(!x){ toast('Not found'); return; }
+  const body=`<div class="dr-kv">
+    <div class="kv"><span class="k">${t('Name','নাম')}</span><span class="v">${esc(x.name)}</span></div>
+    <div class="kv"><span class="k">${t('Contact','যোগাযোগ')}</span><span class="v">${esc(x.phone||'—')}${x.email?' · '+esc(x.email):''}</span></div>
+    <div class="kv"><span class="k">${t('Property','সম্পত্তি')}</span><span class="v">${esc(x.property_name||x.prop||'Any')}</span></div>
+    <div class="kv"><span class="k">${t('Source','সোর্স')}</span><span class="v">${esc(x.source||'—')}</span></div>
+    <div class="kv"><span class="k">${t('Status','স্ট্যাটাস')}</span><span class="v">${badge(x.status)}</span></div>
+    <div class="kv"><span class="k">${t('Assigned','নিযুক্ত')}</span><span class="v">${esc(x.assigned_to||'—')}</span></div>
+    ${x.message?`<div style="margin-top:8px;padding:10px;background:var(--bg-alt);border-radius:10px;font-size:12.5px;color:var(--text-soft);line-height:1.6">${esc(x.message)}</div>`:''}
+    ${x.notes?`<div style="margin-top:8px;padding:10px;background:var(--bg-alt);border-radius:10px;font-size:12px;color:var(--text-mute)"><b>${t('Notes','নোট')}:</b> ${esc(x.notes)}</div>`:''}
+  </div>`;
+  const moves = {'New':['Contacted'],'Contacted':['Viewing','Lost'],'Viewing':['Applied','Lost'],'Applied':['Leased','Lost'],'Leased':[],'Lost':['New']};
+  const next = moves[x.status]||[];
+  let foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>`;
+  next.forEach(n=>{ foot+=`<button class="btn-outline" onclick="leadStatus('${esc(id)}','${n}')">→ ${t(n,n)}</button>`; });
+  if(x.status!=='Leased') foot+=`<button class="btn-primary" onclick="leadAssignForm('${esc(id)}')">👤 ${t('Assign','নিয়োগ')}</button>`;
+  foot+='</div>';
+  openDrawer(`📥 ${t('Lead','লিড')} — ${id}`, body, foot);
+}
+function leadAssignForm(id){
+  const staff = (DB.staff||[]).map(s=>`<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Assign to','নিযুক্ত করুন')}</label><select id="la_staff">${staff}</select></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><textarea id="la_notes" rows="3"></textarea></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="leadDetail('${esc(id)}')">${t('Back','ফিরুন')}</button><button class="btn-primary" onclick="leadAssign('${esc(id)}')">${t('Save','সংরক্ষণ')}</button></div>`;
+  openDrawer(`📥 ${t('Assign lead','লিড নিয়োগ')} — ${id}`, body, foot);
+}
+async function leadAssign(id){
+  const payload = {action:'assign', id, assigned_to: document.getElementById('la_staff')?.value, notes: document.getElementById('la_notes')?.value};
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-leads', payload);
+  if(!d.ok){ toast(d.error||'Assign failed'); return; }
+  toast(t('Lead assigned','লিড নিয়োগ হয়েছে'));
+  if(DEMO_MODE){ const l=(DB.leads||[]).find(x=>x.id===id); if(l){ l.assigned_to=payload.assigned_to; l.notes=payload.notes; } }
+  closeDrawer(); await refreshData(); if(state.view==='leads'){ render(); }
+}
+async function leadStatus(id, status){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-leads', {action:'status', id, status});
+  if(!d.ok){ toast(d.error||'Update failed'); return; }
+  toast(t('Lead → ','লিড → ')+status);
+  if(DEMO_MODE){ const l=(DB.leads||[]).find(x=>x.id===id); if(l) l.status=status; }
+  closeDrawer(); await refreshData(); if(state.view==='leads'){ render(); }
+}
+
 function demoPortalData(){
   const tid=(DB.tenants||[]).find(x=>x.sub_email==='sultana@krtaker.com')?.id || (DB.tenants||[]).find(x=>x.name==='Sultana Rahman')?.id || 'T-002';
   const leases=(DB.leases||[]).filter(l=>l.t===tid);
@@ -2609,15 +2864,36 @@ const renderers={
     return h;
   },
   maintenance(){
-    let h=pageHead(t('Maintenance','রক্ষণাবেক্ষণ'),t('Tickets with landlord/tenant liability resolved by law.','আইন অনুযায়ী মালিক/ভাড়াটিয়া দায় নির্ধারিত টিকিট।'),`<button class="btn-primary" onclick="openNew('tickets')">＋ ${t('New ticket','নতুন টিকিট')}</button>`);
-    h+=`<div class="grid grid-2">${DB.tickets.map(x=>`<div class="panel" data-id="${x.id}" onclick="openDetail('tickets','${x.id}')"><div class="panel-b">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="c-name" style="font-weight:700">${x.id} · ${esc(x.desc)}</div>${badge(x.status)}</div>
-      <div class="kv"><span class="k">Unit</span><span class="v">${esc(unitById(x.u)?.name||'—')}</span></div>
-      <div class="kv"><span class="k">Liability</span><span class="v">${x.liab}</span></div>
-      <div class="kv"><span class="k">Contractor</span><span class="v">${x.con?esc(x.con):'Unassigned'}</span></div>
-      <div class="kv"><span class="k">Reported</span><span class="v">${x.reported}</span></div>
-      <div class="kv"><span class="k">Cost</span><span class="v ${x.cost?'warn':''}">${x.cost?money(x.cost):'Quote pending'}</span></div>
-      </div></div>`).join('')}</div>`;
+    const isStaff = ['superadmin','owner','manager'].includes(role().id);
+    let h=pageHead(t('Maintenance & repairs','রক্ষণাবেক্ষণ ও মেরামত'),t('Report issues, assign vendors, track costs — from tenant report to closed work order.','সমস্যা জানান, ভেন্ডর নিয়োগ করুন, খরচ ট্র্যাক করুন — টেন্যান্ট রিপোর্ট থেকে বন্ধ ওয়ার্ক অর্ডার পর্যন্ত।'),`<button class="btn-primary" onclick="maintenanceForm()">＋ ${t('Report issue','সমস্যা জানান')}</button>`);
+    const reqs=(DB.maintenance_requests||[]);
+    const open=reqs.filter(x=>x.status==='Open'||x.status==='Assigned').length;
+    const inprog=reqs.filter(x=>x.status==='In Progress').length;
+    const done=reqs.filter(x=>x.status==='Resolved'||x.status==='Closed').length;
+    h+=`<div class="grid grid-3" style="margin-bottom:18px">
+      <div class="panel"><div class="panel-b"><div class="kv"><span class="k">${t('Open','খোলা')}</span><span class="v" style="font-size:20px;font-weight:800">${open}</span></div><div class="c-sub">${t('Awaiting assignment / action','অ্যাসাইনমেন্ট/কাজের অপেক্ষায়')}</div></div></div>
+      <div class="panel"><div class="panel-b"><div class="kv"><span class="k">${t('In progress','চলমান')}</span><span class="v" style="font-size:20px;font-weight:800">${inprog}</span></div><div class="c-sub">${t('Vendor on site','ভেন্ডর কাজ করছে')}</div></div></div>
+      <div class="panel"><div class="panel-b"><div class="kv"><span class="k">${t('Resolved / closed','সমাধান/বন্ধ')}</span><span class="v" style="font-size:20px;font-weight:800">${done}</span></div><div class="c-sub">${t('Cost: ৳'+reqs.reduce((s,x)=>s+(x.actual_cost||0),0).toLocaleString(),'খরচ: ৳'+reqs.reduce((s,x)=>s+(x.actual_cost||0),0).toLocaleString())}</div></div></div>
+    </div>`;
+    const CAT={'plumbing':'🚰','electrical':'⚡','appliance':'❄️','structural':'🏗️','pest':'🐜','other':'🔧'};
+    const PRIO_CLS={'high':'b-red','urgent':'b-red','medium':'b-orange','low':'b-gray'};
+    const card=(x)=>`<div class="panel" data-id="${x.id}" style="cursor:pointer;margin-bottom:12px" onclick="maintenanceDetail('${x.id}')"><div class="panel-b">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div class="c-name" style="font-weight:700;font-size:13px">${CAT[x.category]||'🔧'} ${esc(x.title)}</div>${badge(x.status)}</div>
+      <div class="kv"><span class="k">${t('Unit','ইউনিট')}</span><span class="v">${esc(x.unit_name||unitById(x.unit)?.name||'—')}</span></div>
+      ${x.tenant_name?`<div class="kv"><span class="k">${t('Tenant','ভাড়াটিয়া')}</span><span class="v">${esc(x.tenant_name)}</span></div>`:''}
+      ${x.assigned_to?`<div class="kv"><span class="k">${t('Assigned','নিযুক্ত')}</span><span class="v">${esc(x.assigned_to)}${x.vendor?' · '+esc(x.vendor):''}</span></div>`:''}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <span class="badge ${PRIO_CLS[x.priority]||'b-gray'}" style="font-size:10.5px">${esc(String(x.priority||'medium').toUpperCase())}</span>
+        <span class="c-sub">${x.actual_cost?money(x.actual_cost):(x.cost_estimate?t('Est.','আনুমানিক')+' '+money(x.cost_estimate):'')}</span>
+      </div></div></div>`;
+    h+=`<div id="maintenanceLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>maintenanceLoad(reqs,card),0);
+    return h;
+  },
+  leads(){
+    let h=pageHead(t('Leasing pipeline','লিজিং পাইপলাইন'),t('Every inquiry from listing to lease — assign, follow up, convert.','লিস্টিং থেকে লিজ পর্যন্ত প্রতিটি ইনকোয়ারি — অ্যাসাইন, ফলো-আপ, কনভার্ট করুন।'),`<button class="btn-primary" onclick="leadForm()">＋ ${t('Add lead','লিড যোগ করুন')}</button>`);
+    h+=`<div id="leadsLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>leadsLoad(),0);
     return h;
   },
   compliance(){
