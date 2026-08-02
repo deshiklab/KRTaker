@@ -1658,6 +1658,7 @@ function demoPortalData(){
   return {tenant:{id:tid,name:(DB.tenants||[]).find(x=>x.id===tid)?.name||'Tenant'},
     leases:enrich,invoices,payments,receipts,docs,handover,tickets,notices,
     renewals,meters,utility_bills,
+    settlement:demoSettlementFor(tid),
     score:demoScoreFor(tid),
     stats:{outstanding,paid_total:paidTotal,next_due:next?{id:next.id,m:next.m,amount:next.due}:null,tickets_open:tickets.filter(x=>x.status!=='Closed').length,min_days_left:minLeft}};
 }
@@ -1696,6 +1697,7 @@ function portalHtml(d){
   h+=`<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📄</span>${t('My documents','আমার ডকুমেন্ট')}</div><span class="link" onclick="nav('documents')">${t('All','সব')} →</span></div><div class="panel-b">${docRows}</div></div>`;
   h+=meterPanelHtml(d);
   h+=utilityBillPanelHtml(d);
+  h+=settlementPanelHtml(d);
   h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My maintenance','আমার মেরামত')}</div><span class="link" onclick="nav('maintenance')">${t('All','সব')} →</span></div><div class="panel-b">${tickRows}</div></div>`;
   h+=`</div>`;
   h+=`<div>`;
@@ -1918,6 +1920,141 @@ async function utilityGenerate(){
     toast(t('Utility bill generated ✅ (demo)','ইউটিলিটি বিল তৈরি হয়েছে ✅ (ডেমো)'));
   }
 }
+/* ═══ Phase 21: settlement statement + no-dues certificate ═══ */
+let SETTLE_DEDUCTIONS=[];
+function demoSettlementFor(tid){
+  const leases=(DB.leases||[]).filter(l=>l.t===tid);
+  const primary=leases.find(l=>l.status==='Active'||l.status==='Pending Registration')||leases[leases.length-1]||null;
+  if(!primary) return null;
+  const leaseIds=leases.map(l=>l.id);
+  const unitIds=leases.map(l=>l.u).filter(Boolean);
+  const invoices=(DB.invoices||[]).filter(i=>leaseIds.includes(i.l));
+  const invIds=invoices.map(i=>i.id);
+  const paidBy={};(DB.payments||[]).filter(p=>invIds.includes(p.inv)&&p.status==='Success').forEach(p=>paidBy[p.inv]=(paidBy[p.inv]||0)+p.amount);
+  const arrears=invoices.map(iv=>({inv:iv.id,month:iv.m,due:Math.max(0,(iv.net||0)-(paidBy[iv.id]||0))})).filter(a=>a.due>0);
+  const rent=arrears.reduce((s,a)=>s+a.due,0);
+  const demoBills=[{id:'UB-100',unit:'U-010',type:'electric',month:'2026-07',usage:135,amount:1350,status:'Unpaid'},{id:'UB-101',unit:'U-010',type:'water',month:'2026-07',usage:35,amount:700,status:'Paid'}];
+  const utils=demoBills.filter(b=>unitIds.includes(b.unit)&&b.status==='Unpaid');
+  const utility=utils.reduce((s,b)=>s+b.amount,0);
+  const damages=SETTLE_DEDUCTIONS.reduce((s,d)=>s+(parseInt(d.amount,10)||0),0);
+  const totalDue=rent+utility+damages;
+  const deposit=parseInt(primary.adv||0,10);
+  const depApplied=Math.min(deposit,totalDue);
+  const balance=totalDue-depApplied;
+  let status,refund;
+  if(totalDue===0){status='NO_DUES';refund=deposit;}
+  else if(balance<=0){status='SETTLED';refund=-balance;}
+  else {status='DUE';refund=0;}
+  return {status,certificate_eligible:status==='NO_DUES',total_due:totalDue,balance,refund,deposit,rent,utility,damages,deposit_applied:depApplied,
+    id:'SET-100',lease:{property:'Dhanmondi Apartment',unit_name:'Apartment 7B',id:primary.id},
+    sections:{rent_arrears:arrears,utility_dues:utils,damages:SETTLE_DEDUCTIONS.map(d=>({label:d.label,amount:d.amount}))},
+    totals:{rent,utility,damages,total_due:totalDue,balance,refund}};
+}
+function settlementPanelHtml(d){
+  const stl=d.settlement;
+  const authed=!!(TOKEN&&!DEMO_MODE);
+  if(!stl) return '';
+  const meta={NO_DUES:[t('No dues','কোনো পাওনা নেই'),'b-green'],SETTLED:[t('Settled','নিষ্পত্তিকৃত'),'b-blue'],DUE:[t('Amount due','বকেয়া আছে'),'b-red']};
+  const [label,cls]=meta[stl.status]||[stl.status||'','b-gray'];
+  const refundRows=(stl.refund>0)?`<div class="kv"><span class="k">${t('Deposit refund','জমা ফেরত')}</span><span class="v pos">${money(stl.refund)}</span></div>`:'';
+  const btn=authed?`<button class="btn-primary" style="margin-top:10px;padding:6px 12px;font-size:11.5px" onclick="printSettlement('${esc(d.tenant.id)}')">🖨 ${t('Settlement statement','সেটেলমেন্ট স্টেটমেন্ট')}</button>`:'';
+  const note=stl.status==='NO_DUES'?t('No outstanding dues — you are clear to request your no-dues certificate at move-out.','কোনো বকেয়া নেই — মুভ-আউটে নো-ডিউজ সার্টিফিকেট নিতে পারবেন।'):stl.status==='DUE'?t('Outstanding balance payable before move-out clearance.','মুভ-আউট ক্লিয়ারেন্সের আগে বকেয়া পরিশোধ করতে হবে।'):t('All dues covered by your advance deposit.','সব বকেয়া আপনার অগ্রিম জমা দিয়ে কভার হয়েছে।');
+  return `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Settlement & no-dues','সেটেলমেন্ট ও বকেয়া')}</div><span class="badge ${cls}">${label}</span></div><div class="panel-b">
+    <div class="kv"><span class="k">${t('Rent arrears','ভাড়া বকেয়া')}</span><span class="v ${stl.rent?'neg':''}">${money(stl.rent)}</span></div>
+    <div class="kv"><span class="k">${t('Utility dues','ইউটিলিটি বকেয়া')}</span><span class="v ${stl.utility?'neg':''}">${money(stl.utility)}</span></div>
+    <div class="kv"><span class="k">${t('Damage deductions','ক্ষতিপূরণ কর্তন')}</span><span class="v ${stl.damages?'neg':''}">${money(stl.damages)}</span></div>
+    ${stl.total_due>0?`<div class="kv"><span class="k">${t('Total dues','মোট বকেয়া')}</span><span class="v neg">${money(stl.total_due)}</span></div>`:''}
+    <div class="kv"><span class="k">${t('Advance held','জমা রাখা অগ্রিম')}</span><span class="v">${money(stl.deposit)}</span></div>
+    ${refundRows}
+    <div style="font-size:11.5px;color:var(--text-mute);margin-top:8px;line-height:1.6">${note}</div>
+    ${btn}
+  </div></div>`;
+}
+async function printSettlement(tid){
+  if(TOKEN&&!DEMO_MODE){
+    try{
+      const ded=SETTLE_DEDUCTIONS.length?('&deductions='+encodeURIComponent(JSON.stringify(SETTLE_DEDUCTIONS))):'';
+      const res=await fetch(API+'app-settlement-report?t='+encodeURIComponent(tid)+'&html=1'+ded,{headers:{Authorization:'Bearer '+TOKEN}});
+      if(!res.ok){let msg='Cannot open: '+res.status;try{const j=await res.json();if(j.error)msg=j.error;}catch(e){}toast(msg);return;}
+      previewDoc(t('Settlement statement','সেটেলমেন্ট স্টেটমেন্ট'), await res.text());
+    }catch(e){toast('Report error: '+e.message);}
+  } else {
+    previewDoc(t('Settlement statement','সেটেলমেন্ট স্টেটমেন্ট'), demoSettlementHtml(tid));
+  }
+}
+function demoSettlementHtml(tid){
+  const rep=demoSettlementFor(tid);
+  const te=tenantById(tid);
+  if(!rep) return '<html><body><p>No settlement data.</p></body></html>';
+  const meta={NO_DUES:['No Dues','#059669'],SETTLED:['Settled','#2F80ED'],DUE:['Amount Due','#B91C1C']};
+  const [label,col]=meta[rep.status]||[rep.status,'#8A94A6'];
+  const rows=rep.sections.rent_arrears.map(a=>`<tr><td>Rent arrears — ${esc(a.inv)} (${esc(a.month)})</td><td style="text-align:right">৳${Number(a.due).toLocaleString()}</td></tr>`).join('')
+    +rep.sections.utility_dues.map(u=>`<tr><td>Utility due — ${esc(u.type)} · ${esc(u.id)} (${esc(u.month)})</td><td style="text-align:right">৳${Number(u.amount).toLocaleString()}</td></tr>`).join('')
+    +rep.sections.damages.map(d=>`<tr><td>Deduction — ${esc(d.label)}</td><td style="text-align:right">৳${Number(d.amount).toLocaleString()}</td></tr>`).join('')
+    ||'<tr><td>All rent & utility dues settled ✔</td><td style="text-align:right;color:#059669">৳0</td></tr>';
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Settlement Statement</title><style>body{font-family:Inter,'Hind Siliguri',Arial,sans-serif;background:#F4F6FA;padding:32px;color:#101828}.page{max-width:780px;margin:0 auto;background:#fff;border:1px solid #E4EAF3;border-radius:16px;padding:42px}h1{font-size:21px;margin:0 0 4px}.muted{color:#8A94A6;font-size:13px}.head{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #101828;padding-bottom:14px;margin-bottom:20px}.stamp{display:inline-block;padding:6px 16px;border-radius:999px;color:#fff;background:${col};font-size:15px;font-weight:800}table{width:100%;border-collapse:collapse;margin-top:10px}td{padding:8px 12px;border-bottom:1px solid #E4EAF3;font-size:13.5px}.sigs{display:flex;gap:34px;margin-top:34px}.sig{flex:1;text-align:center}.sig div{height:52px}.sig b{display:block;border-top:1.5px solid #101828;padding-top:6px}.foot{margin-top:28px;padding-top:14px;border-top:1px solid #E4EAF3;color:#98A2B3;font-size:12px;display:flex;justify-content:space-between}</style></head><body><div class="page">
+  <div class="head"><div><h1>🏠 KRTaker — Settlement Statement</h1><div class="muted">${rep.id} · Generated ${new Date().toDateString()} · demo</div></div><span class="stamp">${label}</span></div>
+  <div style="font-size:16px;font-weight:800">${esc(te?te.name:tid)}</div><div class="muted">${esc(rep.lease.property)} — ${esc(rep.lease.unit_name)} · ${esc(rep.lease.id)}</div>
+  <div style="font-size:14px;font-weight:800;margin:16px 0 2px">Statement of account</div>
+  <table>${rows}<tr><td style="border-top:2px solid #101828;font-weight:800">Advance / security deposit held</td><td style="border-top:2px solid #101828;text-align:right;font-weight:700">৳${Number(rep.deposit).toLocaleString()}</td></tr><tr><td style="border-top:2px solid #101828;font-weight:800">${rep.status==='DUE'?'Payable by tenant':rep.status==='NO_DUES'?'Net position':'Refundable to tenant'}</td><td style="border-top:2px solid #101828;text-align:right;font-weight:800;color:${col}">৳${Number(rep.status==='DUE'?rep.balance:rep.refund).toLocaleString()}</td></tr></table>
+  ${rep.status==='NO_DUES'?'<div style="margin-top:18px;padding:16px 18px;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:12px"><b style="color:#059669">✅ No dues certificate — কোনো পাওনা নেই</b></div>':''}
+  <div class="sigs"><div class="sig"><div></div><b>Landlord / Owner</b></div><div class="sig"><div></div><b>Tenant</b></div><div class="sig"><div></div><b>KRTaker</b></div></div>
+  <div class="foot"><span>KRTaker · krtaker.com · ${rep.id}</span><span>Demo — system-generated statement</span></div>
+  </div></body></html>`;
+}
+async function settlementDrawer(tid){
+  const te=tenantById(tid);
+  openDrawer(`🧾 ${t('Settlement statement','সেটেলমেন্ট স্টেটমেন্ট')} — ${te?esc(te.name):tid}`, `<div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div>`);
+  try{
+    let rep=null;
+    if(TOKEN&&!DEMO_MODE){
+      const r=await apiCall('app-settlement-report',{t:tid,deductions:SETTLE_DEDUCTIONS});
+      if(!r.ok){toast(r.error||'Settlement failed');return;}
+      rep=r.report;
+      SETTLE_DEDUCTIONS=(rep.sections.damages||[]).map(d=>({label:d.label,amount:d.amount}));
+    } else {
+      rep=demoSettlementFor(tid);
+    }
+    if(!rep){toast(t('No settlement data.','কোনো সেটেলমেন্ট ডেটা নেই।'));return;}
+    $('drawerBody').innerHTML=settlementHtml(rep,tid);
+  }catch(e){toast('Settlement error: '+e.message);}
+}
+function settlementHtml(rep,tid){
+  const meta={NO_DUES:[t('No dues','কোনো পাওনা নেই'),'b-green'],SETTLED:[t('Settled','নিষ্পত্তিকৃত'),'b-blue'],DUE:[t('Amount due','বকেয়া আছে'),'b-red']};
+  const [label,cls]=meta[rep.status]||[rep.status||'','b-gray'];
+  const rows=(rep.sections.rent_arrears||[]).map(a=>`<tr><td>${t('Rent','ভাড়া')} ${esc(a.invoice||a.inv)}</td><td>${esc(a.month)}</td><td class="t-amount">${money(a.due)}</td></tr>`).join('')
+    +(rep.sections.utility_dues||[]).map(u=>`<tr><td>${t('Utility','ইউটিলিটি')} · ${esc(u.type)}</td><td>${esc(u.id)} ${esc(u.month)}</td><td class="t-amount">${money(u.amount)}</td></tr>`).join('')
+    +(rep.sections.damages||[]).map(d=>`<tr><td>${t('Deduction','কর্তন')} · ${esc(d.label)}</td><td></td><td class="t-amount">${money(d.amount)}</td></tr>`).join('')
+    ||`<tr><td colspan="3" class="c-sub">${t('No dues — account is clear ✔','কোনো বকেয়া নেই — অ্যাকাউন্ট ক্লিয়ার ✔')}</td></tr>`;
+  const chips=SETTLE_DEDUCTIONS.map((d,i)=>`<span class="badge b-orange" style="margin:2px 6px 2px 0">${esc(d.label)} · ${money(d.amount)} <span style="cursor:pointer" onclick="SETTLE_DEDUCTIONS.splice(${i},1);settlementDrawer('${esc(tid)}')">✕</span></span>`).join('');
+  const addDed=`<div style="display:flex;gap:6px;margin-top:8px"><input id="settleDLabel" placeholder="${t('Damage label','ক্ষতির বিবরণ')}" style="flex:1.4;min-width:0" /><input id="settleDAmt" type="number" min="0" placeholder="৳" style="flex:0.6;min-width:70px" /><button class="btn-outline" style="padding:6px 12px;font-size:11.5px" onclick="settleAddDeduction('${esc(tid)}')">＋ ${t('Add','যোগ')}</button></div>
+  <div style="margin-top:8px">${chips||`<span class="c-sub">${t('No damage deductions yet.','এখনো কোনো ক্ষতিপূরণ কর্তন নেই।')}</span>`}</div>`;
+  const net=rep.status==='DUE'?`${t('Payable by tenant','ভাড়াটিয়ার বকেয়া')}: <b>${money(rep.totals.balance)}</b>`:rep.status==='NO_DUES'?`${t('Deposit refund due','জমা ফেরত বাকি')}: <b>${money(rep.totals.refund)}</b>`:`${t('Refund to tenant','ভাড়াটিয়াকে ফেরত')}: <b>${money(rep.totals.refund)}</b>`;
+  return `<div style="margin-bottom:12px"><span class="badge ${cls}" style="font-size:13px;padding:5px 14px">${label}</span> <span class="c-sub">${esc(rep.id)} · ${esc(rep.lease.property||'')} — ${esc(rep.lease.unit_name||'')} · ${esc(rep.lease.id||'')}</span></div>
+  <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">📋</span>${t('Statement of account','অ্যাকাউন্ট স্টেটমেন্ট')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Item','আইটেম')}</th><th>${t('Ref','রেফ')}</th><th class="t-amount">${t('Amount','পরিমাণ')}</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <div class="panel-b" style="border-top:1px solid var(--border)">
+    <div class="kv"><span class="k">${t('Rent arrears','ভাড়া বকেয়া')}</span><span class="v">${money(rep.totals.rent)}</span></div>
+    <div class="kv"><span class="k">${t('Utility dues','ইউটিলিটি বকেয়া')}</span><span class="v">${money(rep.totals.utility)}</span></div>
+    <div class="kv"><span class="k">${t('Damages','ক্ষতিপূরণ')}</span><span class="v">${money(rep.totals.damages)}</span></div>
+    <div class="kv"><span class="k">${t('Total due','মোট বকেয়া')}</span><span class="v neg">${money(rep.totals.total_due)}</span></div>
+    <div class="kv"><span class="k">${t('Advance held','জমা অগ্রিম')}</span><span class="v">${money(rep.deposit)}</span></div>
+    <div class="kv"><span class="k">${t('Deposit applied','জমা প্রয়োগ')}</span><span class="v">${money(rep.deposit_applied)}</span></div>
+    <div class="kv" style="border-top:1px solid var(--border);padding-top:8px"><span class="k">${t('Net','নিট')}</span><span class="v">${net}</span></div>
+  </div></div>
+  <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('Damage deductions','ক্ষতিপূরণ কর্তন')}</div></div><div class="panel-b">${addDed}</div></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn-primary" style="padding:7px 14px;font-size:12px" onclick="printSettlement('${esc(tid)}')">🖨 ${t('Print statement','স্টেটমেন্ট প্রিন্ট')}</button><button class="btn-ghost" style="padding:7px 14px;font-size:12px" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`;
+}
+async function settleAddDeduction(tid){
+  const label=($('settleDLabel')||{}).value||''; const amt=parseInt(($('settleDAmt')||{}).value||'0',10);
+  if(!label||!amt){toast(t('Enter label and amount.','লেবেল ও পরিমাণ লিখুন।'));return;}
+  SETTLE_DEDUCTIONS.push({label,amount:amt});
+  if(TOKEN&&!DEMO_MODE){
+    const r=await apiCall('app-settlement-report',{t:tid,deductions:SETTLE_DEDUCTIONS});
+    if(r.ok) SETTLE_DEDUCTIONS=(r.report.sections.damages||[]).map(d=>({label:d.label,amount:d.amount}));
+    else toast(r.error||t('Failed','ব্যর্থ'));
+  }
+  settlementDrawer(tid);
+}
 /* staff: renewal approvals (Leases view) + meter readings (Units view) */
 async function renewalsPanel(){
   const host=document.getElementById('renewalsHost');
@@ -2075,7 +2212,7 @@ async function scoreDrawer(tid){
     } else {
       sc=demoScoreFor(tid);
     }
-    $('drawerBody').innerHTML=scoreCardHtml(sc)+`<div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn-primary" style="padding:7px 14px;font-size:12px" onclick="printVettingReport('${esc(tid)}')">🖨 ${t('Print vetting report','ভেটিং রিপোর্ট প্রিন্ট')}</button><button class="btn-ghost" style="padding:7px 14px;font-size:12px" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`;
+    $('drawerBody').innerHTML=scoreCardHtml(sc)+`<div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn-primary" style="padding:7px 14px;font-size:12px" onclick="printVettingReport('${esc(tid)}')">🖨 ${t('Print vetting report','ভেটিং রিপোর্ট প্রিন্ট')}</button><button class="btn-outline" style="padding:7px 14px;font-size:12px" onclick="settlementDrawer('${esc(tid)}')">🧾 ${t('Settlement','সেটেলমেন্ট')}</button><button class="btn-ghost" style="padding:7px 14px;font-size:12px" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`;
   }catch(e){toast('Score error: '+e.message);}
 }
 async function printVettingReport(tid){
