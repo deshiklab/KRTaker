@@ -940,7 +940,19 @@ const SEED = {
     {id:'RR-100',lease:'L-007',tenant:'T-002',months:12,new_rent:44000,note:'Please renew',status:'Pending',decided_by:'',decided_at:'',ts:'2026-08-02 09:00:00'},
     {id:'RR-101',lease:'L-003',tenant:'T-003',months:24,new_rent:460000,note:'',status:'Approved',decided_by:'Shakil Ahmed',decided_at:'2026-07-28 11:00:00',ts:'2026-07-25 10:00:00'},
     {id:'RR-102',lease:'L-007',tenant:'T-002',months:12,new_rent:42800,note:'7% escalation per Dhanmondi policy',status:'Offered',decided_by:'Rofiqul Islam',decided_at:'2026-08-01 09:00:00',ts:'2026-08-01 09:00:00'}
-  ]
+  ],
+  kr_alerts:[
+    {id:'AL-100',user_key:'sub:1',type:'sla',severity:'warning',title:'SLA at risk',body:'MR-003 · Hall socket sparking · medium · elapsed 14h',ref:'MR-003',status:'open',voice_note:'',ts:'2026-08-02 08:00:00'},
+    {id:'AL-101',user_key:'sub:1',type:'compliance',severity:'critical',title:'Compliance expired',body:'Fire safety — Banani Commercial Tower · 2026-07-31',ref:'CPL-002',status:'open',voice_note:'',ts:'2026-08-02 08:00:00'},
+    {id:'AL-102',user_key:'sub:1',type:'arrears',severity:'critical',title:'Rent arrears',body:'INV-2026-005 · Bengal Agro Foods · 2026-06 · ৳350,000',ref:'INV-2026-005',status:'open',voice_note:'',ts:'2026-08-02 08:00:00'},
+    {id:'AL-103',user_key:'sub:1',type:'renewal',severity:'warning',title:'Lease renewal due',body:'L-001 · Rafiqul Islam · Flat 3B · ends 2026-12-31',ref:'L-001',status:'open',voice_note:'',ts:'2026-08-02 08:00:00'}
+  ],
+  wa_channels:[{id:'WA-demo',user_key:'sub:1',phone:'+8801712445566',provider:'whatsapp',status:'active',ts:'2026-08-01 10:00:00'}],
+  kr_wa_msgs:[
+    {id:1,user_key:'sub:1',direction:'out',body:'ভাড়ার রিমাইন্ডার — জুন ইনভয়েস জমা দিন 📱',voice_note:0,ts:'2026-08-02 09:00:00'},
+    {id:2,user_key:'sub:1',direction:'in',body:'আমার বিল কত?',voice_note:0,ts:'2026-08-02 09:05:00'}
+  ],
+  board_reports:[{id:'BR-DEMO',month:'2026-08',kind:'board',created_by:'Rofiqul Islam',ts:'2026-08-02 09:00:00'}]
 };
 
 /* ═══ Roles & modules ═══ */
@@ -1425,7 +1437,7 @@ function krSend(){
 function krBoot(){
   if(!$('krBody').children.length){
     $('krBody').innerHTML=`<div class="kr-msg ai">Hello 👋 I'm <b>KR</b> — your AI property caretaker. I can take actions (invoices, tickets, reminders) and answer Bangladeshi property law — try one below or type anything.<br><span style="font-size:10px;color:var(--text-mute)">${new Date().toLocaleDateString()} · ${window.krMode||''}</span></div>
-    <div class="kr-chips">${['Generate invoice for L-003','How much collected in June?','Monthly digest','Which units are vacant?','Which invoices are overdue?','Reconciliation','Rent roll','Which leases renew next month?','Portfolio summary','Who pays for a leaking roof?','Holding tax for P-001','Is my advance legal?','My referral link'].map(c=>`<button class="kr-chip" onclick="krQuick('${esc(c)}')">${esc(c)}</button>`).join('')}</div>`;
+    <div class="kr-chips">${['Generate invoice for L-003','How much collected in June?','Monthly digest','Which units are vacant?','Score of T-002','Vendor status SP-01','Remittance status','My alerts','Forecast next 12 months','WhatsApp +8801: ভাড়া দিন','Rent roll','Portfolio summary','Who pays for a leaking roof?','Holding tax for P-001'].map(c=>`<button class="kr-chip" onclick="krQuick('${esc(c)}')">${esc(c)}</button>`).join('')}</div>`;
   }
   apiCall('app-ai-meta').then(d=>{ if(d&&d.ok){ window.krMode=d.mode==='llm'?'KR · DeepSeek (function-calling)':'KR · Offline mode (legal KB)'; const ks=document.querySelector('.kr-head .ks'); if(ks)ks.textContent=window.krMode+' · 24/7'; } }).catch(()=>{});
 }
@@ -3552,6 +3564,116 @@ async function gdprDownload() {
   }
 }
 
+/* ═══ Phase 40/41: WhatsApp + alerts + analytics loaders ═══ */
+async function waBind(){
+  const ph=document.getElementById('waPhone')?.value.trim(); if(!ph){toast('Enter a phone');return;}
+  const d=DEMO_MODE?{ok:true}:await apiCall('app-kr-wa',{action:'bind',phone:ph});
+  if(!d.ok){toast(d.error||'Bind failed');return;}
+  if(DEMO_MODE){const c=DB.wa_channels.find(x=>x.user_key==='sub:1'); if(c)c.phone=ph; else DB.wa_channels.push({user_key:'sub:1',phone:ph,status:'active'});}
+  toast('WhatsApp channel bound ✅'); render();
+}
+async function waSend(){
+  const ph=document.getElementById('waPhone')?.value.trim()||(DB.wa_channels||[]).find(c=>c.user_key==='sub:1')?.phone;
+  const msg=document.getElementById('waMsg')?.value.trim(); if(!msg){toast('Enter a message');return;}
+  const d=DEMO_MODE?{ok:true}:await apiCall('app-kr-wa',{action:'send',phone:ph,message:msg});
+  if(!d.ok){toast(d.error||'Send failed');return;}
+  if(DEMO_MODE){DB.kr_wa_msgs=DB.kr_wa_msgs||[];DB.kr_wa_msgs.unshift({user_key:'sub:1',direction:'out',body:msg,ts:new Date().toISOString().slice(0,19).replace('T',' ')});}
+  toast('Message sent 📤'); document.getElementById('waMsg').value=''; render();
+}
+async function krAlertDismiss(id){
+  const d=DEMO_MODE?{ok:true}:await apiCall('app-kr-alert',{action:'dismiss',id});
+  if(!d.ok){toast(d.error||'Failed');return;}
+  if(DEMO_MODE){const a=(DB.kr_alerts||[]).find(x=>x.id===id); if(a)a.status='dismissed';}
+  toast('Alert dismissed ✓'); render();
+}
+async function krAlertDismissAll(){
+  const d=DEMO_MODE?{ok:true}:await apiCall('app-kr-alert',{action:'dismiss-all'});
+  if(!d.ok){toast(d.error||'Failed');return;}
+  if(DEMO_MODE){(DB.kr_alerts||[]).forEach(a=>a.status='dismissed');}
+  toast('All alerts dismissed ✓'); render();
+}
+async function krAlertRun(){
+  const d=await apiCall('app-kr-alert',{action:'run'});   /* demo owner token — live uses service key via cron */
+  if(!d.ok){toast(d.error||'Scan failed (service key required on live)');return;}
+  toast('Alert scan complete — '+(d.created||0)+' new'); await refreshData(); render();
+}
+async function analyticsLoad(){
+  const host=document.getElementById('analyticsLive'); if(!host) return;
+  let pnl,trends,aging,vacancy,forecast;
+  const m=(new Date().getFullYear())+'-'+String(new Date().getMonth()+1).padStart(2,'0');
+  if(TOKEN&&!DEMO_MODE&&['superadmin','owner','manager','accountant','svc_mgr'].includes(LIVE.user?.role)){
+    const [a,b,c2,d2,e2]=await Promise.all([
+      apiCall('app-analytics?action=pnl&month='+m), apiCall('app-analytics?action=trends&months=12'),
+      apiCall('app-analytics?action=aging'), apiCall('app-analytics?action=vacancy'), apiCall('app-analytics?action=forecast')]);
+    if(a.ok)pnl=a; if(b.ok)trends=b; if(c2.ok)aging=c2; if(d2.ok)vacancy=d2; if(e2.ok)forecast=e2;
+  }
+  if(!pnl){ /* demo fallback from local DB */
+    const month=m;
+    pnl={month,properties:(DB.properties||[]).map(p=>{const pct=(DB.property_rent||[]).find(r=>r.prop===p.id)?.service_charge_pct||0;
+      const invs=(DB.invoices||[]).filter(i=>i.m===month&&(DB.leases||[]).some(l=>l.id===i.l&&(DB.units||[]).some(u=>u.id===l.u&&u.p===p.id)));
+      let gross=0,tds=0,service=0,collected=0;
+      invs.forEach(i=>{gross+=i.gross||0;tds+=i.tds||0;service+=Math.round((i.gross||0)*pct/100);collected+=(DB.payments||[]).filter(x=>x.inv===i.id&&x.status==='Success').reduce((s2,x)=>s2+x.amount,0);});
+      const expenses=(DB.maintenance_requests||[]).filter(x=>x.prop===p.id&&x.actual_cost>0&&['Resolved','Closed'].includes(x.status)&&['owner','service'].includes(x.charge_to)).reduce((s2,x)=>s2+x.actual_cost,0);
+      return {prop:p.id,name:p.name,type:p.type||'',gross,collected,tds,service,expenses,net:collected-tds-service-expenses};}),
+      totals:{}};
+    pnl.totals=pnl.properties.reduce((t2,x)=>{t2.gross+=x.gross;t2.collected+=x.collected;t2.tds+=x.tds;t2.service+=x.service;t2.expenses+=x.expenses;t2.net+=x.net;return t2},{gross:0,collected:0,tds:0,service:0,expenses:0,net:0});
+    const invs=(DB.invoices||[]); const months=[...new Set(invs.map(i=>i.m))].sort().slice(-12);
+    trends={months:months.map(mo=>{const invs2=invs.filter(i=>i.m===mo);return {month:mo,issued:invs2.reduce((s2,i)=>s2+i.net,0),collected:(DB.payments||[]).filter(p=>p.status==='Success'&&invs2.some(i=>i.id===p.inv)).reduce((s2,p)=>s2+p.amount,0)}}),units:(DB.units||[]).length,leased:(DB.units||[]).filter(u=>u.status==='Leased').length};
+    trends.occupancy=trends.units?Math.round(trends.leased/trends.units*100):0;
+    const curM=months[months.length-1]||month; const cy=parseInt(curM.slice(0,4),10),cm=parseInt(curM.slice(5),10);
+    const ageM=(mm)=>{const y=parseInt(mm.slice(0,4),10),mo=parseInt(mm.slice(5),10);return (cy-y)*12+(cm-mo)};
+    const bk={current:0,d30:0,d60:0,d90:0};
+    invs.filter(i=>i.status!=='Paid').forEach(i=>{const a2=ageM(i.m);if(a2<=0)bk.current+=i.net;else if(a2===1)bk.d30+=i.net;else if(a2===2)bk.d60+=i.net;else bk.d90+=i.net});
+    bk.total=bk.current+bk.d30+bk.d60+bk.d90; aging={buckets:bk};
+    const vus=(DB.units||[]).filter(u=>u.status==='Vacant');
+    vacancy={units:vus.map(u=>({id:u.id,name:u.name,rent:u.rent,prop:(DB.properties||[]).find(p=>p.id===u.p)?.name||''})),count:vus.length,monthly_loss:vus.reduce((s2,u)=>s2+(u.rent||0),0)};
+    vacancy.annual_loss=vacancy.monthly_loss*12;
+    const rate=pnl.totals.issued?(pnl.totals.collected/pnl.totals.issued):0;
+    const avg=pnl.totals.gross?Math.round(pnl.totals.collected||0):0;
+    forecast={collection_rate:Math.round(rate*100),avg_collected:avg,total_forecast:avg*12,months:Array.from({length:12},(_,i)=>{const dt=new Date(cy,cm+i,1);return {month:dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0'),collected:avg}}),occupancy:trends.occupancy,leased:trends.leased,units:trends.units,vacancy_loss:vacancy.monthly_loss,renewals_due:(DB.leases||[]).filter(l=>l.status==='Active').length,top_risk:'demo'};
+  }
+  const tot=pnl.totals;
+  const issued6=(trends.months||[]).slice(-6);
+  const issuedD=issued6.map(x=>x.issued||0), collD=issued6.map(x=>x.collected||0), labels=issued6.map(x=>x.month.slice(5)+'/'+x.month.slice(2,4));
+  const bk2=aging.buckets||{current:0,d30:0,d60:0,d90:0,total:0};
+  const fc=forecast||{collection_rate:0,avg_collected:0,total_forecast:0,months:[],occupancy:0,leased:0,units:0,vacancy_loss:0,renewals_due:0,top_risk:''};
+  const fcD=(fc.months||[]).map(x=>x.collected||0), fcL=(fc.months||[]).map(x=>x.month.slice(5)+'/'+x.month.slice(2,4));
+  host.innerHTML = statsRow([
+    stat(t('Portfolio net','পোর্টফোলিও নিট'),moneyC(tot.net||0),pnl.month,'pos','💰'),
+    stat(t('Collected','আদায়'),moneyC(tot.collected||0),t('this month','এই মাসে'),'pos','💳'),
+    stat(t('Occupancy','দখল'),(fc.occupancy||0)+'%',(fc.leased||0)+'/'+(fc.units||0)+' '+t('units','ইউনিট'),(fc.occupancy||0)>=60?'pos':'warn','🚪'),
+    stat(t('Vacancy loss','শূন্যতা ক্ষতি'),moneyC(fc.vacancy_loss||0)+'/mo',fc.vacant_units?fc.vacant_units+' '+t('vacant','খালি'):'','warn','🏚️'),
+    stat(t('12-mo forecast','১২ মাস পূর্বাভাস'),moneyC(fc.total_forecast||0),'@ '+(fc.collection_rate||0)+'%', 'pos','🔮')
+  ]) + `
+  <div class="grid grid-2" style="margin-top:16px">
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📊</span>${t('P&L by property','সম্পত্তিভিত্তিক পিএন্ডএল')} · ${esc(pnl.month)}</div></div><div class="panel-b"><div class="tbl-wrap"><table><thead><tr><th>${t('Property','সম্পত্তি')}</th><th>${t('Collected','আদায়')}</th><th>${t('TDS','টিডিএস')}</th><th>${t('Service','সার্ভিস')}</th><th>${t('Expenses','খরচ')}</th><th>${t('Net','নিট')}</th></tr></thead><tbody>
+    ${(pnl.properties||[]).map(p=>`<tr><td>${esc(p.name)}</td><td>${money(p.collected)}</td><td class="warn">−${money(p.tds)}</td><td class="warn">−${money(p.service)}</td><td class="warn">−${money(p.expenses)}</td><td class="t-amount">${money(p.net)}</td></tr>`).join('')}
+    <tr style="font-weight:800;border-top:2px solid var(--border)"><td>${t('Total','মোট')}</td><td>${money(tot.collected)}</td><td class="warn">−${money(tot.tds)}</td><td class="warn">−${money(tot.service)}</td><td class="warn">−${money(tot.expenses)}</td><td class="t-amount">${money(tot.net)}</td></tr>
+    </tbody></table></div></div></div>
+    <div>
+      <div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">📈</span>${t('Issued vs collected (6mo)','ইস্যু বনাম আদায় (৬ মাস)')}</div></div><div class="panel-b">${issuedD.length?barChart(issuedD,labels):'<div class="c-sub">No data</div>'}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔮</span>${t('12-month forecast','১২ মাস পূর্বাভাস')}</div></div><div class="panel-b">${fcD.length?barChart(fcD,fcL,'#34C77B'):'<div class="c-sub">No data</div>'}<div class="c-sub" style="margin-top:8px">${t('At your','আপনার')} ${fc.collection_rate}% ${t('collection rate · risk:','আদায়ের হার · ঝুঁকি:')} ${esc(fc.top_risk||'—')}</div></div></div>
+    </div>
+  </div>
+  <div class="grid grid-2" style="margin-top:16px">
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Receivables aging','প্রাপ্য এজিং')}</div></div><div class="panel-b">${kv(t('Current','বর্তমান'),money(bk2.current),bk2.current?'pos':'')}${kv('30–60d',money(bk2.d30),bk2.d30?'warn':'')}${kv('60–90d',money(bk2.d60),bk2.d60?'warn':'')}${kv('90d+',money(bk2.d90),bk2.d90?'warn':'')}${kv('<b>'+t('Total outstanding','মোট বকেয়া')+'</b>','<b>'+money(bk2.total||0)+'</b>')}</div></div>
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏚️</span>${t('Vacancy loss','শূন্যতা ক্ষতি')}</div></div><div class="panel-b">${(vacancy.units||[]).map(u=>kv(esc(u.prop)+' · '+esc(u.name),money(u.rent)+'/mo','warn')).join('')||'<div class="empty">No vacancies 🎉</div>'}<div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)"><b>${t('Monthly loss','মাসিক ক্ষতি')}</b><b class="warn">${money(vacancy.monthly_loss||0)}</b></div></div></div>
+  </div>`;
+}
+async function boardReport(){
+  const m=(new Date().getFullYear())+'-'+String(new Date().getMonth()+1).padStart(2,'0');
+  const d=DEMO_MODE?{ok:true,id:'BR-DEMO',markdown:'# KRTaker Portfolio Board Report — '+m+'\n\n(demo — sign in for live data)'}:await apiCall('app-analytics',{action:'board',month:m});
+  if(!d.ok){toast(d.error||'Failed');return;}
+  const md=d.markdown||'';
+  const body=`<div style="white-space:pre-wrap;font-family:monospace;font-size:12px;max-height:420px;overflow:auto;background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;padding:14px">${esc(md)}</div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="downloadBoard('${esc(d.id)}')">⬇ ${t('Download','ডাউনলোড')}</button></div>`;
+  openDrawer(`📊 ${t('Board report','বোর্ড রিপোর্ট')} · ${esc(m)}`,body,foot);
+}
+function downloadBoard(id){
+  const md=document.querySelector('#drawer [style*="white-space"]')?.textContent||'';
+  const blob=new Blob([md],{type:'text/markdown'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=id+'.md';a.click();URL.revokeObjectURL(a.href);
+}
 const renderers={
   dashboard:renderDashboard,
   caretaker:renderCaretaker,
@@ -3707,15 +3829,31 @@ const renderers={
     return h;
   },
   ai(){
-    let h=pageHead(t('AI Caretaker (KR)','এআই কেয়ারটেকার (কেআর)'),t('Ask anything about your portfolio — KR takes actions.','আপনার পোর্টফোলিও সম্পর্কে যেকোনো প্রশ্ন করুন — কেআর কাজ করে দেবে।'));
+    let h=pageHead(t('AI Caretaker v2 (KR)','এআই কেয়ারটেকার ভি২ (কেআর)'),t('Proactive alerts, WhatsApp channel and actions — KR watches your portfolio 24/7.','প্রোঅ্যাকটিভ অ্যালার্ট, হোয়াটসঅ্যাপ চ্যানেল ও অ্যাকশন — কেআর ২৪/৭ আপনার পোর্টফোলিও দেখে।'),`${['superadmin','owner','manager','svc_mgr'].includes(role().id)?`<button class="btn-outline" onclick="krAlertRun()">🔔 ${t('Run alert scan','অ্যালার্ট স্ক্যান চালান')}</button>`:''}`);
+    const alerts=(DB.kr_alerts||[]).filter(a=>a.status==='open');
+    const sev={critical:'b-red',warning:'b-orange',info:'b-blue'};
+    const alertCards=alerts.length?alerts.slice(0,8).map(a=>`<div class="row-item"><div class="ri-ic">${a.severity==='critical'?'🔴':'🟠'}</div><div class="ri-body"><div class="ri-t">${esc(a.title)} <span class="badge ${sev[a.severity]||'b-gray'}" style="font-size:9.5px">${esc(a.type)}</span></div><div class="ri-s">${esc(a.body)}</div></div><div class="ri-r"><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="krAlertDismiss('${esc(a.id)}')">✓</button></div></div>`).join(''):`<div class="empty">${t('No open alerts — all clear 🎉','কোনো খোলা অ্যালার্ট নেই')}</div>`;
+    const wa=(DB.wa_channels||[]).find(c=>c.user_key===(LIVE.user?'sub:'+(LIVE.user.id||1):'sub:1')&&c.status==='active')||null;
+    const waMsgs=(DB.kr_wa_msgs||[]).filter(m=>m.user_key===(LIVE.user?'sub:'+(LIVE.user.id||1):'sub:1')).slice(0,6);
     h+=`<div class="grid grid-2">
-      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🤖</span>${t('Capabilities','ক্ষমতা')}</div></div><div class="panel-b">${[
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🤖</span>${t('KR actions','কেআর অ্যাকশন')}</div></div><div class="panel-b">${[
         ['📄','Lease Q&A','“Which leases need registration?”'],
         ['🏛️','Tax answers','“TDS on L-003?”'],
-        ['⚖️','PRCA checker','“Is my advance legal?”'],
-        ['🔧','Maintenance actions','“Raise ticket for pump”'],
-        ['🧾','Invoice generation','“Generate invoice for L-003”'],
+        ['⭐','Tenant score','“Score of T-002”'],
+        ['🛠️','Vendor status','“Vendor status SP-01”'],
+        ['🌍','Remittance','“Remittance status”'],
+        ['🔮','Forecast','“Forecast next 12 months”'],
+        ['📱','WhatsApp send','“WhatsApp +8801…: ভাড়া দিন”'],
         ['🌐','Bengali & English','“জুনের ভাড়া কত?”']].map(x=>`<div class="row-item"><div class="ri-ic">${x[0]}</div><div class="ri-body"><div class="ri-t">${x[1]}</div><div class="ri-s">${x[2]}</div></div></div>`).join('')}</div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔔</span>${t('Proactive alerts','প্রোঅ্যাকটিভ অ্যালার্ট')}</div>${alerts.length?`<span class="badge b-red">${alerts.length}</span>`:''}<span class="link" style="font-size:11px" onclick="krAlertDismissAll()">${t('Dismiss all','সব বন্ধ')}</span></div><div class="panel-b">${alertCards}</div></div>
+    </div>
+    <div class="grid grid-2" style="margin-top:14px">
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🟢</span>${t('WhatsApp channel','হোয়াটসঅ্যাপ চ্যানেল')}</div>${wa?`<span class="badge b-green">${esc(wa.phone)}</span>`:`<span class="badge b-gray">${t('Not bound','বাঁধা হয়নি')}</span>`}</div><div class="panel-b">
+        <div style="display:flex;gap:8px;margin-bottom:10px"><input id="waPhone" placeholder="+8801XXXXXXXXX" value="${wa?esc(wa.phone):''}" style="flex:1;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-alt)"><button class="btn-primary" style="white-space:nowrap" onclick="waBind()">${wa?'🔄':t('Bind','বাঁধুন')}</button></div>
+        <div style="display:flex;gap:8px;margin-bottom:10px"><input id="waMsg" placeholder="${t('Message (EN / বাংলা)','মেসেজ (EN / বাংলা)')}" style="flex:1;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-alt)"><button class="btn-outline" style="white-space:nowrap" onclick="waSend()">📤 ${t('Send','পাঠান')}</button></div>
+        <div class="c-sub" style="margin-bottom:6px">${t('Recent messages','সাম্প্রতিক মেসেজ')}</div>
+        ${waMsgs.length?waMsgs.map(m=>`<div class="row-item"><div class="ri-ic">${m.direction==='in'?'📥':'📤'}</div><div class="ri-body"><div class="ri-s">${esc(m.body)}</div><div class="c-sub" style="font-size:10px">${esc(m.ts||'')}</div></div></div>`).join(''):`<div class="empty">${t('No messages yet','কোনো মেসেজ নেই')}</div>`}
+      </div></div>
       <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📜</span>${t('Legal engines loaded','আইনি ইঞ্জিন লোড')}</div></div><div class="panel-b">${[
         ['TPA 1882 §107','Registration gate','b-blue'],
         ['PRCA 1991 §10/§23/§18','Advance & eviction','b-green'],
@@ -3727,55 +3865,12 @@ const renderers={
   },
   /* Phase 9: analytics — pure client-side from loaded data (works in demo + live) */
   analytics(){
-    const isTenant = LIVE.user && LIVE.user.role==='tenant';
-    const invs = DB.invoices||[];
-    const months = [...new Set(invs.map(i=>i.m))].sort();
-    const issuedBy={},collBy={};
-    months.forEach(m=>{issuedBy[m]=0;collBy[m]=0});
-    invs.forEach(i=>{issuedBy[i.m]=(issuedBy[i.m]||0)+i.net});
-    (DB.payments||[]).forEach(p=>{const inv=invoiceById(p.inv);if(inv)collBy[inv.m]=(collBy[inv.m]||0)+p.amount});
-    const labels=months.map(m=>m.slice(5)+'/'+m.slice(2,4));
-    const issuedD=months.map(m=>issuedBy[m]||0), collD=months.map(m=>collBy[m]||0);
-    const totIssued=issuedD.reduce((a,b)=>a+b,0), totColl=collD.reduce((a,b)=>a+b,0);
-    const rate=totIssued?Math.round(totColl/totIssued*100):0;
-    const activeLeases=(DB.leases||[]).filter(l=>l.status==='Active'||l.status==='Pending Registration');
-    const mrr=activeLeases.reduce((s,l)=>s+l.rent,0);
-    const units=DB.units||[], leased=units.filter(u=>u.status==='Leased').length;
-    const occ=units.length?Math.round(leased/units.length*100):0;
-    const unpaid=invs.filter(i=>i.status!=='Paid').length;
-    // aging buckets (by invoice month vs latest month)
-    const cur=months[months.length-1]||'2026-07';
-    const curY=parseInt(cur.slice(0,4),10),curM=parseInt(cur.slice(5),10);
-    const ageM=m=>{const y=parseInt(m.slice(0,4),10),mo=parseInt(m.slice(5),10);return (curY-y)*12+(curM-mo)};
-    const buckets={Current:0,'30–60d':0,'60–90d':0,'90d+':0};
-    invs.filter(i=>i.status!=='Paid').forEach(i=>{const a=ageM(i.m);if(a<=0)buckets.Current+=i.net;else if(a===1)buckets['30–60d']+=i.net;else if(a===2)buckets['60–90d']+=i.net;else buckets['90d+']+=i.net});
-    // forecast: collection rate × next-month issuance (MRR)
-    const nextM=new Date(curY,curM,1); nextM.setMonth(nextM.getMonth()+1);
-    const nextLbl=String(nextM.getFullYear())+'-'+String(nextM.getMonth()+1).padStart(2,'0');
-    const forecast=Math.round(mrr*rate/100);
-    const occByProp=(DB.properties||[]).map(p=>{const us=units.filter(u=>u.p===p.id);const lc=us.filter(u=>u.status==='Leased').length;const pct=us.length?Math.round(lc/us.length*100):0;return {p,pct,n:us.length,lc,name:p.name}});
-    const occBars=occByProp.map(o=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>${esc(o.name)}</span><span class="${o.pct<50?'warn':''}">${o.lc}/${o.n} · ${o.pct}%</span></div><div class="prog ${o.pct<50?'orange':''}"><i style="width:${o.pct}%"></i></div></div>`).join('');
-    let h=pageHead(t('Analytics','অ্যানালিটিক্স'),t('Revenue, occupancy and collection trends — computed live from your data.','রাজস্ব, দখল ও আদায়ের প্রবণতা — আপনার ডেটা থেকে লাইভ হিসাব।'));
-    h+=statsRow([
-      stat(t('Monthly rent (MRR)','মাসিক ভাড়া (এমআরআর)'),money(mrr),'+'+rate+'% collection', 'pos','🏠'),
-      stat(t('Occupancy','দখল'),occ+'%',leased+'/'+units.length+' '+t('units leased','ইউনিট লিজড'),'pos','🚪'),
-      stat(t('Collection rate','আদায়ের হার'),rate+'%',moneyC(totColl)+' '+t('of','এর মধ্যে')+' '+moneyC(totIssued),(rate>70?'pos':'warn'),'💳'),
-      stat(t('Unpaid invoices','অপরিশোধিত ইনভয়েস'),unpaid, t('needs follow-up','ফলো-আপ প্রয়োজন'), unpaid?'warn':'pos','🧾')
-    ]);
-    h+=`<div class="grid grid-2">
-      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Issued by month','মাসভিত্তিক ইস্যু')}</div></div><div class="panel-b">${months.length?barChart(issuedD,labels):'<div class="c-sub">No invoice data yet.</div>'}</div></div>
-      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Collected by month','মাসভিত্তিক আদায়')}</div></div><div class="panel-b">${months.length?barChart(collD,labels,'#34C77B'):'<div class="c-sub">No payment data yet.</div>'}</div></div>
-    </div>`;
-    h+=`<div class="grid grid-2">
-      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📊</span>${t('Occupancy by property','সম্পত্তিভিত্তিক দখল')}</div></div><div class="panel-b">${occBars||'<div class="c-sub">No properties.</div>'}</div></div>
-      <div>
-        <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Receivables aging','প্রাপ্য এজিং')}</div></div><div class="panel-b">${Object.entries(buckets).map(([k,v])=>kv(k,v?money(v):'—',v?'warn':'')).join('')}${kv('<b>'+t('Total outstanding','মোট বকেয়া')+'</b>','<b>'+money(Object.values(buckets).reduce((a,b)=>a+b,0))+'</b>')}</div></div>
-        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔮</span>${t('Next-month projection','আগামী মাসের প্রক্ষেপণ')}</div></div><div class="panel-b"><div style="font-size:22px;font-weight:800;color:var(--accent)">${money(forecast)}</div><div class="c-sub" style="margin-top:6px">${t('Expected collection for','জন্য প্রত্যাশিত আদায়')} ${nextLbl} ${t('at your','আপনার')} ${rate}% ${t('historical rate','ঐতিহাসিক হারে')}</div></div></div>
-      </div>
-    </div>`;
+    const canBoard = ['superadmin','owner','manager','accountant'].includes(role().id);
+    let h=pageHead(t('Portfolio analytics & forecast','পোর্টফোলিও অ্যানালিটিক্স ও পূর্বাভাস'),t('Consolidated P&L, trends, aging, vacancy loss and 12-month forecast — computed live.','একত্রিত পিএন্ডএল, প্রবণতা, এজিং, শূন্যতা ক্ষতি ও ১২ মাসের পূর্বাভাস — লাইভ হিসাব।'),`${canBoard?`<button class="btn-primary" onclick="boardReport()">📊 ${t('Board report','বোর্ড রিপোর্ট')}</button>`:''}<button class="btn-outline" onclick="analyticsLoad()">⟳ ${t('Refresh','রিফ্রেশ')}</button>`);
+    h+=`<div id="analyticsLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>analyticsLoad(),0);
     return h;
   },
-  /* Phase 8: notice board */
   notices(){
     const canPost=!LIVE.user||LIVE.user.is_staff||['superadmin','owner','manager','svc_mgr','crm','legal','accountant','hr'].includes(LIVE.user.role);
     let h=pageHead(t('Notice Board','নোটিশ বোর্ড'),t('Announcements for owners, tenants and partners.','মালিক, ভাড়াটিয়া ও পার্টনারদের জন্য ঘোষণা।'),canPost?`<button class="btn-primary" onclick="noticeForm()">＋ ${t('Post notice','নোটিশ পোস্ট')}</button>`:'');
@@ -5162,7 +5257,7 @@ async function openSettings(){
   const u=LIVE.user||{};
   const isStaff=!!u.is_staff;
   const nameVal=esc(u.name||''); const orgVal=esc(u.org||''); const phoneVal=esc(u.phone||'');
-  const prefs = {theme:'light',lang:'en',notify_rent:true,notify_collections:true,notify_renewal:true,notify_docs:true,wa_reminders:true,email_digest:true,notify_premium:true};
+  const prefs = {theme:'light',lang:'en',notify_rent:true,notify_collections:true,notify_renewal:true,notify_docs:true,wa_reminders:true,email_digest:true,notify_premium:true,wa_phone:'',alert_sla:true,alert_compliance:true,alert_arrears:true,alert_renewal:true};
   let authed=false;
   if(TOKEN&&!DEMO_MODE){
     const r=await apiCall('app-settings-get');
@@ -5173,6 +5268,7 @@ async function openSettings(){
     });
   }
   const notifyRow=(key,label,bn)=>{const on=!!prefs[key];return `<div class="row-item"><div class="ri-body"><div class="ri-t">${t(label,bn)}</div></div><div class="ri-r"><label class="kr-sw"><input type="checkbox" id="set_${key}" ${on?'checked':''}><span></span></label></div></div>`};
+  const notifyRowI=(key,label,bn,val)=>{return `<div class="row-item"><div class="ri-body"><div class="ri-t">${t(label,bn)}</div></div><div class="ri-r"><input id="set_${key}" value="${esc(val||'')}" placeholder="+8801XXXXXXXXX" style="width:150px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-alt)"></div></div>`};
   PREF_THEME=prefs.theme||'light'; PREF_LANG=prefs.lang||'en';
   const rid=DEMO_MODE?(role().id||''):(u.role||'');
   const canOrg=['superadmin','owner','manager'].includes(rid);
@@ -5224,7 +5320,7 @@ async function openSettings(){
         ${notifyRow('notify_collections','Collections digest','আদায় ডাইজেস্ট')}
         ${notifyRow('notify_renewal','Renewal updates','রিনিউয়াল আপডেট')}
         ${notifyRow('notify_docs','Document & receipt emails','ডকুমেন্ট ও রসিদ ইমেইল')}
-        ${notifyRow('wa_reminders','WhatsApp reminders','হোয়াটসঅ্যাপ রিমাইন্ডার')}
+        ${notifyRow('wa_reminders','WhatsApp reminders','হোয়াটসঅ্যাপ রিমাইন্ডার')}${notifyRowI('wa_phone','WhatsApp number (KR alerts)','হোয়াটসঅ্যাপ নম্বর (কেআর অ্যালার্ট)',prefs.wa_phone)}${notifyRow('alert_sla','SLA breach alerts','এসএলএ অ্যালার্ট')}${notifyRow('alert_compliance','Compliance expiry alerts','কমপ্লায়েন্স অ্যালার্ট')}${notifyRow('alert_arrears','Rent arrears alerts','ভাড়া বকেয়া অ্যালার্ট')}${notifyRow('alert_renewal','Renewal alerts','রিনিউয়াল অ্যালার্ট')}
         ${notifyRow('email_digest','Daily email digest','দৈনিক ইমেইল ডাইজেস্ট')}
         ${notifyRow('notify_premium','Caretaker updates','কেয়ারটেকার আপডেট')}
       </div>
