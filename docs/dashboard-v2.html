@@ -2821,13 +2821,84 @@ async function loadRecon(){
           </div>
         </div>
       </div>
+    </div>
+    <div class="panel" style="margin-top:18px"><div class="panel-h"><div class="t"><span class="pi">⏰</span>${t('Rent reminders — day 1/7/15 escalation','ভাড়া রিমাইন্ডার — দিন ১/৭/১৫ এস্কেলেশন')}</div>
+      <span class="link" onclick="reminderEdit()">⚙️ ${t('Configure','কনফিগার')}</span><span class="link" onclick="reminderRun(false)">${t('Preview','প্রিভিউ')} →</span><span class="link" onclick="reminderRun(true)">📣 ${t('Send now','এখনই পাঠান')}</span></div>
+      <div id="remLive"><div class="panel-b c-sub">${t('Loading reminders…','রিমাইন্ডার লোড হচ্ছে…')}</div></div>
     </div>`;
+  loadReminders();
 }
 async function runCollections(send){
   if(send&&!confirm(t('Send overdue-rent reminder emails to all tenants with unpaid invoices?','সব ভাড়াটিয়াকে বকেয়া ভাড়ার রিমাইন্ডার ইমেইল পাঠাবেন?')))return;
   const d=await apiCall('app-collections-run',{send:!!send});
   if(d.ok){ toast((send?('Sent '+d.sent+' reminder email(s) · '):(t('Dry-run','ড্রাই-রান')+': '))+d.unpaid+' '+t('unpaid','অপরিশোধিত')+' · ৳'+(d.total_due||0).toLocaleString('en-IN')); if(send){await refreshData(); if(state.view==='recon'){render();}} }
   else toast(d.error||'Failed');
+}
+
+/* ═══ Phase 15: rent reminder scheduler (day 1/7/15) ═══ */
+async function loadReminders(){
+  await new Promise(r=>setTimeout(r,0));
+  const el=document.getElementById('remLive'); if(!el) return;
+  let cfg={ok:false}, sum={ok:false};
+  try{ [cfg,sum]=await Promise.all([apiCall('app-reminder-config'), apiCall('app-reminder-summary')]); }catch(e){}
+  if(!cfg.ok||!sum.ok){ el.innerHTML=`<div class="panel-b c-sub">${t('Reminders unavailable — live data only.','রিমাইন্ডার পাওয়া যায়নি — লাইভ ডেটা প্রয়োজন।')}</div>`; return; }
+  const c=cfg.config||{}, plan=sum.plan||[], byTier=sum.by_tier||{}, hist=cfg.history||[];
+  const tierBadge=tier=>tier===0?`<span class="badge b-gray">${t('Not due','বাকি নয়')}</span>`:tier===1?`<span class="badge b-green">${t('Tier','টিয়ার')} 1</span>`:tier===2?`<span class="badge b-orange">${t('Tier','টিয়ার')} 2</span>`:`<span class="badge b-red">${t('Tier','টিয়ার')} 3</span>`;
+  const rows=plan.map(r=>`<tr><td><span class="c-name">${esc(r.inv)}</span><div class="c-sub">${esc(r.tenant)}</div></td><td>${esc(r.m)}</td><td class="t-amount">${money(r.due)}</td><td>${r.days_overdue>0?r.days_overdue+'d':'—'}</td><td>${tierBadge(r.tier)}</td><td>${r.last_tier?tierBadge(r.last_tier):'<span class="badge b-gray">—</span>'}</td><td>${r.email?esc(r.email):'<span class="badge b-gray">'+t('no email','ইমেইল নেই')+'</span>'}</td></tr>`).join('')||`<tr><td colspan="7" class="c-sub">${t('No unpaid invoices — all settled 🎉','কোনো অপরিশোধিত ইনভয়েস নেই — সব পরিশোধিত 🎉')}</td></tr>`;
+  const histRows=hist.slice(0,6).map(h=>rowItem('📧',esc(h.invoice_id),esc(h.sent_at)+' · via '+esc(h.via),tierBadge(h.tier))).join('')||`<div class="c-sub">${t('No reminders sent yet.','এখনো কোনো রিমাইন্ডার পাঠানো হয়নি।')}</div>`;
+  const tr=c.tiers||{};
+  const cfgChips=['1','2','3'].map(k=>{const tt=tr[k]||{};return `<div style="flex:1;padding:10px 12px;background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;font-size:11.5px"><div style="font-weight:700;margin-bottom:3px">${esc(tt.label||k)}</div><div style="color:var(--text-mute)">${tt.min_days}–${tt.max_days===999?'∞':tt.max_days} ${t('days overdue','দিন বাকি')}</div></div>`}).join('');
+  el.innerHTML=`
+    <div class="panel-b" style="border-bottom:1px solid var(--border)">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+        <span class="kr-pill ${c.enabled?'':'b-gray'}" style="${c.enabled?'':`background:var(--bg-alt);color:var(--text-mute)`}">${c.enabled?('🟢 '+t('Scheduler enabled','শিডিউলার চালু')):(t('Scheduler disabled','শিডিউলার বন্ধ'))}</span>
+        <span class="badge b-gray">${t('Last run','শেষ রান')}: ${esc(cfg.last_run||'never')}</span>
+        <span class="badge b-gray">${t('Due now','এখন বকেয়া')}: ৳${(sum.total_due||0).toLocaleString('en-IN')}</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${cfgChips}</div>
+    </div>
+    <div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Month','মাস')}</th><th>${t('Due','বাকি')}</th><th>${t('Past due','বিলম্ব')}</th><th>${t('Current tier','বর্তমান টিয়ার')}</th><th>${t('Last sent','শেষ পাঠানো')}</th><th>${t('Email','ইমেইল')}</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div style="padding:12px 18px;border-top:1px solid var(--border)"><div class="c-sub" style="margin-bottom:8px">${t('Recent sends','সাম্প্রতিক পাঠানো')}</div>${histRows}</div>`;
+}
+function reminderEdit(){
+  openDrawer('⏰ '+t('Reminder configuration','রিমাইন্ডার কনফিগারেশন'),
+    `<div id="remCfgForm"><div class="panel-b c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="reminderSaveConfig()">${t('Save config','কনফিগার সেভ')}</button></div>`);
+  apiCall('app-reminder-config').then(d=>{
+    const el=document.getElementById('remCfgForm'); if(!el||!d.ok) return;
+    const c=d.config||{};
+    const fe=JSON.stringify(c.late_fee||'').slice(1,-1);
+    const tiers=['1','2','3'].map(k=>{const tt=(c.tiers||{})[k]||{};const lab=JSON.stringify(tt.label||'').slice(1,-1);const nt=JSON.stringify(tt.note||'').slice(1,-1);return `
+      <div class="form-field"><label>Tier ${k} — ${t('label','লেবেল')}</label><input id="rtLab${k}" value="${esc(lab)}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-field"><label>${t('Min days','ন্যূনতম দিন')}</label><input id="rtMin${k}" type="number" value="${esc(tt.min_days??0)}"></div>
+        <div class="form-field"><label>${t('Max days','সর্বোচ্চ দিন')}</label><input id="rtMax${k}" type="number" value="${esc(tt.max_days??999)}"></div>
+      </div>
+      <div class="form-field"><label>${t('Note ({{month}} allowed)','নোট ({{month}} দেওয়া যায়)')}</label><textarea id="rtNote${k}" rows="2">${esc(nt)}</textarea></div>`;}).join('');
+    el.innerHTML=`
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="remEnabled" ${c.enabled?'checked':''} style="width:16px;height:16px"><label style="font-weight:600">${t('Scheduler enabled','শিডিউলার চালু')}</label></div>
+      <div class="form-field"><label>${t('Late-fee note','লেট ফি নোট')}</label><input id="remLateFee" value="${esc(fe)}"></div>
+      ${tiers}
+      <div class="c-sub" style="margin-top:10px">${t('Escalation: a tenant is emailed at most once per tier — Tier 2 only fires after Tier 1, Tier 3 after Tier 2.','এস্কেলেশন: প্রতি টিয়ারে সর্বোচ্চ একবার ইমেইল — টিয়ার ২ কেবল টিয়ার ১-এর পরে, টিয়ার ৩ কেবল টিয়ার ২-এর পরে।')}</div>`;
+  });
+}
+async function reminderSaveConfig(){
+  const cfg={enabled:!!document.getElementById('remEnabled')?.checked, late_fee:document.getElementById('remLateFee')?.value||'', tiers:{}};
+  ['1','2','3'].forEach(k=>{
+    cfg.tiers[k]={label:document.getElementById('rtLab'+k)?.value||'', min_days:parseInt(document.getElementById('rtMin'+k)?.value||'0')||0, max_days:parseInt(document.getElementById('rtMax'+k)?.value||'999')||999, note:document.getElementById('rtNote'+k)?.value||''};
+  });
+  const d=await apiCall('app-reminder-save',{config:cfg});
+  if(d.ok){ toast(t('Reminder config saved','রিমাইন্ডার কনফিগার সেভ হয়েছে')); closeDrawer(); if(state.view==='recon'){loadReminders();} }
+  else toast(d.error||'Failed');
+}
+async function reminderRun(send){
+  if(send&&!confirm(t('Send tiered rent reminders now? (escalates day 1 → 7 → 15)','এখনই টিয়ারড রিমাইন্ডার পাঠাবেন? (দিন ১ → ৭ → ১৫)')) )return;
+  const d=await apiCall('app-reminder-run',{send:!!send});
+  if(d.ok){
+    const byTier=d.by_tier||{};
+    toast((send?(t('Sent','পাঠানো হয়েছে')+' '+d.sent+' '+t('reminder(s)','রিমাইন্ডার')):(t('Preview','প্রিভিউ')+': '))+' · T1:'+(byTier['1']||0)+' T2:'+(byTier['2']||0)+' T3:'+(byTier['3']||0)+' · ৳'+(d.total_due||0).toLocaleString('en-IN'));
+    loadReminders();
+  } else toast(d.error||'Failed');
 }
 async function cleanupGateways(){
   if(!confirm(t('Mark pending gateway sessions older than 24h as expired?','২৪ ঘণ্টার বেশি পুরনো পেন্ডিং গেটওয়ে সেশন মেয়াদোত্তীর্ণ করবেন?')))return;
