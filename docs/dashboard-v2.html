@@ -509,6 +509,28 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
 .tpl-editor input[type=text],.tpl-editor textarea{width:100%;box-sizing:border-box;font:13px Inter;padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text);outline:none}
 .tpl-editor textarea{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.6;min-height:220px;resize:vertical}
 .tpl-editor select{width:100%;font:13px Inter;padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text)}
+/* ── Phase 13: document vault + handover ── */
+.vault-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.vault-chip{font:600 12px Inter;padding:7px 14px;border-radius:999px;border:1px solid var(--border);background:var(--bg-alt);cursor:pointer;color:var(--text)}
+.vault-chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.cat-h{display:flex;justify-content:space-between;align-items:center;margin:18px 0 10px}
+.cat-h h3{margin:0;font-size:12.5px;letter-spacing:1.1px;text-transform:uppercase;color:var(--text-mute)}
+.cat-h h3 span{opacity:.7;font-weight:600}
+.vault-docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.vdoc{background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.vdoc .vd-name{font-weight:700;font-size:12.5px;line-height:1.4;word-break:break-word}
+.vdoc .vd-meta{font-size:11px;color:var(--text-mute)}
+.vdoc .vd-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.vdoc .vd-acts button{font:600 11px Inter;padding:4px 9px;border-radius:7px;border:1px solid var(--border);background:var(--bg);cursor:pointer}
+.vdoc .vd-acts button.p{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hovo-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;background:var(--bg)}
+.hovo-item input[type=checkbox]{margin-top:3px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0}
+.hovo-item .hi-body{flex:1;min-width:0}
+.hovo-item .hi-label{font-size:13px;font-weight:600;color:var(--text)}
+.hovo-item .hi-label.done{text-decoration:line-through;opacity:.55}
+.hovo-item .hi-note{width:100%;box-sizing:border-box;margin-top:6px;font:12px Inter;padding:6px 9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text)}
+.hovo-prog{height:8px;border-radius:99px;background:var(--bg-alt);border:1px solid var(--border);overflow:hidden;margin:10px 0 14px}
+.hovo-prog i{display:block;height:100%;background:linear-gradient(90deg,#27AE60,#2F80ED);border-radius:99px;transition:width .25s}
 </style>
 </head>
 <body>
@@ -1606,22 +1628,24 @@ const renderers={
   },
   leases(){
     let h=pageHead(t('Leases','লিজ'),t('Tenancy agreements with legal gates applied automatically.','আইনি গেটসহ টেন্যান্সি চুক্তি।'),`${can('templates')?`<button class="btn-outline" onclick="tplPrintFor('LSE-STD','${DB.leases[0]?DB.leases[0].id:''}')">📄 ${t('Print agreement','চুক্তি প্রিন্ট')}</button>`:''}<button class="btn-primary" onclick="openNew('leases')">＋ ${t('New lease','নতুন লিজ')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th>${can('templates')?'<th>Docs</th>':''}</tr></thead><tbody>${DB.leases.map(l=>`<tr data-id="${l.id}" onclick="openDetail('leases','${l.id}')"><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td>${can('templates')?`<td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();tplPrintFor('LSE-STD','${l.id}')">📄 ${t('Agreement','চুক্তি')}</button></td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Lease</th><th>Unit</th><th>Tenant</th><th>Term</th><th>Rent</th><th>Registration</th><th>Status</th>${can('templates')||can('leases')?'<th>Actions</th>':''}</tr></thead><tbody>${DB.leases.map(l=>`<tr data-id="${l.id}" onclick="openDetail('leases','${l.id}')"><td><span class="c-name">${l.id}</span></td><td>${esc(unitById(l.u)?.name||'—')}</td><td>${esc(tenantById(l.t)?.name||'—')}</td><td>${l.start}<div class="c-sub">→ ${l.end}</div></td><td class="t-amount">${money(l.rent)}<div class="c-sub">adv ${money(l.adv)}</div></td><td>${l.reg?esc(l.reg.deed):(l.res===false?'<span class="badge b-orange">Needs deed</span>':'<span class="badge b-gray">N/A</span>')}</td><td>${badge(l.status)}</td>${(can('templates')||can('leases'))?`<td><div style="display:flex;gap:4px">${can('templates')?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();tplPrintFor('LSE-STD','${l.id}')">📄 ${t('Agreement','চুক্তি')}</button>`:''}${can('leases')?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();openHando('${l.id}')">✅ ${t('Handover','হ্যান্ডওভার')}</button>`:''}</div></td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
   invoices(){
     let h=pageHead(t('Invoices','ইনভয়েস'),t('Monthly rent invoices with TDS computed where applicable.','প্রযোজ্য ক্ষেত্রে টিডিএসসহ মাসিক ভাড়ার ইনভয়েস।'),`${can('recon')?`<button class="btn-outline" onclick="runCollections(true)">📣 ${t('Send overdue reminders','বকেয়া রিমাইন্ডার পাঠান')}</button>`:''}<button class="btn-primary" onclick="openNew('invoices')">＋ ${t('Generate invoice','ইনভয়েস তৈরি করুন')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Unit</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th></tr></thead><tbody>${DB.invoices.map(i=>{const l=leaseById(i.l);return `<tr data-id="${i.id}" onclick="openDetail('invoices','${i.id}')"><td><span class="c-name">${i.id}</span></td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td>${i.m}</td><td>${money(i.gross)}</td><td>${i.tds?money(i.tds):'—'}</td><td class="t-amount">${money(i.net)}</td><td>${badge(i.status)}</td></tr>`}).join('')}</tbody></table></div></div>`;
+    const canMail=LIVE.user&&['superadmin','owner','manager','accountant','crm'].includes(LIVE.user.role);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Unit</th><th>Month</th><th>Gross</th><th>TDS</th><th>Net</th><th>Status</th>${canMail?'<th>Send</th>':''}</tr></thead><tbody>${DB.invoices.map(i=>{const l=leaseById(i.l);return `<tr data-id="${i.id}" onclick="openDetail('invoices','${i.id}')"><td><span class="c-name">${i.id}</span></td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td>${i.m}</td><td>${money(i.gross)}</td><td>${i.tds?money(i.tds):'—'}</td><td class="t-amount">${money(i.net)}</td><td>${badge(i.status)}</td>${canMail?`<td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();emailInvoice('${i.id}')">📧 ${t('Email','ইমেইল')}</button></td>`:''}</tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   receipts(){
     let h=pageHead(t('Receipts','রসিদ'),t('Digitally signed receipts for every payment.','প্রতিটি পেমেন্টের ডিজিটাল সই করা রসিদ।'));
-    h+=`<div class="grid grid-2eq">${DB.receipts.map(r=>`<div class="panel" data-id="${r.id}"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div class="c-name" style="font-size:14px;font-weight:700">${r.id}</div><div class="c-sub">${r.date} · ${r.method}</div></div>${badge('Paid')}</div><div class="t-amount" style="font-size:20px">${money(r.amount)}</div><div class="c-sub" style="margin-top:8px">${invLbl(r.inv)}</div><div style="margin-top:12px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-mute);font-family:monospace">${r.sig} — verified ✓</div>${can('templates')?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn-ghost" style="padding:5px 12px;font-size:11.5px" onclick="tplPrintFor('RCP-RENT','${r.id}')">🖨 ${t('Print receipt','রসিদ প্রিন্ট')}</button><button class="btn-ghost" style="padding:5px 12px;font-size:11.5px" onclick="tplPrintFor('RCP-ADV','${r.id}')">${t('Advance','অগ্রিম')}</button></div>`:''}</div></div>`).join('')}</div>`;
+    h+=`<div class="grid grid-2eq">${DB.receipts.map(r=>{const pay=paymentForInv(r.inv);return `<div class="panel" data-id="${r.id}"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div class="c-name" style="font-size:14px;font-weight:700">${r.id}</div><div class="c-sub">${r.date} · ${r.method}</div></div>${badge('Paid')}</div><div class="t-amount" style="font-size:20px">${money(r.amount)}</div><div class="c-sub" style="margin-top:8px">${invLbl(r.inv)}</div><div style="margin-top:12px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-mute);font-family:monospace">${r.sig} — verified ✓</div>${(can('templates')||can('payments'))?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${can('templates')?`<button class="btn-ghost" style="padding:5px 12px;font-size:11.5px" onclick="tplPrintFor('RCP-RENT','${r.id}')">🖨 ${t('Print receipt','রসিদ প্রিন্ট')}</button><button class="btn-ghost" style="padding:5px 12px;font-size:11.5px" onclick="tplPrintFor('RCP-ADV','${r.id}')">${t('Advance','অগ্রিম')}</button>`:''}${pay?`<button class="btn-ghost" style="padding:5px 12px;font-size:11.5px" onclick="emailReceipt('${pay.id}')">📧 ${t('Email','ইমেইল')}</button>`:''}</div>`:''}</div></div>`}).join('')}</div>`;
     return h;
   },
   payments(){
     let h=pageHead(t('Payments','পেমেন্ট'),t('bKash, Nagad, bank and cheque — reconciled automatically.','বিকাশ, নগদ, ব্যাংক ও চেক — স্বয়ংক্রিয়ভাবে রিকনসাইলড।'),`<button class="btn-primary" onclick="paymentsForm()">＋ ${t('Record payment','পেমেন্ট রেকর্ড')}</button>`);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Payment</th><th>Invoice</th><th>Method</th><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th>${can('templates')?'<th>Docs</th>':''}</tr></thead><tbody>${DB.payments.map(p=>`<tr data-id="${p.id}"><td><span class="c-name">${p.id}</span></td><td>${esc(p.inv||'—')}</td><td>${p.method==='bKash'?'📱 bKash':p.method==='Nagad'?'📱 Nagad':'🏦 Bank'}</td><td>${esc(p.ref)}</td><td>${p.date}</td><td class="t-pos">+${money(p.amount)}</td><td>${badge(p.status)}</td>${can('templates')?`<td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();tplPrintFor('RCP-RENT','${p.id}')">🖨 ${t('Receipt','রসিদ')}</button></td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
+    const canMail=LIVE.user&&['superadmin','owner','manager','accountant','crm'].includes(LIVE.user.role);
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Payment</th><th>Invoice</th><th>Method</th><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th>${can('templates')||canMail?'<th>Docs</th>':''}</tr></thead><tbody>${DB.payments.map(p=>`<tr data-id="${p.id}"><td><span class="c-name">${p.id}</span></td><td>${esc(p.inv||'—')}</td><td>${p.method==='bKash'?'📱 bKash':p.method==='Nagad'?'📱 Nagad':'🏦 Bank'}</td><td>${esc(p.ref)}</td><td>${p.date}</td><td class="t-pos">+${money(p.amount)}</td><td>${badge(p.status)}</td>${(can('templates')||canMail)?`<td><div style="display:flex;gap:4px">${can('templates')?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();tplPrintFor('RCP-RENT','${p.id}')">🖨 ${t('Receipt','রসিদ')}</button>`:''}${canMail?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();emailReceipt('${p.id}')">📧</button>`:''}</div></td>`:''}</tr>`).join('')}</tbody></table></div></div>`;
     return h;
   },
   taxes(){
@@ -1750,14 +1774,17 @@ const renderers={
   /* Phase 8: documents */
   documents(){
     const isPartner=LIVE.user&&LIVE.user.role==='partner';
-    const refs=isPartner?((DB.tickets||[]).map(x=>x.id)):((DB.leases||[]).map(x=>x.id));
-    const kinds=['lease','agreement','nid','utility','ticket','notice','other'];
-    let h=pageHead(t('Documents','ডকুমেন্ট'),t('Lease deeds, agreements, NID copies and QC files — stored securely.','লিজ ডিড, চুক্তি, এনআইডি কপি ও কিউসি ফাইল — নিরাপদে সংরক্ষিত।'),`<button class="btn-primary" onclick="docForm('${isPartner?'ticket':'lease'}')">＋ ${t('Upload','আপলোড')}</button>`);
-    const docs=(DB.documents||[]).slice().sort((a,b)=>(b.ts||'').localeCompare(a.ts||''));
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>${t('Document','ডকুমেন্ট')}</th><th>${t('Kind','ধরন')}</th><th>${t('Ref','রেফ')}</th><th>${t('Uploaded by','আপলোডকারী')}</th><th>${t('Size','সাইজ')}</th><th></th></tr></thead><tbody>${
-      docs.map(d=>`<tr><td><span class="c-name">📄 ${esc(d.name)}</span><div class="c-sub">${esc(d.id)} · ${esc((d.ts||'').slice(0,16))}</div></td><td>${esc(d.kind)}</td><td>${esc(d.ref)}</td><td>${esc(d.uploaded_by)}</td><td>${d.size?(d.size/1024).toFixed(0)+' KB':'—'}</td><td><div style="display:flex;gap:6px"><button class="btn-ghost" style="padding:3px 10px;font-size:11px" onclick="downloadDoc('${d.id}')">⬇</button>${canDeleteDoc(d)?`<button class="btn-ghost" style="padding:3px 10px;font-size:11px" onclick="deleteDoc('${d.id}')">🗑</button>`:''}</div></td></tr>`).join('')||'<tr><td colspan="6" class="c-sub">No documents yet.</td></tr>'
-    }</tbody></table></div></div>`;
-    h+=`<div class="panel" style="margin-top:14px"><div class="panel-b" style="font-size:12.5px;color:var(--text-mute)">🔒 ${t('Files are stored outside the public web root and served only to authorised roles via the API — tenants see only their own lease documents.','ফাইল পাবলিক ওয়েব রুটের বাইরে রাখা হয় এবং শুধুমাত্র অনুমোদিত রোল API-এর মাধ্যমে দেখে — ভাড়াটিয়ারা শুধু নিজেদের লিজ ডকুমেন্ট দেখতে পারে।')}</div></div>`;
+    let h=pageHead(t('Documents','ডকুমেন্ট'),t('Property document vault — utility papers, legal, tax & khajna, community docs and agreement & lease papers, plus tenant lease files.','প্রপার্টি ডকুমেন্ট ভল্ট — ইউটিলিটি কাগজ, আইনি ডকুমেন্ট, ট্যাক্স ও খাজনা, কমিউনিটি ডক এবং চুক্তি ও লিজ কাগজপত্র।'),`<button class="btn-primary" onclick="vaultUpload('','')">＋ ${t('Upload','আপলোড')}</button>`);
+    if(DEMO_MODE || !TOKEN){
+      const docs=(DB.documents||[]).slice().sort((a,b)=>(b.ts||'').localeCompare(a.ts||''));
+      h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>${t('Document','ডকুমেন্ট')}</th><th>${t('Category','ক্যাটাগরি')}</th><th>${t('Ref','রেফ')}</th><th>${t('Uploaded by','আপলোডকারী')}</th><th></th></tr></thead><tbody>${
+        docs.map(d=>`<tr><td><span class="c-name">📄 ${esc(d.name)}</span><div class="c-sub">${esc(d.id)} · ${esc((d.ts||'').slice(0,16))}</div></td><td>${esc(d.cat||d.kind||'other')}</td><td>${esc(d.ref||'')}</td><td>${esc(d.uploaded_by)}</td><td><button class="btn-ghost" style="padding:3px 10px;font-size:11px" onclick="downloadDoc('${d.id}')">⬇</button></td></tr>`).join('')||'<tr><td colspan="5" class="c-sub">No documents yet.</td></tr>'
+      }</tbody></table></div></div>`;
+      h+=`<div class="panel" style="margin-top:14px"><div class="panel-b" style="font-size:12.5px;color:var(--text-mute)">🔒 ${t('Files are stored outside the public web root and served only to authorised roles via the API — tenants see only their own lease/property documents.','ফাইল পাবলিক ওয়েব রুটের বাইরে রাখা হয় এবং শুধুমাত্র অনুমোদিত রোল API-এর মাধ্যমে দেখে।')}</div></div>`;
+      return h;
+    }
+    h+=`<div id="vaultLive"><div class="panel"><div class="panel-b c-sub">${t('Loading vault…','ভল্ট লোড হচ্ছে…')}</div></div></div>`;
+    loadVault();
     return h;
   },
   /* Phase 10: referrals */
@@ -2005,16 +2032,14 @@ async function tplRenderPreview(){
 }
 function tplPrintCurrent(){
   if(!TPL.lastRender){ toast('Render a preview first'); return; }
-  const w=window.open('','_blank'); if(!w){ toast('Popup blocked'); return; }
-  w.document.write(TPL.lastRender.html); w.document.close();
+  previewDoc(TPL.lastRender.title||'Document', TPL.lastRender.html);
 }
 async function tplPrintFor(id, ref){
   try{
     const res=await fetch(API+'app-tpl-render',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify({id,ref})});
     const d=await res.json();
     if(!d.ok){ toast(d.error||'Cannot render'); return; }
-    const w=window.open('','_blank'); if(!w){ toast('Popup blocked'); return; }
-    w.document.write(d.html); w.document.close();
+    previewDoc(d.title||'Document', d.html);
   }catch(e){ toast('Print failed: '+e.message); }
 }
 function jumpTo(mod,id){
@@ -2348,14 +2373,13 @@ async function saveTicketStatus(id){
   else toast(d.error||'Update failed');
 }
 
-/* ═══ Phase 8: invoice print + WhatsApp reminder ═══ */
+/* ═══ Phase 8: invoice print + WhatsApp reminder (Phase 13: print preview drawer) ═══ */
 async function printInvoice(id){
   try{
     const res=await fetch(API+'app-invoice-print?id='+id,{headers:{Authorization:'Bearer '+TOKEN}});
     if(!res.ok){ toast('Cannot print: '+res.status); return; }
     const html=await res.text();
-    const w=window.open('','_blank'); if(!w){toast('Popup blocked');return}
-    w.document.write(html); w.document.close();
+    previewDoc(t('Invoice','ইনভয়েস')+' '+id, html);
   }catch(e){ toast('Print failed: '+e.message); }
 }
 async function waRemind(invId){
@@ -2451,6 +2475,185 @@ async function deleteDoc(id){
   const d=await apiCall('app-doc-delete',{id});
   if(d.ok){ toast('Document deleted'); await refreshData(); }
   else toast(d.error||'Failed');
+}
+
+/* ═══ Phase 13: document vault (property-based, categorized) ═══ */
+let VAULT = { docs: [], properties: [], cats: {}, sel: 'all' };
+const CAT_META = {
+  utility:   { ic: '💡', en: 'Utility papers & documents', bn: 'ইউটিলিটি কাগজপত্র' },
+  legal:     { ic: '⚖️', en: 'Legal documents', bn: 'আইনি ডকুমেন্ট' },
+  tax:       { ic: '🏛️', en: 'Tax & khajna', bn: 'ট্যাক্স ও খাজনা' },
+  community: { ic: '🏘️', en: 'Community / society documents', bn: 'কমিউনিটি ডকুমেন্ট' },
+  agreement: { ic: '📑', en: 'Agreement & lease papers', bn: 'চুক্তি ও লিজ কাগজ' },
+  other:     { ic: '📁', en: 'Other', bn: 'অন্যান্য' }
+};
+async function loadVault(){
+  let d;
+  try{ d=await apiCall('app-doc-vault'); }catch(e){ toast('Vault unavailable'); return; }
+  if(!d.ok){ toast(d.error||'Failed to load vault'); return; }
+  VAULT.docs=d.documents||[]; VAULT.properties=d.properties||[]; VAULT.cats=d.cats||{};
+  const el=$('vaultLive'); if(el) el.innerHTML=vaultHTML();
+}
+function vaultHTML(){
+  const sel=VAULT.sel;
+  const chips=`<button class="vault-chip ${sel==='all'?'active':''}" onclick="VAULT.sel='all';$('vaultLive').innerHTML=vaultHTML()">🗂 ${t('All properties','সব প্রপার্টি')}</button>`+
+    VAULT.properties.map(p=>`<button class="vault-chip ${sel===p.id?'active':''}" onclick="VAULT.sel='${p.id}';$('vaultLive').innerHTML=vaultHTML()">🏢 ${esc(p.name)}</button>`).join('');
+  const catOrder=['utility','legal','tax','community','agreement','other'];
+  const secs=catOrder.map(cat=>{
+    const docs=VAULT.docs.filter(d=>(sel==='all'?(d.p===''||true):d.p===sel)&&(d.cat||'other')===cat);
+    if(!docs.length) return '';
+    const m=CAT_META[cat]||CAT_META.other;
+    return `<div class="cat-h"><h3>${m.ic} ${t(m.en,m.bn)} <span>(${docs.length})</span></h3>
+      <button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="vaultUpload('${sel==='all'?'':sel}','${cat}')">＋ ${t('Upload','আপলোড')}</button></div>
+      <div class="vault-docs">${docs.map(d=>{
+        const sz=d.size?(d.size/1024).toFixed(0)+' KB':'—';
+        const pname=VAULT.properties.find(p=>p.id===d.p)?.name||'';
+        return `<div class="vdoc"><div class="vd-name">📄 ${esc(d.name)}</div>
+          <div class="vd-meta">${esc(d.id)} · ${sz} · ${esc((d.ts||'').slice(0,10))}<br>${esc(d.uploaded_by||'')}${pname?' · '+esc(pname):''}${d.ref?' · ref '+esc(d.ref):''}</div>
+          <div class="vd-acts">
+            <button class="p" onclick="viewDoc('${d.id}')">👁 ${t('View','দেখুন')}</button>
+            <button onclick="downloadDoc('${d.id}')">⬇ ${t('Download','ডাউনলোড')}</button>
+            ${canDeleteDoc(d)?`<button style="color:var(--danger)" onclick="deleteDoc('${d.id}')">🗑</button>`:''}
+          </div></div>`;}).join('')}</div>`;
+  }).join('');
+  return `<div class="panel"><div class="panel-b">
+    <div class="vault-chips">${chips}</div>
+    ${secs||`<div class="c-sub" style="padding:10px 0">${t('No documents in this property yet — upload the first one.','এখনো কোনো ডকুমেন্ট নেই — প্রথমটি আপলোড করুন।')}</div>`}
+  </div></div>`;
+}
+function vaultUpload(propId, cat){
+  const props=VAULT.properties.length?VAULT.properties:DB.properties;
+  openDrawer('📁 '+t('Upload to vault','ভল্টে আপলোড'),
+    `<div class="form-grid">
+      <div class="form-field"><label>${t('Property','প্রপার্টি')}</label><select id="vuProp">${props.map(p=>`<option value="${esc(p.id)}" ${p.id===propId?'selected':''}>${esc(p.name)} (${esc(p.id)})</option>`).join('')||'<option value="">—</option>'}</select></div>
+      <div class="form-field"><label>${t('Category','ক্যাটাগরি')}</label><select id="vuCat">${Object.keys(CAT_META).map(k=>`<option value="${k}" ${k===cat?'selected':''}>${CAT_META[k].ic} ${t(CAT_META[k].en,CAT_META[k].bn)}</option>`).join('')}</select></div>
+      <div class="form-field full"><label>${t('Lease ref (optional — for agreements)','লিজ রেফ (ঐচ্ছিক — চুক্তির জন্য)')}</label><select id="vuRef"><option value="">—</option>${DB.leases.map(l=>`<option value="${l.id}">${l.id} · ${esc(unitById(l.u)?.name||'')}</option>`).join('')}</select></div>
+      <div class="form-field full"><label>${t('File *','ফাইল *')} (PDF, JPG, PNG, DOCX… max 8MB)</label><input type="file" id="vuFile" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.doc,.docx,.xls,.xlsx,.txt,.csv"></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="uploadDocVault()">⬆ ${t('Upload','আপলোড')}</button></div>`);
+}
+async function uploadDocVault(){
+  const file=document.getElementById('vuFile').files[0];
+  const p=document.getElementById('vuProp').value;
+  const cat=document.getElementById('vuCat').value;
+  const ref=document.getElementById('vuRef').value;
+  if(!file){toast('Choose a file');return}
+  if(!p){toast('Pick a property');return}
+  const fd=new FormData();
+  fd.append('file',file); fd.append('p',p); fd.append('cat',cat); fd.append('kind', cat==='agreement'?'lease':'other'); fd.append('ref',ref);
+  try{
+    const res=await fetch(API+'app-doc-upload',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
+    const d=await res.json();
+    if(d.ok){ toast('Uploaded '+d.id); closeDrawer(); loadVault(); }
+    else toast(d.error||'Upload failed');
+  }catch(e){ toast('Upload error: '+e.message); }
+}
+async function viewDoc(id){
+  try{
+    const res=await fetch(API+'app-doc-view?id='+id,{headers:{Authorization:'Bearer '+TOKEN}});
+    if(!res.ok){ toast('Cannot open: '+res.status); return; }
+    const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    openDrawer('👁 '+t('Document viewer','ডকুমেন্ট ভিউয়ার'),
+      `<div class="email-frame"><iframe src="${url}" style="height:480px"></iframe></div>`,
+      `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="docPrintFrame()">🖨 ${t('Print','প্রিন্ট')}</button></div>`,
+      id);
+  }catch(e){ toast('View error: '+e.message); }
+}
+function docPrintFrame(){ const f=document.querySelector('#drawerBody iframe'); if(f) f.contentWindow.print(); }
+/* Phase 13: print preview drawer — every printable opens here first */
+function previewDoc(title, html){
+  openDrawer('🖨 '+title,
+    `<div class="email-frame"><iframe id="ppFrame" srcdoc="${esc(html)}" style="height:500px"></iframe></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="(document.getElementById('ppFrame')||{}).contentWindow?document.getElementById('ppFrame').contentWindow.print():toast('Preview not ready')">🖨 ${t('Print','প্রিন্ট')}</button></div>`,
+    title);
+}
+/* Phase 13: email invoice / receipt to tenant */
+async function emailInvoice(invId){
+  const d=await apiCall('app-invoice-email',{invoice_id:invId});
+  if(d.ok) toast(d.emailed?('📧 Invoice emailed to '+d.to):('📧 Queued — SMTP failed (see log), '+d.to));
+  else toast(d.error||'Email failed');
+}
+async function emailReceipt(pid){
+  const d=await apiCall('app-receipt-email',{payment_id:pid});
+  if(d.ok) toast(d.emailed?('📧 Receipt emailed to '+d.to):('📧 Queued — SMTP failed (see log), '+d.to));
+  else toast(d.error||'Email failed');
+}
+function paymentForInv(invId){ return (DB.payments||[]).find(p=>p.inv===invId && p.status==='Success')||(DB.payments||[]).find(p=>p.inv===invId); }
+
+/* ═══ Phase 13: property handover checklists ═══ */
+let HOVO = { lease: '', kind: 'move_in', list: [], current: null };
+async function openHando(leaseId){
+  HOVO.lease=leaseId; HOVO.kind='move_in';
+  const d=await apiCall('app-hando-list?lease='+leaseId);
+  if(!d.ok){ toast(d.error||'Cannot load checklists'); return; }
+  HOVO.list=d.checklists||[];
+  HOVO.current=HOVO.list.find(c=>c.kind===HOVO.kind)||null;
+  renderHando();
+}
+function renderHando(){
+  const l=leaseById(HOVO.lease);
+  const kindBtn=k=>`<button class="vault-chip ${HOVO.kind===k?'active':''}" onclick="HOVO.kind='${k}';HOVO.current=HOVO.list.find(c=>c.kind==='${k}')||null;renderHando()">${k==='move_in'?t('Move-in','ভাড়া শুরু'):t('Move-out','ভাড়া শেষ')}</button>`;
+  const c=HOVO.current;
+  let body=`
+    <div class="tpl-editor">
+      <div style="display:flex;gap:8px;margin-bottom:8px">${kindBtn('move_in')}${kindBtn('move_out')}</div>
+      <div style="font-size:13px;color:var(--text-soft);margin-bottom:4px">${esc(l?l.id+' · '+esc(unitById(l.u)?.name||'')+' · '+esc(tenantById(l.t)?.name||''):HOVO.lease)}</div>`;
+  if(!c){
+    body+=`<div class="panel" style="margin-top:10px"><div class="panel-b c-sub">${t('No checklist yet for this handover type.','এই হ্যান্ডওভার টাইপের জন্য এখনো চেকলিস্ট নেই।')}</div></div>`;
+  } else {
+    const items=c.items||[];
+    const done=items.filter(i=>i.checked===1).length;
+    const pct=items.length?Math.round(done/items.length*100):0;
+    body+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+      <span class="badge ${c.status==='Completed'?'b-green':'b-orange'}">${esc(c.status)}</span>
+      <span style="font-size:12px;color:var(--text-mute)">${done}/${items.length} · ${pct}%</span></div>
+      <div class="hovo-prog"><i style="width:${pct}%"></i></div>`;
+    body+=items.map(it=>`
+      <div class="hovo-item">
+        <input type="checkbox" id="hovoChk_${esc(it.id)}" ${it.checked===1?'checked':''} onchange="hovoProgUpdate()">
+        <div class="hi-body">
+          <div class="hi-label ${it.checked===1?'done':''}" id="hovoLbl_${esc(it.id)}">${esc(it.label)}</div>
+          <input class="hi-note" type="text" id="hovoNote_${esc(it.id)}" value="${esc(it.note)}" placeholder="${t('Note (e.g. meter reading)','নোট (যেমন মিটার রিডিং)')}">
+        </div>
+      </div>`).join('');
+    body+=`<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn-primary" onclick="handoSave()">💾 ${t('Save checklist','চেকলিস্ট সেভ')}</button>
+      <button class="btn-outline" style="color:var(--danger)" onclick="handoDelete()">🗑 ${t('Delete','মুছুন')}</button></div>`;
+  }
+  body+=`</div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>
+    ${!c?`<button class="btn-primary" onclick="handoCreate()">＋ ${t('Create checklist','চেকলিস্ট তৈরি')}</button>`:''}</div>`;
+  openDrawer('✅ '+t('Property handover','প্রপার্টি হ্যান্ডওভার'), body, foot, HOVO.lease+' · '+HOVO.kind);
+}
+function hovoProgUpdate(){
+  const items=(HOVO.current&&HOVO.current.items)||[];
+  let done=0;
+  items.forEach(it=>{ if(document.getElementById('hovoChk_'+it.id)&&document.getElementById('hovoChk_'+it.id).checked){ done++; const lbl=document.getElementById('hovoLbl_'+it.id); if(lbl) lbl.classList.add('done'); } const lbl2=document.getElementById('hovoLbl_'+it.id); if(lbl2&&!document.getElementById('hovoChk_'+it.id).checked) lbl2.classList.remove('done'); });
+  const pct=items.length?Math.round(done/items.length*100):0;
+  const bar=document.querySelector('.hovo-prog i'); if(bar) bar.style.width=pct+'%';
+}
+async function handoCreate(){
+  const d=await apiCall('app-hando-create',{lease:HOVO.lease,kind:HOVO.kind});
+  if(d.ok){ toast('Checklist created '+d.id); await openHando(HOVO.lease); }
+  else toast(d.error||'Create failed');
+}
+async function handoSave(){
+  const c=HOVO.current; if(!c){ toast('No checklist to save'); return; }
+  const items=(c.items||[]).map(it=>({
+    id: it.id, label: it.label,
+    checked: document.getElementById('hovoChk_'+it.id)&&document.getElementById('hovoChk_'+it.id).checked?1:0,
+    note: (document.getElementById('hovoNote_'+it.id)||{}).value||''
+  }));
+  const d=await apiCall('app-hando-save',{id:c.id,items});
+  if(d.ok){ toast('Saved — '+d.status+' ('+d.done+'/'+d.total+')'); await openHando(HOVO.lease); }
+  else toast(d.error||'Save failed');
+}
+async function handoDelete(){
+  const c=HOVO.current; if(!c) return;
+  if(!confirm('Delete this checklist?')) return;
+  const d=await apiCall('app-hando-delete',{id:c.id});
+  if(d.ok){ toast('Checklist deleted'); await openHando(HOVO.lease); } else toast(d.error||'Delete failed');
 }
 
 /* ═══ Phase 10: referral copy/share ═══ */
