@@ -3322,6 +3322,10 @@ async function openSettings(){
   }
   const notifyRow=(key,label,bn)=>{const on=!!prefs[key];return `<div class="row-item"><div class="ri-body"><div class="ri-t">${t(label,bn)}</div></div><div class="ri-r"><label class="kr-sw"><input type="checkbox" id="set_${key}" ${on?'checked':''}><span></span></label></div></div>`};
   PREF_THEME=prefs.theme||'light'; PREF_LANG=prefs.lang||'en';
+  const rid=DEMO_MODE?(role().id||''):(u.role||'');
+  const canOrg=['superadmin','owner','manager'].includes(rid);
+  let ORG_CFG={inv_prefix:'INV-',org_name:'KRTaker',org_tagline:'AI CARETAKER',default_lease_months:12,khajna_calendar:[],invoice_footer:'This is a system-generated invoice from KRTaker — your AI caretaker.'};
+  if(canOrg&&TOKEN&&!DEMO_MODE){ const r=await apiCall('app-org-settings-get'); if(r.ok) ORG_CFG=r.cfg; }
   openDrawer(t('Settings','সেটিংস'),
     `<div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">👤</span>${t('Profile','প্রোফাইল')}</div></div><div class="panel-b">
       <div class="form-field"><label>${t('Name','নাম')}</label><input id="setName" value="${nameVal}"></div>
@@ -3356,6 +3360,15 @@ async function openSettings(){
       </div>
       <button class="btn-primary" style="width:100%;margin-top:10px" onclick="saveSettings()">${t('Save preferences','পছন্দ সংরক্ষণ')}</button>
     </div></div>
+    ${canOrg?`<div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">🏢</span>${t('Organization settings','প্রতিষ্ঠান সেটিংস')}</div></div><div class="panel-b">
+      <div class="form-field"><label>${t('Organization name','প্রতিষ্ঠানের নাম')}</label><input id="orgName" value="${esc(ORG_CFG.org_name||'')}"></div>
+      <div class="form-field"><label>${t('Tagline','ট্যাগলাইন')}</label><input id="orgTagline" value="${esc(ORG_CFG.org_tagline||'')}"></div>
+      <div class="form-field"><label>${t('Invoice prefix','ইনভয়েস প্রিফিক্স')}</label><input id="orgInvPrefix" value="${esc(ORG_CFG.inv_prefix||'INV-')}" placeholder="INV-"></div>
+      <div class="form-field"><label>${t('Default lease months','ডিফল্ট লিজ মাস')}</label><input id="orgLeaseMonths" type="number" min="1" max="120" value="${esc(String(ORG_CFG.default_lease_months||12))}"></div>
+      <div class="form-field"><label>${t('Khajna calendar (Property ID | due date)','খাজনা ক্যালেন্ডার (প্রপার্টি আইডি | তারিখ)')}</label><textarea id="orgKhajna" rows="3" placeholder="P-001 | 30 Jun">${esc((ORG_CFG.khajna_calendar||[]).map(k=>k.p+' | '+k.due).join('\n'))}</textarea></div>
+      <div class="form-field"><label>${t('Invoice footer','ইনভয়েস ফুটার')}</label><textarea id="orgFooter" rows="2">${esc(ORG_CFG.invoice_footer||'')}</textarea></div>
+      <button class="btn-primary" style="width:100%" onclick="saveOrgSettings()">${t('Save organization settings','প্রতিষ্ঠান সেটিংস সংরক্ষণ')}</button>
+    </div></div>`:''}
     <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Payment gateways','পেমেন্ট গেটওয়ে')}</div></div><div class="panel-b" id="setGw"></div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`);
   gwConfig().then(gws=>{
@@ -3402,6 +3415,17 @@ async function saveSettings(){
   state.theme=saved.theme||state.theme; applyTheme();
   if((saved.lang||state.lang)!==state.lang){ state.lang=saved.lang; localStorage.setItem('krtaker_dash_lang',state.lang); $('langBtn').textContent=state.lang==='en'?'বাংলা':'EN'; renderNav(); render(); updateCrumb(); }
   toast('Preferences saved ✓');
+}
+async function saveOrgSettings(){
+  const khaj=(document.getElementById('orgKhajna').value||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const m=l.split('|'); return {p:(m[0]||'').trim(), due:(m[1]||'').trim()};});
+  const cfg={org_name:document.getElementById('orgName').value, org_tagline:document.getElementById('orgTagline').value,
+             inv_prefix:document.getElementById('orgInvPrefix').value, default_lease_months:parseInt(document.getElementById('orgLeaseMonths').value)||12,
+             khajna_calendar:khaj, invoice_footer:document.getElementById('orgFooter').value};
+  if(TOKEN&&!DEMO_MODE){
+    const d=await apiCall('app-org-settings-save',{cfg});
+    if(!d.ok){ toast(d.error||'Failed to save'); return; }
+    toast('Organization settings saved ✓');
+  } else toast('Organization settings saved ✓ (demo)');
 }
 function gatewayPayTenant(){
   const mine=DB.invoices.filter(i=>i.status!=='Paid');
