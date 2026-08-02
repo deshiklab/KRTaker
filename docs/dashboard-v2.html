@@ -3698,7 +3698,7 @@ async function openSettings(){
   const u=LIVE.user||{};
   const isStaff=!!u.is_staff;
   const nameVal=esc(u.name||''); const orgVal=esc(u.org||''); const phoneVal=esc(u.phone||'');
-  const prefs = {theme:'light',lang:'en',notify_rent:true,notify_collections:true,notify_renewal:true,notify_docs:true,wa_reminders:true,email_digest:true};
+  const prefs = {theme:'light',lang:'en',notify_rent:true,notify_collections:true,notify_renewal:true,notify_docs:true,wa_reminders:true,email_digest:true,notify_premium:true};
   let authed=false;
   if(TOKEN&&!DEMO_MODE){
     const r=await apiCall('app-settings-get');
@@ -3745,6 +3745,7 @@ async function openSettings(){
         ${notifyRow('notify_docs','Document & receipt emails','ডকুমেন্ট ও রসিদ ইমেইল')}
         ${notifyRow('wa_reminders','WhatsApp reminders','হোয়াটসঅ্যাপ রিমাইন্ডার')}
         ${notifyRow('email_digest','Daily email digest','দৈনিক ইমেইল ডাইজেস্ট')}
+        ${notifyRow('notify_premium','Caretaker updates','কেয়ারটেকার আপডেট')}
       </div>
       <button class="btn-primary" style="width:100%;margin-top:10px" onclick="saveSettings()">${t('Save preferences','পছন্দ সংরক্ষণ')}</button>
     </div></div>
@@ -3790,7 +3791,7 @@ function pickPrefTheme(v){ PREF_THEME=v; const d=$('setThemeDark'), l=$('setThem
 function pickPrefLang(v){ PREF_LANG=v; const e=$('setLangEn'), b=$('setLangBn'); if(e)e.classList.toggle('btn-primary',v==='en'); if(b)b.classList.toggle('btn-primary',v==='bn'); }
 async function saveSettings(){
   const prefs={theme:PREF_THEME,lang:PREF_LANG};
-  ['notify_rent','notify_collections','notify_renewal','notify_docs','wa_reminders','email_digest'].forEach(k=>{
+  ['notify_rent','notify_collections','notify_renewal','notify_docs','wa_reminders','email_digest','notify_premium'].forEach(k=>{
     const el=document.getElementById('set_'+k); if(el) prefs[k]=el.checked;
   });
   let saved=prefs;
