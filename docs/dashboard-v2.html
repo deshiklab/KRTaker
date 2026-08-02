@@ -870,11 +870,25 @@ const SEED = {
   ],
   insurance_policies:[
     {id:'POL-001',tenant:'T-002',plan:'IP-001',lease:'L-007',premium:449,coverage:120000,score:72,status:'active',start:'2026-07-15',end:'2027-07-15',claim:'',claim_amt:0,plan_name:'Rent Guarantee',tenant_name:'Sultana Rahman'}
+  ],
+  statement_payouts:[
+    {prop:'P-001',month:'2026-06',amount:186400,status:'Paid',method:'Bank',ref:'NPSB-88412'},
+    {prop:'P-002',month:'2026-06',amount:883000,status:'Paid',method:'Bank',ref:'NPSB-88415'},
+    {prop:'P-005',month:'2026-06',amount:34500,status:'Scheduled',method:'',ref:''},
+    {prop:'P-001',month:'2026-05',amount:181200,status:'Paid',method:'Bank',ref:'NPSB-87840'},
+    {prop:'P-002',month:'2026-05',amount:876500,status:'Paid',method:'Bank',ref:'NPSB-87843'}
+  ],
+  compliance_items:[
+    {id:'CPL-001',entity_type:'property',entity_id:'P-001',item:'fire_safety',label:'Fire safety certificate — Green View Residency',ref_no:'BFSCD-2041',issue_date:'2025-08-01',expiry_date:'2026-07-15',status:'active',notes:'Annual inspection — certificate expired',entity_label:'Green View Residency'},
+    {id:'CPL-002',entity_type:'property',entity_id:'P-005',item:'trade_license',label:'Trade license — Dhanmondi Apartment',ref_no:'DNCC-TL-8821',issue_date:'2025-09-01',expiry_date:'2026-09-05',status:'active',notes:'Renew before expiry at DNCC',entity_label:'Dhanmondi Apartment'},
+    {id:'CPL-003',entity_type:'property',entity_id:'P-002',item:'fire_safety',label:'Fire safety certificate — Banani Commercial Tower',ref_no:'BFSCD-2042',issue_date:'2025-08-01',expiry_date:'2026-08-01',status:'active',notes:'Annual inspection due now',entity_label:'Banani Commercial Tower'},
+    {id:'CPL-004',entity_type:'tenant',entity_id:'T-002',item:'nid',label:'NID on file — Sultana Rahman',ref_no:'1992123456789',issue_date:'',expiry_date:'2036-12-31',status:'active',notes:'Identity document on file',entity_label:'Sultana Rahman'},
+    {id:'CPL-005',entity_type:'lease',entity_id:'L-007',item:'lease_expiry',label:'Lease expiry — Sultana Rahman · Apartment 7B',ref_no:'L-007',issue_date:'',expiry_date:'2026-12-14',status:'active',notes:'Renew or vacate before this date',entity_label:'Apartment 7B'}
   ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','maintenance','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','invoices','receipts','payments','taxes','statements','maintenance','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
@@ -884,20 +898,20 @@ const ROLES = [
   {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','compliance','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','ai','notices','documents','referrals']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','ai','analytics','notices','documents','recon','templates']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
-  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
+  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
   {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['leads','📥','Leads'],['compliance','⚖️','Compliance']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','maintenance':'🔧','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','maintenance':'Maintenance','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','maintenance':'🔧','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','maintenance':'Maintenance','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Maintenance':'রক্ষণাবেক্ষণ','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Maintenance':'রক্ষণাবেক্ষণ','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -1994,6 +2008,191 @@ async function leadStatus(id, status){
   closeDrawer(); await refreshData(); if(state.view==='leads'){ render(); }
 }
 
+/* ═══ Phase 32: owner statements & P&L ═══ */
+async function statementsLoad(){
+  const host = document.getElementById('statementsLive'); if(!host) return;
+  const month = document.getElementById('stmtMonth')?.value || '2026-08';
+  let stats = [];
+  if(TOKEN && !DEMO_MODE){
+    const d = await apiCall('app-statements?action=list&month='+month);
+    if(d.ok) stats = d.statements||[];
+  } else {
+    stats = (DB.properties||[]).map(p=>{
+      const pct=(DB.property_rent||[]).find(r=>r.prop===p.id)?.service_charge_pct||0;
+      const invs=(DB.invoices||[]).filter(i=>i.m===month&&(DB.leases||[]).some(l=>l.id===i.l&&(DB.units||[]).some(u=>u.id===l.u&&u.p===p.id)));
+      let gross=0,tds=0,service=0,collected=0;
+      invs.forEach(i=>{gross+=i.gross||0;tds+=i.tds||0;service+=Math.round((i.gross||0)*pct/100);collected+=(DB.payments||[]).filter(x=>x.inv===i.id&&x.status==='Success').reduce((s,x)=>s+x.amount,0);});
+      const expenses=(DB.maintenance_requests||[]).filter(x=>x.prop===p.id&&x.actual_cost>0&&['Resolved','Closed'].includes(x.status)&&['owner','service'].includes(x.charge_to)).reduce((s,x)=>s+x.actual_cost,0);
+      const payout=(DB.statement_payouts||[]).find(x=>x.prop===p.id&&x.month===month)||null;
+      return {prop:p.id,name:p.name,type:p.type||'',gross,collected,tds,service,expenses,net:collected-tds-service-expenses,payout};
+    });
+  }
+  const canPayout = ['superadmin','owner','accountant'].includes(role().id);
+  const totC=stats.reduce((s,x)=>s+x.collected,0), totT=stats.reduce((s,x)=>s+x.tds,0), totE=stats.reduce((s,x)=>s+x.expenses,0), totN=stats.reduce((s,x)=>s+x.net,0);
+  host.innerHTML = statsRow([
+    stat(t('Collected','আদায়'),moneyC(totC),month,'pos','💳'),
+    stat(t('TDS withheld','টিডিএস কর্তন'),moneyC(totT),t('government','সরকার'),'warn','🏛️'),
+    stat(t('Expenses','খরচ'),moneyC(totE),t('maintenance & service','রক্ষণাবেক্ষণ ও সার্ভিস'),'warn','🔧'),
+    stat(t('Net payout','নিট পেআউট'),moneyC(totN),t('after deductions','কর্তনের পর'),totN>=0?'pos':'warn','💰')
+  ]) + `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin-top:18px">` + stats.map(s=>{
+    const po=s.payout;
+    const poChip = po ? `<span class="badge ${po.status==='Paid'?'b-green':'b-orange'}">${t(po.status,po.status)} · ${money(po.amount)}</span>` : `<span class="badge b-gray">${t('No payout','পেআউট নেই')}</span>`;
+    return `<div class="panel" style="cursor:pointer" onclick="statementDetail('${esc(s.prop)}','${month}')"><div class="panel-h"><div class="t"><span class="pi">🏢</span>${esc(s.name)}</div>${poChip}</div><div class="panel-b">
+      <div class="kv"><span class="k">${t('Rent collected','ভাড়া আদায়')}</span><span class="v">${money(s.collected)}</span></div>
+      <div class="kv"><span class="k">${t('TDS','টিডিএস')}</span><span class="v warn">− ${money(s.tds)}</span></div>
+      <div class="kv"><span class="k">${t('Service charge','সার্ভিস চার্জ')}</span><span class="v warn">− ${money(s.service)}</span></div>
+      <div class="kv"><span class="k">${t('Expenses','খরচ')}</span><span class="v warn">− ${money(s.expenses)}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)"><span style="font-weight:800;font-size:15px">${t('Net payout','নিট পেআউট')}</span><span style="font-weight:800;font-size:16px;color:var(--accent)">${money(s.net)}</span></div>
+      <div style="margin-top:10px;display:flex;gap:6px">${canPayout?`<button class="btn-outline" style="padding:5px 12px;font-size:11.5px" onclick="event.stopPropagation();statementPayoutForm('${esc(s.prop)}','${month}','${s.net}')">💰 ${t('Record payout','পেআউট লিপিবদ্ধ')}</button>`:''}<button class="btn-ghost" style="padding:5px 12px;font-size:11.5px" onclick="event.stopPropagation();statementDetail('${esc(s.prop)}','${month}')">${t('Full statement','সম্পূর্ণ স্টেটমেন্ট')}</button></div>
+    </div></div>`;
+  }).join('') + `</div>`;
+}
+async function statementDetail(prop, month){
+  let d={};
+  if(TOKEN && !DEMO_MODE){
+    d = await apiCall('app-statements?action=detail&prop='+prop+'&month='+month);
+  } else {
+    const p=(DB.properties||[]).find(x=>x.id===prop);
+    const pct=(DB.property_rent||[]).find(r=>r.prop===prop)?.service_charge_pct||0;
+    const invs=(DB.invoices||[]).filter(i=>i.m===month&&(DB.leases||[]).some(l=>l.id===i.l&&(DB.units||[]).some(u=>u.id===l.u&&u.p===prop)));
+    d.lines=invs.map(i=>{const l=(DB.leases||[]).find(x=>x.id===i.l);const u=l?(DB.units||[]).find(x=>x.id===l.u):null;const t2=l?(DB.tenants||[]).find(x=>x.id===l.t):null;const collected=(DB.payments||[]).filter(x=>x.inv===i.id&&x.status==='Success').reduce((s,x)=>s+x.amount,0);return {inv:i.id,unit_name:u?.name||'',tenant_name:t2?.name||'',gross:i.gross||0,tds:i.tds||0,collected,service:Math.round((i.gross||0)*pct/100),inv_status:i.status};});
+    d.expense_items=(DB.maintenance_requests||[]).filter(x=>x.prop===prop&&x.actual_cost>0&&['Resolved','Closed'].includes(x.status)&&['owner','service'].includes(x.charge_to)).map(x=>({id:x.id,title:x.title,actual_cost:x.actual_cost,charge_to:x.charge_to}));
+    d.payout=(DB.statement_payouts||[]).find(x=>x.prop===prop&&x.month===month)||null;
+    d.name=p?.name||prop;
+  }
+  if(!d.ok && !d.lines){ toast(d.error||'Not found'); return; }
+  const lines=d.lines||[];
+  const expenses=d.expense_items||[];
+  const totals = {gross:lines.reduce((s,x)=>s+x.gross,0), collected:lines.reduce((s,x)=>s+x.collected,0), tds:lines.reduce((s,x)=>s+x.tds,0), service:lines.reduce((s,x)=>s+x.service,0), exp:expenses.reduce((s,x)=>s+x.actual_cost,0)};
+  const net=totals.collected-totals.tds-totals.service-totals.exp;
+  const po=d.payout;
+  const body=`<div class="dr-kv">
+    <div class="kv"><span class="k">${t('Property','সম্পত্তি')}</span><span class="v">${esc(d.name)}</span></div>
+    <div class="kv"><span class="k">${t('Month','মাস')}</span><span class="v">${month}</span></div>
+    ${po?`<div class="kv"><span class="k">${t('Payout','পেআউট')}</span><span class="v">${badge(po.status)} · ${money(po.amount)}${po.method?' · '+esc(po.method):''}${po.ref?' · '+esc(po.ref):''}</span></div>`:''}
+  </div>
+  <div class="panel" style="margin-top:12px"><div class="panel-h"><div class="t">${t('Rent lines','ভাড়ার খাতা')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Unit','ইউনিট')}</th><th>${t('Tenant','ভাড়াটিয়া')}</th><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Gross','মোট')}</th><th>${t('Collected','আদায়')}</th><th>${t('TDS','টিডিএস')}</th><th>${t('Service','সার্ভিস')}</th></tr></thead><tbody>${lines.map(x=>`<tr><td>${esc(x.unit_name||'—')}</td><td>${esc(x.tenant_name||'—')}</td><td>${esc(x.inv||'—')}</td><td class="t-amount">${money(x.gross)}</td><td class="t-pos">${money(x.collected)}</td><td>${x.tds?money(x.tds):'—'}</td><td>${money(x.service)}</td></tr>`).join('')||`<tr><td colspan="7" class="m">${t('No invoices this month','এই মাসে কোনো ইনভয়েস নেই')}</td></tr>`}</tbody></table></div></div>
+  ${expenses.length?`<div class="panel" style="margin-top:12px"><div class="panel-h"><div class="t">${t('Expenses','খরচ')}</div></div><div class="panel-b">${expenses.map(x=>`<div class="kv"><span class="k">${esc(x.title)}</span><span class="v warn">− ${money(x.actual_cost)}</span></div>`).join('')}</div></div>`:''}
+  <div class="panel" style="margin-top:12px"><div class="panel-b">
+    <div class="kv"><span class="k">${t('Rent collected','ভাড়া আদায়')}</span><span class="v">${money(totals.collected)}</span></div>
+    <div class="kv"><span class="k">${t('TDS withheld','টিডিএস কর্তন')}</span><span class="v warn">− ${money(totals.tds)}</span></div>
+    <div class="kv"><span class="k">${t('Service charge','সার্ভিস চার্জ')}</span><span class="v warn">− ${money(totals.service)}</span></div>
+    <div class="kv"><span class="k">${t('Expenses','খরচ')}</span><span class="v warn">− ${money(totals.exp)}</span></div>
+    <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)"><span style="font-weight:800">${t('Net payout','নিট পেআউট')}</span><span style="font-weight:800;color:var(--accent)">${money(net)}</span></div>
+  </div></div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>${['superadmin','owner','accountant'].includes(role().id)?`<button class="btn-primary" onclick="statementPayoutForm('${esc(prop)}','${month}','${net}')">💰 ${t('Record payout','পেআউট লিপিবদ্ধ')}</button>`:''}</div>`;
+  openDrawer(`💰 ${t('Owner statement','মালিক স্টেটমেন্ট')} — ${esc(d.name)}`, body, foot);
+}
+function statementPayoutForm(prop, month, net){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Property','সম্পত্তি')}</label><input disabled value="${esc(prop)}"></div>
+    <div class="form-field"><label>${t('Month','মাস')}</label><input disabled value="${month}"></div>
+    <div class="form-field"><label>${t('Amount (৳)','পরিমাণ')}</label><input id="po_amount" type="number" value="${net||0}"></div>
+    <div class="form-field"><label>${t('Status','স্ট্যাটাস')}</label><select id="po_status"><option value="Paid">Paid</option><option value="Scheduled">Scheduled</option></select></div>
+    <div class="form-field"><label>${t('Method','পদ্ধতি')}</label><select id="po_method"><option value="Bank">Bank</option><option value="bKash">bKash</option><option value="Nagad">Nagad</option></select></div>
+    <div class="form-field"><label>${t('Reference','রেফারেন্স')}</label><input id="po_ref" placeholder="NPSB-…"></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="statementDetail('${esc(prop)}','${month}')">${t('Back','ফিরুন')}</button><button class="btn-primary" onclick="statementPayoutSubmit('${esc(prop)}','${month}')">${t('Save payout','পেআউট সংরক্ষণ')}</button></div>`;
+  openDrawer(`💰 ${t('Record payout','পেআউট লিপিবদ্ধ')} — ${esc(prop)}`, body, foot);
+}
+async function statementPayoutSubmit(prop, month){
+  const payload={action:'payout', prop, month, amount:parseInt(document.getElementById('po_amount')?.value||'0',10), status:document.getElementById('po_status')?.value, method:document.getElementById('po_method')?.value, ref:document.getElementById('po_ref')?.value};
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-statements', payload);
+  if(!d.ok){ toast(d.error||'Save failed'); return; }
+  toast(t('Payout recorded','পেআউট লিপিবদ্ধ হয়েছে'));
+  if(DEMO_MODE){ DB.statement_payouts=(DB.statement_payouts||[]).filter(x=>!(x.prop===prop&&x.month===month)); DB.statement_payouts.push({prop,month,amount:payload.amount,status:payload.status,method:payload.method,ref:payload.ref}); }
+  closeDrawer(); await refreshData(); if(state.view==='statements'){ render(); }
+}
+
+/* ═══ Phase 33: compliance & expiry tracker ═══ */
+function daysBetween(from, to){
+  if(!to) return 999;
+  const a=new Date(from+'T00:00:00'), b=new Date(to+'T00:00:00');
+  return Math.round((b-a)/86400000);
+}
+async function complianceLoad(){
+  const host = document.getElementById('complianceLive'); if(!host) return;
+  let items=[], today=new Date().toISOString().slice(0,10);
+  if(TOKEN && !DEMO_MODE){
+    const d = await apiCall('app-compliance?action=list');
+    if(d.ok){ items=d.items||[]; today=d.today||today; }
+  } else {
+    items=(DB.compliance_items||[]).map(x=>({...x}));
+    items.forEach(x=>{ const dl=daysBetween(today,x.expiry_date); x.days_left=dl; x.status = (!x.expiry_date||dl>45)?'valid':(dl<0?'expired':'expiring_soon'); });
+  }
+  const nValid=items.filter(x=>x.status==='valid').length;
+  const nSoon=items.filter(x=>x.status==='expiring_soon').length;
+  const nExp=items.filter(x=>x.status==='expired').length;
+  const CLS={'valid':'b-green','expiring_soon':'b-orange','expired':'b-red'};
+  const LABEL={'valid':t('Valid','সঠিক'),'expiring_soon':t('Expiring soon','মেয়াদোন্নত হতে চলেছে'),'expired':t('Expired','মেয়াদোত্তীর্ণ')};
+  const canManage=['superadmin','owner','manager'].includes(role().id);
+  host.innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+    <div class="panel" style="padding:10px 16px;flex:1;min-width:120px"><div class="kv" style="margin:0"><span class="k">${t('Valid','সঠিক')}</span><span class="v" style="font-size:18px;font-weight:800">${nValid}</span></div></div>
+    <div class="panel" style="padding:10px 16px;flex:1;min-width:120px"><div class="kv" style="margin:0"><span class="k">${t('Expiring ≤ 45d','৪৫ দিনের মধ্যে মেয়াদ')}</span><span class="v" style="font-size:18px;font-weight:800;color:var(--warn)">${nSoon}</span></div></div>
+    <div class="panel" style="padding:10px 16px;flex:1;min-width:120px"><div class="kv" style="margin:0"><span class="k">${t('Expired','মেয়াদোত্তীর্ণ')}</span><span class="v" style="font-size:18px;font-weight:800;color:#B91C1C">${nExp}</span></div></div>
+  </div>
+  <div class="panel"><div class="tbl-wrap"><table><thead><tr><th>${t('Document','ডকুমেন্ট')}</th><th>${t('Entity','এনটিটি')}</th><th>${t('Reference','রেফারেন্স')}</th><th>${t('Expiry','মেয়াদ')}</th><th>${t('Days','দিন')}</th><th>${t('Status','স্ট্যাটাস')}</th>${canManage?'<th>'+t('Actions','অ্যাকশন')+'</th>':''}</tr></thead><tbody>` +
+    items.map(x=>`<tr><td><span class="c-name">${esc(x.label)}</span>${x.notes?`<div class="c-sub">${esc(x.notes)}</div>`:''}</td><td>${esc(x.entity_label||x.entity_id||'—')}</td><td>${esc(x.ref_no||'—')}</td><td>${x.expiry_date||'—'}</td><td>${x.expiry_date?(x.days_left<0?`<span class="warn">${x.days_left}</span>`:x.days_left):'—'}</td><td><span class="badge ${CLS[x.status]||'b-gray'}">${LABEL[x.status]||x.status}</span></td>${canManage?`<td><div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="complianceEdit('${esc(x.id)}')">✏️</button>${['superadmin','owner'].includes(role().id)?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="complianceDelete('${esc(x.id)}')">🗑️</button>`:''}</div></td>`:''}</tr>`).join('')
+    + `</tbody></table></div></div>`;
+}
+function complianceForm(){
+  const props=(DB.properties||[]).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Entity type','এনটিটি টাইপ')}</label><select id="cpl_etype"><option value="property">Property</option><option value="lease">Lease</option><option value="tenant">Tenant</option></select></div>
+    <div class="form-field"><label>${t('Entity','এনটিটি')}</label><select id="cpl_eid">${props}</select></div>
+    <div class="form-field"><label>${t('Document','ডকুমেন্ট')}</label><select id="cpl_item"><option value="trade_license">Trade license</option><option value="fire_safety">Fire safety certificate</option><option value="nid">NID / BIN</option><option value="insurance">Insurance policy</option><option value="lease_expiry">Lease expiry</option><option value="other">Other</option></select></div>
+    <div class="form-field full"><label>${t('Label','লেবেল')}</label><input id="cpl_label" placeholder="e.g. Trade license — Green View Residency"></div>
+    <div class="form-field"><label>${t('Reference no.','রেফারেন্স')}</label><input id="cpl_ref" placeholder="DNCC-TL-…"></div>
+    <div class="form-field"><label>${t('Issue date','ইস্যুর তারিখ')}</label><input id="cpl_issue" type="date"></div>
+    <div class="form-field"><label>${t('Expiry date','মেয়াদের তারিখ')}</label><input id="cpl_expiry" type="date"></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><textarea id="cpl_notes" rows="2"></textarea></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="complianceSubmit()">${t('Add document','ডকুমেন্ট যোগ করুন')}</button></div>`;
+  openDrawer(`⚖️ ${t('Add compliance document','কমপ্লায়েন্স ডকুমেন্ট যোগ করুন')}`, body, foot);
+}
+async function complianceSubmit(){
+  const payload={action:'create', entity_type:document.getElementById('cpl_etype')?.value, entity_id:document.getElementById('cpl_eid')?.value, item:document.getElementById('cpl_item')?.value, label:document.getElementById('cpl_label')?.value, ref_no:document.getElementById('cpl_ref')?.value, issue_date:document.getElementById('cpl_issue')?.value, expiry_date:document.getElementById('cpl_expiry')?.value, notes:document.getElementById('cpl_notes')?.value};
+  if(!payload.label){ toast(t('Label required','লেবেল প্রয়োজন')); return; }
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-compliance', payload);
+  if(!d.ok){ toast(d.error||'Add failed'); return; }
+  toast(t('Document added','ডকুমেন্ট যোগ হয়েছে'));
+  if(DEMO_MODE){ (DB.compliance_items=DB.compliance_items||[]).push({id:d.id||('CPL-'+Math.floor(Math.random()*900+100)),entity_type:payload.entity_type,entity_id:payload.entity_id,item:payload.item,label:payload.label,ref_no:payload.ref_no,issue_date:payload.issue_date,expiry_date:payload.expiry_date,notes:payload.notes,entity_label:(DB.properties||[]).find(p=>p.id===payload.entity_id)?.name||''}); }
+  closeDrawer(); await refreshData(); if(state.view==='compliance'){ render(); }
+}
+function complianceEdit(id){
+  const x=(DB.compliance_items||[]).find(i=>i.id===id);
+  if(!x){ toast('Not found'); return; }
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Label','লেবেল')}</label><input id="cplE_label" value="${esc(x.label)}" disabled></div>
+    <div class="form-field"><label>${t('Reference no.','রেফারেন্স')}</label><input id="cplE_ref" value="${esc(x.ref_no||'')}"></div>
+    <div class="form-field"><label>${t('Expiry date','মেয়াদের তারিখ')}</label><input id="cplE_expiry" type="date" value="${esc(x.expiry_date||'')}"></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><textarea id="cplE_notes" rows="2">${esc(x.notes||'')}</textarea></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="complianceUpdate('${esc(id)}')">${t('Save','সংরক্ষণ')}</button></div>`;
+  openDrawer(`⚖️ ${t('Edit document','ডকুমেন্ট সম্পাদনা')} — ${id}`, body, foot);
+}
+async function complianceUpdate(id){
+  const payload={action:'update', id, expiry_date:document.getElementById('cplE_expiry')?.value, ref_no:document.getElementById('cplE_ref')?.value, notes:document.getElementById('cplE_notes')?.value};
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-compliance', payload);
+  if(!d.ok){ toast(d.error||'Update failed'); return; }
+  toast(t('Document updated','ডকুমেন্ট আপডেট হয়েছে'));
+  if(DEMO_MODE){ const x=(DB.compliance_items||[]).find(i=>i.id===id); if(x){ x.expiry_date=payload.expiry_date; x.ref_no=payload.ref_no; x.notes=payload.notes; } }
+  closeDrawer(); await refreshData(); if(state.view==='compliance'){ render(); }
+}
+async function complianceDelete(id){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-compliance', {action:'delete', id});
+  if(!d.ok){ toast(d.error||'Delete failed'); return; }
+  toast(t('Document deleted','ডকুমেন্ট মুছে ফেলা হয়েছে'));
+  if(DEMO_MODE){ DB.compliance_items=(DB.compliance_items||[]).filter(i=>i.id!==id); }
+  await refreshData(); if(state.view==='compliance'){ render(); }
+}
+async function complianceRemind(){
+  const d = DEMO_MODE ? {ok:true,due:0,sent:0} : await apiCall('app-compliance', {action:'remind'});
+  if(!d.ok){ toast(d.error||'Reminder failed'); return; }
+  toast(t('Reminders','রিমাইন্ডার')+' — '+t('due','বাকি')+': '+(d.due||0)+', '+t('sent','পাঠানো')+': '+(d.sent||0));
+  await refreshData();
+}
+
 function demoPortalData(){
   const tid=(DB.tenants||[]).find(x=>x.sub_email==='sultana@krtaker.com')?.id || (DB.tenants||[]).find(x=>x.name==='Sultana Rahman')?.id || 'T-002';
   const leases=(DB.leases||[]).filter(l=>l.t===tid);
@@ -2896,22 +3095,19 @@ const renderers={
     setTimeout(()=>leadsLoad(),0);
     return h;
   },
+  statements(){
+    const canPayout = ['superadmin','owner','accountant'].includes(role().id);
+    const months=['2026-05','2026-06','2026-07','2026-08'];
+    let h=pageHead(t('Owner statements','মালিক স্টেটমেন্ট'),t('Per-property monthly P&L: rent − TDS − service − expenses → net payout.','প্রতি সম্পত্তির মাসিক পিএন্ডএল: ভাড়া − টিডিএস − সার্ভিস − খরচ → নিট পেআউট।'),`<span style="display:inline-flex;align-items:center;gap:8px">${t('Month','মাস')} <select id="stmtMonth" style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-alt);font-weight:600" onchange="statementsLoad()">${months.map(m=>`<option value="${m}">${m}</option>`).join('')}</select></span>`);
+    h+=`<div id="statementsLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>statementsLoad(),0);
+    return h;
+  },
   compliance(){
-    let h=pageHead(t('Compliance','কমপ্লায়েন্স'),t('Registration gates, PRCA limits and the statutory calendar.','রেজিস্ট্রেশন গেট, পিআরসিএ সীমা ও বিধিবদ্ধ ক্যালেন্ডার।'));
-    h+=`<div class="grid grid-2">
-      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📄</span>${t('Registration gate (TPA §107)','রেজিস্ট্রেশন গেট')}</div></div><div class="panel-b">${DB.leases.filter(l=>l.res===false).map(l=>rowItem('📄',l.id+' · '+unitById(l.u)?.name,(tenantById(l.t)?.name||'')+' · '+(l.reg?('Deed '+l.reg.deed):'Needs registration'),l.reg?badge('Active'):badge('Pending Registration'))).join('')}</div></div>
-      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚖️</span>${t('PRCA checks','পিআরসিএ চেক')}</div></div><div class="panel-b">${[
-        ['Advance cap (residential ≤ 2mo)','All leases pass','b-green'],
-        ['Advance cap (commercial ≤ 3mo)','All leases pass','b-green'],
-        ['Rent hike ≤ 5% / 3 years','No hikes flagged','b-green'],
-        ['Eviction protection','No unlawful eviction','b-green']].map(x=>kv(x[0],`<span class="badge ${x[2]}">${x[1]}</span>`)).join('')}</div></div>
-      <div class="panel" style="grid-column:1/-1"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Statutory calendar','বিধিবদ্ধ ক্যালেন্ডার')}</div></div><div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>Date</th><th>Obligation</th><th>Owner</th><th>Status</th></tr></thead><tbody>${[
-        ['Jul 05','L-004 deed registration','Legal','b-orange'],
-        ['Jul 15','TDS challan — June','Accountant','b-blue'],
-        ['Jul 31','Holding tax — Dhaka North','Accountant','b-blue'],
-        ['Aug 01','Fire safety inspection — BFSCD','Service Mgr','b-red'],
-        ['Aug 15','e-TIN verification — all tenants','Legal','b-gray']].map(x=>`<tr><td><span class="c-name">${x[0]}</span></td><td>${x[1]}</td><td>${x[2]}</td><td><span class="badge ${x[3]}">Scheduled</span></td></tr>`).join('')}</tbody></table></div></div>
-    </div>`;
+    const canManage = ['superadmin','owner','manager'].includes(role().id);
+    let h=pageHead(t('Compliance','কমপ্লায়েন্স'),t('Licenses, certificates and expiries — auto-tracked from leases, policies and registrations.','লাইসেন্স, সার্টিফিকেট ও মেয়াদ — লিজ, পলিসি ও রেজিস্ট্রেশন থেকে অটো-ট্র্যাকিং।'),`<button class="btn-outline" onclick="complianceRemind()">📣 ${t('Send reminders','রিমাইন্ডার পাঠান')}</button>${canManage?`<button class="btn-primary" onclick="complianceForm()">＋ ${t('Add document','ডকুমেন্ট যোগ করুন')}</button>`:''}`);
+    h+=`<div id="complianceLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>complianceLoad(),0);
     return h;
   },
   ai(){
@@ -3784,8 +3980,10 @@ async function crud(action, collection, id, data){
   return d;
 }
 async function refreshData(){
-  const b=await apiCall('app-bootstrap');
-  if(b.ok) applyLive(b, true);
+  try {
+    const b=await apiCall('app-bootstrap');
+    if(b.ok) applyLive(b, true);
+  } catch(e) { /* demo/offline — keep local DB */ }
 }
 function payForm(invId){
   const inv=invoiceById(invId); if(!inv){toast('Not found');return}
