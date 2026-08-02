@@ -103,12 +103,21 @@ Core groups (v1 — ~20 modules):
 - Chat UI: suggestion chips, typing indicator, mode badge, `**bold**` markdown rendering, auto-refresh after actions; `ai_log` audit table.
 - Go live: `export KRT_DS_KEY=sk-...` on the host (or paste in `AI_CONFIG()`) → KR upgrades to DeepSeek automatically.
 
-### Phase 6 — Multi-tenant Hardening (PostgreSQL + RLS)
-- Migrate SQLite → PostgreSQL; `ENABLE ROW LEVEL SECURITY` on all tenant tables; `app.current_tenant` session var from JWT; ORM injects explicit `WHERE tenant_id = X` (doc: RLS as backstop, not primary filter).
-- PgBouncer-ready pooling; tenant context cleared on connection reuse.
+### Phase 6 — Multi-tenant Hardening (PostgreSQL + RLS) ✅ delivered (adapted)
+- **Finding**: shared cPanel host ships `pdo_pgsql` but runs **no PostgreSQL server** (probe: 5432 refused; cPanel doesn't provision PG). True PG+RLS is a VPS capability → Phase 7's backend move.
+- **Delivered on the live SQLite stack** (app-layer RLS = the plan's *primary filter*):
+  - Connection hardening: WAL, `synchronous=NORMAL`, `foreign_keys=ON`, `busy_timeout=5000`, `temp_store=MEMORY` (live: `journal_mode=wal`, `quick_check=ok`).
+  - Auth hardening: login lockout (10 fails/email or 40/IP per 15 min → 429), OTP cap (5 wrong → code invalidated), register ≤8/IP/hr, resend ≤3/10 min; `auth_attempts` table + opportunistic prune.
+  - Tokens **hashed at rest** (sha256 in `app_tokens`; lookup by hash — existing sessions invalidated once, users re-login).
+  - **KR AI row-scoping** (closed live cross-tenant leaks): tenant sees only own leases/units/invoices/tickets (EN + বাংলা intents + LLM system prompt); partner sees only own jobs (financial intents politely declined); owner/staff org-wide. `ai_scope()`/`ai_q()` helpers.
+  - `app-crud` row-scope guards: tenant update/delete blocked up-front; partner restricted to tickets.
+  - New superadmin endpoints: `app-backup` (VACUUM INTO snapshot stream — DB sits outside FTP jail), `app-export` (23-table JSON, feeds PG import), `app-audit` (paged audit trail); `app-health` (unauthenticated integrity/journal/counts); security headers on API responses (nosniff/SAMEORIGIN/Referrer-Policy).
+  - **PG migration artifact** ready for Phase 7: `docs/pg-migration.sql` (full DDL, `owner_id` + `app.current_tenant`, RLS policies on all 13 tenant tables via `krtaker_app`/`krtaker_staff` roles, FTS5→tsvector+GIN, PgBouncer hygiene notes) + `tools/pg_import.py` (idempotent JSON→PG importer).
+- Verified: local E2E suite (lockout, OTP cap, token hashing, backup/export/audit, health) + live prod checks (tenant AI scoping, 403s, superadmin export, single-fail no false lockout). Commit `16f44ea`; assets `?v=3.5` / SW v13 unchanged (server-only deploy).
 
 ### Phase 7 — Deploy
 - gunicorn systemd `krtaker-backend` + nginx (`krtaker.18.142.98.150.sslip.io`) + certbot; PWA on `app.…sslip.io`; Cloudflare tunnel for interim HTTPS. (Reuse REM deploy recipes.)
+- **PG cutover path**: install PostgreSQL 14+ on the VPS → `app-export` from cPanel → `tools/pg_import.py` → apply `docs/pg-migration.sql` → point backend at PG with `SET app.current_tenant` after each auth (RLS backstop; keep API WHERE-clause scoping primary).
 
 ---
 

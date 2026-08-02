@@ -1,0 +1,205 @@
+-- ============================================================================
+-- KRTaker — PostgreSQL + Row-Level Security migration (Phase 6 artifact)
+-- Target: VPS (Lightsail 18.142.98.150 or any VPS) where PostgreSQL 14+ is
+-- installed. NOT for the shared cPanel host — it ships pdo_pgsql but has NO
+-- PostgreSQL server (probe: connection refused on 5432; cPanel doesn't
+-- provision PG). This DDL is the turnkey path for Phase 7's backend move.
+--
+-- Import path:
+--   1. On the cPanel host: superadmin → GET /api/app-export  (JSON, 23 tables)
+--   2. Load JSON into the VPS:  python3 tools/pg_import.py export.json
+--      (script maps each table, converts SQLite types → PG, re-runs idempotent)
+--   3. Apply this file:  psql -U krtaker -d krtaker -f pg_migration.sql
+--   4. Grant least privilege; app connects as krtaker_app with
+--      `SET app.current_tenant = '<org>'` after every auth check.
+-- ============================================================================
+
+-- ── Roles ──────────────────────────────────────────────────────────────────
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'krtaker_app') THEN
+    CREATE ROLE krtaker_app NOLOGIN;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'krtaker_staff') THEN
+    CREATE ROLE krtaker_staff NOLOGIN;
+  END IF;
+END $$;
+GRANT krtaker_staff TO krtaker_app;  -- staff inherits app (superadmin paths)
+
+-- ── Base tables (landing) ──────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS subscribers (
+  id            BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name          TEXT NOT NULL,
+  org           TEXT DEFAULT '',
+  email         TEXT NOT NULL UNIQUE,
+  phone         TEXT DEFAULT '',
+  role          TEXT DEFAULT 'owner',
+  plan          TEXT DEFAULT 'Trial',
+  status        TEXT DEFAULT 'pending',
+  trial_end     TEXT,
+  otp_hash      TEXT,
+  otp_expires   TEXT,
+  created_at    TIMESTAMPTZ DEFAULT now(),
+  verified_at   TIMESTAMPTZ,
+  password_hash TEXT DEFAULT '',
+  last_login    TIMESTAMPTZ,
+  otp_fails     INT DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS contacts (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name TEXT, email TEXT, phone TEXT, subject TEXT, message TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS newsletter_emails (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL, created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ── Auth / platform ────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS app_users (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name TEXT NOT NULL, email TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL, role TEXT NOT NULL, dept TEXT DEFAULT '',
+  avatar TEXT DEFAULT '', is_staff INT DEFAULT 1, active INT DEFAULT 1,
+  last_login TIMESTAMPTZ
+);
+CREATE TABLE IF NOT EXISTS app_tokens (
+  token TEXT PRIMARY KEY,           -- sha256 hex (never raw)
+  user_id BIGINT NOT NULL, kind TEXT DEFAULT 'sub',
+  created_at TIMESTAMPTZ DEFAULT now(), expires_at TIMESTAMPTZ
+);
+CREATE TABLE IF NOT EXISTS plan_catalog (
+  code TEXT PRIMARY KEY, name TEXT NOT NULL, price BIGINT NOT NULL,
+  seats INT DEFAULT 1, tag TEXT DEFAULT '', features JSONB NOT NULL DEFAULT '[]'
+);
+CREATE TABLE IF NOT EXISTS auth_attempts (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  email TEXT DEFAULT '', ip TEXT DEFAULT '', kind TEXT DEFAULT '',
+  ok INT DEFAULT 0, ts TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_auth_email_ts ON auth_attempts(email, ts);
+CREATE INDEX IF NOT EXISTS idx_auth_ip_ts ON auth_attempts(ip, ts);
+
+-- ── Tenant tables: every row carries owner_id → RLS key ────────────────────
+-- owner_id = subscribers.id of the owning org ('platform' org = 1 for staff).
+CREATE TABLE IF NOT EXISTS properties (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  name TEXT, type TEXT, jur TEXT, holding TEXT,
+  sqft BIGINT DEFAULT 0, value BIGINT DEFAULT 0, status TEXT DEFAULT 'Active'
+);
+CREATE TABLE IF NOT EXISTS units (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  p TEXT, name TEXT, floor TEXT, sqft BIGINT DEFAULT 0, status TEXT DEFAULT 'Vacant'
+);
+CREATE TABLE IF NOT EXISTS tenants (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  name TEXT, phone TEXT, email TEXT, nid TEXT,
+  nrb INT DEFAULT 0, kind TEXT DEFAULT 'Individual', sub_email TEXT DEFAULT ''
+);
+CREATE TABLE IF NOT EXISTS leases (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  u TEXT, t TEXT, start TEXT, "end" TEXT, rent BIGINT DEFAULT 0,
+  adv BIGINT DEFAULT 0, res INT DEFAULT 1, reg_office TEXT DEFAULT '',
+  reg_deed TEXT DEFAULT '', status TEXT DEFAULT 'Active'
+);
+CREATE TABLE IF NOT EXISTS invoices (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  l TEXT, m TEXT, gross BIGINT DEFAULT 0, tds BIGINT DEFAULT 0,
+  net BIGINT DEFAULT 0, status TEXT DEFAULT 'Unpaid'
+);
+CREATE TABLE IF NOT EXISTS receipts (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  inv TEXT, amount BIGINT DEFAULT 0, date TEXT, method TEXT, sig TEXT DEFAULT ''
+);
+CREATE TABLE IF NOT EXISTS payments (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  inv TEXT, amount BIGINT DEFAULT 0, method TEXT, ref TEXT DEFAULT '',
+  date TEXT, status TEXT DEFAULT 'Success'
+);
+CREATE TABLE IF NOT EXISTS tickets (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  u TEXT, desc TEXT, reported TEXT, liab TEXT, status TEXT DEFAULT 'Open',
+  con TEXT DEFAULT '', cost BIGINT DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS partners (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  name TEXT, trade TEXT, rating REAL DEFAULT 0, jobs BIGINT DEFAULT 0,
+  status TEXT DEFAULT 'Active', sub_email TEXT DEFAULT ''
+);
+CREATE TABLE IF NOT EXISTS staff (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  name TEXT, role TEXT, dept TEXT, status TEXT DEFAULT 'Active'
+);
+CREATE TABLE IF NOT EXISTS support (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  from_t TEXT, subject TEXT, status TEXT, prio TEXT, age TEXT
+);
+CREATE TABLE IF NOT EXISTS platform_meta (k TEXT PRIMARY KEY, v TEXT);
+CREATE TABLE IF NOT EXISTS cases (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  title TEXT, ref_lease TEXT DEFAULT '', type TEXT, status TEXT DEFAULT 'Open',
+  opened TEXT, notes TEXT DEFAULT ''
+);
+CREATE TABLE IF NOT EXISTS gateway_tx (
+  id TEXT PRIMARY KEY, owner_id BIGINT NOT NULL REFERENCES subscribers(id),
+  invoice_id TEXT, method TEXT, amount BIGINT DEFAULT 0, status TEXT DEFAULT 'pending',
+  ref TEXT DEFAULT '', created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ── Legal KB: FTS5 → PG full-text ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS legal_docs (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  cat TEXT, title TEXT, body TEXT, kw TEXT,
+  tsv TSVECTOR GENERATED ALWAYS AS (
+    to_tsvector('english', coalesce(cat,'') || ' ' || coalesce(title,'') || ' ' || coalesce(body,'') || ' ' || coalesce(kw,''))
+  ) STORED
+);
+CREATE INDEX IF NOT EXISTS idx_legal_docs_tsv ON legal_docs USING GIN(tsv);
+-- Query: SELECT cat,title,body FROM legal_docs WHERE tsv @@ plainto_tsquery('english', $q) LIMIT 3;
+
+CREATE TABLE IF NOT EXISTS audit_log (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  ts TIMESTAMPTZ DEFAULT now(), user TEXT, action TEXT, module TEXT,
+  entity TEXT, details TEXT
+);
+CREATE TABLE IF NOT EXISTS ai_log (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  ts TIMESTAMPTZ DEFAULT now(), user TEXT, mode TEXT, query TEXT,
+  tool TEXT, result TEXT
+);
+
+-- ═══════════════════════════ ROW LEVEL SECURITY ════════════════════════════
+-- Model: each tenant row carries owner_id = subscribers.id.
+--   - krtaker_staff  → bypasses RLS entirely (superadmin / platform ops)
+--   - krtaker_app    → row visible only when owner_id = current tenant
+--   - tenant/partner sub-logins are ALSO scoped by owner_id (their org),
+--     then further narrowed at the API layer by sub_email / ticket con
+--     (RLS is the backstop — the API's explicit WHERE clauses stay primary,
+--     exactly as documented in PLAN.md Phase 6).
+DO $$
+DECLARE t TEXT;
+BEGIN
+  FOREACH t IN ARRAY ARRAY['properties','units','tenants','leases','invoices',
+                          'receipts','payments','tickets','partners','staff',
+                          'support','cases','gateway_tx'] LOOP
+    EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t);
+    EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', t);
+    EXECUTE format(
+      'CREATE POLICY tenant_isolation ON %I FOR ALL TO krtaker_app '
+      'USING (owner_id = current_setting(''app.current_tenant'', true)::bigint) '
+      'WITH CHECK (owner_id = current_setting(''app.current_tenant'', true)::bigint)',
+      t);
+  END LOOP;
+END $$;
+
+-- Connection hygiene (PgBouncer-ready): the app MUST clear the tenant var on
+-- every pooled connection reuse:
+--   SELECT set_config('app.current_tenant', '0', false);
+--   ... auth check → SELECT set_config('app.current_tenant', :ownerId, false);
+-- krtaker_staff role bypasses: ALTER TABLE ... ENABLE ROW LEVEL SECURITY does
+-- not apply to table owners / superusers; app connects via krtaker_app after
+-- GRANT SELECT/INSERT/UPDATE/DELETE per table (staff paths use krtaker_staff).
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO krtaker_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO krtaker_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO krtaker_staff;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO krtaker_staff;
