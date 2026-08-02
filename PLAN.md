@@ -165,3 +165,11 @@ Core groups (v1 — ~20 modules):
 2. **AI provider:** DeepSeek (cheap, current) or OpenAI-compatible endpoint for the agent?
 3. **Scope of Phase 1 prototype:** full 20-module build, or start with 8 core modules (Portfolio + Tenancy + Financials + AI Chat)?
 4. **bKash sandbox creds** — need App Key/Secret from the bKash developer portal (or reuse REM sandbox pattern with placeholder creds).
+
+### Demo-complete batch P25–P29 (2026-08-02, commits `eded233`→`6354407`, `?v=3.23` / SW v31, 559/559)
+- **P25 per-property rent config + amenities** — `property_rent` (service charge %, utility advance, parking, escalation %, advance months, due day, late fee %, rent/sqft) + `amenities` (AM-### per property/unit, icon+category); `app-rent-config-get/save` RBAC (tenant → own property only); rent mix = base + service + parking; units.rent editable; idempotent live seed. Live proof: Dhanmondi mix ৳44,100 (40k + 1,600 + 2,500).
+- **P26 tab systems** — ⚙️ Settings 5 tabs (Profile/Preferences/Security/Billing/Data-GDPR) + 🏢 Property drawer 4 tabs (Overview/Units/Rent/Amenities); fixed `krTabBar` missing `data-p`.
+- **P27 move-out wizard** — `app-moveout`: prepare (10-item handover checklist auto-created + settlement snapshot + open tickets) → close (single transaction: settlement → checklist Completed → tickets closed → lease Terminated + unit Vacant → notice → `move_out` email #9). Live settlement: ৳41,500 due / balance ৳1,500 after 40k deposit.
+- **P28 premium billing cycle** — `caretaker_invoices` (CI-###); `app-premium-billing` list/run/pay; **run uses X-Service-Key** (cron-friendly) and advances from sub's `next_invoice` (fixed loop-forever-from-today bug); monthly cron created (1st, silent when nothing).
+- **P29 tenant insurance / rent guarantee** — `insurance_plans` (RG ৳499 / DS ৳299 / DC ৳199) + `insurance_policies` (POL-###); plans (score-aware premium 5–15% off) / apply (one per plan) / claim / decide (staff approve→paid / reject→active); hit and fixed PHP switch trap + GET action. Live E2E: apply IP-002 → claim ৳3,000 → approve → paid.
+- **Live**: 9 email templates confirmed; all 4 new endpoint groups + rent-config live-tested; DB backup `/root/krtaker-backup/phase25-29/predeploy-20260802-152243.db`.
