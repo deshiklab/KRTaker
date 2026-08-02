@@ -795,6 +795,7 @@ function applyLive(d, silent) {
   hideAuth(); showDemoBanner(false);
   renderNav(); render(); updateCrumb();
   if (!silent) toast('Signed in as ' + LIVE.user.name + ' — ' + LIVE.user.role);
+  gatewayReturn();   /* handle real-gateway callback (returned from bKash/SSLCommerz/Nagad) */
 }
 async function doLogin() {
   const email = $('authEmail').value.trim().toLowerCase();
@@ -1195,7 +1196,7 @@ function krSend(){
 function krBoot(){
   if(!$('krBody').children.length){
     $('krBody').innerHTML=`<div class="kr-msg ai">Hello 👋 I'm <b>KR</b> — your AI property caretaker. I can take actions (invoices, tickets, reminders) and answer Bangladeshi property law — try one below or type anything.<br><span style="font-size:10px;color:var(--text-mute)">${new Date().toLocaleDateString()} · ${window.krMode||''}</span></div>
-    <div class="kr-chips">${['Generate invoice for L-003','Who pays for a leaking roof?','Holding tax for P-001','Is my advance legal?','Send reminder for INV-2026-008','What is occupancy?'].map(c=>`<button class="kr-chip" onclick="krQuick('${esc(c)}')">${esc(c)}</button>`).join('')}</div>`;
+    <div class="kr-chips">${['Generate invoice for L-003','How much collected in June?','Rent roll','Which leases renew next month?','Portfolio summary','Who pays for a leaking roof?','Holding tax for P-001','Is my advance legal?'].map(c=>`<button class="kr-chip" onclick="krQuick('${esc(c)}')">${esc(c)}</button>`).join('')}</div>`;
   }
   apiCall('app-ai-meta').then(d=>{ if(d&&d.ok){ window.krMode=d.mode==='llm'?'KR · DeepSeek (function-calling)':'KR · Offline mode (legal KB)'; const ks=document.querySelector('.kr-head .ks'); if(ks)ks.textContent=window.krMode+' · 24/7'; } }).catch(()=>{});
 }
@@ -1508,7 +1509,7 @@ hr(){
         ['Role & permissions','RBAC matrix · 10 roles'],
         ['Billing & seats','Business plan · 3 seats'],
         ['Audit trail','Last: Sohel exported TDS report'],
-        ['Settings','Branding · language · backup']].map(x=>rowItem('⚙️',x[0],x[1],'<span style="color:var(--text-mute)">→</span>')).join('')}</div></div>
+        ['Settings','Branding · language · backup']].map(x=>`<div class="row-item" style="cursor:pointer" onclick="${x[0]==='Settings'?'openSettings()':''}"><div class="ri-ic">⚙️</div><div class="ri-body"><div class="ri-t">${x[0]}</div><div class="ri-s">${x[1]}</div></div><span style="color:var(--text-mute)">→</span></div>`).join('')}</div></div>
     </div>
   </div>`;
   return h;
@@ -1982,6 +1983,13 @@ async function gatewayInit(invId){
   const method=document.getElementById('gwMethod').value;
   const d=await apiCall('app-payment-init',{invoice_id:invId,method});
   if(!d.ok){toast(d.error||'Checkout failed');return}
+  /* REAL gateway path: redirect to the payment page; on return the ?gw= params auto-confirm */
+  if(d.checkout && d.checkout.simulated===false && d.checkout.gateway_url){
+    sessionStorage.setItem('krt_gw_pending', JSON.stringify({sid:d.session_id, amount:d.amount, gateway:d.gateway}));
+    toast('Opening '+d.gateway+'…');
+    window.location.href=d.checkout.gateway_url;
+    return;
+  }
   openDrawer('🔐 '+d.gateway+' checkout',
     `<div class="gw-merchant">
       <div class="gm-logo">${d.gateway==='bKash'?'💗':d.gateway==='Nagad'?'🟠':'🔒'} ${esc(d.gateway)}</div>
@@ -1992,6 +2000,30 @@ async function gatewayInit(invId){
       <div class="gm-note">In production this redirects to ${esc(d.gateway)}'s secure checkout. In sandbox, confirm to simulate a successful payment.</div>
     </div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="gatewayCancel('${d.session_id}')">Cancel</button><button class="btn-primary" onclick="gatewayConfirm('${d.session_id}',${d.amount})">✅ Pay ${money(d.amount)}</button></div>`);
+}
+/* Returned from a real gateway → verify + confirm using the ?gw= query params */
+async function gatewayReturn(){
+  const p=new URLSearchParams(location.search);
+  const gw=p.get('gw'); const sid=p.get('sid');
+  if(!gw||!sid) return;
+  const ref=p.get('val_id')||p.get('paymentID')||p.get('order_id')||p.get('tran_id')||'';
+  const status=p.get('status')||'';
+  const pend=JSON.parse(sessionStorage.getItem('krt_gw_pending')||'{}');
+  sessionStorage.removeItem('krt_gw_pending');
+  history.replaceState(null,'',location.pathname);
+  if(status && status!=='Completed' && status!=='VALID' && status!=='Success' && status!=='success' && status!=='CANCELLED'){
+    toast('Payment was not completed ('+status+')');
+    return;
+  }
+  if(!ref){ toast('Gateway did not return a reference — contact support with session '+sid); return; }
+  const d=await apiCall('app-payment-confirm',{session_id:sid,gateway_ref:ref});
+  if(d.ok){
+    toast('Payment '+d.payment+' recorded · receipt '+d.receipt);
+    if(typeof refreshData==='function') refreshData();
+  } else {
+    toast(d.error||'Verification failed');
+    if(pend.sid) gatewayCancel(pend.sid);
+  }
 }
 async function gatewayConfirm(sid,amount){
   const d=await apiCall('app-payment-confirm',{session_id:sid});
@@ -2008,6 +2040,52 @@ async function gatewayConfirm(sid,amount){
   } else toast(d.error||'Payment failed');
 }
 async function gatewayCancel(sid){ await apiCall('app-payment-cancel',{session_id:sid}); closeDrawer(); toast('Checkout cancelled'); }
+/* ── Settings: profile + password + gateway status ── */
+function openSettings(){
+  const u=LIVE.user||{};
+  const isStaff=!!u.is_staff;
+  const nameVal=esc(u.name||''); const orgVal=esc(u.org||''); const phoneVal=esc(u.phone||'');
+  openDrawer(t('Settings','সেটিংস'),
+    `<div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">👤</span>${t('Profile','প্রোফাইল')}</div></div><div class="panel-b">
+      <div class="form-field"><label>${t('Name','নাম')}</label><input id="setName" value="${nameVal}"></div>
+      ${isStaff?`<div class="form-field"><label>${t('Department','বিভাগ')}</label><input id="setDept" value="${esc(u.dept||'')}"></div>`
+        :`<div class="form-field"><label>${t('Organization','প্রতিষ্ঠান')}</label><input id="setOrg" value="${orgVal}"></div>
+           <div class="form-field"><label>${t('Phone','ফোন')}</label><input id="setPhone" value="${phoneVal}"></div>`}
+      <button class="btn-primary" style="width:100%" onclick="saveProfile()">${t('Save profile','প্রোফাইল সংরক্ষণ')}</button>
+    </div></div>
+    <div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">🔑</span>${t('Change password','পাসওয়ার্ড পরিবর্তন')}</div></div><div class="panel-b">
+      <div class="form-field"><label>${t('Current password','বর্তমান পাসওয়ার্ড')}</label><input type="password" id="setOldPw" autocomplete="current-password"></div>
+      <div class="form-field"><label>${t('New password (min 6)','নতুন পাসওয়ার্ড (ন্যূনতম ৬)')}</label><input type="password" id="setNewPw" autocomplete="new-password"></div>
+      <button class="btn-outline" style="width:100%" onclick="changePw()">${t('Change password','পাসওয়ার্ড পরিবর্তন')}</button>
+    </div></div>
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Payment gateways','পেমেন্ট গেটওয়ে')}</div></div><div class="panel-b" id="setGw"></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`);
+  gwConfig().then(gws=>{
+    const el=document.getElementById('setGw'); if(!el)return;
+    el.innerHTML=gws.map(g=>`<div class="row-item" style="padding:6px 0;border:none"><div class="ri-ic">${g.name==='bKash'?'💗':g.name==='Nagad'?'🟠':'🔒'}</div><div class="ri-body"><div class="ri-t">${esc(g.name)}</div><div class="ri-s">${g.sandbox?'Sandbox (demo checkout — no real money)':'Live (real payments)'}</div></div><div class="ri-r">${g.sandbox?'<span class="kr-pill">🧪 sandbox</span>':badge('Live')}</div></div>`).join('')
+      ||'<div style="color:var(--text-mute);font-size:13px">No gateways configured.</div>';
+  });
+}
+async function saveProfile(){
+  const body={name:document.getElementById('setName').value};
+  const u=LIVE.user||{};
+  if(u.is_staff){ body.dept=document.getElementById('setDept').value; }
+  else { body.org=document.getElementById('setOrg').value; body.phone=document.getElementById('setPhone').value; }
+  const d=await apiCall('app-profile',body);
+  if(d.ok){ toast('Profile updated ✓'); if(d.user) LIVE.user=d.user; renderNav(); }
+  else toast(d.error||'Failed to save');
+}
+async function changePw(){
+  const oldPw=document.getElementById('setOldPw').value;
+  const newPw=document.getElementById('setNewPw').value;
+  if(newPw.length<6){ toast('Password must be at least 6 characters'); return; }
+  const d=await apiCall('app-profile',{old_password:oldPw,new_password:newPw});
+  if(d.ok){
+    toast('Password changed — please sign in again');
+    TOKEN=''; try{localStorage.removeItem('krtaker_dash_token');}catch(x){}
+    closeDrawer(); doLogout();
+  } else toast(d.error||'Failed to change password');
+}
 function gatewayPayTenant(){
   const mine=DB.invoices.filter(i=>i.status!=='Paid');
   if(!mine.length){toast('No outstanding invoices — you are all clear 🎉');return}
