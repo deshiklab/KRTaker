@@ -1057,18 +1057,43 @@ const SEED = {
     {id:'HP-001',owner_email:'owner@krtaker.com',prop:'P-001',unit:'',season:'pre_monsoon',service:'roof_waterproof',scheduled_for:'2026-08',status:'Scheduled',assigned_to:'EcoClean Services',cost:12000,paid:0,checklist:[{task:'Inspect roof membrane',done:0},{task:'Clear drainage outlets',done:0},{task:'Patch cracks',done:0},{task:'Water test',done:0}],findings:'',completed_at:'',notes:'Waterproofing before monsoon peak',ts:'2026-07-25 09:00:00',updated_at:'2026-07-25 09:00:00'},
     {id:'HP-002',owner_email:'owner@krtaker.com',prop:'P-002',unit:'U-010',season:'pre_summer',service:'ac_service',scheduled_for:'2026-05',status:'Completed',assigned_to:'EcoClean Services',cost:4000,paid:4000,checklist:[{task:'Clean filters',done:1},{task:'Check gas pressure',done:1},{task:'Inspect outdoor unit',done:1},{task:'Test cooling',done:1}],findings:'All 3 units serviced — cooling OK',completed_at:'2026-05-20 16:00:00',notes:'Pre-summer AC servicing',ts:'2026-04-15 09:00:00',updated_at:'2026-05-20 16:00:00'},
     {id:'HP-003',owner_email:'owner@krtaker.com',prop:'P-003',unit:'U-008',season:'quarterly',service:'deep_clean',scheduled_for:'2026-09',status:'Planned',assigned_to:'',cost:0,paid:0,checklist:[],findings:'',completed_at:'',notes:'Empty flat — deep clean before renting',ts:'2026-08-01 09:00:00',updated_at:'2026-08-01 09:00:00'}
+  ],
+  build_projects:[
+    {id:'BP-001',owner_email:'owner@krtaker.com',prop:'P-002',title:'Banani Duplex Renovation',kind:'renovation',status:'In_Progress',budget_total:2000000,start_date:'2026-04-01',target_end:'2026-09-30',contractor:'EcoBuild Engineering',architect:'Ar. Tanvir Islam',site_address:'House 12, Road 11, Banani, Dhaka',notes:'Full interior renovation — 2 floors, owner abroad',ts:'2026-03-20 09:00:00',updated_at:'2026-08-01 09:00:00'},
+    {id:'BP-002',owner_email:'owner@krtaker.com',prop:'P-003',title:'Gulshan Tower — 6th Floor Construction',kind:'construction',status:'In_Progress',budget_total:8000000,start_date:'2026-01-15',target_end:'2026-12-20',contractor:'EcoBuild Engineering',architect:'',site_address:'Gulshan Avenue, Dhaka',notes:'New floor slab + finishing for rental unit',ts:'2026-01-10 09:00:00',updated_at:'2026-08-01 09:00:00'},
+    {id:'BP-003',owner_email:'owner@krtaker.com',prop:'P-001',title:'Bashundhara Flat Repair',kind:'repair',status:'Completed',budget_total:150000,start_date:'2026-05-01',target_end:'2026-06-15',contractor:'QuickFix Interiors',architect:'',site_address:'Block C, Bashundhara R/A',notes:'Bathroom + kitchen repair after tenant move-out',ts:'2026-04-28 09:00:00',updated_at:'2026-06-15 09:00:00'}
+  ],
+  build_milestones:[
+    {id:'BM-001',project:'BP-001',title:'Structure & partition walls',phase:'structure',target_date:'2026-05-15',status:'Completed',cost:700000,paid:700000,notes:'Load-bearing walls + partition done'},
+    {id:'BM-002',project:'BP-001',title:'Electrical & plumbing rough-in',phase:'electrical',target_date:'2026-08-10',status:'In_Progress',cost:350000,paid:150000,notes:'Wiring 70% — awaiting inspection'},
+    {id:'BM-003',project:'BP-001',title:'Flooring & finishing works',phase:'finishing',target_date:'2026-07-20',status:'Pending',cost:500000,paid:0,notes:'Tile order placed — overdue'},
+    {id:'BM-004',project:'BP-002',title:'Foundation & column casting',phase:'foundation',target_date:'2026-03-30',status:'Completed',cost:2500000,paid:2500000,notes:'Columns 1-6 cast & cured'},
+    {id:'BM-005',project:'BP-002',title:'6th floor slab',phase:'structure',target_date:'2026-08-25',status:'In_Progress',cost:3000000,paid:1200000,notes:'Steel work in progress'},
+    {id:'BM-006',project:'BP-003',title:'Bathroom & kitchen repair',phase:'finishing',target_date:'2026-06-10',status:'Completed',cost:150000,paid:150000,notes:'Handed back clean'}
+  ],
+  build_expenses:[
+    {id:'BX-001',project:'BP-001',label:'Cement & brick',amount:800000,category:'material',spent_on:'2026-05-10',paid:1,notes:'Shah Cement — 400 bags'},
+    {id:'BX-002',project:'BP-001',label:'Mason & helper wages',amount:650000,category:'labour',spent_on:'2026-07-25',paid:1,notes:'4 crews × 12 weeks'},
+    {id:'BX-003',project:'BP-001',label:'Tiles & fittings',amount:400000,category:'material',spent_on:'2026-07-30',paid:0,notes:'Imported porcelain — partial payment'},
+    {id:'BX-004',project:'BP-002',label:'Steel & concrete',amount:5000000,category:'material',spent_on:'2026-04-20',paid:1,notes:'BSRM rod + ready-mix'},
+    {id:'BX-005',project:'BP-002',label:'Site labour',amount:4000000,category:'labour',spent_on:'2026-08-01',paid:0,notes:'Daily-wage site crew — over budget'},
+    {id:'BX-006',project:'BP-003',label:'Repair materials + labour',amount:148000,category:'material',spent_on:'2026-06-12',paid:1,notes:'Sanitary + fittings + 1 crew'}
+  ],
+  build_media:[
+    {id:'BD-001',project:'BP-001',kind:'photo',name:'Site photo — electrical rough-in',fname:'bmd_bp001_01.jpg',size:182345,mime:'image/jpeg',geo:'23.7925,90.4078',captured_at:'2026-07-22 10:15:00',uploaded_by:'Arif Chowdhury'},
+    {id:'BD-002',project:'BP-002',kind:'photo',name:'Slab casting day',fname:'bmd_bp002_01.jpg',size:241902,mime:'image/jpeg',geo:'23.8103,90.4125',captured_at:'2026-04-18 14:30:00',uploaded_by:'Arif Chowdhury'}
   ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','ai','analytics','notices','documents']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','concierge','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','concierge','smarthome','health','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','concierge','health','ai','analytics','notices','documents','recon','templates']},
@@ -1077,14 +1102,14 @@ const ROLES = [
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['nrb','🌐','NRB Hub'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Build Watch':'নির্মাণ মনিটরিং','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -3527,6 +3552,236 @@ async function conciergeCfgSave(){
 }
 /* ── Phase 48: Smart Home & Security + Property Health Check ── */
 function smarthomeStaff(){ return ['superadmin','owner','manager','svc_mgr','crm'].includes(role().id); }
+function buildStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
+function buildKind(k){ return ({construction:t('Construction','নির্মাণ'),renovation:t('Renovation','সংস্কার'),repair:t('Repair','মেরামত')})[k]||k; }
+function buildBadge(st){ const m={Planning:['b-gray','📋'],In_Progress:['b-blue','🔨'],On_Hold:['b-orange','⏸️'],Completed:['b-green','✅'],Cancelled:['b-red','🚫']}; const e=m[st]||['b-gray','']; return `<span class="badge ${e[0]}">${e[1]} ${esc(st)}</span>`; }
+function buildMsBadge(st){ const m={Pending:['b-gray','🕐'],In_Progress:['b-blue','🔨'],Completed:['b-green','✅'],Skipped:['b-gray','⏭️']}; const e=m[st]||['b-gray','']; return `<span class="badge ${e[0]}">${e[1]} ${esc(st)}</span>`; }
+function buildEnrich(p){
+  const ms=(DB.build_milestones||[]).filter(x=>x.project===p.id);
+  const xs=(DB.build_expenses||[]).filter(x=>x.project===p.id);
+  const spent=xs.reduce((s,x)=>s+(+x.amount||0),0);
+  const today=new Date().toISOString().slice(0,10);
+  const done=ms.filter(x=>['Completed','Skipped'].includes(x.status)).length;
+  const overdue=ms.filter(x=>!['Completed','Skipped'].includes(x.status)&&x.target_date&&x.target_date<today).length;
+  const dueSoon=ms.filter(x=>!['Completed','Skipped'].includes(x.status)&&x.target_date&&x.target_date<=new Date(Date.now()+14*864e5).toISOString().slice(0,10)).length;
+  const budget=Math.max(0,+p.budget_total||0);
+  const pct=budget>0?Math.round(spent/budget*1000)/10:0;
+  const daysLeft=p.target_end?Math.floor((new Date(p.target_end)-new Date(today))/864e5):null;
+  const propName=(DB.properties||[]).find(x=>x.id===p.prop)?.name||'';
+  return Object.assign({},p,{spent,milestones_total:ms.length,milestones_done:done,milestones_overdue:overdue,milestones_due_soon:dueSoon,progress:ms.length?Math.round(done/ms.length*100):0,budget_used_pct:pct,budget_variance:budget-spent,days_left:daysLeft,over_budget:budget>0&&spent>budget*1.1,media_count:(DB.build_media||[]).filter(x=>x.project===p.id).length,property_name:propName});
+}
+function demoBuildData(){
+  const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+  const rows=(DB.build_projects||[]).filter(x=>x.owner_email===''||x.owner_email===em).map(buildEnrich);
+  const by=(rows,keys)=>{const o={};keys.forEach(k=>o[k]=0);rows.forEach(r=>o[r.status]=(o[r.status]||0)+1);return o;};
+  const alerts=[];
+  rows.forEach(p=>{ if(p.milestones_overdue>0) alerts.push({severity:'warning',ref:p.id,title:t('Milestone overdue','মাইলস্টোন ওভারডিউ'),body:p.id+' — '+p.title+' · '+p.milestones_overdue+' '+t('milestone(s) past due','মাইলস্টোন মেয়াদোত্তীর্ণ')}); if(p.over_budget) alerts.push({severity:'warning',ref:p.id,title:t('Budget overrun','বাজেট ওভাররান'),body:p.id+' — '+p.title+' · '+t('spent','ব্যয়')+' '+money(p.spent)+' '+t('of','এর মধ্যে')+' '+money(p.budget_total)+' '+t('budget','বাজেট')}); });
+  return {projects:rows,stats:by(rows,['Planning','In_Progress','On_Hold','Completed','Cancelled']),total_budget:rows.reduce((s,p)=>s+(+p.budget_total||0),0),total_spent:rows.reduce((s,p)=>s+p.spent,0),alerts,config:{milestone_alert_days:14,budget_overrun_pct:10,default_contractor:'EcoBuild Engineering'}};
+}
+async function buildLoad(){
+  const host=document.getElementById('buildLive'); if(!host) return;
+  let d;
+  if(TOKEN&&!DEMO_MODE){
+    d=await apiCall('app-build',{action:'summary'});
+    if(!d.ok){ host.innerHTML=`<div class="m">${esc(d.error||'Failed to load')}</div>`; return; }
+    if(d.projects) DB.build_projects=d.projects;
+  } else { d=demoBuildData(); }
+  window.__buildCfg=d.config||{milestone_alert_days:14,budget_overrun_pct:10,default_contractor:'EcoBuild Engineering'};
+  host.innerHTML=buildHtml(d);
+}
+function buildHtml(d){
+  const rows=d.projects||[], bs=d.stats||{};
+  const active=rows.filter(p=>!['Completed','Cancelled'].includes(p.status)).length;
+  const overTotal=rows.reduce((s,p)=>s+p.milestones_overdue,0);
+  let h=statsRow([
+    stat(t('Projects','প্রকল্প'),rows.length,t('total','মোট'),'','🏗️'),
+    stat(t('Active','সক্রিয়'),active,t('in progress','চলমান'),active?'warn':'','🔨'),
+    stat(t('Spent','ব্যয়'),money(d.total_spent||0),t('of budget','বাজেটের'),(d.total_spent||0)>(d.total_budget||0)?'warn':'','💰'),
+    stat(t('Overdue ms.','ওভারডিউ মাইলস্টোন'),overTotal,t('milestones','মাইলস্টোন'),overTotal?'warn':'','🚨')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏗️</span>${t('Build projects','নির্মাণ প্রকল্প')}</div><span class="link" onclick="buildNewProject()">＋ ${t('New project','নতুন প্রকল্প')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Project','প্রকল্প')}</th><th>${t('Kind','ধরন')}</th><th>${t('Budget','বাজেট')}</th><th>${t('Spent','ব্যয়')}</th><th>${t('Progress','অগ্রগতি')}</th><th>${t('Target','লক্ষ্য')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (rows.map(x=>`<tr><td><span class="c-name">${esc(x.title)}</span><div class="c-sub">${x.id}${x.property_name?' · '+esc(x.property_name):''}</div></td><td>${buildKind(x.kind)}</td><td>${money(x.budget_total)}</td><td>${money(x.spent)}${x.over_budget?' <span class="badge b-red">⚠️</span>':''}</td><td><div class="c-sub">${x.milestones_done}/${x.milestones_total} · ${x.progress}%</div><div style="height:6px;background:#eef1f5;border-radius:3px;overflow:hidden;width:90px"><div style="width:${x.progress}%;height:100%;background:${x.over_budget?'#dc2626':'#2F80ED'}"></div></div></td><td>${esc(x.target_end||'—')}${x.days_left!==null&&x.days_left<0?' <span class="badge b-orange">'+t('past','অতীত')+'</span>':''}</td><td>${buildBadge(x.status)}</td><td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="buildDrawer('${esc(x.id)}')">👁</button></td></tr>`).join('')
+    || `<tr><td colspan="8" class="m">${t('No build projects yet.','এখনো কোনো নির্মাণ প্রকল্প নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  const al=d.alerts||[];
+  if(al.length) h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🚨</span>${t('Build alerts','নির্মাণ অ্যালার্ট')}</div></div><div class="panel-b">`+al.map(a=>`<div class="row-item"><div class="ri-ic">${a.severity==='warning'?'🟠':'🔵'}</div><div class="ri-body"><div class="ri-t">${esc(a.title)}</div><div class="ri-s">${esc(a.body)}</div></div></div>`).join('')+`</div></div>`;
+  return h;
+}
+function buildDrawer(id){
+  const raw=(DB.build_projects||[]).find(x=>x.id===id); if(!raw){ toast(t('Project not found','প্রকল্প পাওয়া যায়নি')); return; }
+  const en=buildEnrich(raw);
+  const ms=(DB.build_milestones||[]).filter(x=>x.project===id).sort((a,b)=>(a.target_date||'').localeCompare(b.target_date||''));
+  const xs=(DB.build_expenses||[]).filter(x=>x.project===id);
+  const md=(DB.build_media||[]).filter(x=>x.project===id);
+  const canStaff=buildStaff();
+  const today=new Date().toISOString().slice(0,10);
+  const totX=xs.reduce((s,x)=>s+(+x.amount||0),0);
+  const body=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div><div style="font-size:16px;font-weight:700">${esc(en.title)}</div><div class="c-sub">${en.id} · ${buildKind(en.kind)} · ${esc(en.prop||'—')}${en.property_name?' · '+esc(en.property_name):''}</div></div>
+      ${buildBadge(en.status)}
+    </div>
+    <div class="grid grid-2" style="margin-bottom:10px">
+      <div class="panel"><div class="panel-b"><div style="font-size:11px;color:#667">${t('Budget','বাজেট')}</div><div style="font-size:18px;font-weight:800">${money(en.budget_total)}</div><div class="c-sub">${t('Spent','ব্যয়')} ${money(en.spent)} (${en.budget_used_pct}%)</div><div style="height:8px;background:#eef1f5;border-radius:4px;overflow:hidden;margin-top:6px"><div style="width:${Math.min(100,en.budget_used_pct)}%;height:100%;background:${en.over_budget?'#dc2626':'#2F80ED'}"></div></div>${en.over_budget?`<div class="badge b-red" style="margin-top:6px">⚠️ ${t('Over budget','বাজেট ছাড়িয়েছে')}</div>`:''}</div></div>
+      <div class="panel"><div class="panel-b"><div style="font-size:11px;color:#667">${t('Milestones','মাইলস্টোন')}</div><div style="font-size:18px;font-weight:800">${en.milestones_done}/${en.milestones_total}</div><div class="c-sub">${en.progress}% · ${en.milestones_overdue?en.milestones_overdue+' '+t('overdue','ওভারডিউ'):t('on track','ঠিক পথে')}</div></div></div>
+    </div>
+    <div style="margin-bottom:10px"><div class="kv"><span>${t('Contractor','কন্ট্রাক্টর')}</span><b>${esc(en.contractor||'—')}</b></div><div class="kv"><span>${t('Architect','স্থপতি')}</span><b>${esc(en.architect||'—')}</b></div><div class="kv"><span>${t('Site','সাইট')}</span><b>${esc(en.site_address||'—')}</b></div><div class="kv"><span>${t('Timeline','সময়সীমা')}</span><b>${esc(en.start_date||'—')} → ${esc(en.target_end||'—')}${en.days_left!==null?' ('+en.days_left+'d)':''}</b></div></div>
+    <div style="margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap">
+      ${canStaff&&['Planning','In_Progress','On_Hold'].includes(en.status)?`<button class="btn-primary" style="padding:6px 12px;font-size:12px" onclick="buildStatus('${esc(en.id)}','next')">➡️ ${t('Advance status','স্ট্যাটাস বাড়ান')}</button>`:''}
+      <button class="btn-outline" style="padding:6px 12px;font-size:12px" onclick="buildReport('${esc(en.id)}')">🖨 ${t('Print report','রিপোর্ট প্রিন্ট')}</button>
+      ${canStaff?`<button class="btn-ghost" style="padding:6px 12px;font-size:12px" onclick="buildNewMilestone('${esc(en.id)}')">＋ ${t('Milestone','মাইলস্টোন')}</button>`:''}
+    </div>
+    <div style="font-size:13px;font-weight:700;margin:12px 0 6px">${t('Milestones','মাইলস্টোন')}</div>
+    <div class="tbl-wrap"><table><thead><tr><th>${t('Milestone','মাইলস্টোন')}</th><th>${t('Phase','পর্ব')}</th><th>${t('Target','লক্ষ্য')}</th><th>${t('Cost','খরচ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (ms.map(x=>`<tr><td><span class="c-name">${esc(x.title)}</span><div class="c-sub">${x.id}</div></td><td>${esc(x.phase)}</td><td>${esc(x.target_date||'—')}${!['Completed','Skipped'].includes(x.status)&&x.target_date&&x.target_date<today?' <span class="badge b-orange">'+t('overdue','ওভারডিউ')+'</span>':''}</td><td>${money(x.cost)}</td><td>${buildMsBadge(x.status)}</td><td>${canStaff&&['Pending','In_Progress'].includes(x.status)?`<button class="btn-ghost" style="padding:2px 8px;font-size:10.5px" onclick="buildMsStatus('${esc(x.id)}')">➡️</button>`:''}</td></tr>`).join('')
+    || `<tr><td colspan="6" class="m">${t('No milestones yet.','এখনো কোনো মাইলস্টোন নেই।')}</td></tr>`)
+    +`</tbody></table></div>
+    <div style="font-size:13px;font-weight:700;margin:12px 0 6px">${t('Expenses','ব্যয়')} <span class="c-sub">(${totX?money(totX):'—'})</span></div>
+    <div class="tbl-wrap"><table><thead><tr><th>${t('Label','লেবেল')}</th><th>${t('Category','ক্যাটাগরি')}</th><th>${t('Date','তারিখ')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Paid','পরিশোধিত')}</th><th></th></tr></thead><tbody>`+
+    (xs.map(x=>`<tr><td><span class="c-name">${esc(x.label)}</span><div class="c-sub">${x.id}</div></td><td>${esc(x.category)}</td><td>${esc(x.spent_on||'—')}</td><td>${money(x.amount)}</td><td>${x.paid?'<span class="badge b-green">✓</span>':'<span class="badge b-orange">—</span>'}</td><td>${canStaff?`<button class="btn-ghost" style="padding:2px 8px;font-size:10.5px" onclick="buildExpenseDel('${esc(x.id)}')">✕</button>`:''}</td></tr>`).join('')
+    || `<tr><td colspan="6" class="m">${t('No expenses yet.','এখনো কোনো ব্যয় নেই।')}</td></tr>`)
+    +`</tbody></table></div>
+    ${canStaff?`<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <input id="bxLabel" class="inp" style="flex:2;min-width:140px" placeholder="${t('Expense label','ব্যয়ের বিবরণ')}">
+      <input id="bxAmt" class="inp" style="flex:1;min-width:90px" type="number" placeholder="${t('Amount','পরিমাণ')}">
+      <select id="bxCat" class="inp" style="flex:1;min-width:90px"><option value="material">${t('Material','সামগ্রী')}</option><option value="labour">${t('Labour','শ্রম')}</option><option value="permit">${t('Permit','পারমিট')}</option><option value="design">${t('Design','ডিজাইন')}</option><option value="other">${t('Other','অন্যান্য')}</option></select>
+      <button class="btn-primary" style="padding:6px 14px;font-size:12px" onclick="buildExpenseAdd('${esc(en.id)}')">＋ ${t('Add expense','ব্যয় যোগ')}</button>
+    </div>`:''}
+    <div style="font-size:13px;font-weight:700;margin:12px 0 6px">${t('Site media','সাইট মিডিয়া')} (${md.length})</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">`+
+    (md.map(x=>`<div style="width:120px;border:1px solid #E4EAF3;border-radius:8px;padding:8px;text-align:center"><div style="font-size:26px">📷</div><div style="font-size:10.5px;font-weight:600">${esc(x.name)}</div><div class="c-sub" style="font-size:9.5px">${esc(x.captured_at||'')}${x.geo?'<br>📍 '+esc(x.geo):''}</div></div>`).join('')
+    || `<div class="empty">${t('No site photos yet.','এখনো কোনো সাইট ফটো নেই।')}</div>`)
+    +`</div>`;
+  const foot=`<button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>`;
+  openDrawer(`${t('Build project','নির্মাণ প্রকল্প')} — ${esc(en.id)}`, body, foot);
+}
+async function buildStatus(id, dir){
+  const p=(DB.build_projects||[]).find(x=>x.id===id); if(!p) return;
+  const seq={Planning:['In_Progress'],In_Progress:['On_Hold','Completed','Cancelled'],On_Hold:['In_Progress','Completed','Cancelled']};
+  const opts=seq[p.status]||[];
+  if(!opts.length){ toast(t('Terminal status','টার্মিনাল স্ট্যাটাস')); return; }
+  const next=dir==='next'?opts[0]:dir;
+  if(!opts.includes(next)){ toast(t('Invalid transition','অবৈধ ট্রানজিশন')); return; }
+  const prev=p.status; p.status=next;
+  if(!DEMO_MODE){ const d=await apiCall('app-build',{action:'status',id,status:next}); if(!d.ok){ p.status=prev; toast(d.error||'Failed'); return; } }
+  toast(t('Project updated','প্রকল্প আপডেট হয়েছে')); closeDrawer(); render();
+}
+async function buildMsStatus(id){
+  const m=(DB.build_milestones||[]).find(x=>x.id===id); if(!m) return;
+  const seq={Pending:['In_Progress','Skipped'],In_Progress:['Completed']};
+  const opts=seq[m.status]||[];
+  if(!opts.length){ toast(t('Terminal status','টার্মিনাল স্ট্যাটাস')); return; }
+  const next=opts[0], prev=m.status; m.status=next;
+  if(!DEMO_MODE){ const d=await apiCall('app-build',{action:'milestone-status',id,status:next}); if(!d.ok){ m.status=prev; toast(d.error||'Failed'); return; } }
+  toast(t('Milestone updated','মাইলস্টোন আপডেট হয়েছে')); closeDrawer(); render();
+}
+async function buildExpenseAdd(pid){
+  const label=(document.getElementById('bxLabel')||{}).value||'';
+  const amount=parseInt((document.getElementById('bxAmt')||{}).value||'0',10);
+  const category=(document.getElementById('bxCat')||{}).value||'other';
+  if(!label.trim()||amount<=0){ toast(t('Label and amount required','লেবেল ও পরিমাণ প্রয়োজন')); return; }
+  let d;
+  if(DEMO_MODE){
+    const maxN=Math.max(100,...(DB.build_expenses||[]).map(x=>+(x.id||'BX-0').replace('BX-','')||0));
+    DB.build_expenses=DB.build_expenses||[];
+    DB.build_expenses.push({id:'BX-'+String(maxN+1).padStart(3,'0'),project:pid,label,amount,category,spent_on:new Date().toISOString().slice(0,10),paid:0,notes:''});
+    d={ok:true};
+  } else { d=await apiCall('app-build',{action:'expense-add',project:pid,label,amount,category}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Expense added','ব্যয় যোগ হয়েছে')); closeDrawer(); render();
+}
+async function buildExpenseDel(xid){
+  let d;
+  if(DEMO_MODE){ DB.build_expenses=(DB.build_expenses||[]).filter(x=>x.id!==xid); d={ok:true}; }
+  else { d=await apiCall('app-build',{action:'expense-delete',id:xid}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Expense removed','ব্যয় মুছে ফেলা হয়েছে')); closeDrawer(); render();
+}
+function buildNewProject(){
+  const body=`
+    <div class="kv"><span>${t('Title','শিরোনাম')} *</span><input id="bpTitle" class="inp" placeholder="${t('e.g. Banani duplex renovation','যেমন: বনানী ডুপ্লেক্স সংস্কার')}"></div>
+    <div class="kv"><span>${t('Kind','ধরন')}</span><select id="bpKind" class="inp"><option value="construction">${t('Construction','নির্মাণ')}</option><option value="renovation">${t('Renovation','সংস্কার')}</option><option value="repair">${t('Repair','মেরামত')}</option></select></div>
+    <div class="kv"><span>${t('Budget (৳)','বাজেট (৳)')}</span><input id="bpBudget" class="inp" type="number" value="0" placeholder="2000000"></div>
+    <div class="kv"><span>${t('Property','সম্পত্তি')}</span><select id="bpProp" class="inp"><option value="">—</option>${(DB.properties||[]).map(x=>`<option value="${esc(x.id)}">${esc(x.name)} (${x.id})</option>`).join('')}</select></div>
+    <div class="kv"><span>${t('Start','শুরু')}</span><input id="bpStart" class="inp" type="date"></div>
+    <div class="kv"><span>${t('Target end','লক্ষ্য শেষ')}</span><input id="bpEnd" class="inp" type="date"></div>
+    <div class="kv"><span>${t('Contractor','কন্ট্রাক্টর')}</span><input id="bpContractor" class="inp" placeholder="EcoBuild Engineering"></div>
+    <div class="kv"><span>${t('Notes','নোট')}</span><textarea id="bpNotes" class="inp" rows="2"></textarea></div>`;
+  const foot=`<button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="buildCreate()">${t('Create project','প্রকল্প তৈরি')}</button>`;
+  openDrawer(t('New build project','নতুন নির্মাণ প্রকল্প'), body, foot);
+}
+async function buildCreate(){
+  const title=(document.getElementById('bpTitle')||{}).value||'';
+  if(!title.trim()){ toast(t('Title is required','শিরোনাম প্রয়োজন')); return; }
+  const payload={action:'create',title,kind:(document.getElementById('bpKind')||{}).value||'construction',budget_total:parseInt((document.getElementById('bpBudget')||{}).value||'0',10),prop:(document.getElementById('bpProp')||{}).value||'',start_date:(document.getElementById('bpStart')||{}).value||'',target_end:(document.getElementById('bpEnd')||{}).value||'',contractor:(document.getElementById('bpContractor')||{}).value||'',notes:(document.getElementById('bpNotes')||{}).value||''};
+  let d;
+  if(DEMO_MODE){
+    const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+    const maxN=Math.max(100,...(DB.build_projects||[]).map(x=>+(x.id||'BP-0').replace('BP-','')||0));
+    const id='BP-'+String(maxN+1).padStart(3,'0');
+    DB.build_projects=DB.build_projects||[];
+    DB.build_projects.unshift(Object.assign({id,owner_email:em,status:'Planning',architect:'',site_address:'',ts:'',updated_at:''},payload));
+    d={ok:true,id};
+  } else { d=await apiCall('app-build',payload); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Project created','প্রকল্প তৈরি হয়েছে')); closeDrawer(); render();
+}
+function buildNewMilestone(pid){
+  const body=`
+    <div class="kv"><span>${t('Milestone','মাইলস্টোন')} *</span><input id="bmTitle" class="inp" placeholder="${t('e.g. Roof waterproofing','যেমন: ছাদ ওয়াটারপ্রুফিং')}"></div>
+    <div class="kv"><span>${t('Phase','পর্ব')}</span><select id="bmPhase" class="inp"><option value="foundation">${t('Foundation','ভিত্তি')}</option><option value="structure">${t('Structure','কাঠামো')}</option><option value="electrical">${t('Electrical','ইলেকট্রিক্যাল')}</option><option value="plumbing">${t('Plumbing','প্লাম্বিং')}</option><option value="finishing">${t('Finishing','ফিনিশিং')}</option><option value="handover">${t('Handover','হ্যান্ডওভার')}</option></select></div>
+    <div class="kv"><span>${t('Target date','লক্ষ্য তারিখ')}</span><input id="bmDate" class="inp" type="date"></div>
+    <div class="kv"><span>${t('Cost','খরচ')}</span><input id="bmCost" class="inp" type="number" value="0"></div>`;
+  const foot=`<button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="buildMsCreate('${esc(pid)}')">${t('Add','যোগ')}</button>`;
+  openDrawer(t('New milestone','নতুন মাইলস্টোন'), body, foot);
+}
+async function buildMsCreate(pid){
+  const title=(document.getElementById('bmTitle')||{}).value||'';
+  if(!title.trim()){ toast(t('Title is required','শিরোনাম প্রয়োজন')); return; }
+  const payload={action:'milestone-create',project:pid,title,phase:(document.getElementById('bmPhase')||{}).value||'structure',target_date:(document.getElementById('bmDate')||{}).value||'',cost:parseInt((document.getElementById('bmCost')||{}).value||'0',10)};
+  let d;
+  if(DEMO_MODE){
+    const maxN=Math.max(100,...(DB.build_milestones||[]).map(x=>+(x.id||'BM-0').replace('BM-','')||0));
+    DB.build_milestones=DB.build_milestones||[];
+    DB.build_milestones.push({id:'BM-'+String(maxN+1).padStart(3,'0'),project:pid,title,phase:payload.phase,target_date:payload.target_date,status:'Pending',cost:payload.cost,paid:0,notes:''});
+    d={ok:true};
+  } else { d=await apiCall('app-build',payload); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Milestone added','মাইলস্টোন যোগ হয়েছে')); closeDrawer(); render();
+}
+function buildConfigDrawer(){
+  const cfg=window.__buildCfg||{milestone_alert_days:14,budget_overrun_pct:10,default_contractor:'EcoBuild Engineering'};
+  const body=`
+    <div class="kv"><span>${t('Milestone alert days','মাইলস্টোন অ্যালার্ট দিন')}</span><input id="bdDays" class="inp" type="number" value="${cfg.milestone_alert_days}"></div>
+    <div class="kv"><span>${t('Budget overrun %','বাজেট ওভাররান %')}</span><input id="bdPct" class="inp" type="number" value="${cfg.budget_overrun_pct}"></div>
+    <div class="kv"><span>${t('Default contractor','ডিফল্ট কন্ট্রাক্টর')}</span><input id="bdCon" class="inp" value="${esc(cfg.default_contractor||'')}"></div>`;
+  const foot=`<button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="buildConfigSave()">${t('Save','সেভ')}</button>`;
+  openDrawer(t('Build Watch settings','নির্মাণ মনিটরিং সেটিংস'), body, foot);
+}
+async function buildConfigSave(){
+  const payload={action:'config-save',milestone_alert_days:parseInt((document.getElementById('bdDays')||{}).value||'14',10),budget_overrun_pct:parseInt((document.getElementById('bdPct')||{}).value||'10',10),default_contractor:(document.getElementById('bdCon')||{}).value||''};
+  let d;
+  if(DEMO_MODE){ d={ok:true}; }
+  else { d=await apiCall('app-build',payload); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Settings saved','সেটিংস সেভ হয়েছে')); closeDrawer(); render();
+}
+async function buildReport(id){
+  let html;
+  if(TOKEN&&!DEMO_MODE){
+    const res=await fetch(API+'app-build?action=report&id='+encodeURIComponent(id),{headers:{Authorization:'Bearer '+TOKEN}});
+    html=await res.text();
+  } else {
+    const raw=(DB.build_projects||[]).find(x=>x.id===id); if(!raw){ toast(t('Project not found','প্রকল্প পাওয়া যায়নি')); return; }
+    const p=buildEnrich(raw);
+    const ms=(DB.build_milestones||[]).filter(x=>x.project===id);
+    const xs=(DB.build_expenses||[]).filter(x=>x.project===id);
+    const rows=ms.map(m=>`<tr><td>${esc(m.id)}</td><td>${esc(m.title)}</td><td>${esc(m.phase)}</td><td>${esc(m.target_date||'—')}</td><td><b>${esc(m.status)}</b></td><td style="text-align:right">৳${(+m.cost||0).toLocaleString('en-IN')}</td></tr>`).join('');
+    const erows=xs.map(x=>`<tr><td>${esc(x.id)}</td><td>${esc(x.label)}</td><td>${esc(x.category)}</td><td>${esc(x.spent_on||'—')}</td><td style="text-align:right">৳${(+x.amount||0).toLocaleString('en-IN')}</td></tr>`).join('');
+    html=`<div style="font-family:Arial;max-width:820px;margin:0 auto;padding:20px"><div style="border-bottom:3px solid #2F80ED;padding-bottom:12px;margin-bottom:16px"><div style="font-size:20px;font-weight:800">🏗️ Build Watch — Progress Report</div><div style="font-size:12px;color:#667">${esc(p.id)} · ${esc(p.title)} · Generated ${new Date().toLocaleString()}</div></div><div style="display:flex;gap:10px;margin-bottom:14px"><div style="flex:1;border:1px solid #E4EAF3;border-radius:8px;padding:10px"><b>৳${(+p.budget_total||0).toLocaleString('en-IN')}</b><div style="font-size:11px;color:#667">Budget</div></div><div style="flex:1;border:1px solid #E4EAF3;border-radius:8px;padding:10px"><b>৳${p.spent.toLocaleString('en-IN')} (${p.budget_used_pct}%)</b><div style="font-size:11px;color:#667">Spent</div></div><div style="flex:1;border:1px solid #E4EAF3;border-radius:8px;padding:10px"><b>${p.progress}%</b><div style="font-size:11px;color:#667">Milestones done</div></div></div><h3 style="margin:14px 0 6px">Milestones</h3><table style="border-collapse:collapse;width:100%;font-size:13px"><thead><tr style="background:#F8FAFC"><th style="border:1px solid #E4EAF3;padding:6px">ID</th><th style="border:1px solid #E4EAF3;padding:6px">Milestone</th><th style="border:1px solid #E4EAF3;padding:6px">Phase</th><th style="border:1px solid #E4EAF3;padding:6px">Target</th><th style="border:1px solid #E4EAF3;padding:6px">Status</th><th style="border:1px solid #E4EAF3;padding:6px">Cost</th></tr></thead><tbody>${rows}</tbody></table><h3 style="margin:14px 0 6px">Expenses</h3><table style="border-collapse:collapse;width:100%;font-size:13px"><thead><tr style="background:#F8FAFC"><th style="border:1px solid #E4EAF3;padding:6px">ID</th><th style="border:1px solid #E4EAF3;padding:6px">Label</th><th style="border:1px solid #E4EAF3;padding:6px">Category</th><th style="border:1px solid #E4EAF3;padding:6px">Date</th><th style="border:1px solid #E4EAF3;padding:6px">Amount</th></tr></thead><tbody>${erows}</tbody></table></div>`;
+  }
+  previewDoc(id+' — Build Watch Report', html);
+}
 function healthStaff(){ return ['superadmin','owner','manager','svc_mgr','crm','accountant'].includes(role().id); }
 function smartLockBadge(st){ return st==='active'?'<span class="badge b-green">Active</span>':st==='revoked'?'<span class="badge b-red">Revoked</span>':'<span class="badge b-orange">'+esc(st)+'</span>'; }
 function smartCamBadge(st){ return st==='online'?'<span class="badge b-green">Online</span>':'<span class="badge b-red">Offline</span>'; }
@@ -5863,6 +6118,13 @@ const renderers={
     let h=pageHead(t('Health Check','হেলথ চেক'),isStaff?t('Seasonal property health plans — pre-monsoon waterproofing, pre-summer AC service, quarterly deep clean.','ঋতুভিত্তিক সম্পত্তি হেলথ প্ল্যান — প্রি-মৌসুমি ওয়াটারপ্রুফিং, প্রি-গ্রীষ্ম এসি সার্ভিস, কোয়ার্টারলি ডিপ ক্লিন।'):t('Your property health plans.','আপনার সম্পত্তির হেলথ প্ল্যান।'),isStaff?`<button class="btn-primary" onclick="healthNewPlan()">＋ ${t('New plan','নতুন প্ল্যান')}</button>`:'');
     h+=`<div id="healthLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>healthLoad(),0);
+    return h;
+  },
+  build(){
+    const isStaff=buildStaff();
+    let h=pageHead(t('Build Watch','নির্মাণ মনিটরিং'),isStaff?t('Construction & renovation monitoring — budgets, milestones, site photos and progress reports. Built for NRB owners building from abroad.','নির্মাণ ও সংস্কার মনিটরিং — বাজেট, মাইলস্টোন, সাইট ফটো ও অগ্রগতি রিপোর্ট। বিদেশ থেকে বাড়ি নির্মাণকারী এনআরবি মালিকদের জন্য।'):t('Your build projects.','আপনার নির্মাণ প্রকল্প।'),isStaff?`<button class="btn-primary" onclick="buildNewProject()">＋ ${t('New project','নতুন প্রকল্প')}</button><button class="btn-ghost" onclick="buildConfigDrawer()">⚙️</button>`:'');
+    h+=`<div id="buildLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>buildLoad(),0);
     return h;
   },
   remit(){
