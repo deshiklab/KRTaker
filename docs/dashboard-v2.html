@@ -958,19 +958,28 @@ const SEED = {
     {id:1,user_key:'sub:1',direction:'out',body:'ভাড়ার রিমাইন্ডার — জুন ইনভয়েস জমা দিন 📱',voice_note:0,ts:'2026-08-02 09:00:00'},
     {id:2,user_key:'sub:1',direction:'in',body:'আমার বিল কত?',voice_note:0,ts:'2026-08-02 09:05:00'}
   ],
-  board_reports:[{id:'BR-DEMO',month:'2026-08',kind:'board',created_by:'Rofiqul Islam',ts:'2026-08-02 09:00:00'}]
+  board_reports:[{id:'BR-DEMO',month:'2026-08',kind:'board',created_by:'Rofiqul Islam',ts:'2026-08-02 09:00:00'}],
+  nid_verifications:[
+    {id:'NV-001',tenant:'T-001',nid:'19900123456789012',dob:'1990-01-23',status:'verified',method:'checksum',checksum_ok:1,age_ok:1,notes:'Check digit valid.',verified_by:'Kabir Ahmed',verified_at:'2026-08-01 10:00:00',ts:'2026-08-01 10:00:00'},
+    {id:'NV-002',tenant:'T-002',nid:'19850112233445021',dob:'1985-11-22',status:'verified',method:'checksum',checksum_ok:1,age_ok:1,notes:'Check digit valid.',verified_by:'Kabir Ahmed',verified_at:'2026-08-01 10:05:00',ts:'2026-08-01 10:05:00'},
+    {id:'NV-003',tenant:'T-004',nid:'19880108990011031',dob:'1988-08-08',status:'unverified',method:'checksum',checksum_ok:0,age_ok:1,notes:'Check digit mismatch — verify manually.',verified_by:'',verified_at:'',ts:'2026-08-01 10:10:00'}
+  ],
+  thana_forms:[
+    {id:'TF-001',tenant:'T-001',unit:'U-001',prop:'P-001',thana:'Mirpur',district:'Dhaka',status:'Verified',payload:{unit:'U-001',prop:'P-001',name:'Rafiqul Islam',nid:'19900123456789012',dob:'1990-01-23',phone:'01711-223344',father:'Abdul Karim',mother:'Rahima Khatun',profession:'Business',employer:'Rafi Traders',present_flat:'Flat 3B, Green View Residency',present_road:'12/5, Mirpur-10',present_area:'Mirpur',permanent_address:'Village: Charpara, P.O. Sirajganj',spouse:'Nasima Begum',spouse_phone:'01711-334455',family_count:'4',ref1_name:'Md. Hanif',ref1_phone:'01811-112233',ref1_address:'Mirpur-12',ref2_name:'Shahidul Islam',ref2_phone:'01911-556677',ref2_address:'Pallabi',landlord_name:'Rofiqul Islam (Owner)',landlord_nid:'',landlord_phone:'01700-000000',move_in:'2026-01-01',lease_term:'12',vehicle:'None',remarks:'Corporate lease reference NA'},submitted_at:'2026-02-01 10:00:00',verified_by:'Kabir Ahmed',verified_at:'2026-02-02 12:00:00',created_by:'Kabir Ahmed',ts:'2026-02-01 10:00:00'},
+    {id:'TF-002',tenant:'T-002',unit:'U-010',prop:'P-001',thana:'Mirpur',district:'Dhaka',status:'Submitted',payload:{unit:'U-010',prop:'P-001',name:'Sultana Rahman',nid:'19850112233445021',dob:'1985-11-22',phone:'01712-445566',father:'Late A. Rahman',mother:'Jahanara Begum',profession:'Banker',employer:'Dutch-Bangla Bank',present_flat:'Flat 10A, Green View Residency',present_road:'12/5, Mirpur-10',present_area:'Mirpur',permanent_address:'House 22, Road 4, Dhanmondi',spouse:'Kamal Hossain',spouse_phone:'01712-778899',family_count:'3',ref1_name:'Rafiqul Islam',ref1_phone:'01711-223344',ref1_address:'Green View Residency',ref2_name:'Nusrat Jahan',ref2_phone:'01611-223344',ref2_address:'Mirpur DOHS',landlord_name:'Rofiqul Islam (Owner)',landlord_nid:'',landlord_phone:'01700-000000',move_in:'2026-01-15',lease_term:'11',vehicle:'Toyota Axio (Dhaka Metro-GHA-12-3456)',remarks:''},submitted_at:'2026-07-20 09:30:00',verified_by:'',verified_at:'',created_by:'Kabir Ahmed',ts:'2026-07-20 09:30:00'}
+  ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','trust','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
-  {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','ai','notices','documents','analytics']},
+  {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','ai','analytics','notices','documents']},
-  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','ai','notices','documents','templates']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','trust','ai','analytics','notices','documents']},
+  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','trust','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
@@ -978,14 +987,14 @@ const ROLES = [
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['trust','🪪','Trust Engine']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','trust':'🪪','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','trust':'Trust Engine','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Trust Engine':'ট্রাস্ট ইঞ্জিন','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -2265,6 +2274,194 @@ async function complianceRemind(){
   if(!d.ok){ toast(d.error||'Reminder failed'); return; }
   toast(t('Reminders','রিমাইন্ডার')+' — '+t('due','বাকি')+': '+(d.due||0)+', '+t('sent','পাঠানো')+': '+(d.sent||0));
   await refreshData();
+}
+
+/* ═══ Phase 43: Trust Engine v2 — NID verification + Thana Tenant Information Form ═══ */
+function trustIsStaff(){ return ['superadmin','owner','manager','legal','accountant','svc_mgr'].includes(role().id); }
+function nvBadge(st){
+  return st==='verified' ? '<span class="badge b-green">✓ Verified</span>'
+    : st==='mismatch' ? '<span class="badge b-red">⚠ Mismatch</span>'
+    : '<span class="badge b-orange">◷ Unverified</span>';
+}
+function tfBadge(st){
+  return st==='Verified' ? '<span class="badge b-green">✓ Verified</span>'
+    : st==='Submitted' ? '<span class="badge b-blue">↑ Submitted</span>'
+    : '<span class="badge b-orange">✎ Draft</span>';
+}
+async function trustLoad(){
+  const host = document.getElementById('trustLive'); if(!host) return;
+  const isStaff = trustIsStaff();
+  let nv=[], tf=[], sum={};
+  if(TOKEN && !DEMO_MODE){
+    const [a,b,c] = await Promise.all([
+      apiCall('app-trust?action=summary'), apiCall('app-trust?action=nid-list'), apiCall('app-trust?action=tif-list')]);
+    if(a.ok) sum=a; if(b.ok) nv=b.items||[]; if(c.ok) tf=c.items||[];
+  } else {
+    nv=(DB.nid_verifications||[]).map(x=>({...x}));
+    tf=(DB.thana_forms||[]).map(x=>({...x, payload: x.payload||{}}));
+    let myTid = isStaff ? null : (LIVE.user && LIVE.user.email ? (DB.tenants||[]).find(x=>x.sub_email===LIVE.user.email)?.id : null);
+    if(!isStaff && !myTid && role().id==='tenant'){ myTid = (DB.tenants||[]).find(x=>x.name==='Sultana Rahman')?.id; }
+    if(!isStaff && myTid){ nv=nv.filter(x=>x.tenant===myTid); tf=tf.filter(x=>x.tenant===myTid); }
+    const nvVerified = nv.filter(x=>x.status==='verified').length;
+    sum = { nid_verified:nvVerified, nid_total:nv.length,
+      tf_draft:tf.filter(x=>x.status==='Draft').length, tf_submitted:tf.filter(x=>x.status==='Submitted').length,
+      tf_verified:tf.filter(x=>x.status==='Verified').length, forms_total:tf.length,
+      needs_form: isStaff ? Math.max(0,(DB.tenants||[]).length - tf.length) : (tf.length?0:1) };
+  }
+  const s = (k, v, sub, cls, ico) => stat(t(k,sub||''), v, t(sub||'',sub||''), cls||'', ico||'');
+  let h = statsRow([
+    stat(t('NID verified','এনআইডি ভেরিফাইড'), sum.nid_verified||0, t('checksum passed','চেকসাম পাস'), 'pos','🪪'),
+    stat(t('NID records','এনআইডি রেকর্ড'), sum.nid_total||0, t('on file','ফাইলে'), '','🪪'),
+    stat(t('Forms verified','ফরম ভেরিফাইড'), sum.tf_verified||0, t('thana approved','থানা অনুমোদিত'), 'pos','📋'),
+    stat(t('Forms pending','ফরম পেন্ডিং'), (sum.tf_submitted||0)+(sum.tf_draft||0), t('submit to thana','থানায় জমা দিন'), (sum.tf_submitted||sum.tf_draft)?'warn':'','📋')
+  ]);
+  /* NID verification ledger */
+  h += `<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🪪</span>${t('NID verification ledger','এনআইডি যাচাই লেজার')}</div>${isStaff?`<span class="link" onclick="trustNidForm()">＋ ${t('Verify NID','এনআইডি যাচাই')}</span>`:''}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Tenant','ভাড়াটিয়া')}</th><th>${t('NID','এনআইডি')}</th><th>${t('DOB','জন্ম তারিখ')}</th><th>${t('Check digit','চেক ডিজিট')}</th><th>${t('Status','স্ট্যাটাস')}</th>${isStaff?'<th>'+t('Actions','অ্যাকশন')+'</th>':''}</tr></thead><tbody>` +
+    (nv.map(x=>`<tr><td><span class="c-name">${esc(x.tenant_name||tenantById(x.tenant)?.name||x.tenant)}</span><div class="c-sub">${esc(x.tenant||'')}</div></td><td style="font-family:ui-monospace,monospace">${esc(x.nid||'—')}</td><td>${x.dob||'—'}</td><td>${x.checksum_ok?`<span class="badge b-green">${t('valid','সঠিক')}</span>`:`<span class="badge b-red">${t('fail','ভুল')}</span>`}</td><td>${nvBadge(x.status)}${x.verified_by?`<div class="c-sub">by ${esc(x.verified_by)} · ${esc((x.verified_at||'').slice(0,10))}</div>`:''}</td>` +
+      (isStaff?`<td><div style="display:flex;gap:4px">${x.status!=='verified'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nvSetStatus('${esc(x.id)}','verified')">✓ ${t('Mark verified','ভেরিফাইড')}</button>`:''}${x.status!=='mismatch'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nvSetStatus('${esc(x.id)}','mismatch')">⚠</button>`:''}</div></td>`:'') + `</tr>`).join('')
+    || `<tr><td colspan="${isStaff?6:5}" class="m">${t('No NID records yet — verify the first tenant.','এখনো কোনো এনআইডি রেকর্ড নেই — প্রথম ভাড়াটিয়া যাচাই করুন।')}</td></tr>`)
+    + `</tbody></table></div></div>`;
+  /* Thana forms */
+  h += `<div class="panel"><div class="panel-h"><div class="t"><span class="pi">📋</span>${t('Thana Tenant Information Forms','থানা ভাড়াটিয়া তথ্য ফরম')}</div>${isStaff?`<span class="link" onclick="tfForm('')">＋ ${t('New form','নতুন ফরম')}</span>`:`${(tf||[]).length===0?`<span class="link" onclick="tfForm('')">＋ ${t('Create my form','আমার ফরম তৈরি')}</span>`:''}`}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Form','ফরম')}</th><th>${t('Tenant','ভাড়াটিয়া')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Thana','থানা')}</th><th>${t('Submitted','জমা')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>` +
+    (tf.map(x=>`<tr><td><span class="c-name">${esc(x.id)}</span></td><td>${esc(x.tenant_name||tenantById(x.tenant)?.name||x.tenant)}</td><td>${esc(x.unit_name||x.unit||'—')}</td><td>${esc(x.thana||'—')}${x.district?`<div class="c-sub">${esc(x.district)}</div>`:''}</td><td>${x.submitted_at?(x.submitted_at).slice(0,10):'—'}</td><td>${tfBadge(x.status)}</td><td><div style="display:flex;gap:4px">` +
+      (x.status!=='Verified'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="tfForm('${esc(x.id)}')">✏️</button>`:'') +
+      `</div></td></tr>`).join('')
+    || `<tr><td colspan="7" class="m">${t('No thana forms yet — create one to stay compliant with DMP rules.','এখনো কোনো থানা ফরম নেই — ডিএমপি নিয়ম মেনে একটি তৈরি করুন।')}</td></tr>`)
+    + `</tbody></table></div></div>`;
+  host.innerHTML = h;
+}
+function trustNidForm(){
+  const tenants = (DB.tenants||[]).map(x=>`<option value="${esc(x.id)}">${esc(x.name)} (${esc(x.id)})</option>`).join('');
+  const body = `<div class="form-grid">
+    <div class="form-field full"><label>${t('Tenant','ভাড়াটিয়া')}</label><select id="nv_tenant">${tenants}</select></div>
+    <div class="form-field"><label>NID ${t('number','নম্বর')}</label><input id="nv_nid" placeholder="17-digit or 10-digit"></div>
+    <div class="form-field"><label>${t('Date of birth','জন্ম তারিখ')}</label><input id="nv_dob" type="date"></div>
+    <div class="form-field full"><div class="c-sub" style="color:var(--text-mute)">${t('Runs the Bangladesh 17-digit check-digit algorithm; legacy 10-digit NIDs pass format-only.','বাংলাদেশের ১৭-ডিজিট চেক-ডিজিট অ্যালগরিদম চালায়; পুরনো ১০-ডিজিট এনআইডি ফরম্যাট-মাত্র পাস করে।')}</div></div>
+  </div>`;
+  const foot = `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="nvSave()">${t('Verify NID','এনআইডি যাচাই')}</button></div>`;
+  openDrawer(`🪪 ${t('Verify tenant NID','ভাড়াটিয়ার এনআইডি যাচাই')}`, body, foot);
+}
+async function nvSave(){
+  const tenant = document.getElementById('nv_tenant')?.value;
+  const nid = document.getElementById('nv_nid')?.value.trim();
+  const dob = document.getElementById('nv_dob')?.value||'';
+  if(!tenant||!nid){ toast(t('Tenant and NID required','ভাড়াটিয়া ও এনআইডি প্রয়োজন')); return; }
+  const d = DEMO_MODE ? {ok:true,id:'NV-'+Math.floor(Math.random()*900+100),valid:/^\d{17}$/.test(nid),status:/^\d{17}$/.test(nid)?'verified':'unverified'} : await apiCall('app-trust', {action:'nid-save', tenant, nid, dob});
+  if(!d.ok){ toast(d.error||'Verify failed'); return; }
+  toast(d.valid ? t('NID check digit valid ✓','এনআইডি চেক ডিজিট সঠিক ✓') : t('NID check digit failed — verify manually','এনআইডি চেক ডিজিট ব্যর্থ — ম্যানুয়ালি যাচাই করুন'));
+  if(DEMO_MODE){ (DB.nid_verifications=DB.nid_verifications||[]).push({id:d.id,tenant,nid,dob,status:d.status,method:'checksum',checksum_ok:d.valid?1:0,age_ok:1,notes:'',verified_by:user().name,verified_at:new Date().toISOString().slice(0,10),ts:new Date().toISOString().slice(0,19)}); }
+  closeDrawer(); await refreshData(); if(state.view==='trust'){ render(); }
+}
+async function nvSetStatus(id, status){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-trust', {action:'nid-status', id, status});
+  if(!d.ok){ toast(d.error||'Update failed'); return; }
+  if(DEMO_MODE){ const r=(DB.nid_verifications||[]).find(x=>x.id===id); if(r) r.status=status; }
+  toast(t('NID status updated','এনআইডি স্ট্যাটাস আপডেট হয়েছে'));
+  await refreshData(); if(state.view==='trust'){ render(); }
+}
+async function tfForm(id){
+  let form = id ? (DB.thana_forms||[]).find(x=>x.id===id) : null;
+  let base = {};
+  if(TOKEN && !DEMO_MODE && id){
+    const d = await apiCall('app-trust?action=tif-get&id='+id);
+    if(d.ok) form = d.form;
+  }
+  if(form){ base = form.payload||{}; }
+  else if(trustIsStaff()){
+    const t = (DB.tenants||[])[0]; if(t) base={name:t.name,nid:t.nid||'',phone:t.phone||''};
+  } else {
+    const my = (DB.tenants||[]).find(x=>x.sub_email===LIVE.user?.email);
+    if(my) base={name:my.name,nid:my.nid||'',phone:my.phone||''};
+  }
+  const val = (k)=> esc(base[k]||'');
+  const unitOpts = (DB.units||[]).map(u=>`<option value="${esc(u.id)}" ${base.unit===u.id?'selected':''}>${esc(u.name)} — ${esc(propById(u.p)?.name||'')}</option>`).join('');
+  const body = `<div class="form-grid">
+    <div class="form-field full"><label>${t('Unit','ইউনিট')}</label><select id="tf_unit">${unitOpts}</select></div>
+    <div class="form-field"><label>${t('Tenant name','ভাড়াটিয়ার নাম')}</label><input id="tf_name" value="${val('name')}"></div>
+    <div class="form-field"><label>NID</label><input id="tf_nid" value="${val('nid')}"></div>
+    <div class="form-field"><label>${t('DOB','জন্ম তারিখ')}</label><input id="tf_dob" type="date" value="${val('dob')}"></div>
+    <div class="form-field"><label>${t('Phone','মোবাইল')}</label><input id="tf_phone" value="${val('phone')}"></div>
+    <div class="form-field"><label>${t('Father','পিতার নাম')}</label><input id="tf_father" value="${val('father')}"></div>
+    <div class="form-field"><label>${t('Mother','মাতার নাম')}</label><input id="tf_mother" value="${val('mother')}"></div>
+    <div class="form-field"><label>${t('Profession','পেশা')}</label><input id="tf_profession" value="${val('profession')}"></div>
+    <div class="form-field"><label>${t('Employer','কর্মস্থল')}</label><input id="tf_employer" value="${val('employer')}"></div>
+    <div class="form-field"><label>${t('Present flat','বর্তমান ফ্ল্যাট')}</label><input id="tf_present_flat" value="${val('present_flat')}"></div>
+    <div class="form-field"><label>${t('Present road','বর্তমান রোড')}</label><input id="tf_present_road" value="${val('present_road')}"></div>
+    <div class="form-field"><label>${t('Present area','বর্তমান এলাকা')}</label><input id="tf_present_area" value="${val('present_area')}"></div>
+    <div class="form-field full"><label>${t('Permanent address','স্থায়ী ঠিকানা')}</label><input id="tf_permanent_address" value="${val('permanent_address')}"></div>
+    <div class="form-field"><label>${t('Spouse','স্বামী/স্ত্রী')}</label><input id="tf_spouse" value="${val('spouse')}"></div>
+    <div class="form-field"><label>${t('Spouse phone','স্বামী/স্ত্রীর মোবাইল')}</label><input id="tf_spouse_phone" value="${val('spouse_phone')}"></div>
+    <div class="form-field"><label>${t('Family count','পরিবারের সদস্য')}</label><input id="tf_family_count" value="${val('family_count')||'1'}"></div>
+    <div class="form-field"><label>${t('Thana','থানা')}</label><input id="tf_thana" value="${esc(form?.thana||'')}"></div>
+    <div class="form-field"><label>${t('District','জেলা')}</label><input id="tf_district" value="${esc(form?.district||'')}"></div>
+    <div class="form-field"><label>${t('Ref 1 name','রেফারেন্স ১')}</label><input id="tf_ref1_name" value="${val('ref1_name')}"></div>
+    <div class="form-field"><label>${t('Ref 1 phone','রেফারেন্স ১ এর মোবাইল')}</label><input id="tf_ref1_phone" value="${val('ref1_phone')}"></div>
+    <div class="form-field full"><label>${t('Ref 1 address','রেফারেন্স ১ এর ঠিকানা')}</label><input id="tf_ref1_address" value="${val('ref1_address')}"></div>
+    <div class="form-field"><label>${t('Ref 2 name','রেফারেন্স ২')}</label><input id="tf_ref2_name" value="${val('ref2_name')}"></div>
+    <div class="form-field"><label>${t('Ref 2 phone','রেফারেন্স ২ এর মোবাইল')}</label><input id="tf_ref2_phone" value="${val('ref2_phone')}"></div>
+    <div class="form-field full"><label>${t('Ref 2 address','রেফারেন্স ২ এর ঠিকানা')}</label><input id="tf_ref2_address" value="${val('ref2_address')}"></div>
+    <div class="form-field"><label>${t('Move-in date','ভাড়া শুরুর তারিখ')}</label><input id="tf_move_in" type="date" value="${val('move_in')}"></div>
+    <div class="form-field"><label>${t('Lease term (months)','লিজের মেয়াদ')}</label><input id="tf_lease_term" value="${val('lease_term')}"></div>
+    <div class="form-field"><label>${t('Vehicle','গাড়ি')}</label><input id="tf_vehicle" value="${val('vehicle')}"></div>
+    <div class="form-field full"><label>${t('Remarks','মন্তব্য')}</label><input id="tf_remarks" value="${val('remarks')}"></div>
+  </div>`;
+  const canSubmit = form ? form.status==='Draft' : true;
+  const foot = `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>${form?`<button class="btn-outline" onclick="tfPrint('${esc(form.id)}')">🖨 ${t('Print','প্রিন্ট')}</button>`:''}${canSubmit?`<button class="btn-primary" onclick="tfSave('${id||''}')">${t('Save','সংরক্ষণ')}</button>`:''}${form&&form.status==='Draft'?`<button class="btn-outline" onclick="tfSubmit('${esc(form.id)}')">${t('Submit to thana','থানায় জমা দিন')}</button>`:''}</div>`;
+  openDrawer(`📋 ${form?form.id+' — '+t('Edit form','ফরম সম্পাদনা'):t('New Thana form','নতুন থানা ফরম')}`, body, foot);
+}
+async function tfSave(id){
+  const tid = trustIsStaff() ? (document.getElementById('tf_unit')?.value ? (DB.leases||[]).find(l=>l.u===document.getElementById('tf_unit').value&&['Active','Pending Registration'].includes(l.status))?.t : '') : (DB.tenants||[]).find(x=>x.sub_email===LIVE.user?.email)?.id;
+  const unit = document.getElementById('tf_unit')?.value||'';
+  const prop = (DB.units||[]).find(u=>u.id===unit)?.p||'';
+  const fields = ['name','nid','dob','phone','father','mother','profession','employer','present_flat','present_road','present_area','permanent_address','spouse','spouse_phone','family_count','ref1_name','ref1_phone','ref1_address','ref2_name','ref2_phone','ref2_address','move_in','lease_term','vehicle','remarks'];
+  const payload = {action:'tif-save', id, unit, prop, thana:document.getElementById('tf_thana')?.value||'', district:document.getElementById('tf_district')?.value||''};
+  fields.forEach(k=>{ const el=document.getElementById('tf_'+k); if(el) payload[k]=el.value; });
+  let d;
+  if(!id){
+    if(DEMO_MODE){
+      d={ok:true,id:'TF-'+Math.floor(Math.random()*900+100)};
+      const f={id:d.id,tenant:tid,unit,prop,thana:payload.thana,district:payload.district,status:'Draft',payload:{...payload},submitted_at:'',verified_by:'',verified_at:'',created_by:user().name,ts:new Date().toISOString().slice(0,19)};
+      (DB.thana_forms=DB.thana_forms||[]).push(f);
+      payload.id=f.id; payload.status='Draft';
+      toast(t('Form created','ফরম তৈরি হয়েছে'));
+      closeDrawer(); await refreshData(); if(state.view==='trust'){ render(); }
+      return;
+    }
+    const createD = await apiCall('app-trust', {action:'tif-create', tenant:tid, unit, prop, thana:payload.thana, district:payload.district});
+    if(!createD.ok){ toast(createD.error||'Create failed'); return; }
+    id = createD.id;
+    const saveBody = {action:'tif-save', id};
+    fields.forEach(k=>{ if(payload[k]!==undefined) saveBody[k]=payload[k]; });
+    if(payload.thana) saveBody.thana=payload.thana;
+    if(payload.district) saveBody.district=payload.district;
+    d = await apiCall('app-trust', saveBody);
+  } else {
+    d = DEMO_MODE ? {ok:true} : await apiCall('app-trust', {action:'tif-save', id, unit, prop, thana:payload.thana, district:payload.district, ...fields.reduce((o,k)=>({...o,[k]:payload[k]}),{})});
+    if(DEMO_MODE){ const f=(DB.thana_forms||[]).find(x=>x.id===id); if(f){ Object.assign(f.payload, payload); f.thana=payload.thana; f.district=payload.district; } }
+  }
+  if(!d.ok){ toast(d.error||'Save failed'); return; }
+  toast(t('Form saved','ফরম সংরক্ষিত হয়েছে'));
+  closeDrawer(); await refreshData(); if(state.view==='trust'){ render(); }
+}
+async function tfSubmit(id){
+  const d = DEMO_MODE ? {ok:true} : await apiCall('app-trust', {action:'tif-submit', id});
+  if(!d.ok){ toast(d.error||'Submit failed'); return; }
+  if(DEMO_MODE){ const f=(DB.thana_forms||[]).find(x=>x.id===id); if(f){ f.status='Submitted'; f.submitted_at=new Date().toISOString().slice(0,19); } }
+  toast(t('Form submitted to thana','ফরম থানায় জমা হয়েছে'));
+  closeDrawer(); await refreshData(); if(state.view==='trust'){ render(); }
+}
+async function tfPrint(id){
+  if(DEMO_MODE){
+    const f=(DB.thana_forms||[]).find(x=>x.id===id); if(!f){ toast('Not found'); return; }
+    const rows=Object.entries(f.payload||{}).filter(([k])=>!['unit','prop'].includes(k)).map(([k,v])=>`<tr><td style="padding:8px 12px;border:1px solid #DDE3EC;background:#F7F9FC;font-size:12px;font-weight:700;width:220px">${esc(k.replace(/_/g,' '))}</td><td style="padding:8px 12px;border:1px solid #DDE3EC;font-size:13px">${esc(v||'')}</td></tr>`).join('');
+    previewDoc(f.id+' — Tenant Information Form', `<div style="font-family:Arial;max-width:820px;margin:0 auto;padding:20px"><div style="border-bottom:3px solid #2F80ED;padding-bottom:12px;margin-bottom:16px"><div style="font-size:20px;font-weight:800">Tenant Information Form</div><div style="font-size:12px;color:#667">ভাড়াটিয়া তথ্য ফরম — ${esc(f.thana||'—')} থানা</div></div><table style="border-collapse:collapse;width:100%">${rows}</table></div>`);
+    return;
+  }
+  try{
+    const res=await fetch(API+'app-trust?action=tif-print&id='+encodeURIComponent(id),{headers:{Authorization:'Bearer '+TOKEN}});
+    if(!res.ok){let msg='Cannot open: '+res.status;try{const j=await res.json();if(j.error)msg=j.error;}catch(e){}toast(msg);return;}
+    previewDoc(id+' — Tenant Information Form', await res.text());
+  }catch(e){ toast('Print error: '+e.message); }
 }
 
 /* ═══ Phase 34: utilities & service billing ═══ */
@@ -3928,6 +4125,13 @@ const renderers={
     let h=pageHead(t('Compliance','কমপ্লায়েন্স'),t('Licenses, certificates and expiries — auto-tracked from leases, policies and registrations.','লাইসেন্স, সার্টিফিকেট ও মেয়াদ — লিজ, পলিসি ও রেজিস্ট্রেশন থেকে অটো-ট্র্যাকিং।'),`<button class="btn-outline" onclick="complianceRemind()">📣 ${t('Send reminders','রিমাইন্ডার পাঠান')}</button>${canManage?`<button class="btn-primary" onclick="complianceForm()">＋ ${t('Add document','ডকুমেন্ট যোগ করুন')}</button>`:''}`);
     h+=`<div id="complianceLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>complianceLoad(),0);
+    return h;
+  },
+  trust(){
+    const isStaff = ['superadmin','owner','manager','legal','accountant','svc_mgr'].includes(role().id);
+    let h=pageHead(t('Trust Engine','ট্রাস্ট ইঞ্জিন'),isStaff?t('NID check-digit verification + Thana Tenant Information Forms for every tenant.','এনআইডি চেক-ডিজিট যাচাই + প্রতিটি ভাড়াটিয়ার জন্য থানা ভাড়াটিয়া তথ্য ফরম।'):t('Your NID verification and Thana information form.','আপনার এনআইডি যাচাই ও থানা তথ্য ফরম।'),isStaff?`<button class="btn-primary" onclick="trustNidForm()">🪪 ${t('Verify NID','এনআইডি যাচাই')}</button>`:'');
+    h+=`<div id="trustLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>trustLoad(),0);
     return h;
   },
   vendors(){
