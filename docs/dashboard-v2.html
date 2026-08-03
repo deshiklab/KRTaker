@@ -1131,7 +1131,7 @@ function renderNav(){
   renderMobBar();
 }
 function renderMobBar(){
-  const items=[['dashboard','📊'],['properties','🏢'],['invoices','🧾'],['maintenance','🔧'],['leads','📥'],['ai','🤖']].filter(i=>can(i[0]));
+  const items=[['dashboard','📊'],['properties','🏢'],['invoices','🧾'],['maintenance','🔧'],['leads','📥']].filter(i=>can(i[0]));
   $('mobBar')||(function(){const d=document.createElement('div');d.className='mob-bar';d.id='mobBar';document.body.appendChild(d)})();
   $('mobBar').innerHTML=items.map(i=>`<div class="mb ${state.view===i[0]?'active':''}" onclick="nav('${i[0]}')"><span class="mi">${i[1]}</span>${t(MOD_TITLE[i[0]],BN[MOD_TITLE[i[0]]])}</div>`).join('');
 }
