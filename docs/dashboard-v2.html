@@ -1082,18 +1082,31 @@ const SEED = {
   build_media:[
     {id:'BD-001',project:'BP-001',kind:'photo',name:'Site photo — electrical rough-in',fname:'bmd_bp001_01.jpg',size:182345,mime:'image/jpeg',geo:'23.7925,90.4078',captured_at:'2026-07-22 10:15:00',uploaded_by:'Arif Chowdhury'},
     {id:'BD-002',project:'BP-002',kind:'photo',name:'Slab casting day',fname:'bmd_bp002_01.jpg',size:241902,mime:'image/jpeg',geo:'23.8103,90.4125',captured_at:'2026-04-18 14:30:00',uploaded_by:'Arif Chowdhury'}
+  ],
+  gate_visits:[
+    {id:'GV-001',owner_email:'owner@krtaker.com',prop:'P-002',vtype:'visitor',name:'Mahmudul Karim',phone:'01712345678',vehicle_no:'',unit:'U-004',purpose:'Meeting with tenant',host_name:'Sultana Rahman',check_in:'2026-08-03 10:20:00',check_out:'',status:'Inside',flagged:0,notes:'Brother of tenant — long visit',photo:'',created_by:'Arif Chowdhury',ts:'2026-08-03 10:20:00'},
+    {id:'GV-002',owner_email:'owner@krtaker.com',prop:'P-002',vtype:'delivery',name:'Pathao Food',phone:'01711112222',vehicle_no:'DHAKA-LA-1234',unit:'',purpose:'Food delivery',host_name:'',check_in:'2026-08-03 14:20:00',check_out:'2026-08-03 14:50:00',status:'Out',flagged:0,notes:'',photo:'',created_by:'Arif Chowdhury',ts:'2026-08-03 14:20:00'},
+    {id:'GV-003',owner_email:'owner@krtaker.com',prop:'P-001',vtype:'worker',name:'Electrical repair crew',phone:'',vehicle_no:'DHAKA-METRO-7712',unit:'U-001',purpose:'MR-003 electrical fix',host_name:'Rahim Uddin',check_in:'2026-08-03 13:20:00',check_out:'2026-08-03 14:20:00',status:'Out',flagged:0,notes:'',photo:'',created_by:'Arif Chowdhury',ts:'2026-08-03 13:20:00'},
+    {id:'GV-004',owner_email:'owner@krtaker.com',prop:'P-003',vtype:'vehicle',name:'Unknown pickup',phone:'',vehicle_no:'DHAKA-METRO-9999',unit:'',purpose:'Suspicious vehicle — watchlist demo',host_name:'',check_in:'2026-08-03 15:50:00',check_out:'',status:'Inside',flagged:1,notes:'Auto-flagged by watchlist on check-in',photo:'',created_by:'Arif Chowdhury',ts:'2026-08-03 15:50:00'}
+  ],
+  resident_vehicles:[
+    {id:'RV-001',prop:'P-002',unit:'U-003',vehicle_no:'DHAKA-METRO-1122',vtype:'car',label:'Honda City',owner_name:'Sultana Rahman',sticker_no:'ST-101',status:'active',ts:'2026-07-01 09:00:00'},
+    {id:'RV-002',prop:'P-001',unit:'U-001',vehicle_no:'DHAKA-METRO-3344',vtype:'bike',label:'Yamaha FZS',owner_name:'Rahim Uddin',sticker_no:'ST-102',status:'active',ts:'2026-07-01 09:00:00'}
+  ],
+  gate_watchlist:[
+    {id:'GW-001',vehicle_no:'DHAKA-METRO-9999',name:'Unknown pickup',reason:'Suspicious activity — reported by neighbour, avoid entry',active:1,ts:'2026-07-28 09:00:00'}
   ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','ai','analytics','notices','documents']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','concierge','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','concierge','smarthome','health','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','concierge','health','ai','analytics','notices','documents','recon','templates']},
@@ -1102,20 +1115,20 @@ const ROLES = [
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['nrb','🌐','NRB Hub'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Build Watch':'নির্মাণ মনিটরিং','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Build Watch':'নির্মাণ মনিটরিং','Gate Watch':'গেট ওয়াচ','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
 
 /* ═══ State ═══ */
-let state = {role:'owner', view:'dashboard', theme:localStorage.getItem('krtaker_dash_theme')||'light', lang:localStorage.getItem('krtaker_dash_lang')||'en'};
+let state = {role:'owner', view:'dashboard', gateTab:'live', theme:localStorage.getItem('krtaker_dash_theme')||'light', lang:localStorage.getItem('krtaker_dash_lang')||'en'};
 let DB = JSON.parse(JSON.stringify(SEED));
 
 /* ═══ Phase 2: API layer (backend + RBAC + subscriptions) ═══ */
@@ -3577,6 +3590,228 @@ function demoBuildData(){
   const alerts=[];
   rows.forEach(p=>{ if(p.milestones_overdue>0) alerts.push({severity:'warning',ref:p.id,title:t('Milestone overdue','মাইলস্টোন ওভারডিউ'),body:p.id+' — '+p.title+' · '+p.milestones_overdue+' '+t('milestone(s) past due','মাইলস্টোন মেয়াদোত্তীর্ণ')}); if(p.over_budget) alerts.push({severity:'warning',ref:p.id,title:t('Budget overrun','বাজেট ওভাররান'),body:p.id+' — '+p.title+' · '+t('spent','ব্যয়')+' '+money(p.spent)+' '+t('of','এর মধ্যে')+' '+money(p.budget_total)+' '+t('budget','বাজেট')}); });
   return {projects:rows,stats:by(rows,['Planning','In_Progress','On_Hold','Completed','Cancelled']),total_budget:rows.reduce((s,p)=>s+(+p.budget_total||0),0),total_spent:rows.reduce((s,p)=>s+p.spent,0),alerts,config:{milestone_alert_days:14,budget_overrun_pct:10,default_contractor:'EcoBuild Engineering'}};
+}
+function gateStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
+function gateVtype(v){ return ({visitor:t('Visitor','দর্শনার্থী'),delivery:t('Delivery','ডেলিভারি'),worker:t('Worker','কর্মী'),vendor:t('Vendor','ভেন্ডর'),vehicle:t('Vehicle','যানবাহন')})[v]||v; }
+function gateEnrich(v){
+  const propName=(DB.properties||[]).find(x=>x.id===v.prop)?.name||'';
+  let insideMin=0;
+  if(v.status==='Inside'&&v.check_in){ const t0=new Date(v.check_in.replace(' ','T')).getTime(); if(!isNaN(t0)) insideMin=Math.max(0,Math.floor((Date.now()-t0)/60000)); }
+  const resident=v.vehicle_no?(DB.resident_vehicles||[]).some(x=>x.vehicle_no===v.vehicle_no&&x.status==='active'):false;
+  return Object.assign({},v,{property_name:propName,inside_min:insideMin,resident});
+}
+function demoGateData(){
+  const rows=(DB.gate_visits||[]).map(x=>Object.assign({},x));
+  rows.forEach(x=>{ if(x.status==='Inside'){ const h=x.id==='GV-001'?6:0.5; x.check_in=new Date(Date.now()-h*3600e3).toISOString().slice(0,19).replace('T',' '); } });
+  const en=rows.map(gateEnrich);
+  const inside=en.filter(x=>x.status==='Inside');
+  const today=new Date().toISOString().slice(0,10);
+  const todayRows=en.filter(x=>(x.check_in||'').indexOf(today)===0);
+  const by={visitor:0,delivery:0,worker:0,vendor:0,vehicle:0};
+  en.forEach(x=>by[x.vtype]=(by[x.vtype]||0)+1);
+  const cfg0=window.__gateCfg||{};
+  return {visits:en,summary:{
+    inside_now:inside, inside_count:inside.length, today_in:todayRows.length,
+    today_out:todayRows.filter(x=>x.status==='Out').length, by_type:by,
+    flagged_open:inside.filter(x=>x.flagged).length,
+    watchlist_active:(DB.gate_watchlist||[]).filter(x=>x.active).length,
+    recent:en.slice(0,12),
+    config:{auto_flag_hours:cfg0.auto_flag_hours||4,report_title:cfg0.report_title||'Daily Gate Register'}
+  },config:{auto_flag_hours:cfg0.auto_flag_hours||4,report_title:cfg0.report_title||'Daily Gate Register'}};
+}
+async function gateLoad(){
+  const host=document.getElementById('gateLive'); if(!host) return;
+  let d;
+  if(TOKEN&&!DEMO_MODE){
+    d=await apiCall('app-gate',{action:'summary'});
+    if(!d.ok){ host.innerHTML=`<div class="m">${esc(d.error||'Failed to load')}</div>`; return; }
+    const sm=d.summary||{}; d={visits:sm.inside_now||[], summary:sm, config:d.config||sm.config||{}};
+  } else { d=demoGateData(); }
+  window.__gateCfg=d.config||{auto_flag_hours:4,report_title:'Daily Gate Register'};
+  host.innerHTML=gateHtml(d);
+}
+function gateHtml(d){
+  const sm=d.summary||{}; const inside=sm.inside_now||[]; const rows=d.visits||[];
+  const cfg=window.__gateCfg||{};
+  const flagH=(cfg.auto_flag_hours||4);
+  let h=statsRow([
+    stat(t('Inside now','এখন ভেতরে'),sm.inside_count||0,t('in building','ভবনে'),(sm.inside_count||0)?'warn':'','🚪'),
+    stat(t('Today in','আজ ঢুকেছে'),sm.today_in||0,t('visits','আগমন'),'','📥'),
+    stat(t('Flagged','ফ্ল্যাগড'),sm.flagged_open||0,t('on site','সাইটে'),(sm.flagged_open||0)?'warn':'','🚨'),
+    stat(t('Watchlist','ওয়াচলিস্ট'),sm.watchlist_active||0,t('active','সক্রিয়'),'','⚠️')
+  ]);
+  h+=`<div class="kr-tabs" style="margin-bottom:12px">`+
+    `<button class="${state.gateTab==='live'?'btn-primary':'btn-ghost'}" onclick="gateTab('live')">🟢 ${t('Live board','লাইভ বোর্ড')}</button>`+
+    `<button class="${state.gateTab==='log'?'btn-primary':'btn-ghost'}" onclick="gateTab('log')">📋 ${t('Log','লগ')}</button>`+
+    `<button class="${state.gateTab==='vehicles'?'btn-primary':'btn-ghost'}" onclick="gateTab('vehicles')">🚗 ${t('Vehicles','যানবাহন')}</button>`+
+    `<button class="${state.gateTab==='watchlist'?'btn-primary':'btn-ghost'}" onclick="gateTab('watchlist')">🚨 ${t('Watchlist','ওয়াচলিস্ট')}</button>`+
+    `<button class="btn-ghost" onclick="gateReport()">🖨 ${t('Daily report','দৈনিক রিপোর্ট')}</button></div>`;
+  if(state.gateTab==='live'){
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🟢</span>${t('Inside right now','এই মুহূর্তে ভেতরে')}</div><span class="link" onclick="gateCheckIn()">＋ ${t('Check in','চেক-ইন')}</span></div><div class="panel-b">`+
+      (inside.length?inside.map(v=>`<div class="row-item"><div class="ri-ic">${v.flagged?'🚨':'🚪'}</div><div class="ri-body"><div class="ri-t">${esc(v.name||v.vehicle_no||v.id)} ${v.flagged?`<span class="badge b-red">${t('FLAGGED','ফ্ল্যাগড')}</span>`:''} ${v.resident?`<span class="badge b-green">${t('resident','রেসিডেন্ট')}</span>`:''}</div><div class="ri-s">${gateVtype(v.vtype)}${v.vehicle_no?' · '+esc(v.vehicle_no):''}${v.property_name?' · '+esc(v.property_name):''}${v.host_name?' · '+t('host','হোস্ট')+' '+esc(v.host_name):''}</div><div class="ri-s">${t('in','ঢুকেছে')} ${esc(v.check_in||'')}${v.inside_min>0?' · '+Math.floor(v.inside_min/60)+'h '+t('inside','ভেতরে'):''}</div></div><div class="ri-r"><button class="btn-primary" style="padding:4px 10px;font-size:11px" onclick="gateCheckOut('${esc(v.id)}')">${t('Check out','চেক-আউট')}</button></div></div>`).join(''):`<div class="empty">${t('No one inside right now.','এই মুহূর্তে কেউ ভেতরে নেই।')}</div>`)+`</div></div>`;
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">📋</span>${t('Recent activity','সাম্প্রতিক কার্যক্রম')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Who','কে')}</th><th>${t('Type','ধরন')}</th><th>${t('Vehicle','যানবাহন')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('In','ঢোকে')}</th><th>${t('Out','বের হয়')}</th><th>${t('Status','স্ট্যাটাস')}</th></tr></thead><tbody>`+
+      (sm.recent||[]).map(v=>`<tr><td><span class="c-name">${esc(v.name||v.vehicle_no||'—')}</span>${v.flagged?` <span class="badge b-red">★</span>`:''}<div class="c-sub">${v.phone||''}</div></td><td>${gateVtype(v.vtype)}</td><td>${esc(v.vehicle_no||'—')}</td><td>${esc(v.property_name||'—')}</td><td>${esc(v.check_in||'—')}</td><td>${esc(v.check_out||'—')}</td><td>${v.status==='Inside'?`<span class="badge b-green">${t('Inside','ভেতরে')}</span>`:`<span class="badge b-gray">${t('Out','বাইরে')}</span>`}</td></tr>`).join('')+`</tbody></table></div></div>`;
+  } else if(state.gateTab==='log'){
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">📋</span>${t('Gate log','গেট লগ')}</div><span class="link" onclick="gateCheckIn()">＋ ${t('Check in','চেক-ইন')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('ID','আইডি')}</th><th>${t('Who','কে')}</th><th>${t('Type','ধরন')}</th><th>${t('Vehicle','যানবাহন')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Purpose','উদ্দেশ্য')}</th><th>${t('In','ঢোকে')}</th><th>${t('Out','বের হয়')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+      (rows.map(v=>`<tr><td>${esc(v.id)}</td><td><span class="c-name">${esc(v.name||'—')}</span>${v.flagged?` <span class="badge b-red">★</span>`:''}</td><td>${gateVtype(v.vtype)}</td><td>${esc(v.vehicle_no||'—')}</td><td>${esc(v.property_name||'—')}</td><td>${esc(v.purpose||'—')}</td><td>${esc(v.check_in||'—')}</td><td>${esc(v.check_out||'—')}</td><td>${v.status==='Inside'?`<span class="badge b-green">${t('Inside','ভেতরে')}</span>`:`<span class="badge b-gray">${t('Out','বাইরে')}</span>`}</td><td>${v.status==='Inside'?`<button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="gateCheckOut('${esc(v.id)}')">${t('Out','বের')}</button>`:''}<button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="gateDeleteVisit('${esc(v.id)}')">✕</button></td></tr>`).join('')||`<tr><td colspan="10" class="empty">${t('No visits yet.','এখনো কোনো আগমন নেই।')}</td></tr>`)+`</tbody></table></div></div>`;
+  } else if(state.gateTab==='vehicles'){
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🚗</span>${t('Resident vehicles','রেসিডেন্ট যানবাহন')}</div><span class="link" onclick="gateVehicleForm()">＋ ${t('Add vehicle','যানবাহন যোগ')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Plate','নম্বর')}</th><th>${t('Type','ধরন')}</th><th>${t('Label','লেবেল')}</th><th>${t('Owner','মালিক')}</th><th>${t('Unit','ইউনিট')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Sticker','স্টিকার')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+      ((DB.resident_vehicles||[]).map(v=>{ const pn=(DB.properties||[]).find(x=>x.id===v.prop)?.name||''; return `<tr><td><b>${esc(v.vehicle_no)}</b></td><td>${esc(v.vtype)}</td><td>${esc(v.label||'—')}</td><td>${esc(v.owner_name||'—')}</td><td>${esc(v.unit||'—')}</td><td>${esc(pn||'—')}</td><td>${esc(v.sticker_no||'—')}</td><td>${v.status==='active'?`<span class="badge b-green">${t('active','সক্রিয়')}</span>`:`<span class="badge b-gray">${t('inactive','নিষ্ক্রিয়')}</span>`}</td><td><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="gateVehicleForm('${esc(v.id)}')">✎</button><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="gateVehicleDelete('${esc(v.id)}')">✕</button></td></tr>`;}).join('')||`<tr><td colspan="9" class="empty">${t('No vehicles registered.','কোনো যানবাহন নিবন্ধিত নেই।')}</td></tr>`)+`</tbody></table></div></div>`;
+  } else {
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🚨</span>${t('Watchlist','ওয়াচলিস্ট')}</div><span class="link" onclick="gateWatchlistForm()">＋ ${t('Add entry','এন্ট্রি যোগ')}</span></div><div class="panel-b">`+
+      ((DB.gate_watchlist||[]).map(w=>`<div class="row-item"><div class="ri-ic">${w.active?'🚨':'⚠️'}</div><div class="ri-body"><div class="ri-t">${esc(w.vehicle_no||w.name||w.id)} ${w.active?`<span class="badge b-red">${t('active','সক্রিয়')}</span>`:`<span class="badge b-gray">${t('off','বন্ধ')}</span>`}</div><div class="ri-s">${esc(w.name||'')}${w.reason?' · '+esc(w.reason):''}</div></div><div class="ri-r"><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="gateWatchlistForm('${esc(w.id)}')">✎</button><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="gateWatchlistDelete('${esc(w.id)}')">✕</button></div></div>`).join('')||`<div class="empty">${t('Watchlist is empty.','ওয়াচলিস্ট খালি।')}</div>`)+`</div></div>`;
+    h+=`<div class="panel"><div class="panel-b c-sub">${t('Watchlist entries are auto-checked on check-in — a matching plate or name flags the visit and raises a critical KR alert.','ওয়াচলিস্ট এন্ট্রি চেক-ইনের সময় অটো-চেক হয় — মিলে গেলে ভিজিট ফ্ল্যাগ হয় এবং কেআর ক্রিটিক্যাল অ্যালার্ট দেয়।')}</div></div>`;
+  }
+  return h;
+}
+function gateTab(tab){ state.gateTab=tab; gateLoad(); }
+function gatePropOptions(sel){
+  return (DB.properties||[]).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+}
+function gateCheckIn(){
+  const body=`
+  <div class="f-row"><label>${t('Property','সম্পত্তি')}</label><select id="gvProp">${gatePropOptions()}</select></div>
+  <div class="f-row"><label>${t('Type','ধরন')}</label><select id="gvType"><option value="visitor">${t('Visitor','দর্শনার্থী')}</option><option value="delivery">${t('Delivery','ডেলিভারি')}</option><option value="worker">${t('Worker','কর্মী')}</option><option value="vendor">${t('Vendor','ভেন্ডর')}</option><option value="vehicle">${t('Vehicle','যানবাহন')}</option></select></div>
+  <div class="f-row"><label>${t('Name','নাম')}</label><input id="gvName" placeholder="${t('Visitor name','আগন্তুকের নাম')}"></div>
+  <div class="f-row"><label>${t('Phone','ফোন')}</label><input id="gvPhone" placeholder="017xxxxxxxx"></div>
+  <div class="f-row"><label>${t('Vehicle no.','যানবাহন নম্বর')}</label><input id="gvVehicle" placeholder="DHAKA-METRO-1234"></div>
+  <div class="f-row"><label>${t('Unit','ইউনিট')}</label><input id="gvUnit" placeholder="U-004"></div>
+  <div class="f-row"><label>${t('Purpose','উদ্দেশ্য')}</label><input id="gvPurpose" placeholder="${t('Meeting, delivery, repair…','সাক্ষাৎ, ডেলিভারি, মেরামত…')}"></div>
+  <div class="f-row"><label>${t('Host','হোস্ট')}</label><input id="gvHost" placeholder="${t('Who are they visiting?','কার সাথে দেখা করবেন?')}"></div>
+  <div class="f-row"><label>${t('Notes','নোট')}</label><input id="gvNotes"></div>`;
+  const foot=`<button class="btn-primary" onclick="submitGateCheckIn()">${t('Check in','চেক-ইন')}</button>`;
+  openDrawer(t('Check in visitor','আগন্তুক চেক-ইন'), body, foot);
+}
+async function submitGateCheckIn(){
+  const payload={action:'visit-create',prop:val('gvProp'),vtype:val('gvType'),name:val('gvName'),phone:val('gvPhone'),vehicle_no:val('gvVehicle'),unit:val('gvUnit'),purpose:val('gvPurpose'),host_name:val('gvHost'),notes:val('gvNotes')};
+  if(!payload.prop){ toast(t('Pick a property','সম্পত্তি বাছুন')); return; }
+  if(!payload.name&&!payload.vehicle_no){ toast(t('Name or vehicle number required','নাম বা যানবাহন নম্বর প্রয়োজন')); return; }
+  if(DEMO_MODE||!TOKEN){
+    const maxN=Math.max(100,...(DB.gate_visits||[]).map(x=>+(x.id||'GV-0').replace('GV-','')||0));
+    const id='GV-'+String(maxN+1).padStart(3,'0');
+    const wl=(DB.gate_watchlist||[]).filter(w=>w.active);
+    const flag=wl.some(w=>payload.vehicle_no&&w.vehicle_no&&w.vehicle_no.toUpperCase()===payload.vehicle_no.toUpperCase())||wl.some(w=>w.name&&payload.name&&w.name===payload.name);
+    DB.gate_visits=DB.gate_visits||[]; DB.gate_visits.unshift({id,owner_email:'owner@krtaker.com',prop:payload.prop,vtype:payload.vtype,name:payload.name,phone:payload.phone,vehicle_no:payload.vehicle_no.toUpperCase(),unit:payload.unit,purpose:payload.purpose,host_name:payload.host_name,check_in:new Date().toISOString().slice(0,19).replace('T',' '),check_out:'',status:'Inside',flagged:flag?1:0,notes:payload.notes,created_by:'Demo',ts:new Date().toISOString().slice(0,19).replace('T',' ')});
+    toast(flag?t('⚠️ Checked in — FLAGGED by watchlist','⚠️ চেক-ইন হয়েছে — ওয়াচলিস্টে ফ্ল্যাগড'):t('Checked in','চেক-ইন হয়েছে'));
+    closeDrawer(); gateLoad(); return;
+  }
+  const d=await apiCall('app-gate',payload);
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(d.flagged?t('⚠️ FLAGGED by watchlist','⚠️ ওয়াচলিস্টে ফ্ল্যাগড'):t('Checked in','চেক-ইন হয়েছে'));
+  closeDrawer(); gateLoad();
+}
+async function gateCheckOut(id){
+  if(DEMO_MODE||!TOKEN){
+    const v=(DB.gate_visits||[]).find(x=>x.id===id); if(v){ v.status='Out'; v.check_out=new Date().toISOString().slice(0,19).replace('T',' '); }
+    toast(t('Checked out','চেক-আউট হয়েছে')); gateLoad(); return;
+  }
+  const d=await apiCall('app-gate',{action:'visit-out',id});
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Checked out','চেক-আউট হয়েছে')); gateLoad();
+}
+async function gateDeleteVisit(id){
+  if(!confirm(t('Delete this gate entry?','এই গেট এন্ট্রি মুছবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){
+    DB.gate_visits=(DB.gate_visits||[]).filter(x=>x.id!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); gateLoad(); return;
+  }
+  const d=await apiCall('app-gate',{action:'visit-delete',id});
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Deleted','মুছে ফেলা হয়েছে')); gateLoad();
+}
+function gateVehicleForm(id){
+  const v=id?(DB.resident_vehicles||[]).find(x=>x.id===id):null;
+  const body=`
+  <div class="f-row"><label>${t('Vehicle no.','যানবাহন নম্বর')}</label><input id="rvNo" value="${v?esc(v.vehicle_no):''}" placeholder="DHAKA-METRO-1234"></div>
+  <div class="f-row"><label>${t('Type','ধরন')}</label><select id="rvType">${['car','bike','cycle','other'].map(x=>`<option value="${x}" ${v&&v.vtype===x?'selected':''}>${x}</option>`).join('')}</select></div>
+  <div class="f-row"><label>${t('Label','লেবেল')}</label><input id="rvLabel" value="${v?esc(v.label||''):''}" placeholder="Honda City"></div>
+  <div class="f-row"><label>${t('Owner','মালিক')}</label><input id="rvOwner" value="${v?esc(v.owner_name||''):''}"></div>
+  <div class="f-row"><label>${t('Unit','ইউনিট')}</label><input id="rvUnit" value="${v?esc(v.unit||''):''}"></div>
+  <div class="f-row"><label>${t('Property','সম্পত্তি')}</label><select id="rvProp">${gatePropOptions()}</select></div>
+  <div class="f-row"><label>${t('Sticker no.','স্টিকার নম্বর')}</label><input id="rvSticker" value="${v?esc(v.sticker_no||''):''}"></div>
+  ${v?`<div class="f-row"><label>${t('Status','স্ট্যাটাস')}</label><select id="rvStatus"><option value="active" ${v.status==='active'?'selected':''}>${t('active','সক্রিয়')}</option><option value="inactive" ${v.status==='inactive'?'selected':''}>${t('inactive','নিষ্ক্রিয়')}</option></select></div>`:''}`;
+  const foot=`<button class="btn-primary" onclick="submitGateVehicle('${v?v.id:''}')">${t('Save','সেভ')}</button>`;
+  openDrawer(v?t('Edit vehicle','যানবাহন সম্পাদনা'):t('Add vehicle','যানবাহন যোগ'), body, foot);
+}
+async function submitGateVehicle(id){
+  const payload={action:id?'vehicle-save':'vehicle-create',id,prop:val('rvProp'),vehicle_no:val('rvNo'),vtype:val('rvType'),label:val('rvLabel'),owner_name:val('rvOwner'),unit:val('rvUnit'),sticker_no:val('rvSticker')};
+  if(id) payload.status=val('rvStatus');
+  if(!payload.vehicle_no){ toast(t('Vehicle number required','যানবাহন নম্বর প্রয়োজন')); return; }
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const v=(DB.resident_vehicles||[]).find(x=>x.id===id); if(v) Object.assign(v,payload,{vehicle_no:payload.vehicle_no.toUpperCase()}); }
+    else { const maxN=Math.max(100,...(DB.resident_vehicles||[]).map(x=>+(x.id||'RV-0').replace('RV-','')||0)); DB.resident_vehicles=DB.resident_vehicles||[]; DB.resident_vehicles.unshift({id:'RV-'+String(maxN+1).padStart(3,'0'),vehicle_no:payload.vehicle_no.toUpperCase(),status:'active',ts:new Date().toISOString().slice(0,19).replace('T',' '),...payload}); }
+    toast(t('Saved','সেভ হয়েছে')); closeDrawer(); gateLoad(); return;
+  }
+  const d=await apiCall('app-gate',payload);
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Saved','সেভ হয়েছে')); closeDrawer(); gateLoad();
+}
+async function gateVehicleDelete(id){
+  if(!confirm(t('Remove this vehicle?','যানবাহনটি মুছবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){ DB.resident_vehicles=(DB.resident_vehicles||[]).filter(x=>x.id!==id); toast(t('Removed','মুছে ফেলা হয়েছে')); gateLoad(); return; }
+  const d=await apiCall('app-gate',{action:'vehicle-delete',id});
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Removed','মুছে ফেলা হয়েছে')); gateLoad();
+}
+function gateWatchlistForm(id){
+  const w=id?(DB.gate_watchlist||[]).find(x=>x.id===id):null;
+  const body=`
+  <div class="f-row"><label>${t('Vehicle no.','যানবাহন নম্বর')}</label><input id="gwNo" value="${w?esc(w.vehicle_no||''):''}" placeholder="DHAKA-METRO-1234"></div>
+  <div class="f-row"><label>${t('Name','নাম')}</label><input id="gwName" value="${w?esc(w.name||''):''}"></div>
+  <div class="f-row"><label>${t('Reason','কারণ')}</label><input id="gwReason" value="${w?esc(w.reason||''):''}"></div>
+  ${w?`<div class="f-row"><label>${t('Active','সক্রিয়')}</label><select id="gwActive"><option value="1" ${w.active?'selected':''}>${t('yes','হ্যাঁ')}</option><option value="0" ${!w.active?'selected':''}>${t('no','না')}</option></select></div>`:''}`;
+  const foot=`<button class="btn-primary" onclick="submitGateWatchlist('${w?w.id:''}')">${t('Save','সেভ')}</button>`;
+  openDrawer(w?t('Edit watchlist entry','ওয়াচলিস্ট এন্ট্রি সম্পাদনা'):t('Add watchlist entry','ওয়াচলিস্ট এন্ট্রি যোগ'), body, foot);
+}
+async function submitGateWatchlist(id){
+  const payload={action:id?'watchlist-save':'watchlist-create',id,vehicle_no:val('gwNo'),name:val('gwName'),reason:val('gwReason')};
+  if(id) payload.active=parseInt(val('gwActive')||'1',10);
+  if(!payload.vehicle_no&&!payload.name){ toast(t('Vehicle number or name required','যানবাহন নম্বর বা নাম প্রয়োজন')); return; }
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const w=(DB.gate_watchlist||[]).find(x=>x.id===id); if(w) Object.assign(w,payload,{vehicle_no:(payload.vehicle_no||'').toUpperCase()}); }
+    else { const maxN=Math.max(100,...(DB.gate_watchlist||[]).map(x=>+(x.id||'GW-0').replace('GW-','')||0)); DB.gate_watchlist=DB.gate_watchlist||[]; DB.gate_watchlist.unshift({id:'GW-'+String(maxN+1).padStart(3,'0'),vehicle_no:(payload.vehicle_no||'').toUpperCase(),name:payload.name,reason:payload.reason,active:1,ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+    toast(t('Saved','সেভ হয়েছে')); closeDrawer(); gateLoad(); return;
+  }
+  const d=await apiCall('app-gate',payload);
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Saved','সেভ হয়েছে')); closeDrawer(); gateLoad();
+}
+async function gateWatchlistDelete(id){
+  if(!confirm(t('Remove watchlist entry?','ওয়াচলিস্ট এন্ট্রি মুছবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){ DB.gate_watchlist=(DB.gate_watchlist||[]).filter(x=>x.id!==id); toast(t('Removed','মুছে ফেলা হয়েছে')); gateLoad(); return; }
+  const d=await apiCall('app-gate',{action:'watchlist-delete',id});
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Removed','মুছে ফেলা হয়েছে')); gateLoad();
+}
+function gateConfigDrawer(){
+  const cfg=window.__gateCfg||{auto_flag_hours:4,report_title:'Daily Gate Register'};
+  const body=`
+  <div class="f-row"><label>${t('Auto-flag after hours','অটো-ফ্ল্যাগ ঘণ্টা')}</label><input id="gcfgHours" type="number" value="${cfg.auto_flag_hours||4}" min="1" max="120"></div>
+  <div class="f-row"><label>${t('Report title','রিপোর্ট শিরোনাম')}</label><input id="gcfgTitle" value="${esc(cfg.report_title||'Daily Gate Register')}"></div>
+  <div class="c-sub">${t('Visitors still inside after this many hours raise a long-stay warning. Watchlist matches raise critical alerts.','এত ঘণ্টার বেশি ভেতরে থাকলে লং-স্টে ওয়ার্নিং আসে। ওয়াচলিস্ট মিলে গেলে ক্রিটিক্যাল অ্যালার্ট আসে।')}</div>`;
+  const foot=`<button class="btn-primary" onclick="gateSaveConfig()">${t('Save','সেভ')}</button>`;
+  openDrawer(t('Gate Watch settings','গেট ওয়াচ সেটিংস'), body, foot);
+}
+async function gateSaveConfig(){
+  const payload={action:'config-save',auto_flag_hours:parseInt(val('gcfgHours')||'4',10),report_title:val('gcfgTitle')};
+  if(DEMO_MODE||!TOKEN){ window.__gateCfg={auto_flag_hours:payload.auto_flag_hours,report_title:payload.report_title}; toast(t('Saved','সেভ হয়েছে')); closeDrawer(); gateLoad(); return; }
+  const d=await apiCall('app-gate',payload);
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  window.__gateCfg={auto_flag_hours:payload.auto_flag_hours,report_title:payload.report_title};
+  toast(t('Saved','সেভ হয়েছে')); closeDrawer(); gateLoad();
+}
+async function gateReport(){
+  const title=t('Daily gate register','দৈনিক গেট রেজিস্টার');
+  if(DEMO_MODE||!TOKEN){
+    const rows=(DB.gate_visits||[]).map(gateEnrich);
+    const trs=rows.map((v,i)=>`<tr><td>${i+1}</td><td>${esc(v.id)}</td><td>${esc(v.check_in||'')}</td><td>${esc(v.check_out||'—')}</td><td>${gateVtype(v.vtype)}</td><td>${esc(v.name||v.vehicle_no||'—')}${v.flagged?' ★':''}</td><td>${esc(v.phone||'')}</td><td>${esc(v.vehicle_no||'')}</td><td>${esc(v.unit||'')}</td><td>${esc(v.purpose||'')}</td><td>${esc(v.host_name||'')}</td><td>${v.status}</td></tr>`).join('');
+    const html=`<h1>${esc(title)} — Gate Watch (গেট রেজিস্টার)</h1><div style="color:#666;font-size:12px">${new Date().toDateString()} · ${rows.length} visits</div><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:12px"><tr><th>#</th><th>ID</th><th>In</th><th>Out</th><th>Type</th><th>Name</th><th>Phone</th><th>Vehicle</th><th>Unit</th><th>Purpose</th><th>Host</th><th>Status</th></tr>${trs}</table><div style="display:flex;gap:60px;margin-top:40px;font-size:12px"><div style="border-top:1px solid #333;padding-top:4px;flex:1">Guard (গার্ড)</div><div style="border-top:1px solid #333;padding-top:4px;flex:1">Manager (ম্যানেজার)</div><div style="border-top:1px solid #333;padding-top:4px;flex:1">Owner (মালিক)</div></div>`;
+    previewDoc(title, html); return;
+  }
+  try{
+    const res=await fetch(API+'app-gate?action=report',{headers:{Authorization:'Bearer '+TOKEN}});
+    const html=await res.text();
+    previewDoc(title, html);
+  }catch(e){ toast(t('Report failed','রিপোর্ট ব্যর্থ')); }
 }
 async function buildLoad(){
   const host=document.getElementById('buildLive'); if(!host) return;
@@ -6125,6 +6360,13 @@ const renderers={
     let h=pageHead(t('Build Watch','নির্মাণ মনিটরিং'),isStaff?t('Construction & renovation monitoring — budgets, milestones, site photos and progress reports. Built for NRB owners building from abroad.','নির্মাণ ও সংস্কার মনিটরিং — বাজেট, মাইলস্টোন, সাইট ফটো ও অগ্রগতি রিপোর্ট। বিদেশ থেকে বাড়ি নির্মাণকারী এনআরবি মালিকদের জন্য।'):t('Your build projects.','আপনার নির্মাণ প্রকল্প।'),isStaff?`<button class="btn-primary" onclick="buildNewProject()">＋ ${t('New project','নতুন প্রকল্প')}</button><button class="btn-ghost" onclick="buildConfigDrawer()">⚙️</button>`:'');
     h+=`<div id="buildLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>buildLoad(),0);
+    return h;
+  },
+  gate(){
+    const isStaff=gateStaff();
+    let h=pageHead(t('Gate Watch','গেট ওয়াচ'),isStaff?t('Visitor & vehicle control — who is in and out of your buildings, watchlist alerts and the daily gate register. Built for NRB owners monitoring from abroad.','আগন্তুক ও যানবাহন নিয়ন্ত্রণ — কার ভবনে কে ঢুকেছে/বেরিয়েছে, ওয়াচলিস্ট অ্যালার্ট ও দৈনিক গেট রেজিস্টার। বিদেশ থেকে মনিটর করা এনআরবি মালিকদের জন্য।'):t('Your gate log.','আপনার গেট লগ।'),isStaff?`<button class="btn-primary" onclick="gateCheckIn()">＋ ${t('Check in','চেক-ইন')}</button><button class="btn-ghost" onclick="gateConfigDrawer()">⚙️</button>`:'');
+    h+=`<div id="gateLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>gateLoad(),0);
     return h;
   },
   remit(){
