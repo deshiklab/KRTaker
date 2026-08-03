@@ -1127,6 +1127,29 @@ const SEED = {
   ]
 ,
 
+  building_staff:[
+    {id:'BS-001',owner_email:'owner@krtaker.com',name:'Abdul Karim',role:'guard',phone:'01711000001',join_date:'2025-06-29',monthly_salary:12000,shift:'day',prop:'P-001',status:'active',notes:'Main gate — day shift',ts:'2026-06-01 09:00:00'},
+    {id:'BS-002',owner_email:'owner@krtaker.com',name:'Rashida Begum',role:'cleaner',phone:'01711000002',join_date:'2025-10-08',monthly_salary:8000,shift:'day',prop:'P-002',status:'active',notes:'Common areas + stairwells',ts:'2026-06-01 09:00:00'},
+    {id:'BS-003',owner_email:'owner@krtaker.com',name:'Mizanur Rahman',role:'caretaker',phone:'01711000003',join_date:'2024-05-26',monthly_salary:18000,shift:'rotating',prop:'P-002',status:'active',notes:'Building caretaker — all floors',ts:'2026-06-01 09:00:00'},
+    {id:'BS-004',owner_email:'owner@krtaker.com',name:'Shafiqul Islam',role:'driver',phone:'01711000004',join_date:'2026-01-15',monthly_salary:15000,shift:'night',prop:'P-003',status:'on_leave',notes:'Owner car — night duty',ts:'2026-06-01 09:00:00'}
+  ],
+  staff_attendance:[
+    {id:'AT-001',owner_email:'owner@krtaker.com',staff:'BS-001',work_date:'2026-07-29',check_in:'07:55',check_out:'20:05',status:'present',notes:'',ts:'2026-07-29 07:55:00'},
+    {id:'AT-002',owner_email:'owner@krtaker.com',staff:'BS-001',work_date:'2026-07-30',check_in:'07:58',check_out:'20:02',status:'present',notes:'',ts:'2026-07-30 07:58:00'},
+    {id:'AT-003',owner_email:'owner@krtaker.com',staff:'BS-001',work_date:'2026-07-31',check_in:'',check_out:'',status:'absent',notes:'No show — no notice',ts:'2026-07-31 08:30:00'},
+    {id:'AT-004',owner_email:'owner@krtaker.com',staff:'BS-001',work_date:'2026-08-01',check_in:'',check_out:'',status:'absent',notes:'No show',ts:'2026-08-01 08:30:00'},
+    {id:'AT-005',owner_email:'owner@krtaker.com',staff:'BS-001',work_date:'2026-08-02',check_in:'',check_out:'',status:'absent',notes:'No show',ts:'2026-08-02 08:30:00'},
+    {id:'AT-006',owner_email:'owner@krtaker.com',staff:'BS-002',work_date:'2026-08-03',check_in:'08:10',check_out:'',status:'present',notes:'On duty',ts:'2026-08-03 08:10:00'},
+    {id:'AT-007',owner_email:'owner@krtaker.com',staff:'BS-003',work_date:'2026-08-03',check_in:'09:40',check_out:'',status:'late',notes:'Came 40 min late',ts:'2026-08-03 09:40:00'},
+    {id:'AT-008',owner_email:'owner@krtaker.com',staff:'BS-004',work_date:'2026-08-02',check_in:'',check_out:'',status:'leave',notes:'Approved leave',ts:'2026-08-02 09:00:00'}
+  ],
+  staff_payroll:[
+    {id:'PY-001',owner_email:'owner@krtaker.com',staff:'BS-001',month:'2026-07',salary:12000,overtime:0,bonus:0,advance_deduction:0,absent_days:0,daily_rate:400,net:12000,status:'Draft',paid_at:'',ts:'2026-07-25 10:00:00'},
+    {id:'PY-002',owner_email:'owner@krtaker.com',staff:'BS-002',month:'2026-07',salary:8000,overtime:0,bonus:500,advance_deduction:0,absent_days:0,daily_rate:267,net:8500,status:'Paid',paid_at:'2026-07-28',ts:'2026-07-25 10:00:00'},
+    {id:'PY-003',owner_email:'owner@krtaker.com',staff:'BS-003',month:'2026-07',salary:18000,overtime:0,bonus:0,advance_deduction:2000,absent_days:0,daily_rate:600,net:16000,status:'Draft',paid_at:'',ts:'2026-07-25 10:00:00'}
+  ]
+,
+
   emergency_contacts:[
     {id:'EC-001',owner_email:'owner@krtaker.com',prop:'',contact_type:'fire',name:'Fire Service & Civil Defence',phone:'999',notes:'National fire emergency',ts:'2026-06-01 09:00:00'},
     {id:'EC-002',owner_email:'owner@krtaker.com',prop:'',contact_type:'police',name:'Police Emergency',phone:'999',notes:'National police emergency',ts:'2026-06-01 09:00:00'},
@@ -1137,28 +1160,28 @@ const SEED = {
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','staffwatch','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','ai','analytics','notices','documents']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','staffwatch','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','concierge','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','concierge','smarthome','health','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','concierge','health','ai','analytics','notices','documents','recon','templates']},
-  {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
+  {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','staffwatch','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['nrb','🌐','NRB Hub'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch'],['firesafety','🧯','Fire Safety'],['systems','⚙️','Systems Watch']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch'],['firesafety','🧯','Fire Safety'],['systems','⚙️','Systems Watch'],['staffwatch','👷','Staff Watch']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','firesafety':'🧯','systems':'⚙️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','firesafety':'Fire Safety','systems':'Systems Watch','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','firesafety':'🧯','systems':'⚙️','staffwatch':'👷','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','firesafety':'Fire Safety','systems':'Systems Watch','staffwatch':'Staff Watch','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
   'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Build Watch':'নির্মাণ মনিটরিং','Gate Watch':'গেট ওয়াচ','Fire Safety':'ফায়ার সেফটি','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
@@ -4382,6 +4405,219 @@ async function sysReport(){
   const r=await fetch('/api/app-systems?action=report',{headers:{Authorization:'Bearer '+TOKEN}});
   if(r.ok){ const html=await r.text(); previewDoc('Systems Report',html); }
 }
+function staffStaff(){ return ['superadmin','owner','manager','svc_mgr','hr'].includes(role().id); }
+function staffCap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+function staffRoleLabel(v){ return ({guard:t('Guard','গার্ড'),cleaner:t('Cleaner','ক্লিনার'),caretaker:t('Caretaker','কেয়ারটেকার'),driver:t('Driver','ড্রাইভার'),supervisor:t('Supervisor','সুপারভাইজার'),security:t('Security','সিকিউরিটি'),other:t('Other','অন্যান্য')})[v]||v; }
+function staffShiftLabel(v){ return ({day:t('Day','দিন'),night:t('Night','রাত'),rotating:t('Rotating','ঘূর্ণায়মান')})[v]||v; }
+function staffAttBadge(st){ const m={present:['b-green','✅'],late:['b-orange','🕐'],absent:['b-red','✕'],leave:['b-gray','🏖️']}; const e=m[st]||['b-gray','']; return `<span class="badge ${e[0]}">${e[1]} ${esc(st)}</span>`; }
+function staffStatusBadge(st){ const m={active:['b-green','✅'],on_leave:['b-orange','🏖️'],terminated:['b-red','⏹️']}; const e=m[st]||['b-gray','']; return `<span class="badge ${e[0]}">${e[1]} ${esc(st)}</span>`; }
+function staffEnrich(s){
+  const cfg=window.__staffCfg||{payroll_alert_days:7,absent_pct:30};
+  const today=new Date().toISOString().slice(0,10);
+  const month=today.slice(0,7);
+  s=s?Object.assign({},s):{};
+  s.role_label=staffRoleLabel(s.role);
+  s.property_name=propById(s.prop)?.name||'';
+  const att=(DB.staff_attendance||[]).filter(a=>a.staff===s.id);
+  const todayRow=att.find(a=>a.work_date===today);
+  s.today_status=todayRow?todayRow.status:'';
+  const mRows=att.filter(a=>(a.work_date||'').startsWith(month));
+  s.present_month=mRows.filter(a=>a.status==='present').length;
+  s.late_month=mRows.filter(a=>a.status==='late').length;
+  s.absent_month=mRows.filter(a=>a.status==='absent').length;
+  s.leave_month=mRows.filter(a=>a.status==='leave').length;
+  s.absent_pct=mRows.length?Math.round(s.absent_month/mRows.length*100):0;
+  const prev=(new Date(today.slice(0,4), +today.slice(5,7)-2, 1).toISOString().slice(0,7));
+  s.payroll_unpaid_prev=(DB.staff_payroll||[]).filter(p=>p.staff===s.id&&p.month===prev&&p.status==='Draft').length;
+  s.days_employed=s.join_date?Math.max(0,Math.floor((new Date(today)-new Date(s.join_date))/864e5)):0;
+  return s;
+}
+function demoSaffData(){
+  const staff=(DB.building_staff||[]).map(staffEnrich);
+  const att=(DB.staff_attendance||[]).slice();
+  const pay=(DB.staff_payroll||[]).slice();
+  const active=staff.filter(s=>s.status==='active');
+  const today=new Date().toISOString().slice(0,10);
+  return {stats:{staff_total:staff.length,active:active.length,on_leave:staff.filter(s=>s.status==='on_leave').length,terminated:staff.filter(s=>s.status==='terminated').length,on_duty_today:active.filter(s=>['present','late'].includes(s.today_status)).length,absent_today:active.filter(s=>s.today_status==='absent').length,late_today:active.filter(s=>s.today_status==='late').length,no_mark_today:active.filter(s=>s.today_status==='').length,payroll_unpaid_count:staff.filter(s=>s.payroll_unpaid_prev).length,attendance_month:att.filter(a=>(a.work_date||'').startsWith(today.slice(0,7))).length},staff:staff,attendance:att,payroll:pay};
+}
+async function staffLoad(){
+  const host=$('staffLive'); if(!host) return;
+  if(DEMO_MODE||!TOKEN){
+    const d=demoSaffData();
+    DB.building_staff=d.staff.map(s=>{const c=Object.assign({},s); delete c.role_label; delete c.property_name; delete c.today_status; delete c.present_month; delete c.late_month; delete c.absent_month; delete c.leave_month; delete c.absent_pct; delete c.payroll_unpaid_prev; delete c.days_employed; return c;});
+    host.innerHTML=staffHtml(d);
+    return;
+  }
+  const r=await apiCall('app-staffwatch',{action:'summary'});
+  if(!r||!r.ok){ host.innerHTML=`<div class="m">${t('Failed to load staff.','স্টাফ লোড করা যায়নি।')}</div>`; return; }
+  const d=r.summary||{};
+  DB.building_staff=d.staff||[]; DB.staff_attendance=d.attendance||[]; DB.staff_payroll=d.payroll||[];
+  window.__staffCfg=r.config||{payroll_alert_days:7,absent_pct:30};
+  host.innerHTML=staffHtml(d);
+}
+function staffTab(tab){ state.staffTab=tab; staffLoad(); }
+function staffHtml(d){
+  const rows=d.staff||[], st=d.stats||{};
+  const att=d.attendance||[], pay=d.payroll||[];
+  const isStaff=staffStaff();
+  const t0=state.staffTab||'roster';
+  let h=statsRow([
+    stat(t('Staff','স্টাফ'),st.staff_total||rows.length,t('active','সক্রিয়')+': '+(st.active||0),'','👷'),
+    stat(t('On duty','ডিউটিতে'),st.on_duty_today||0,t('today','আজ'),'','🕐'),
+    stat(t('Absent / late','অনুপস্থিত / দেরি'),(st.absent_today||0)+(st.late_today||0),t('today','আজ'),((st.absent_today||0)+(st.late_today||0))?'warn':'','✕'),
+    stat(t('Salary due','বেতন বাকি'),st.payroll_unpaid_count||0,t('prev month','আগের মাস'),(st.payroll_unpaid_count||0)?'warn':'','💰')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">👷</span>${t('Staff Watch','স্টাফ ওয়াচ')}</div><div style="display:flex;gap:6px">
+    <button class="${t0==='roster'?'btn-primary':'btn-ghost'}" onclick="staffTab('roster')">👥 ${t('Roster','তালিকা')}</button>
+    <button class="${t0==='attendance'?'btn-primary':'btn-ghost'}" onclick="staffTab('attendance')">🕐 ${t('Attendance','উপস্থিতি')}</button>
+    <button class="${t0==='payroll'?'btn-primary':'btn-ghost'}" onclick="staffTab('payroll')">💰 ${t('Payroll','বেতন')}</button>
+    <span style="flex:1"></span>
+    ${isStaff?`<button class="btn-ghost" onclick="staffReport()">🖨 ${t('Report','রিপোর্ট')}</button>`:''}
+  </div></div><div class="panel-b">`;
+  if(t0==='roster'){
+    h+=`<div class="tbl-wrap"><table><thead><tr><th>${t('Staff','স্টাফ')}</th><th>${t('Role','পদ')}</th><th>${t('Shift','শিফট')}</th><th>${t('Salary','বেতন')}</th><th>${t('Today','আজ')}</th><th>${t('This month','এই মাস')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+      rows.map(x=>`<tr><td><span class="c-name">${esc(x.name)}</span><div class="c-sub">${x.id}${x.property_name?' · '+esc(x.property_name):''}</div></td><td>${esc(x.role_label)}</td><td>${esc(staffShiftLabel(x.shift))}</td><td class="t-amount">${money(x.monthly_salary)}<div class="c-sub">${t('per month','প্রতি মাসে')}</div></td><td>${x.today_status?staffAttBadge(x.today_status):'<span class="badge b-red">'+t('NO MARK','মার্ক নেই')+'</span>'}</td><td>${x.present_month} ${t('on','উপস্থিত')} · ${x.absent_month} ${t('absent','অনুপস্থিত')}${x.absent_pct>=30?' <span class="badge b-red">'+x.absent_pct+'%</span>':''}</td><td>${staffStatusBadge(x.status)}</td><td>${isStaff?`<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="staffForm('${esc(x.id)}')">✎</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="staffMark('${esc(x.id)}')" title="${t('Mark attendance','উপস্থিতি দিন')}">🕐</button>${x.status==='active'?`<button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="staffPayrollForm('${esc(x.id)}')" title="${t('Payroll','বেতন')}">💰</button>`:''}<button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="staffDelete('${esc(x.id)}')">✕</button></div>`:''}</td></tr>`).join('')
+      || `<tr><td colspan="8" class="m">${t('No staff registered yet.','এখনো কোনো স্টাফ নিবন্ধিত নেই।')}</td></tr></tbody></table></div>`;
+  } else if(t0==='attendance'){
+    h+=`<div class="tbl-wrap"><table><thead><tr><th>${t('Date','তারিখ')}</th><th>${t('Staff','স্টাফ')}</th><th>${t('In','প্রবেশ')}</th><th>${t('Out','প্রস্থান')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Notes','নোট')}</th><th></th></tr></thead><tbody>`+
+      att.map(a=>{ const s=(DB.building_staff||[]).find(x=>x.id===a.staff); return `<tr><td>${esc(a.work_date)}</td><td>${s?esc(s.name)+' <span class="c-sub">'+esc(a.staff)+'</span>':esc(a.staff)}</td><td>${esc(a.check_in||'—')}</td><td>${esc(a.check_out||'—')}</td><td>${staffAttBadge(a.status)}</td><td>${esc(a.notes||'')}</td><td>${isStaff?`<button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="staffAttendanceDelete('${esc(a.id)}')">✕</button>`:''}</td></tr>`; }).join('')
+      || `<tr><td colspan="7" class="m">${t('No attendance entries.','এখনো কোনো উপস্থিতি এন্ট্রি নেই।')}</td></tr></tbody></table></div>`;
+  } else {
+    h+=`<div class="tbl-wrap"><table><thead><tr><th>${t('Month','মাস')}</th><th>${t('Staff','স্টাফ')}</th><th>${t('Salary','বেতন')}</th><th>${t('Absent','অনুপস্থিত')}</th><th>${t('Net','নেট')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+      pay.map(p=>{ const s=(DB.building_staff||[]).find(x=>x.id===p.staff); return `<tr><td>${esc(p.month)}</td><td>${s?esc(s.name)+' <span class="c-sub">'+esc(p.staff)+'</span>':esc(p.staff)}</td><td class="t-amount">${money(p.salary)}</td><td>${p.absent_days||0}</td><td class="t-amount">${money(p.net)}</td><td>${p.status==='Paid'?'<span class="badge b-green">Paid</span>':'<span class="badge b-orange">Draft</span>'}</td><td>${isStaff&&p.status!=='Paid'?`<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="staffPayrollPay('${esc(p.id)}')">💵 ${t('Pay','পরিশোধ')}</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="staffPayrollDelete('${esc(p.id)}')">✕</button></div>`:''}</td></tr>`; }).join('')
+      || `<tr><td colspan="7" class="m">${t('No payroll entries.','এখনো কোনো বেতন এন্ট্রি নেই।')}</td></tr></tbody></table></div>`;
+  }
+  h+=`</div></div>`;
+  return h;
+}
+function staffForm(id){
+  const s=id?(DB.building_staff||[]).find(x=>x.id===id):null;
+  const rows=[];
+  const props=(DB.properties||[]).map(p=>`<option value="${esc(p.id)}" ${s&&s.prop===p.id?'selected':''}>${esc(p.name)}</option>`).join('');
+  const roles=['guard','cleaner','caretaker','driver','supervisor','security','other'].map(v=>`<option value="${v}" ${s&&s.role===v?'selected':''}>${staffRoleLabel(v)}</option>`).join('');
+  const shifts=['day','night','rotating'].map(v=>`<option value="${v}" ${s&&s.shift===v?'selected':''}>${staffShiftLabel(v)}</option>`).join('');
+  rows.push(rowItem('name',`<label class="lb">${t('Name','নাম')} *</label><input id="st_name" class="inp" value="${s?esc(s.name||''):''}">`));
+  rows.push(rowItem('role',`<label class="lb">${t('Role','পদ')}</label><select id="st_role" class="inp">${roles}</select>`));
+  rows.push(rowItem('shift',`<label class="lb">${t('Shift','শিফট')}</label><select id="st_shift" class="inp">${shifts}</select>`));
+  rows.push(rowItem('prop',`<label class="lb">${t('Property','সম্পত্তি')}</label><select id="st_prop" class="inp"><option value="">—</option>${props}</select>`));
+  rows.push(rowItem('phone',`<label class="lb">${t('Phone','ফোন')}</label><input id="st_phone" class="inp" value="${s?esc(s.phone||''):''}">`));
+  rows.push(rowItem('salary',`<label class="lb">${t('Monthly salary (৳)','মাসিক বেতন (৳)')}</label><input id="st_salary" class="inp" type="number" min="0" value="${s?s.monthly_salary||0:0}">`));
+  rows.push(rowItem('notes',`<label class="lb">${t('Notes','নোট')}</label><textarea id="st_notes" class="inp" rows="2">${s?esc(s.notes||''):''}</textarea>`));
+  openDrawer(t(id?'Edit staff':'Add staff',id?'স্টাফ সম্পাদনা':'স্টাফ যোগ করুন'),rows.join(''),`<button class="btn-primary" onclick="submitStaff('${id||''}')">${t('Save','সেভ')}</button>`);
+}
+async function submitStaff(id){
+  const name=val('st_name').trim(); if(!name){ toast(t('Name is required.','নাম আবশ্যক।')); return; }
+  const payload={action: id?'staff-save':'staff-create',name:name,role:val('st_role'),shift:val('st_shift'),prop:val('st_prop'),phone:val('st_phone'),monthly_salary:+(val('st_salary')||0),notes:val('st_notes')};
+  if(id) payload.id=id;
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const s=(DB.building_staff||[]).find(x=>x.id===id); if(s) Object.assign(s,{name:name,role:payload.role,shift:payload.shift,prop:payload.prop,phone:payload.phone,monthly_salary:payload.monthly_salary,notes:payload.notes}); }
+    else { const n=Math.max(100,...(DB.building_staff||[]).map(x=>+(x.id||'BS-0').replace('BS-','')||0))+1; DB.building_staff=DB.building_staff||[]; DB.building_staff.push({id:'BS-'+n,owner_email:'owner@krtaker.com',name:name,role:payload.role,phone:payload.phone,join_date:new Date().toISOString().slice(0,10),monthly_salary:payload.monthly_salary,shift:payload.shift,prop:payload.prop,status:'active',notes:payload.notes,ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+    toast(t('Saved','সেভ হয়েছে')); closeDrawer(); staffLoad(); return;
+  }
+  const r=await apiCall('app-staffwatch',payload);
+  if(r&&r.ok){ toast(id?t('Updated','আপডেট হয়েছে'):r.id+' '+t('created','তৈরি হয়েছে')); closeDrawer(); staffLoad(); }
+}
+async function staffStatus(id,st){
+  if(DEMO_MODE||!TOKEN){ const s=(DB.building_staff||[]).find(x=>x.id===id); if(s) s.status=st; toast(t('Status updated','স্ট্যাটাস আপডেট')); staffLoad(); return; }
+  const r=await apiCall('app-staffwatch',{action:'staff-status',id:id,status:st});
+  if(r&&r.ok){ toast(t('Status updated','স্ট্যাটাস আপডেট')); staffLoad(); }
+}
+function staffMark(id){
+  const s=(DB.building_staff||[]).find(x=>x.id===id); if(!s){ toast(t('Staff not found','স্টাফ পাওয়া যায়নি')); return; }
+  const today=new Date().toISOString().slice(0,10);
+  const rows=[];
+  rows.push(rowItem('who',`<label class="lb">${t('Staff','স্টাফ')}</label><div class="c-name">${esc(s.name)} · ${esc(s.id)}</div>`));
+  rows.push(rowItem('date',`<label class="lb">${t('Date','তারিখ')} *</label><input id="am_date" class="inp" type="date" value="${today}">`));
+  rows.push(rowItem('status',`<label class="lb">${t('Status','স্ট্যাটাস')}</label><select id="am_status" class="inp"><option value="present">✅ ${t('Present','উপস্থিত')}</option><option value="late">🕐 ${t('Late','দেরি')}</option><option value="absent">✕ ${t('Absent','অনুপস্থিত')}</option><option value="leave">🏖️ ${t('Leave','ছুটি')}</option></select>`));
+  rows.push(rowItem('in',`<label class="lb">${t('Check in','প্রবেশের সময়')}</label><input id="am_in" class="inp" type="time">`));
+  rows.push(rowItem('out',`<label class="lb">${t('Check out','প্রস্থানের সময়')}</label><input id="am_out" class="inp" type="time">`));
+  rows.push(rowItem('notes',`<label class="lb">${t('Notes','নোট')}</label><input id="am_notes" class="inp">`));
+  openDrawer(t('Mark attendance','উপস্থিতি দিন')+' — '+s.id,rows.join(''),`<button class="btn-primary" onclick="submitStaffMark('${esc(id)}')">${t('Save','সেভ')}</button>`);
+}
+async function submitStaffMark(id){
+  const wdate=val('am_date'); if(!wdate){ toast(t('Date is required.','তারিখ আবশ্যক।')); return; }
+  const payload={action:'attendance-mark',staff:id,work_date:wdate,status:val('am_status'),check_in:val('am_in'),check_out:val('am_out'),notes:val('am_notes')};
+  if(DEMO_MODE||!TOKEN){
+    let a=(DB.staff_attendance||[]).find(x=>x.staff===id&&x.work_date===wdate);
+    if(a){ Object.assign(a,{status:payload.status,check_in:payload.check_in,check_out:payload.check_out,notes:payload.notes}); }
+    else { const n=Math.max(100,...(DB.staff_attendance||[]).map(x=>+(x.id||'AT-0').replace('AT-','')||0))+1; DB.staff_attendance=DB.staff_attendance||[]; DB.staff_attendance.push({id:'AT-'+n,owner_email:'owner@krtaker.com',staff:id,work_date:wdate,check_in:payload.check_in,check_out:payload.check_out,status:payload.status,notes:payload.notes,ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+    toast(t('Marked','মার্ক হয়েছে')); closeDrawer(); staffLoad(); return;
+  }
+  const r=await apiCall('app-staffwatch',payload);
+  if(r&&r.ok){ toast(t('Marked','মার্ক হয়েছে')); closeDrawer(); staffLoad(); }
+}
+async function staffAttendanceDelete(id){
+  if(!confirm(t('Delete this attendance entry?','এই উপস্থিতি এন্ট্রি মুছবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){ DB.staff_attendance=(DB.staff_attendance||[]).filter(x=>x.id!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); staffLoad(); return; }
+  const r=await apiCall('app-staffwatch',{action:'attendance-delete',id:id});
+  if(r&&r.ok){ toast(t('Deleted','মুছে ফেলা হয়েছে')); staffLoad(); }
+}
+function staffPayrollForm(id){
+  const s=(DB.building_staff||[]).find(x=>x.id===id); if(!s){ toast(t('Staff not found','স্টাফ পাওয়া যায়নি')); return; }
+  const now=new Date(); const prev=new Date(now.getFullYear(), now.getMonth()-1, 1);
+  const prevM=prev.toISOString().slice(0,7);
+  const rows=[];
+  rows.push(rowItem('who',`<label class="lb">${t('Staff','স্টাফ')}</label><div class="c-name">${esc(s.name)} · ${esc(s.id)}</div>`));
+  rows.push(rowItem('month',`<label class="lb">${t('Month (YYYY-MM)','মাস (YYYY-MM)')} *</label><input id="py_month" class="inp" value="${prevM}">`));
+  rows.push(rowItem('salary',`<label class="lb">${t('Salary','বেতন')}</label><div class="c-name">${money(s.monthly_salary)}</div>`));
+  rows.push(rowItem('overtime',`<label class="lb">${t('Overtime (৳)','ওভারটাইম (৳)')}</label><input id="py_ot" class="inp" type="number" min="0" value="0">`));
+  rows.push(rowItem('bonus',`<label class="lb">${t('Bonus (৳)','বোনাস (৳)')}</label><input id="py_bonus" class="inp" type="number" min="0" value="0">`));
+  rows.push(rowItem('advance',`<label class="lb">${t('Advance deduction (৳)','অগ্রিম কাটা (৳)')}</label><input id="py_adv" class="inp" type="number" min="0" value="0">`));
+  openDrawer(t('Payroll','বেতন')+' — '+s.id,rows.join(''),`<button class="btn-primary" onclick="submitStaffPayroll('${esc(id)}')">${t('Create / update','তৈরি / আপডেট')}</button>`);
+}
+async function submitStaffPayroll(id){
+  const month=val('py_month').trim(); if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)){ toast(t('Month must be YYYY-MM.','মাস অবশ্যই YYYY-MM হবে।')); return; }
+  const payload={action:'payroll-create',staff:id,month:month,overtime:+(val('py_ot')||0),bonus:+(val('py_bonus')||0),advance_deduction:+(val('py_adv')||0)};
+  if(DEMO_MODE||!TOKEN){
+    const s=(DB.building_staff||[]).find(x=>x.id===id); if(s){ let p=(DB.staff_payroll||[]).find(x=>x.staff===id&&x.month===month); const daily=Math.round((+s.monthly_salary||0)/30); const absent=(DB.staff_attendance||[]).filter(a=>a.staff===id&&(a.work_date||'').startsWith(month)&&a.status==='absent').length; const net=Math.max(0,(+s.monthly_salary||0)+payload.overtime+payload.bonus-payload.advance_deduction-absent*daily); if(p){ Object.assign(p,{salary:s.monthly_salary,overtime:payload.overtime,bonus:payload.bonus,advance_deduction:payload.advance_deduction,absent_days:absent,daily_rate:daily,net:net}); } else { const n=Math.max(100,...(DB.staff_payroll||[]).map(x=>+(x.id||'PY-0').replace('PY-','')||0))+1; DB.staff_payroll=DB.staff_payroll||[]; DB.staff_payroll.push({id:'PY-'+n,owner_email:'owner@krtaker.com',staff:id,month:month,salary:s.monthly_salary,overtime:payload.overtime,bonus:payload.bonus,advance_deduction:payload.advance_deduction,absent_days:absent,daily_rate:daily,net:net,status:'Draft',paid_at:'',ts:new Date().toISOString().slice(0,19).replace('T',' ')}); } }
+    toast(t('Saved','সেভ হয়েছে')); closeDrawer(); staffLoad(); return;
+  }
+  const r=await apiCall('app-staffwatch',payload);
+  if(r&&r.ok){ toast(t('Saved','সেভ হয়েছে')); closeDrawer(); staffLoad(); }
+}
+async function staffPayrollPay(id){
+  if(!confirm(t('Mark this salary as paid?','এই বেতন পরিশোধিত হিসেবে চিহ্নিত করবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){ const p=(DB.staff_payroll||[]).find(x=>x.id===id); if(p){ p.status='Paid'; p.paid_at=new Date().toISOString().slice(0,10); } toast(t('Paid','পরিশোধিত')); staffLoad(); return; }
+  const r=await apiCall('app-staffwatch',{action:'payroll-pay',id:id});
+  if(r&&r.ok){ toast(t('Paid','পরিশোধিত')); staffLoad(); }
+}
+async function staffPayrollDelete(id){
+  if(!confirm(t('Delete this payroll entry?','এই বেতন এন্ট্রি মুছবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){ DB.staff_payroll=(DB.staff_payroll||[]).filter(x=>x.id!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); staffLoad(); return; }
+  const r=await apiCall('app-staffwatch',{action:'payroll-delete',id:id});
+  if(r&&r.ok){ toast(t('Deleted','মুছে ফেলা হয়েছে')); staffLoad(); }
+}
+async function staffDelete(id){
+  if(!confirm(t('Delete this staff member and their attendance/payroll?','এই স্টাফ এবং তার উপস্থিতি/বেতন মুছবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){ DB.building_staff=(DB.building_staff||[]).filter(x=>x.id!==id); DB.staff_attendance=(DB.staff_attendance||[]).filter(x=>x.staff!==id); DB.staff_payroll=(DB.staff_payroll||[]).filter(x=>x.staff!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); staffLoad(); return; }
+  const r=await apiCall('app-staffwatch',{action:'staff-delete',id:id});
+  if(r&&r.ok){ toast(t('Deleted','মুছে ফেলা হয়েছে')); staffLoad(); }
+}
+function staffConfigDrawer(){
+  const cfg=window.__staffCfg||{payroll_alert_days:7,absent_pct:30};
+  const rows=[];
+  rows.push(rowItem('pad',`<label class="lb">${t('Payroll alert (day of month)','বেতন অ্যালার্ট (মাসের দিন)')}</label><input id="sf_pad" class="inp" type="number" min="1" max="120" value="${cfg.payroll_alert_days||7}">`));
+  rows.push(rowItem('ap',`<label class="lb">${t('Absenteeism alert (%)','অনুপস্থিতি অ্যালার্ট (%)')}</label><input id="sf_ap" class="inp" type="number" min="1" max="50" value="${cfg.absent_pct||30}">`));
+  openDrawer(t('Staff Watch settings','স্টাফ ওয়াচ সেটিংস'),rows.join(''),`<button class="btn-primary" onclick="staffSaveConfig()">${t('Save','সেভ')}</button>`);
+}
+async function staffSaveConfig(){
+  const payload={action:'config-save',payroll_alert_days:+(val('sf_pad')||7),absent_pct:+(val('sf_ap')||30)};
+  if(DEMO_MODE||!TOKEN){ window.__staffCfg={payroll_alert_days:payload.payroll_alert_days,absent_pct:payload.absent_pct}; toast(t('Saved','সেভ হয়েছে')); closeDrawer(); staffLoad(); return; }
+  const r=await apiCall('app-staffwatch',payload);
+  if(r&&r.ok){ window.__staffCfg={payroll_alert_days:payload.payroll_alert_days,absent_pct:payload.absent_pct}; toast(t('Saved','সেভ হয়েছে')); closeDrawer(); staffLoad(); }
+}
+async function staffReport(){
+  if(DEMO_MODE||!TOKEN){
+    const staff=(DB.building_staff||[]).map(staffEnrich);
+    const pay=DB.staff_payroll||[];
+    let rows=staff.map(s=>{ const fl=[]; if(s.status==='active'&&s.today_status==='')fl.push('NO MARK TODAY'); if(s.today_status==='absent')fl.push('ABSENT TODAY'); if(s.today_status==='late')fl.push('LATE TODAY'); if(s.absent_pct>=30)fl.push('ABSENT '+s.absent_pct+'%'); if(s.payroll_unpaid_prev)fl.push('SALARY DUE'); return `<tr><td>${esc(s.id)}</td><td>${esc(s.name)}</td><td>${esc(s.role_label)}</td><td>${esc(s.property_name||'—')}</td><td>${esc(s.shift)}</td><td>${esc(s.today_status||'—')}</td><td>${s.present_month}/${s.late_month}/${s.absent_month}</td><td>${esc(fl.join(', '))}</td></tr>`; }).join('');
+    let prows=pay.map(p=>{ const s=(DB.building_staff||[]).find(x=>x.id===p.staff); return `<tr><td>${esc(p.id)}</td><td>${esc(p.month)}</td><td>${s?esc(s.name):esc(p.staff)}</td><td>৳${money(p.salary)}</td><td>${p.absent_days||0}</td><td>৳${money(p.net)}</td><td>${esc(p.status)}</td></tr>`; }).join('');
+    const html=`<!doctype html><html><head><meta charset="utf-8"><title>Staff Watch Report</title></head><body style="font-family:Arial,sans-serif;color:#1A2433;padding:32px"><h1>Staff Watch Report — Staff Watch (স্টাফ ওয়াচ)</h1><p>Generated ${new Date().toLocaleString()}</p><h2>Roster / কর্মী তালিকা</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:13px"><tr style="background:#F6F9FE"><th>ID</th><th>Name</th><th>Role</th><th>Property</th><th>Shift</th><th>Today</th><th>P/L/A</th><th>Flags</th></tr>${rows}</table>${prows?`<h2>Payroll / বেতন</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:13px"><tr style="background:#F6F9FE"><th>ID</th><th>Month</th><th>Staff</th><th>Salary</th><th>Absent</th><th>Net</th><th>Status</th></tr>${prows}</table>`:''}<div style="margin-top:48px;display:flex;gap:48px"><div>Prepared by (তৈরি করেছেন)<div style="border-bottom:1px solid #999;width:180px;height:24px"></div></div><div>HR / Manager (এইচআর / ম্যানেজার)<div style="border-bottom:1px solid #999;width:180px;height:24px"></div></div><div>Owner (মালিক)<div style="border-bottom:1px solid #999;width:180px;height:24px"></div></div></div></body></html>`;
+    previewDoc('Staff Watch Report',html); return;
+  }
+  const r=await fetch('/api/app-staffwatch?action=report',{headers:{Authorization:'Bearer '+TOKEN}});
+  if(r.ok){ const html=await r.text(); previewDoc('Staff Watch Report',html); }
+}
 async function buildLoad(){
   const host=document.getElementById('buildLive'); if(!host) return;
   let d;
@@ -6950,6 +7186,13 @@ const renderers={
     let h=pageHead(t('Systems Watch','সিস্টেম ওয়াচ'),isStaff?t('Lift, generator, pumps & transformer — service schedules, RAJUK certificates and the diesel ledger. Built for NRB owners monitoring from abroad.','লিফট, জেনারেটর, পাম্প ও ট্রান্সফরমার — সার্ভিস সময়সূচি, সার্টিফিকেট ও ডিজেল লেজার। বিদেশ থেকে মনিটর করা এনআরবি মালিকদের জন্য।'):t('Your essential systems.','আপনার অত্যাবশ্যকীয় সিস্টেম।'),isStaff?`<button class="btn-primary" onclick="sysAssetForm()">＋ ${t('Add asset','যন্ত্র যোগ করুন')}</button><button class="btn-ghost" onclick="sysConfigDrawer()">⚙️</button>`:'');
     h+=`<div id="sysLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>sysLoad(),0);
+    return h;
+  },
+  staffwatch(){
+    const isStaff=staffStaff();
+    let h=pageHead(t('Staff Watch','স্টাফ ওয়াচ'),isStaff?t('Building staff roster, attendance and payroll — guards, cleaners, caretakers. Pay only for verified attendance. Built for NRB owners monitoring from abroad.','বিল্ডিং স্টাফ রোস্টার, উপস্থিতি ও বেতন — গার্ড, ক্লিনার, কেয়ারটেকার। যাচাইকৃত উপস্থিতির জন্যই বেতন দিন। বিদেশ থেকে মনিটর করা এনআরবি মালিকদের জন্য।'):t('Your building staff.','আপনার বিল্ডিং স্টাফ।'),isStaff?`<button class="btn-primary" onclick="staffForm()">＋ ${t('Add staff','স্টাফ যোগ করুন')}</button><button class="btn-ghost" onclick="staffConfigDrawer()">⚙️</button>`:'');
+    h+=`<div id="staffLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>staffLoad(),0);
     return h;
   },
   remit(){
