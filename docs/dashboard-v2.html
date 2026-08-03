@@ -7379,6 +7379,7 @@ const renderers={
     return h;
   }
 };
+
 function samityStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
 function samityCap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
 function samityEnrich(b){
@@ -7457,18 +7458,25 @@ function samityHtml(d){
   return h;
 }
 function samityMemberForm(id){
-  const m=(DB.samity_members||[]).find(x=>x.id===id)||{name:'',role:'Member',phone:'',since_date:'',status:'active',notes:''};
-  const roles=['Chairman','Secretary','Treasurer','Member'];
-  const fields=[['name',t('Name','নাম'),'text',m.name],['role',t('Role','পদ'),'select',m.role,roles],['phone',t('Phone','ফোন'),'text',m.phone],['since_date',t('Since','থেকে'),'date',m.since_date],['status',t('Status','স্ট্যাটাস'),'select',m.status,['active','inactive']],['notes',t('Notes','নোট'),'text',m.notes]];
-  openDrawer(t(id?'Edit member':'Add member',id?'সদস্য সম্পাদনা':'সদস্য যোগ করুন'),drawerForm(fields,`<button class="btn-primary" onclick="samityMemberSave('${id||''}')">${t('Save','সেভ')}</button>`));
+  const m=id?(DB.samity_members||[]).find(x=>x.id===id):{name:'',role:'Member',phone:'',since_date:'',status:'active',notes:''};
+  const rows=[];
+  rows.push(rowItem('name',`<label class="lb">${t('Name','নাম')}</label><input id="sm_name" class="inp" value="${m?esc(m.name||''):''}">`));
+  const roles=['Chairman','Secretary','Treasurer','Member'].map(v=>`<option value="${v}" ${m&&m.role===v?'selected':''}>${v}</option>`).join('');
+  rows.push(rowItem('role',`<label class="lb">${t('Role','পদ')}</label><select id="sm_role" class="inp">${roles}</select>`));
+  rows.push(rowItem('phone',`<label class="lb">${t('Phone','ফোন')}</label><input id="sm_phone" class="inp" value="${m?esc(m.phone||''):''}">`));
+  rows.push(rowItem('since_date',`<label class="lb">${t('Since','থেকে')}</label><input id="sm_since" class="inp" type="date" value="${m?esc(m.since_date||''):''}">`));
+  const stats=['active','inactive'].map(v=>`<option value="${v}" ${m&&m.status===v?'selected':''}>${samityCap(v)}</option>`).join('');
+  rows.push(rowItem('status',`<label class="lb">${t('Status','স্ট্যাটাস')}</label><select id="sm_status" class="inp">${stats}</select>`));
+  rows.push(rowItem('notes',`<label class="lb">${t('Notes','নোট')}</label><textarea id="sm_notes" class="inp" rows="2">${m?esc(m.notes||''):''}</textarea>`));
+  openDrawer(t(id?'Edit member':'Add member',id?'সদস্য সম্পাদনা':'সদস্য যোগ করুন'),rows.join(''),`<button class="btn-primary" onclick="submitSamityMember('${id||''}')">${t('Save','সেভ')}</button>`);
 }
-async function samityMemberSave(id){
-  const g=readDrawer();
-  const payload={action:id?'member-save':'member-create',name:g.name||'',role:g.role||'Member',phone:g.phone||'',since_date:g.since_date||'',status:g.status||'active',notes:g.notes||''};
+async function submitSamityMember(id){
+  const name=val('sm_name').trim(); if(!name){ toast(t('Name is required.','নাম আবশ্যক।')); return; }
+  const payload={action:id?'member-save':'member-create',name:name,role:val('sm_role'),phone:val('sm_phone'),since_date:val('sm_since'),status:val('sm_status'),notes:val('sm_notes')};
   if(id) payload.id=id;
-  if(DEMO_MODE){
-    if(id){const m=(DB.samity_members||[]).find(x=>x.id===id); if(m){m.name=g.name;m.role=g.role;m.phone=g.phone;m.status=g.status;}}
-    else DB.samity_members.push({id:'SM-'+(DB.samity_members.length+1000),owner_email:'',name:g.name,role:g.role,phone:g.phone,since_date:g.since_date,status:g.status,notes:g.notes,ts:new Date().toISOString()});
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const m=(DB.samity_members||[]).find(x=>x.id===id); if(m) Object.assign(m,{name:name,role:payload.role,phone:payload.phone,since_date:payload.since_date,status:payload.status,notes:payload.notes}); }
+    else { const n=Math.max(100,...(DB.samity_members||[]).map(x=>+(x.id||'SM-0').replace('SM-',''))); DB.samity_members.push({id:'SM-'+n,owner_email:'',name:name,role:payload.role,phone:payload.phone,since_date:payload.since_date,status:payload.status,notes:payload.notes,ts:new Date().toISOString()}); }
     closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে')); return;
   }
   const r=await apiCall('app-samity',payload);
@@ -7477,25 +7485,31 @@ async function samityMemberSave(id){
 }
 async function samityMemberDelete(id){
   if(!confirm(t('Delete this member?','এই সদস্য মুছে ফেলবেন?'))) return;
-  if(DEMO_MODE){ DB.samity_members=(DB.samity_members||[]).filter(x=>x.id!==id); samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে')); return; }
+  if(DEMO_MODE||!TOKEN){ DB.samity_members=(DB.samity_members||[]).filter(x=>x.id!==id); samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে')); return; }
   const r=await apiCall('app-samity',{action:'member-delete',id:id});
   if(!r||!r.ok){ toast((r&&r.error)||t('Delete failed.','মুছতে ব্যর্থ।'),true); return; }
   samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে'));
 }
 function samityBillForm(id){
-  const b=(DB.samity_bills||[]).find(x=>x.id===id)||{unit:'',month:new Date().toISOString().slice(0,7),amount:'',due_date:'',status:'Pending',note:''};
-  const units=(DB.units||[]).map(u=>[u.id,u.name]).concat([['','']]);
-  const fields=[['unit',t('Unit','ইউনিট'),'select',b.unit,units],['month',t('Month (YYYY-MM)','মাস (YYYY-MM)'),'text',b.month],['amount',t('Amount ৳','পরিমাণ ৳'),'number',b.amount],['due_date',t('Due date','শেষ তারিখ'),'date',b.due_date],['status',t('Status','স্ট্যাটাস'),'select',b.status,['Pending','Paid','Waived']],['note',t('Note','নোট'),'text',b.note]];
-  openDrawer(t(id?'Edit bill':'Add bill',id?'বিল সম্পাদনা':'বিল যোগ করুন'),drawerForm(fields,`<button class="btn-primary" onclick="samityBillSave('${id||''}')">${t('Save','সেভ')}</button>`));
+  const b=id?(DB.samity_bills||[]).find(x=>x.id===id):{unit:'',month:new Date().toISOString().slice(0,7),amount:'',due_date:'',status:'Pending',note:''};
+  const rows=[];
+  const units=(DB.units||[]).map(u=>`<option value="${esc(u.id)}" ${b&&b.unit===u.id?'selected':''}>${esc(u.name)}</option>`).join('');
+  rows.push(rowItem('unit',`<label class="lb">${t('Unit','ইউনিট')}</label><select id="sb_unit" class="inp"><option value="">—</option>${units}</select>`));
+  rows.push(rowItem('month',`<label class="lb">${t('Month (YYYY-MM)','মাস (YYYY-MM)')}</label><input id="sb_month" class="inp" value="${b?esc(b.month||''):''}">`));
+  rows.push(rowItem('amount',`<label class="lb">${t('Amount (৳)','পরিমাণ (৳)')}</label><input id="sb_amount" class="inp" type="number" min="1" value="${b?(b.amount||0):''}">`));
+  rows.push(rowItem('due_date',`<label class="lb">${t('Due date','শেষ তারিখ')}</label><input id="sb_due" class="inp" type="date" value="${b?esc(b.due_date||''):''}">`));
+  const sts=['Pending','Paid','Waived'].map(v=>`<option value="${v}" ${b&&b.status===v?'selected':''}>${v}</option>`).join('');
+  rows.push(rowItem('status',`<label class="lb">${t('Status','স্ট্যাটাস')}</label><select id="sb_status" class="inp">${sts}</select>`));
+  rows.push(rowItem('note',`<label class="lb">${t('Note','নোট')}</label><input id="sb_note" class="inp" value="${b?esc(b.note||''):''}">`));
+  openDrawer(t(id?'Edit bill':'Add bill',id?'বিল সম্পাদনা':'বিল যোগ করুন'),rows.join(''),`<button class="btn-primary" onclick="submitSamityBill('${id||''}')">${t('Save','সেভ')}</button>`);
 }
-async function samityBillSave(id){
-  const g=readDrawer();
-  const payload={action:id?'bill-save':'bill-create',unit:g.unit||'',month:g.month||'',amount:parseInt(g.amount||'0',10)||0,due_date:g.due_date||'',status:g.status||'Pending',note:g.note||''};
+async function submitSamityBill(id){
+  const unit=val('sb_unit'); if(!unit){ toast(t('Select a unit.','একটি ইউনিট নির্বাচন করুন।'),true); return; }
+  const payload={action:id?'bill-save':'bill-create',unit:unit,month:val('sb_month'),amount:+(val('sb_amount')||0),due_date:val('sb_due'),status:val('sb_status'),note:val('sb_note')};
   if(id) payload.id=id;
-  if(DEMO_MODE){
-    if(!payload.unit){ toast(t('Select a unit.','একটি ইউনিট নির্বাচন করুন।'),true); return; }
-    if(id){const b=(DB.samity_bills||[]).find(x=>x.id===id); if(b){b.unit=payload.unit;b.month=payload.month;b.amount=payload.amount;b.due_date=payload.due_date;b.status=payload.status;b.note=payload.note;}}
-    else DB.samity_bills.push({id:'SB-'+(DB.samity_bills.length+1000),owner_email:'',unit:payload.unit,month:payload.month,amount:payload.amount,due_date:payload.due_date,status:payload.status,note:payload.note,ts:new Date().toISOString()});
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const b=(DB.samity_bills||[]).find(x=>x.id===id); if(b) Object.assign(b,{unit:unit,month:payload.month,amount:payload.amount,due_date:payload.due_date,status:payload.status,note:payload.note}); }
+    else { const n=Math.max(100,...(DB.samity_bills||[]).map(x=>+(x.id||'SB-0').replace('SB-',''))); DB.samity_bills.push({id:'SB-'+n,owner_email:'',unit:unit,month:payload.month,amount:payload.amount,due_date:payload.due_date,status:payload.status,note:payload.note,ts:new Date().toISOString()}); }
     closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে')); return;
   }
   const r=await apiCall('app-samity',payload);
@@ -7504,26 +7518,32 @@ async function samityBillSave(id){
 }
 async function samityBillDelete(id){
   if(!confirm(t('Delete this bill? Collections will also be removed.','এই বিল মুছে ফেলবেন? আদায়ও মুছে যাবে।'))) return;
-  if(DEMO_MODE){ DB.samity_bills=(DB.samity_bills||[]).filter(x=>x.id!==id); DB.samity_collections=(DB.samity_collections||[]).filter(x=>x.bill!==id); samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে')); return; }
+  if(DEMO_MODE||!TOKEN){ DB.samity_bills=(DB.samity_bills||[]).filter(x=>x.id!==id); DB.samity_collections=(DB.samity_collections||[]).filter(x=>x.bill!==id); samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে')); return; }
   const r=await apiCall('app-samity',{action:'bill-delete',id:id});
   if(!r||!r.ok){ toast((r&&r.error)||t('Delete failed.','মুছতে ব্যর্থ।'),true); return; }
   samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে'));
 }
 function samityCollectForm(billId){
   const methods=['Cash','bKash','Nagad','Bank'];
-  const fields=[['bill',t('Bill','বিল'),'select',billId||'',(DB.samity_bills||[]).map(b=>[b.id,b.unit_label||b.unit+' · '+b.month])],['amount',t('Amount ৳','পরিমাণ ৳'),'number',''],['method',t('Method','পদ্ধতি'),'select','Cash',methods],['collected_at',t('Date','তারিখ'),'date',new Date().toISOString().slice(0,10)]];
-  openDrawer(t('Record collection','আদায় রেকর্ড'),drawerForm(fields,`<button class="btn-primary" onclick="samityCollectSave()">${t('Save','সেভ')}</button>`));
+  const rows=[];
+  const bills=(DB.samity_bills||[]).map(b=>`<option value="${esc(b.id)}" ${billId===b.id?'selected':''}>${esc(b.unit_label||b.unit)} · ${esc(b.month)}</option>`).join('');
+  rows.push(rowItem('bill',`<label class="lb">${t('Bill','বিল')}</label><select id="sc_bill" class="inp">${bills}</select>`));
+  rows.push(rowItem('amount',`<label class="lb">${t('Amount (৳)','পরিমাণ (৳)')}</label><input id="sc_amount" class="inp" type="number" min="1">`));
+  const mds=methods.map(v=>`<option value="${v}">${v}</option>`).join('');
+  rows.push(rowItem('method',`<label class="lb">${t('Method','পদ্ধতি')}</label><select id="sc_method" class="inp">${mds}</select>`));
+  rows.push(rowItem('collected_at',`<label class="lb">${t('Date','তারিখ')}</label><input id="sc_date" class="inp" type="date" value="${new Date().toISOString().slice(0,10)}">`));
+  openDrawer(t('Record collection','আদায় রেকর্ড'),rows.join(''),`<button class="btn-primary" onclick="submitSamityCollect()">${t('Save','সেভ')}</button>`);
 }
-async function samityCollectSave(){
-  const g=readDrawer();
-  const payload={action:'collection-create',bill:g.bill||'',amount:parseInt(g.amount||'0',10)||0,method:g.method||'Cash',collected_at:g.collected_at||''};
-  if(DEMO_MODE){
-    const b=(DB.samity_bills||[]).find(x=>x.id===payload.bill);
-    if(!b){ toast(t('Select a bill.','একটি বিল নির্বাচন করুন।'),true); return; }
-    const already=(DB.samity_collections||[]).filter(x=>x.bill===payload.bill).reduce((s,x)=>s+(x.amount||0),0);
-    if(already+payload.amount>(b.amount||0)){ toast(t('Overpayment — exceeds bill total.','বিলের বেশি পরিমাণ — অতিরিক্ত।'),true); return; }
-    const id='SC-'+(DB.samity_collections.length+1000);
-    DB.samity_collections.push({id:id,owner_email:'',bill:payload.bill,amount:payload.amount,method:payload.method,collected_at:payload.collected_at,receipt_no:'RCPT-'+id,note:'',ts:new Date().toISOString()});
+async function submitSamityCollect(){
+  const bill=val('sc_bill'); if(!bill){ toast(t('Select a bill.','একটি বিল নির্বাচন করুন।'),true); return; }
+  const amount=+(val('sc_amount')||0); if(amount<=0){ toast(t('Enter an amount.','পরিমাণ দিন।'),true); return; }
+  const payload={action:'collection-create',bill:bill,amount:amount,method:val('sc_method'),collected_at:val('sc_date')};
+  if(DEMO_MODE||!TOKEN){
+    const b=(DB.samity_bills||[]).find(x=>x.id===bill);
+    const already=(DB.samity_collections||[]).filter(x=>x.bill===bill).reduce((s,x)=>s+(x.amount||0),0);
+    if(!b||already+amount>(b.amount||0)){ toast(t('Overpayment — exceeds bill total.','বিলের বেশি পরিমাণ — অতিরিক্ত।'),true); return; }
+    const n=Math.max(100,...(DB.samity_collections||[]).map(x=>+(x.id||'SC-0').replace('SC-','')));
+    DB.samity_collections.push({id:'SC-'+n,owner_email:'',bill:bill,amount:amount,method:payload.method,collected_at:payload.collected_at,receipt_no:'RCPT-SC-'+n,note:'',ts:new Date().toISOString()});
     closeDrawer(); samityLoad(); toast(t('Collection recorded','আদায় রেকর্ড হয়েছে')); return;
   }
   const r=await apiCall('app-samity',payload);
@@ -7532,30 +7552,30 @@ async function samityCollectSave(){
 }
 async function samityCollectionDelete(id){
   if(!confirm(t('Delete this collection?','এই আদায় মুছে ফেলবেন?'))) return;
-  if(DEMO_MODE){ DB.samity_collections=(DB.samity_collections||[]).filter(x=>x.id!==id); samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে')); return; }
+  if(DEMO_MODE||!TOKEN){ DB.samity_collections=(DB.samity_collections||[]).filter(x=>x.id!==id); samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে')); return; }
   const r=await apiCall('app-samity',{action:'collection-delete',id:id});
   if(!r||!r.ok){ toast((r&&r.error)||t('Delete failed.','মুছতে ব্যর্থ।'),true); return; }
   samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে'));
 }
 function samityConfigDrawer(){
   const cfg=window.__samityCfg||{alert_days:7,default_charge:3000};
-  const fields=[['alert_days',t('Overdue alert window (days)','বকেয়া সতর্কতা (দিন)'),'number',cfg.alert_days],['default_charge',t('Default monthly charge ৳','ডিফল্ট মাসিক চার্জ ৳'),'number',cfg.default_charge]];
-  openDrawer(t('Society settings','সমিতি সেটিংস'),drawerForm(fields,`<button class="btn-primary" onclick="samityConfigSave()">${t('Save','সেভ')}</button>`));
+  const rows=[];
+  rows.push(rowItem('alert_days',`<label class="lb">${t('Overdue alert window (days)','বকেয়া সতর্কতা (দিন)')}</label><input id="smc_ad" class="inp" type="number" min="1" max="120" value="${cfg.alert_days||7}">`));
+  rows.push(rowItem('default_charge',`<label class="lb">${t('Default monthly charge (৳)','ডিফল্ট মাসিক চার্জ (৳)')}</label><input id="smc_dc" class="inp" type="number" min="1" value="${cfg.default_charge||3000}">`));
+  openDrawer(t('Society settings','সমিতি সেটিংস'),rows.join(''),`<button class="btn-primary" onclick="submitSamityConfig()">${t('Save','সেভ')}</button>`);
 }
-async function samityConfigSave(){
-  const g=readDrawer();
-  if(DEMO_MODE){ window.__samityCfg={alert_days:parseInt(g.alert_days||'7',10),default_charge:parseInt(g.default_charge||'3000',10)}; closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে')); return; }
-  const r=await apiCall('app-samity',{action:'config-save',alert_days:parseInt(g.alert_days||'7',10),default_charge:parseInt(g.default_charge||'3000',10)});
+async function submitSamityConfig(){
+  const payload={action:'config-save',alert_days:+(val('smc_ad')||7),default_charge:+(val('smc_dc')||3000)};
+  if(DEMO_MODE||!TOKEN){ window.__samityCfg={alert_days:payload.alert_days,default_charge:payload.default_charge}; closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে')); return; }
+  const r=await apiCall('app-samity',payload);
   if(!r||!r.ok){ toast((r&&r.error)||t('Save failed.','সেভ ব্যর্থ।'),true); return; }
   closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে'));
 }
 async function samityReport(){
-  if(DEMO_MODE){ toast(t('Report available in live mode.','রিপোর্ট লাইভ মোডে পাওয়া যায়।')); return; }
+  if(DEMO_MODE||!TOKEN){ toast(t('Report available in live mode.','রিপোর্ট লাইভ মোডে পাওয়া যায়।')); return; }
   const w=window.open('/api/app-samity?action=report','_blank');
   if(w) w.document.write('<p style="font-family:sans-serif;padding:20px">'+t('Opening report…','রিপোর্ট খোলা হচ্ছে…')+'</p>');
 }
-
-
 /* ═══ Phase 12: templates engine (front-end) ═══ */
 let TPL = { templates: [], email: [], palettes: {}, refs: {}, current: null, currentEmail: null };
 const TPL_META = {
