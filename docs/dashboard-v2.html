@@ -1160,14 +1160,14 @@ const SEED = {
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','staffwatch','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','staffwatch','samity','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','staffwatch','ai','analytics','notices','documents']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','staffwatch','samity','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','concierge','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','concierge','smarthome','health','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','concierge','health','ai','analytics','notices','documents','recon','templates']},
@@ -1176,12 +1176,12 @@ const ROLES = [
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['nrb','🌐','NRB Hub'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch'],['firesafety','🧯','Fire Safety'],['systems','⚙️','Systems Watch'],['staffwatch','👷','Staff Watch']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch'],['firesafety','🧯','Fire Safety'],['systems','⚙️','Systems Watch'],['staffwatch','👷','Staff Watch'],['samity','🏘️','Kalyan Samity']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','firesafety':'🧯','systems':'⚙️','staffwatch':'👷','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','firesafety':'Fire Safety','systems':'Systems Watch','staffwatch':'Staff Watch','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','firesafety':'🧯','systems':'⚙️','staffwatch':'👷','samity':'🏘️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','firesafety':'Fire Safety','systems':'Systems Watch','staffwatch':'Staff Watch','samity':'Kalyan Samity','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
   'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Build Watch':'নির্মাণ মনিটরিং','Gate Watch':'গেট ওয়াচ','Fire Safety':'ফায়ার সেফটি','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
@@ -7195,6 +7195,14 @@ const renderers={
     setTimeout(()=>staffLoad(),0);
     return h;
   },
+
+  samity(){
+    const isStaff=samityStaff();
+    let h=pageHead(t('Kalyan Samity','কাল্যান সমিতি'),isStaff?t('Flat owners’ association — committee, monthly service charges per unit and the collection ledger. bKash/Nagad/cash receipts, arrears and fund balance. Built for NRB owners monitoring from abroad.','ফ্ল্যাট মালিকদের সমিতি — কমিটি, প্রতি ইউনিটের মাসিক সার্ভিস চার্জ ও আদায়ের হিসাব। বিকাশ/নগদ/ক্যাশ রসিদ, বকেয়া ও তহবিল ব্যালেন্স। বিদেশ থেকে মনিটর করা এনআরবি মালিকদের জন্য।'):t('Your building society.','আপনার বিল্ডিং সমিতি।'),isStaff?`<button class="btn-primary" onclick="samityMemberForm()">＋ ${t('Add member','সদস্য যোগ করুন')}</button><button class="btn-ghost" onclick="samityConfigDrawer()">⚙️</button>`:'');
+    h+=`<div id="samityLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>samityLoad(),0);
+    return h;
+  },
   remit(){
     const canWrite = ['superadmin','owner','accountant'].includes(role().id);
     let h=pageHead(t('Remittances','রেমিট্যান্স'),t('NRB payouts sent abroad — SWIFT/bKash, exchange rate, Form C.','এনআরবি পেআউট বিদেশে পাঠানো — সুইফট/বিকাশ, এক্সচেঞ্জ রেট, ফর্ম সি।'),`${canWrite?`<button class="btn-primary" onclick="remitForm()">＋ ${t('Record remittance','রেমিট্যান্স রেকর্ড')}</button>`:''}`);
@@ -7371,6 +7379,182 @@ const renderers={
     return h;
   }
 };
+function samityStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
+function samityCap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+function samityEnrich(b){
+  const c=Object.assign({},b);
+  c.collected=c.collected||0; c.outstanding=c.outstanding||0;
+  c.computed_status=c.computed_status||c.status||'Pending';
+  return c;
+}
+function demoSamityData(){
+  const members=(DB.samity_members||[]).slice();
+  const bills=(DB.samity_bills||[]).map(samityEnrich);
+  const col=(DB.samity_collections||[]).slice();
+  const cfg=window.__samityCfg||{alert_days:7,default_charge:3000};
+  let billed=0, collected=0;
+  bills.forEach(b=>{billed+=b.amount||0;});
+  col.forEach(c=>{collected+=c.amount||0;});
+  const fund={total_billed:billed,total_collected:collected,outstanding:Math.max(0,billed-collected),collection_rate:billed>0?Math.round(collected/billed*100):0};
+  return {stats:{members_total:members.length,members_active:members.filter(m=>m.status==='active').length,bills_total:bills.length,bills_overdue:bills.filter(b=>b.overdue).length,bills_partial:bills.filter(b=>b.computed_status==='Partial').length,bills_paid:bills.filter(b=>b.computed_status==='Paid').length,collections_total:col.length,fund_collected:collected,fund_outstanding:fund.outstanding,collection_rate:fund.collection_rate},members:members,bills:bills,collections:col,fund:fund,config:{alert_days:cfg.alert_days,default_charge:cfg.default_charge}};
+}
+async function samityLoad(){
+  const host=$('samityLive'); if(!host) return;
+  if(DEMO_MODE||!TOKEN){
+    const d=demoSamityData();
+    DB.samity_members=d.members.map(m=>{const c=Object.assign({},m); return c;});
+    DB.samity_bills=d.bills.map(b=>{const c=Object.assign({},b); delete c.collected; delete c.outstanding; delete c.computed_status; delete c.overdue; delete c.unit_label; return c;});
+    DB.samity_collections=d.collections.slice();
+    host.innerHTML=samityHtml(d);
+    return;
+  }
+  const r=await apiCall('app-samity',{action:'summary'});
+  if(!r||!r.ok){ host.innerHTML=`<div class="m">${t('Failed to load society.','সমিতি লোড করা যায়নি।')}</div>`; return; }
+  const d=r.summary||{};
+  DB.samity_members=d.members||[]; DB.samity_bills=d.bills||[]; DB.samity_collections=d.collections||[];
+  window.__samityCfg=r.config||{alert_days:7,default_charge:3000};
+  host.innerHTML=samityHtml(d);
+}
+function samityTab(tab){ state.samityTab=tab; samityLoad(); }
+function samityStatusBadge(st){
+  const m={Paid:['b-green','✅'],Partial:['b-orange','◐'],Pending:['b-gray','⏳'],Waived:['b-gray','➖']};
+  const e=m[st]||['b-gray',''];
+  return `<span class="badge ${e[0]}">${e[1]} ${esc(st)}</span>`;
+}
+function samityHtml(d){
+  const members=d.members||[], st=d.stats||{};
+  const bills=d.bills||[], col=d.collections||[], fund=d.fund||{};
+  const isStaff=samityStaff();
+  const t0=state.samityTab||'committee';
+  const unitLabel=(u)=>{ const un=(DB.units||[]).find(x=>x.id===u); return un?un.name:u; };
+  let h=statsRow([
+    stat(t('Members','সদস্য'),st.members_total||members.length,t('active','সক্রিয়')+': '+(st.members_active||0),'','🏘️'),
+    stat(t('Fund collected','তহবিল আদায়'),money(st.fund_collected||0),t('rate','হার')+': '+(st.collection_rate||0)+'%','','💰'),
+    stat(t('Outstanding','বকেয়া'),money(st.fund_outstanding||0),t('bills','বিল')+': '+(st.bills_total||0),st.fund_outstanding?'warn':'','⚠️'),
+    stat(t('Overdue','মেয়াদোত্তীর্ণ'),st.bills_overdue||0,t('bills','বিল'),(st.bills_overdue||0)?'warn':'','🔔')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏘️</span>${t('Kalyan Samity','কাল্যান সমিতি')}</div><div style="display:flex;gap:6px">
+    <button class="${t0==='committee'?'btn-primary':'btn-ghost'}" onclick="samityTab('committee')">👥 ${t('Committee','কমিটি')}</button>
+    <button class="${t0==='bills'?'btn-primary':'btn-ghost'}" onclick="samityTab('bills')">🧾 ${t('Bills','বিল')}</button>
+    <button class="${t0==='collections'?'btn-primary':'btn-ghost'}" onclick="samityTab('collections')">💳 ${t('Collections','আদায়')}</button>
+    <span style="flex:1"></span>
+    ${isStaff?`<button class="btn-ghost" onclick="samityReport()">🖨 ${t('Report','রিপোর্ট')}</button>`:''}
+  </div></div><div class="panel-b">`;
+  if(t0==='committee'){
+    h+=`<div class="tbl-wrap"><table><thead><tr><th>${t('Member','সদস্য')}</th><th>${t('Role','পদ')}</th><th>${t('Phone','ফোন')}</th><th>${t('Since','থেকে')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+      members.map(x=>`<tr><td><span class="c-name">${esc(x.name)}</span><div class="c-sub">${x.id}</div></td><td>${esc(x.role)}</td><td>${esc(x.phone||'—')}</td><td>${esc(x.since_date||'—')}</td><td>${x.status==='active'?'<span class="badge b-green">Active</span>':'<span class="badge b-gray">Inactive</span>'}</td><td>${isStaff?`<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="samityMemberForm('${esc(x.id)}')">✎</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="samityMemberDelete('${esc(x.id)}')">✕</button></div>`:''}</td></tr>`).join('')
+      || `<tr><td colspan="6" class="m">${t('No committee members yet.','এখনো কোনো কমিটি সদস্য নেই।')}</td></tr></tbody></table></div>`;
+  } else if(t0==='bills'){
+    h+=`<div class="tbl-wrap"><table><thead><tr><th>${t('Unit','ইউনিট')}</th><th>${t('Month','মাস')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Collected','আদায়')}</th><th>${t('Outstanding','বকেয়া')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+      bills.map(b=>`<tr><td><span class="c-name">${esc(b.unit_label||unitLabel(b.unit))}</span><div class="c-sub">${b.id}</div></td><td>${esc(b.month)}</td><td class="t-amount">${money(b.amount)}</td><td class="t-amount">${money(b.collected||0)}</td><td class="t-amount">${b.overdue?'<span class="badge b-red">OVERDUE</span> ':''}${money(b.outstanding||0)}</td><td>${samityStatusBadge(b.computed_status||b.status)}</td><td>${isStaff?`<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="samityBillForm('${esc(b.id)}')">✎</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="samityCollectForm('${esc(b.id)}')" title="${t('Collect','আদায়')}">💵</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="samityBillDelete('${esc(b.id)}')">✕</button></div>`:''}</td></tr>`).join('')
+      || `<tr><td colspan="7" class="m">${t('No service-charge bills yet.','এখনো কোনো সার্ভিস চার্জ বিল নেই।')}</td></tr></tbody></table></div>`;
+  } else {
+    h+=`<div class="tbl-wrap"><table><thead><tr><th>${t('Receipt','রসিদ')}</th><th>${t('Bill','বিল')}</th><th>${t('Amount','পরিমাণ')}</th><th>${t('Method','পদ্ধতি')}</th><th>${t('Date','তারিখ')}</th><th></th></tr></thead><tbody>`+
+      col.map(c=>{const b=(DB.samity_bills||[]).find(x=>x.id===c.bill); return `<tr><td><span class="c-name">${esc(c.receipt_no||c.id)}</span><div class="c-sub">${c.id}</div></td><td>${b?esc(b.unit_label||b.unit)+' <span class="c-sub">'+esc(b.month)+'</span>':esc(c.bill)}</td><td class="t-amount">${money(c.amount)}</td><td>${esc(c.method)}</td><td>${esc(c.collected_at||'—')}</td><td>${isStaff?`<button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="samityCollectionDelete('${esc(c.id)}')">✕</button>`:''}</td></tr>`; }).join('')
+      || `<tr><td colspan="6" class="m">${t('No collections yet.','এখনো কোনো আদায় নেই।')}</td></tr></tbody></table></div>`;
+  }
+  h+=`</div></div>`;
+  return h;
+}
+function samityMemberForm(id){
+  const m=(DB.samity_members||[]).find(x=>x.id===id)||{name:'',role:'Member',phone:'',since_date:'',status:'active',notes:''};
+  const roles=['Chairman','Secretary','Treasurer','Member'];
+  const fields=[['name',t('Name','নাম'),'text',m.name],['role',t('Role','পদ'),'select',m.role,roles],['phone',t('Phone','ফোন'),'text',m.phone],['since_date',t('Since','থেকে'),'date',m.since_date],['status',t('Status','স্ট্যাটাস'),'select',m.status,['active','inactive']],['notes',t('Notes','নোট'),'text',m.notes]];
+  openDrawer(t(id?'Edit member':'Add member',id?'সদস্য সম্পাদনা':'সদস্য যোগ করুন'),drawerForm(fields,`<button class="btn-primary" onclick="samityMemberSave('${id||''}')">${t('Save','সেভ')}</button>`));
+}
+async function samityMemberSave(id){
+  const g=readDrawer();
+  const payload={action:id?'member-save':'member-create',name:g.name||'',role:g.role||'Member',phone:g.phone||'',since_date:g.since_date||'',status:g.status||'active',notes:g.notes||''};
+  if(id) payload.id=id;
+  if(DEMO_MODE){
+    if(id){const m=(DB.samity_members||[]).find(x=>x.id===id); if(m){m.name=g.name;m.role=g.role;m.phone=g.phone;m.status=g.status;}}
+    else DB.samity_members.push({id:'SM-'+(DB.samity_members.length+1000),owner_email:'',name:g.name,role:g.role,phone:g.phone,since_date:g.since_date,status:g.status,notes:g.notes,ts:new Date().toISOString()});
+    closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে')); return;
+  }
+  const r=await apiCall('app-samity',payload);
+  if(!r||!r.ok){ toast((r&&r.error)||t('Save failed.','সেভ ব্যর্থ।'),true); return; }
+  closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে'));
+}
+async function samityMemberDelete(id){
+  if(!confirm(t('Delete this member?','এই সদস্য মুছে ফেলবেন?'))) return;
+  if(DEMO_MODE){ DB.samity_members=(DB.samity_members||[]).filter(x=>x.id!==id); samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে')); return; }
+  const r=await apiCall('app-samity',{action:'member-delete',id:id});
+  if(!r||!r.ok){ toast((r&&r.error)||t('Delete failed.','মুছতে ব্যর্থ।'),true); return; }
+  samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে'));
+}
+function samityBillForm(id){
+  const b=(DB.samity_bills||[]).find(x=>x.id===id)||{unit:'',month:new Date().toISOString().slice(0,7),amount:'',due_date:'',status:'Pending',note:''};
+  const units=(DB.units||[]).map(u=>[u.id,u.name]).concat([['','']]);
+  const fields=[['unit',t('Unit','ইউনিট'),'select',b.unit,units],['month',t('Month (YYYY-MM)','মাস (YYYY-MM)'),'text',b.month],['amount',t('Amount ৳','পরিমাণ ৳'),'number',b.amount],['due_date',t('Due date','শেষ তারিখ'),'date',b.due_date],['status',t('Status','স্ট্যাটাস'),'select',b.status,['Pending','Paid','Waived']],['note',t('Note','নোট'),'text',b.note]];
+  openDrawer(t(id?'Edit bill':'Add bill',id?'বিল সম্পাদনা':'বিল যোগ করুন'),drawerForm(fields,`<button class="btn-primary" onclick="samityBillSave('${id||''}')">${t('Save','সেভ')}</button>`));
+}
+async function samityBillSave(id){
+  const g=readDrawer();
+  const payload={action:id?'bill-save':'bill-create',unit:g.unit||'',month:g.month||'',amount:parseInt(g.amount||'0',10)||0,due_date:g.due_date||'',status:g.status||'Pending',note:g.note||''};
+  if(id) payload.id=id;
+  if(DEMO_MODE){
+    if(!payload.unit){ toast(t('Select a unit.','একটি ইউনিট নির্বাচন করুন।'),true); return; }
+    if(id){const b=(DB.samity_bills||[]).find(x=>x.id===id); if(b){b.unit=payload.unit;b.month=payload.month;b.amount=payload.amount;b.due_date=payload.due_date;b.status=payload.status;b.note=payload.note;}}
+    else DB.samity_bills.push({id:'SB-'+(DB.samity_bills.length+1000),owner_email:'',unit:payload.unit,month:payload.month,amount:payload.amount,due_date:payload.due_date,status:payload.status,note:payload.note,ts:new Date().toISOString()});
+    closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে')); return;
+  }
+  const r=await apiCall('app-samity',payload);
+  if(!r||!r.ok){ toast((r&&r.error)||t('Save failed.','সেভ ব্যর্থ।'),true); return; }
+  closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে'));
+}
+async function samityBillDelete(id){
+  if(!confirm(t('Delete this bill? Collections will also be removed.','এই বিল মুছে ফেলবেন? আদায়ও মুছে যাবে।'))) return;
+  if(DEMO_MODE){ DB.samity_bills=(DB.samity_bills||[]).filter(x=>x.id!==id); DB.samity_collections=(DB.samity_collections||[]).filter(x=>x.bill!==id); samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে')); return; }
+  const r=await apiCall('app-samity',{action:'bill-delete',id:id});
+  if(!r||!r.ok){ toast((r&&r.error)||t('Delete failed.','মুছতে ব্যর্থ।'),true); return; }
+  samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে'));
+}
+function samityCollectForm(billId){
+  const methods=['Cash','bKash','Nagad','Bank'];
+  const fields=[['bill',t('Bill','বিল'),'select',billId||'',(DB.samity_bills||[]).map(b=>[b.id,b.unit_label||b.unit+' · '+b.month])],['amount',t('Amount ৳','পরিমাণ ৳'),'number',''],['method',t('Method','পদ্ধতি'),'select','Cash',methods],['collected_at',t('Date','তারিখ'),'date',new Date().toISOString().slice(0,10)]];
+  openDrawer(t('Record collection','আদায় রেকর্ড'),drawerForm(fields,`<button class="btn-primary" onclick="samityCollectSave()">${t('Save','সেভ')}</button>`));
+}
+async function samityCollectSave(){
+  const g=readDrawer();
+  const payload={action:'collection-create',bill:g.bill||'',amount:parseInt(g.amount||'0',10)||0,method:g.method||'Cash',collected_at:g.collected_at||''};
+  if(DEMO_MODE){
+    const b=(DB.samity_bills||[]).find(x=>x.id===payload.bill);
+    if(!b){ toast(t('Select a bill.','একটি বিল নির্বাচন করুন।'),true); return; }
+    const already=(DB.samity_collections||[]).filter(x=>x.bill===payload.bill).reduce((s,x)=>s+(x.amount||0),0);
+    if(already+payload.amount>(b.amount||0)){ toast(t('Overpayment — exceeds bill total.','বিলের বেশি পরিমাণ — অতিরিক্ত।'),true); return; }
+    const id='SC-'+(DB.samity_collections.length+1000);
+    DB.samity_collections.push({id:id,owner_email:'',bill:payload.bill,amount:payload.amount,method:payload.method,collected_at:payload.collected_at,receipt_no:'RCPT-'+id,note:'',ts:new Date().toISOString()});
+    closeDrawer(); samityLoad(); toast(t('Collection recorded','আদায় রেকর্ড হয়েছে')); return;
+  }
+  const r=await apiCall('app-samity',payload);
+  if(!r||!r.ok){ toast((r&&r.error)||t('Save failed.','সেভ ব্যর্থ।'),true); return; }
+  closeDrawer(); samityLoad(); toast(t('Collection recorded','আদায় রেকর্ড হয়েছে'));
+}
+async function samityCollectionDelete(id){
+  if(!confirm(t('Delete this collection?','এই আদায় মুছে ফেলবেন?'))) return;
+  if(DEMO_MODE){ DB.samity_collections=(DB.samity_collections||[]).filter(x=>x.id!==id); samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে')); return; }
+  const r=await apiCall('app-samity',{action:'collection-delete',id:id});
+  if(!r||!r.ok){ toast((r&&r.error)||t('Delete failed.','মুছতে ব্যর্থ।'),true); return; }
+  samityLoad(); toast(t('Deleted','মুছে ফেলা হয়েছে'));
+}
+function samityConfigDrawer(){
+  const cfg=window.__samityCfg||{alert_days:7,default_charge:3000};
+  const fields=[['alert_days',t('Overdue alert window (days)','বকেয়া সতর্কতা (দিন)'),'number',cfg.alert_days],['default_charge',t('Default monthly charge ৳','ডিফল্ট মাসিক চার্জ ৳'),'number',cfg.default_charge]];
+  openDrawer(t('Society settings','সমিতি সেটিংস'),drawerForm(fields,`<button class="btn-primary" onclick="samityConfigSave()">${t('Save','সেভ')}</button>`));
+}
+async function samityConfigSave(){
+  const g=readDrawer();
+  if(DEMO_MODE){ window.__samityCfg={alert_days:parseInt(g.alert_days||'7',10),default_charge:parseInt(g.default_charge||'3000',10)}; closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে')); return; }
+  const r=await apiCall('app-samity',{action:'config-save',alert_days:parseInt(g.alert_days||'7',10),default_charge:parseInt(g.default_charge||'3000',10)});
+  if(!r||!r.ok){ toast((r&&r.error)||t('Save failed.','সেভ ব্যর্থ।'),true); return; }
+  closeDrawer(); samityLoad(); toast(t('Saved','সেভ হয়েছে'));
+}
+async function samityReport(){
+  if(DEMO_MODE){ toast(t('Report available in live mode.','রিপোর্ট লাইভ মোডে পাওয়া যায়।')); return; }
+  const w=window.open('/api/app-samity?action=report','_blank');
+  if(w) w.document.write('<p style="font-family:sans-serif;padding:20px">'+t('Opening report…','রিপোর্ট খোলা হচ্ছে…')+'</p>');
+}
+
 
 /* ═══ Phase 12: templates engine (front-end) ═══ */
 let TPL = { templates: [], email: [], palettes: {}, refs: {}, current: null, currentEmail: null };
