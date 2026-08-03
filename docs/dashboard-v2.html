@@ -980,18 +980,47 @@ const SEED = {
     {id:'EV-001',case_id:'CASE-001',ev_type:'stage',body:'Case opened — stage: Legal Notice',actor:'Kabir Ahmed',ts:'2026-07-01 10:05:00'},
     {id:'EV-002',case_id:'CASE-001',ev_type:'hearing',body:'Next hearing listed for 15 Aug at Dhaka Chief Metropolitan Magistrate Court',actor:'Barrister Naima',ts:'2026-07-12 14:00:00'},
     {id:'EV-003',case_id:'CASE-002',ev_type:'stage',body:'Case opened — stage: Negotiation',actor:'Kabir Ahmed',ts:'2026-07-05 09:30:00'}
+  ],
+  land_parcels:[
+    {id:'LP-001',owner_email:'owner@krtaker.com',name:'Sirajganj Ancestral Land',district:'Sirajganj',upazila:'Ullapara',mouza:'Charpara',khatian:'KH-1482',dag:'DAG-110',area:'8.5 decimal',lat:'24.2837',lng:'89.5872',monitor:'quarterly',status:'Secure',risk:'low',notes:'Family khas land beside the Bongshi river — watch river erosion',created_by:'Kabir Ahmed',ts:'2026-03-10 09:00:00',updated_at:'2026-06-10 11:20:00'},
+    {id:'LP-002',owner_email:'owner@krtaker.com',name:'Savar Dhamrai Plot',district:'Dhaka',upazila:'Dhamrai',mouza:'Kushura',khatian:'KH-2105',dag:'DAG-47',area:'12 decimal',lat:'23.9050',lng:'90.1965',monitor:'quarterly',status:'Needs Review',risk:'medium',notes:'Boundary wall partially damaged — verify adjacent construction',created_by:'Kabir Ahmed',ts:'2026-04-02 10:00:00',updated_at:'2026-06-15 15:40:00'},
+    {id:'LP-003',owner_email:'owner@krtaker.com',name:'Rangpur Bagan Bari Land',district:'Rangpur',upazila:'Badarganj',mouza:'Baganbari',khatian:'KH-3310',dag:'DAG-22',area:'20 decimal',lat:'25.6807',lng:'89.0660',monitor:'semi_annual',status:'Encroached',risk:'high',notes:'Illegal tin-shed structure reported by field agent',created_by:'Kabir Ahmed',ts:'2026-02-20 09:00:00',updated_at:'2026-05-20 09:10:00'},
+    {id:'LP-004',owner_email:'',name:'Mymensingh Khas Plot',district:'Mymensingh',upazila:'Trishal',mouza:'Kanthal',khatian:'KH-0451',dag:'DAG-9',area:'5 decimal',lat:'24.6100',lng:'90.4050',monitor:'annual',status:'Secure',risk:'low',notes:'Org-held parcel — annual drone sweep',created_by:'Kabir Ahmed',ts:'2026-01-05 09:00:00',updated_at:'2026-01-05 09:00:00'}
+  ],
+  land_visits:[
+    {id:'LV-001',parcel:'LP-001',agent:'Drone — DJI Mavic 3E',visit_type:'drone',scheduled_for:'2026-06-10',completed_at:'2026-06-10 11:20:00',status:'Completed',outcome:'Secure',findings:'Parcel clear. No structure or encroachment. Riverbank stable.',checklist:['Aerial sweep','Boundary check','Encroachment scan'],created_by:'Kabir Ahmed',completed_by:'Rahim Steel Works (agent)',ts:'2026-06-10 11:20:00'},
+    {id:'LV-002',parcel:'LP-002',agent:'Karim Uddin (field agent)',visit_type:'field',scheduled_for:'2026-06-15',completed_at:'2026-06-15 15:40:00',status:'Completed',outcome:'Needs Review',findings:'Boundary wall damage on east side. Adjacent new construction starting.',checklist:['Perimeter walk','Boundary wall','Photos'],created_by:'Kabir Ahmed',completed_by:'Karim Uddin',ts:'2026-06-15 15:40:00'},
+    {id:'LV-003',parcel:'LP-003',agent:'Karim Uddin (field agent)',visit_type:'field',scheduled_for:'2026-05-20',completed_at:'2026-05-20 09:10:00',status:'Completed',outcome:'Encroached',findings:'Illegal tin-shed + fencing found on SW corner. Owner notified; legal action advised.',checklist:['Perimeter walk','Occupancy check','Video'],created_by:'Kabir Ahmed',completed_by:'Karim Uddin',ts:'2026-05-20 09:10:00'},
+    {id:'LV-004',parcel:'LP-001',agent:'Drone — DJI Mavic 3E',visit_type:'drone',scheduled_for:new Date(Date.now()+85*864e5).toISOString().slice(0,10),completed_at:'',status:'Scheduled',outcome:'',findings:'Quarterly aerial sweep',checklist:['Aerial sweep','Boundary check'],created_by:'Kabir Ahmed',completed_by:'',ts:'2026-08-01 09:00:00'},
+    {id:'LV-005',parcel:'LP-002',agent:'Karim Uddin (field agent)',visit_type:'field',scheduled_for:new Date(Date.now()-5*864e5).toISOString().slice(0,10),completed_at:'',status:'Scheduled',outcome:'',findings:'Follow-up on boundary wall — MISSED, must reschedule',checklist:['Boundary wall','Photos'],created_by:'Kabir Ahmed',completed_by:'',ts:'2026-07-29 09:00:00'}
+  ],
+  land_media:[
+    {id:'LM-001',visit:'LV-001',kind:'drone',name:'Aerial overview — LP-001',fname:'lp001_aerial_01.jpg',size:2840132,mime:'image/jpeg',geo:'24.2837,89.5872',captured_at:'2026-06-10 11:20:00',uploaded_by:'Rahim Steel Works (agent)',ts:'2026-06-10 11:20:00'},
+    {id:'LM-002',visit:'LV-002',kind:'photo',name:'Boundary wall damage east side',fname:'lp002_wall_01.jpg',size:1983321,mime:'image/jpeg',geo:'23.9050,90.1965',captured_at:'2026-06-15 15:40:00',uploaded_by:'Karim Uddin',ts:'2026-06-15 15:40:00'},
+    {id:'LM-003',visit:'LV-003',kind:'photo',name:'Illegal tin-shed SW corner',fname:'lp003_shed_01.jpg',size:2415580,mime:'image/jpeg',geo:'25.6807,89.0660',captured_at:'2026-05-20 09:10:00',uploaded_by:'Karim Uddin',ts:'2026-05-20 09:10:00'},
+    {id:'LM-004',visit:'LV-003',kind:'video',name:'360 walkthrough of encroachment',fname:'lp003_walk_01.mp4',size:15842912,mime:'video/mp4',geo:'25.6807,89.0660',captured_at:'2026-05-20 09:15:00',uploaded_by:'Karim Uddin',ts:'2026-05-20 09:15:00'}
+  ],
+  land_events:[
+    {id:'LE-001',parcel:'LP-001',ev_type:'created',body:'Parcel registered — quarterly monitoring plan',actor:'Kabir Ahmed',ts:'2026-03-10 09:00:00'},
+    {id:'LE-002',parcel:'LP-001',ev_type:'visit',body:'Visit LV-001 completed — Secure',actor:'Rahim Steel Works (agent)',ts:'2026-06-10 11:20:00'},
+    {id:'LE-003',parcel:'LP-002',ev_type:'created',body:'Parcel registered — quarterly monitoring plan',actor:'Kabir Ahmed',ts:'2026-04-02 10:00:00'},
+    {id:'LE-004',parcel:'LP-002',ev_type:'visit',body:'Visit LV-002 completed — Needs Review (boundary wall)',actor:'Karim Uddin',ts:'2026-06-15 15:40:00'},
+    {id:'LE-005',parcel:'LP-002',ev_type:'note',body:'Boundary wall repair estimate requested',actor:'Kabir Ahmed',ts:'2026-06-20 11:00:00'},
+    {id:'LE-006',parcel:'LP-003',ev_type:'created',body:'Parcel registered — semi-annual monitoring plan',actor:'Kabir Ahmed',ts:'2026-02-20 09:00:00'},
+    {id:'LE-007',parcel:'LP-003',ev_type:'encroachment',body:'Visit LV-003 found illegal tin-shed + fencing — status Encroached',actor:'Karim Uddin',ts:'2026-05-20 09:10:00'},
+    {id:'LE-008',parcel:'LP-004',ev_type:'created',body:'Parcel registered — annual drone sweep',actor:'Kabir Ahmed',ts:'2026-01-05 09:00:00'}
   ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','ai','analytics','notices','documents']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','ai','analytics','notices','documents','recon','templates']},
@@ -1000,14 +1029,14 @@ const ROLES = [
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -2684,6 +2713,265 @@ async function legalCaseUpdate(id){
     toast('⚖️ Case updated');
   }
   closeDrawer(); if(state.view==='legal'){ render(); }
+}
+
+/* ═══ Phase 45: Land/Plot Guard — anti-encroachment monitoring ═══ */
+function landStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
+function landMonitorBadge(m){ return m==='quarterly'?'<span class="badge b-blue">Quarterly</span>':m==='semi_annual'?'<span class="badge b-orange">Semi-annual</span>':m==='annual'?'<span class="badge b-gray">Annual</span>':'<span class="badge b-gray">Off</span>'; }
+function landStatusBadge(st){ return st==='Secure'?'<span class="badge b-green">Secure</span>':st==='Needs Review'?'<span class="badge b-orange">Needs review</span>':st==='Encroached'?'<span class="badge b-red">Encroached</span>':'<span class="badge b-blue">Under monitoring</span>'; }
+function landOutcomeBadge(o){ return o==='Secure'?'<span class="badge b-green">Secure</span>':o==='Needs Review'?'<span class="badge b-orange">Needs review</span>':o==='Encroached'?'<span class="badge b-red">Encroached</span>':'<span class="badge b-gray">—</span>'; }
+function landVisitActions(v,isStaff){
+  if(v.status==='Scheduled'||v.status==='In Progress'){
+    return `<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="landVisitCompleteForm('${esc(v.id)}')">✅ ${t('Complete','সম্পন্ন')}</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="landVisitCancel('${esc(v.id)}')">✕</button></div>`;
+  }
+  return v.status==='Completed'?landOutcomeBadge(v.outcome):`<span class="badge b-gray">${esc(v.status)}</span>`;
+}
+function landNextDue(p,lastAt){
+  const months={quarterly:3,semi_annual:6,annual:12}[p.monitor||'quarterly']||0;
+  if(!months) return '';
+  const base=(lastAt||p.ts||new Date().toISOString().slice(0,10)).slice(0,10);
+  const d=new Date(base); d.setMonth(d.getMonth()+months);
+  return d.toISOString().slice(0,10);
+}
+function landEnrichDemo(){
+  const today=new Date();
+  const days=sf=>Math.floor((new Date(sf)-today)/864e5);
+  return (DB.land_parcels||[]).map(p=>{
+    const visits=(DB.land_visits||[]).filter(v=>v.parcel===p.id);
+    const comp=visits.filter(v=>v.status==='Completed').sort((a,b)=>(b.completed_at||'').localeCompare(a.completed_at||''))[0];
+    const pnd=visits.filter(v=>v.status==='Scheduled'||v.status==='In Progress').sort((a,b)=>(a.scheduled_for||'').localeCompare(b.scheduled_for||''))[0];
+    let next_due='',due_days=null,next_visit='',visit_status='';
+    if(pnd){ next_visit=pnd.id; visit_status=pnd.status; next_due=(pnd.scheduled_for||'').slice(0,10); due_days=days(next_due); }
+    else { next_due=landNextDue(p,comp?comp.completed_at:''); if(next_due) due_days=days(next_due); }
+    return {...p,last_visit:comp?comp.id:'',last_visit_at:comp?(comp.completed_at||'').slice(0,10):'',last_outcome:comp?comp.outcome||'':'',next_due,due_days,next_visit,visit_status,
+      coverage:(p.monitor||'quarterly')!=='none',
+      media_count:(DB.land_media||[]).filter(m=>visits.some(v=>v.id===m.visit)).length,
+      events_count:(DB.land_events||[]).filter(e=>e.parcel===p.id).length};
+  });
+}
+function landAlerts(parcels){
+  const out=[];
+  (parcels||[]).forEach(p=>{
+    if(p.status==='Encroached') out.push({kind:'encroached',parcel:p.id,name:p.name,days:null});
+    else if(p.due_days!==null&&p.due_days<0) out.push({kind:'overdue',parcel:p.id,name:p.name,days:p.due_days});
+    else if(p.due_days!==null&&p.due_days<=30) out.push({kind:'due_soon',parcel:p.id,name:p.name,days:p.due_days});
+  });
+  return out;
+}
+async function landLoad(){
+  const host=document.getElementById('landLive'); if(!host) return;
+  const isStaff=landStaff();
+  let parcels=[],visits=[],media=[],events=[];
+  if(TOKEN&&!DEMO_MODE){
+    const d=await apiCall('app-land',{action:'list'});
+    if(!d.ok){ host.innerHTML=`<div class="m">${esc(d.error||'Failed to load')}</div>`; return; }
+    parcels=d.parcels||[]; visits=d.visits||[]; media=d.media||[]; events=d.events||[];
+  } else {
+    parcels=landEnrichDemo();
+    visits=(DB.land_visits||[]).map(x=>({...x,parcel_name:(DB.land_parcels||[]).find(p=>p.id===x.parcel)?.name||x.parcel}));
+    media=DB.land_media||[]; events=DB.land_events||[];
+    if(role().id==='owner'){ const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com'; parcels=parcels.filter(p=>p.owner_email===''||p.owner_email===em); }
+  }
+  const alerts=landAlerts(parcels);
+  const total=parcels.length, secure=parcels.filter(p=>p.status==='Secure').length,
+        review=parcels.filter(p=>p.status==='Needs Review').length,
+        encro=parcels.filter(p=>p.status==='Encroached').length,
+        due=parcels.filter(p=>p.due_days!==null&&p.due_days<=30).length;
+  let h=statsRow([
+    stat(t('Parcels','প্লট'),total,t('under guard','গার্ডে'),'','🛰️'),
+    stat(t('Secure','নিরাপদ'),secure,t('clear','পরিষ্কার'),'up','✅'),
+    stat(t('Needs review','পর্যালোচনা'),review,t('verify','যাচাই করুন'),review?'warn':'','🟠'),
+    stat(t('Encroached','দখল'),encro,t('critical','গুরুতর'),encro?'down':'','🚨')
+  ]);
+  if(alerts.length){ h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🔔</span>${t('Land alerts','ভূমি অ্যালার্ট')}</div><span class="tagline">${due?t(due+' visit(s) due','টি পরিদর্শন বাকি'):''}</span></div><div class="panel-b">${alerts.map(a=>`<div class="row-item"><div class="ri-ic">${a.kind==='encroached'?'🚨':a.kind==='overdue'?'⛔':'📅'}</div><div class="ri-body"><div class="ri-t">${esc(a.name)} <span class="c-sub">${esc(a.parcel)}</span></div><div class="c-sub">${a.kind==='encroached'?t('Encroachment detected — verify and act','দখল শনাক্ত — যাচাই করুন'):a.kind==='overdue'?t(Math.abs(a.days)+' days overdue',Math.abs(a.days)+' দিন ওভারডিউ'):t('visit due in '+a.days+'d','পরিদর্শন বাকি '+a.days+' দিন')}</div></div><div class="ri-r">${a.kind==='encroached'?'<span class="badge b-red">Critical</span>':a.kind==='overdue'?'<span class="badge b-red">Overdue</span>':'<span class="badge b-orange">Due soon</span>'}</div></div>`).join('')}</div></div>`; }
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🗺️</span>${t('Land parcels','জমির প্লট')}</div><span class="link" onclick="landNewParcel()">＋ ${t('Register parcel','প্লট নিবন্ধন')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Parcel','প্লট')}</th><th>${t('Location','অবস্থান')}</th><th>${t('Area','আয়তন')}</th><th>${t('Monitor','মনিটরিং')}</th><th>${t('Last visit','শেষ পরিদর্শন')}</th><th>${t('Next due','পরবর্তী')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (parcels.map(p=>`<tr><td><span class="c-name">${esc(p.name)}</span><div class="c-sub">${p.id}${p.owner_email?' · '+esc(p.owner_email):''}</div></td><td>${esc([p.district,p.upazila].filter(Boolean).join(' · ')||'—')}</td><td>${esc(p.area||'—')}</td><td>${landMonitorBadge(p.monitor)}</td><td>${p.last_visit?esc(p.last_visit_at)+' '+landOutcomeBadge(p.last_outcome):'<span class="badge b-gray">—</span>'}</td><td>${p.next_due?`<span class="${p.due_days<0?'badge b-red':p.due_days<=30?'badge b-orange':'badge b-blue'}">${esc(p.next_due)}${p.due_days<0?' ⛔':''}</span>`:'<span class="badge b-gray">—</span>'}</td><td>${landStatusBadge(p.status)}</td><td><div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="landParcelDrawer('${esc(p.id)}')">👁</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="landVisitForm('${esc(p.id)}')">📅</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="landReport('${esc(p.id)}')">🖨</button></div></td></tr>`).join('')
+    || `<tr><td colspan="8" class="m">${t('No land parcels yet — register your first plot.','এখনো কোনো প্লট নিবন্ধিত নেই — প্রথম প্লট নিবন্ধন করুন।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  const upcoming=visits.filter(v=>['Scheduled','In Progress'].includes(v.status)).sort((a,b)=>(a.scheduled_for||'').localeCompare(b.scheduled_for||''));
+  const history=visits.filter(v=>v.status==='Completed').sort((a,b)=>(b.completed_at||'').localeCompare(a.completed_at||''));
+  h+=`<div class="grid grid-2"><div class="panel"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Upcoming visits','আসন্ন পরিদর্শন')}</div></div><div class="panel-b">${upcoming.map(v=>`<div class="row-item"><div class="ri-ic">${v.visit_type==='drone'?'🛸':'🚶'}</div><div class="ri-body"><div class="ri-t">${esc(v.parcel_name||v.parcel)} · ${esc(v.agent||'—')}</div><div class="c-sub">${esc(v.id)} · ${esc(v.scheduled_for)} · ${esc(v.visit_type)}</div></div><div class="ri-r">${landVisitActions(v,isStaff)}</div></div>`).join('')||`<div class="c-sub">${t('No upcoming visits.','কোনো আসন্ন পরিদর্শন নেই।')}</div>`}</div></div><div class="panel"><div class="panel-h"><div class="t"><span class="pi">🗂️</span>${t('Visit history','পরিদর্শন ইতিহাস')}</div></div><div class="panel-b">${history.slice(0,6).map(v=>`<div class="row-item"><div class="ri-ic">${v.visit_type==='drone'?'🛸':'🚶'}</div><div class="ri-body"><div class="ri-t">${esc(v.parcel_name||v.parcel)} ${landOutcomeBadge(v.outcome)}</div><div class="c-sub">${esc(v.id)} · ${esc((v.completed_at||'').slice(0,10))} · ${esc(v.findings||'')}</div></div><div class="ri-r"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="landParcelDrawer('${esc(v.parcel)}')">👁</button></div></div>`).join('')||`<div class="c-sub">${t('No visits yet.','এখনো কোনো পরিদর্শন নেই।')}</div>`}</div></div></div>`;
+  host.innerHTML=h;
+}
+function landNewParcel(){
+  if(!landStaff()){ toast('Staff only'); return; }
+  const body=`
+      <div class="form-grid">
+        <div class="form-field full"><label>${t('Parcel name','প্লটের নাম')} *</label><input id="lpName" placeholder="e.g. Savar Dhamrai Plot"></div>
+        <div class="form-field"><label>${t('District','জেলা')}</label><input id="lpDistrict" placeholder="Dhaka"></div>
+        <div class="form-field"><label>${t('Upazila','উপজেলা')}</label><input id="lpUpazila" placeholder="Dhamrai"></div>
+        <div class="form-field"><label>${t('Mouza','মৌজা')}</label><input id="lpMouza" placeholder="Kushura"></div>
+        <div class="form-field"><label>${t('Khatian','খতিয়ান')}</label><input id="lpKhatian" placeholder="KH-2105"></div>
+        <div class="form-field"><label>${t('DAG','দাগ')}</label><input id="lpDag" placeholder="DAG-47"></div>
+        <div class="form-field"><label>${t('Area','আয়তন')}</label><input id="lpArea" placeholder="12 decimal"></div>
+        <div class="form-field"><label>Lat</label><input id="lpLat" placeholder="23.9050"></div>
+        <div class="form-field"><label>Lng</label><input id="lpLng" placeholder="90.1965"></div>
+        <div class="form-field"><label>${t('Monitoring plan','মনিটরিং পরিকল্পনা')}</label><select id="lpMonitor"><option value="quarterly">${t('Quarterly','ত্রৈমাসিক')}</option><option value="semi_annual">${t('Semi-annual','অর্ধবার্ষিক')}</option><option value="annual">${t('Annual','বার্ষিক')}</option><option value="none">${t('None','কোনোটিই নয়')}</option></select></div>
+        <div class="form-field full"><label>${t('Notes','নোট')}</label><textarea id="lpNotes" rows="2" placeholder="Boundary details, risks…"></textarea></div>
+      </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="landParcelCreate()">🛰️ ${t('Register','নিবন্ধন')}</button></div>`;
+  openDrawer(`🛰️ ${t('Register land parcel','জমির প্লট নিবন্ধন')}`, body, foot);
+}
+async function landParcelCreate(){
+  const name=($('lpName')||{}).value?.trim(); if(!name){ toast('Parcel name required'); return; }
+  const body={action:'create',name,district:($('lpDistrict')||{}).value,upazila:($('lpUpazila')||{}).value,mouza:($('lpMouza')||{}).value,khatian:($('lpKhatian')||{}).value,dag:($('lpDag')||{}).value,area:($('lpArea')||{}).value,lat:($('lpLat')||{}).value,lng:($('lpLng')||{}).value,monitor:($('lpMonitor')||{}).value||'quarterly',notes:($('lpNotes')||{}).value};
+  let d;
+  if(DEMO_MODE){
+    const id='LP-'+Math.floor(Math.random()*900+100);
+    (DB.land_parcels=DB.land_parcels||[]).push({id,owner_email:LIVE.user?.email||'',...body,status:'Secure',risk:'low',created_by:user().name,ts:new Date().toISOString().slice(0,19),updated_at:new Date().toISOString().slice(0,19)});
+    (DB.land_events=DB.land_events||[]).push({id:'LE-'+Math.floor(Math.random()*900+100),parcel:id,ev_type:'created',body:'Parcel registered — '+(body.monitor||'quarterly')+' monitoring plan',actor:user().name,ts:new Date().toISOString().slice(0,19)});
+    d={ok:true,id};
+  } else {
+    d=await apiCall('app-land',body);
+  }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast('🛰️ '+t('Parcel registered','প্লট নিবন্ধিত')+' '+d.id);
+  closeDrawer(); if(state.view==='land'){ render(); }
+}
+async function landParcelDrawer(id){
+  let p=null,visits=[],media=[],events=[];
+  if(TOKEN&&!DEMO_MODE){
+    const d=await apiCall('app-land',{action:'get',id});
+    if(!d.ok){ toast(d.error||'Failed'); return; }
+    p=d.parcel; visits=d.visits||[]; media=d.media||[]; events=d.events||[];
+  } else {
+    p=landEnrichDemo().find(x=>x.id===id)||null;
+    if(!p) return;
+    visits=(DB.land_visits||[]).filter(v=>v.parcel===id);
+    media=(DB.land_media||[]).filter(m=>visits.some(v=>v.id===m.visit));
+    events=(DB.land_events||[]).filter(e=>e.parcel===id);
+  }
+  const body=`
+      <div class="form-grid">
+        <div class="form-field full"><div class="kv"><span class="k">${t('Status','স্ট্যাটাস')}</span><span class="v">${landStatusBadge(p.status)}</span></div></div>
+        <div class="form-field"><div class="kv"><span class="k">${t('Location','অবস্থান')}</span><span class="v">${esc([p.district,p.upazila,p.mouza].filter(Boolean).join(' · ')||'—')}</span></div></div>
+        <div class="form-field"><div class="kv"><span class="k">Khatian / DAG</span><span class="v">${esc(p.khatian||'—')} · ${esc(p.dag||'—')}</span></div></div>
+        <div class="form-field"><div class="kv"><span class="k">${t('Area','আয়তন')}</span><span class="v">${esc(p.area||'—')}</span></div></div>
+        <div class="form-field"><div class="kv"><span class="k">Geo</span><span class="v">${p.lat?esc(p.lat+', '+p.lng):'—'}</span></div></div>
+        <div class="form-field"><div class="kv"><span class="k">${t('Monitor','মনিটরিং')}</span><span class="v">${landMonitorBadge(p.monitor)} ${p.next_due?` · ${t('due','বাকি')} <b>${esc(p.next_due)}</b>`:''}</span></div></div>
+        <div class="form-field"><div class="kv"><span class="k">${t('Owner','মালিক')}</span><span class="v">${esc(p.owner_email||'Organization')}</span></div></div>
+        <div class="form-field full"><div class="kv"><span class="k">${t('Notes','নোট')}</span><span class="v" style="font-size:12.5px">${esc(p.notes||'—')}</span></div></div>
+        ${landStaff()?`<div class="form-field full" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <select id="lpStatusSel" style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-alt);font-weight:600">${['Secure','Needs Review','Encroached','Under Monitoring'].map(s=>`<option ${s===p.status?'selected':''}>${s}</option>`).join('')}</select>
+          <button class="btn-outline" onclick="landStatusSet('${esc(p.id)}')">${t('Update status','স্ট্যাটাস আপডেট')}</button>
+          <button class="btn-outline" onclick="landVisitForm('${esc(p.id)}')">📅 ${t('Schedule visit','পরিদর্শন নির্ধারণ')}</button>
+          <button class="btn-outline" onclick="landReport('${esc(p.id)}')">🖨 ${t('Report','রিপোর্ট')}</button>
+        </div>`:''}
+        <div class="form-field full"><h3 style="font-size:13.5px;margin:10px 0 6px">${t('Timeline','টাইমলাইন')}</h3>
+        <div style="border-left:2px solid var(--border);padding-left:14px">${events.map(e=>`<div style="margin-bottom:10px;position:relative"><div style="position:absolute;left:-19px;top:4px;width:8px;height:8px;border-radius:50%;background:${e.ev_type==='encroachment'?'#EB5757':e.ev_type==='visit'?'#2F80ED':'#B8C4D6'}"></div><div style="font-size:12px;font-weight:600">${esc(e.body)}</div><div class="c-sub">${esc(e.actor||'')} · ${esc((e.ts||'').slice(0,16))}</div></div>`).join('')||`<div class="c-sub">${t('No events.','কোনো ঘটনা নেই।')}</div>`}</div></div>
+        <div class="form-field full"><h3 style="font-size:13.5px;margin:10px 0 6px">${t('Visits','পরিদর্শন')} <span class="tagline">${visits.length}</span></h3>
+        <div>${visits.map(v=>`<div class="row-item" style="padding:6px 0"><div class="ri-ic">${v.visit_type==='drone'?'🛸':'🚶'}</div><div class="ri-body"><div class="ri-t">${esc(v.id)} · ${esc(v.agent||'—')} ${landOutcomeBadge(v.outcome)}</div><div class="c-sub">${esc(v.scheduled_for)}${v.completed_at?' → '+esc((v.completed_at||'').slice(0,10)):''} · ${esc(v.status)}${v.findings?' · '+esc(v.findings):''}</div></div><div class="ri-r">${landVisitActions(v,landStaff())}</div></div>`).join('')||`<div class="c-sub">${t('No visits yet.','এখনো কোনো পরিদর্শন নেই।')}</div>`}</div></div>
+        <div class="form-field full"><h3 style="font-size:13.5px;margin:10px 0 6px">${t('Proof media','প্রমাণ মিডিয়া')} <span class="tagline">${media.length}</span></h3>
+        <div>${media.map(m=>`<div class="row-item" style="padding:6px 0"><div class="ri-ic">${m.kind==='video'?'🎥':m.kind==='drone'?'🛸':'📷'}</div><div class="ri-body"><div class="ri-t">${esc(m.name)}</div><div class="c-sub">${esc(m.id)} · ${esc(m.kind)} · geo ${esc(m.geo||'—')} · ${esc((m.captured_at||'').slice(0,16))}</div></div></div>`).join('')||`<div class="c-sub">${t('No media yet.','এখনো কোনো মিডিয়া নেই।')}</div>`}</div></div>
+      </div>`;
+  openDrawer(`🗺️ ${esc(p.name)} — ${esc(p.id)}`, body);
+}
+async function landStatusSet(id){
+  const status=($('lpStatusSel')||{}).value; if(!status) return;
+  let d;
+  if(DEMO_MODE){
+    const p=(DB.land_parcels||[]).find(x=>x.id===id); if(p){ p.status=status; if(status==='Encroached') p.risk='high'; }
+    (DB.land_events=DB.land_events||[]).push({id:'LE-'+Math.floor(Math.random()*900+100),parcel:id,ev_type:status==='Encroached'?'encroachment':'status',body:'Status → '+status,actor:user().name,ts:new Date().toISOString().slice(0,19)});
+    d={ok:true};
+  } else { d=await apiCall('app-land',{action:'status',id,status,note:''}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast('🛰️ '+t('Status updated','স্ট্যাটাস আপডেট'));
+  landParcelDrawer(id);
+}
+function landVisitForm(parcelId){
+  if(!landStaff()){ toast('Staff only'); return; }
+  const body=`
+      <div class="form-grid">
+        <div class="form-field"><label>${t('Type','ধরন')}</label><select id="lvType"><option value="field">🚶 ${t('Field agent','ফিল্ড এজেন্ট')}</option><option value="drone">🛸 ${t('Drone','ড্রোন')}</option></select></div>
+        <div class="form-field"><label>${t('Date','তারিখ')}</label><input type="date" id="lvDate" value="${new Date(Date.now()+7*864e5).toISOString().slice(0,10)}"></div>
+        <div class="form-field full"><label>${t('Agent','এজেন্ট')}</label><input id="lvAgent" placeholder="Karim Uddin (field agent) / Drone — DJI Mavic 3E"></div>
+        <div class="form-field full"><label>${t('Checklist','চেকলিস্ট')}</label><textarea id="lvChecklist" rows="2" placeholder="Aerial sweep&#10;Boundary check&#10;Encroachment scan"></textarea></div>
+      </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="landVisitSchedule('${esc(parcelId)}')">📅 ${t('Schedule','নির্ধারণ')}</button></div>`;
+  openDrawer(`📅 ${t('Schedule visit','পরিদর্শন নির্ধারণ')} — ${esc(parcelId)}`, body, foot);
+}
+async function landVisitSchedule(parcelId){
+  const sf=($('lvDate')||{}).value; if(!sf){ toast('Date required'); return; }
+  const agent=($('lvAgent')||{}).value?.trim()||'';
+  const vt=($('lvType')||{}).value||'field';
+  const checklist=(($('lvChecklist')||{}).value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  let d;
+  if(DEMO_MODE){
+    const id='LV-'+Math.floor(Math.random()*900+100);
+    (DB.land_visits=DB.land_visits||[]).push({id,parcel:parcelId,agent,visit_type:vt,scheduled_for:sf,completed_at:'',status:'Scheduled',outcome:'',findings:'',checklist,created_by:user().name,completed_by:'',ts:new Date().toISOString().slice(0,19)});
+    (DB.land_events=DB.land_events||[]).push({id:'LE-'+Math.floor(Math.random()*900+100),parcel:parcelId,ev_type:'visit',body:'Visit '+id+' scheduled for '+sf+' ('+vt+')',actor:user().name,ts:new Date().toISOString().slice(0,19)});
+    d={ok:true,id};
+  } else { d=await apiCall('app-land',{action:'visit-schedule',parcel:parcelId,agent,visit_type:vt,scheduled_for:sf,checklist}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast('📅 '+t('Visit scheduled','পরিদর্শন নির্ধারিত')+' '+d.id);
+  closeDrawer(); if(state.view==='land'){ render(); }
+}
+function landVisitCompleteForm(id){
+  if(!landStaff()){ toast('Staff only'); return; }
+  const v=(DB.land_visits||[]).find(x=>x.id===id)||{};
+  const body=`
+      <div class="form-grid">
+        <div class="form-field"><label>${t('Outcome','ফলাফল')} *</label><select id="lcOutcome"><option value="Secure">✅ ${t('Secure','নিরাপদ')}</option><option value="Needs Review">🟠 ${t('Needs review','পর্যালোচনা প্রয়োজন')}</option><option value="Encroached">🚨 ${t('Encroached','দখল')}</option></select></div>
+        <div class="form-field full"><label>${t('Findings','ফাইন্ডিংস')}</label><textarea id="lcFindings" rows="2" placeholder="Parcel clear. Boundary intact…"></textarea></div>
+        <div class="form-field full"><label>${t('Proof entries (one per line)','প্রমাণ এন্ট্রি (প্রতি লাইনে একটি)')}</label><textarea id="lcProof" rows="3" placeholder="photo | East wall | 23.9050,90.1965 | 2026-08-03 09:00&#10;drone | Aerial pass | 23.9050,90.1965 | 2026-08-03 09:05"></textarea><div class="c-sub">kind | name | geo | captured_at</div></div>
+      </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="landVisitCompleteSubmit('${esc(id)}')">✅ ${t('Complete','সম্পন্ন')}</button></div>`;
+  openDrawer(`✅ ${t('Complete visit','পরিদর্শন সম্পন্ন')} — ${esc(id)}`, body, foot);
+}
+async function landVisitCompleteSubmit(id){
+  const outcome=($('lcOutcome')||{}).value; if(!outcome){ toast('Outcome required'); return; }
+  const findings=($('lcFindings')||{}).value?.trim()||'';
+  const proof=((($('lcProof')||{}).value||'').split('\n').map(l=>l.trim()).filter(Boolean)).map(line=>{
+    const parts=line.split('|').map(s=>s.trim());
+    return {kind:parts[0]||'photo',name:parts[1]||('proof '+Date.now()),geo:parts[2]||'',captured_at:parts[3]||new Date().toISOString().slice(0,19)};
+  });
+  let d;
+  if(DEMO_MODE){
+    const v=(DB.land_visits||[]).find(x=>x.id===id); if(v){ v.status='Completed'; v.outcome=outcome; v.findings=findings; v.completed_by=user().name; v.completed_at=new Date().toISOString().slice(0,19); }
+    const parcel=v? v.parcel:'';
+    const p=(DB.land_parcels||[]).find(x=>x.id===parcel); if(p){ p.status=outcome; p.risk=outcome==='Encroached'?'high':'low'; p.updated_at=new Date().toISOString().slice(0,19); }
+    const ids=[];
+    proof.forEach(pr=>{ const mid='LM-'+Math.floor(Math.random()*900+100); (DB.land_media=DB.land_media||[]).push({id:mid,visit:id,kind:pr.kind,name:pr.name,fname:'',size:0,mime:'',geo:pr.geo,captured_at:pr.captured_at,uploaded_by:user().name,ts:new Date().toISOString().slice(0,19)}); ids.push(mid); });
+    (DB.land_events=DB.land_events||[]).push({id:'LE-'+Math.floor(Math.random()*900+100),parcel,ev_type:outcome==='Encroached'?'encroachment':'visit',body:'Visit '+id+' completed — '+outcome+(findings?': '+findings:''),actor:user().name,ts:new Date().toISOString().slice(0,19)});
+    d={ok:true,media:ids};
+  } else { d=await apiCall('app-land',{action:'visit-complete',id,outcome,findings,proof}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast('✅ '+t('Visit completed','পরিদর্শন সম্পন্ন'));
+  closeDrawer(); if(state.view==='land'){ render(); }
+}
+async function landVisitCancel(id){
+  let d;
+  if(DEMO_MODE){
+    const v=(DB.land_visits||[]).find(x=>x.id===id); if(v){ v.status='Cancelled'; }
+    d={ok:true};
+  } else { d=await apiCall('app-land',{action:'visit-cancel',id}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast('Visit cancelled');
+  if(state.view==='land'){ render(); }
+}
+async function landReport(id){
+  if(TOKEN&&!DEMO_MODE){
+    const res=await fetch(API+'app-land?id='+encodeURIComponent(id)+'&action=report',{headers:{Authorization:'Bearer '+TOKEN}});
+    previewDoc(id+' — Land Guard Report', await res.text());
+  } else {
+    const p=landEnrichDemo().find(x=>x.id===id); if(!p) return;
+    const visits=(DB.land_visits||[]).filter(v=>v.parcel===id);
+    const media=(DB.land_media||[]).filter(m=>visits.some(v=>v.id===m.visit));
+    const sb={'Secure':'#27AE60','Needs Review':'#F0B429','Encroached':'#EB5757','Under Monitoring':'#2F80ED'}[p.status]||'#8A94A6';
+    const row=(k,v)=>`<tr><td style="padding:8px 12px;border:1px solid #DDE3EC;background:#F7F9FC;font-size:12px;font-weight:700;color:#445;width:230px">${esc(k)}</td><td style="padding:8px 12px;border:1px solid #DDE3EC;font-size:13px">${esc(v||'—')}</td></tr>`;
+    const rows=[['Parcel / প্লট',p.name],['District / জেলা',p.district],['Upazila / উপজেলা',p.upazila],['Mouza / মৌজা',p.mouza],['Khatian / খতিয়ান',p.khatian],['DAG / দাগ',p.dag],['Area / আয়তন',p.area],['Geo (lat,lng) / স্থানাঙ্ক',p.lat?p.lat+', '+p.lng:''],['Monitoring plan / মনিটরিং পরিকল্পনা',p.monitor],['Next visit due / পরবর্তী পরিদর্শন',p.next_due||'—']].map(x=>row(x[0],x[1])).join('');
+    const vt=visits.map(v=>`<tr><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(v.id)}</td><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(v.visit_type)}</td><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(v.agent)}</td><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc((v.scheduled_for||'').slice(0,10))}</td><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(v.status)}</td><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(v.outcome)}</td></tr>`).join('');
+    const mt=media.map(m=>`<tr><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(m.id)}</td><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(m.kind)}</td><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(m.name)}</td><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(m.geo)}</td><td style="padding:8px;border:1px solid #DDE3EC;font-size:12px">${esc(m.captured_at)}</td></tr>`).join('');
+    previewDoc(id+' — Land Guard Report', `<div style="font-family:Arial,Helvetica,sans-serif;color:#223;max-width:860px;margin:0 auto;padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #2F80ED;padding-bottom:12px;margin-bottom:16px"><div><div style="font-size:20px;font-weight:800">Land Guard Report / ভূমি গার্ড রিপোর্ট</div><div style="font-size:12px;color:#667">${esc(p.name)} — ${esc(p.id)}</div></div><div style="display:inline-block;padding:4px 12px;border-radius:999px;color:#fff;background:${sb};font-size:11px;font-weight:700">${esc(p.status)}</div></div>
+      <table style="border-collapse:collapse;width:100%">${rows}</table>
+      <h3 style="font-size:14px;margin:18px 0 8px">Visit history / পরিদর্শন ইতিহাস</h3>
+      <table style="border-collapse:collapse;width:100%"><tr style="background:#F7F9FC"><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">ID</th><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">Type</th><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">Agent</th><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">Scheduled</th><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">Status</th><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">Outcome</th></tr>${vt||'<tr><td colspan="6" style="padding:8px;border:1px solid #DDE3EC;font-size:12px;color:#99A">No visits yet</td></tr>'}</table>
+      <h3 style="font-size:14px;margin:18px 0 8px">Proof media / প্রমাণ মিডিয়া</h3>
+      <table style="border-collapse:collapse;width:100%"><tr style="background:#F7F9FC"><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">ID</th><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">Kind</th><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">File</th><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">Geo</th><th style="padding:8px;border:1px solid #DDE3EC;font-size:11px;text-align:left">Captured</th></tr>${mt||'<tr><td colspan="5" style="padding:8px;border:1px solid #DDE3EC;font-size:12px;color:#99A">No media yet</td></tr>'}</table>
+      <div style="margin-top:18px;display:flex;justify-content:space-between;gap:30px"><div style="font-size:12px;color:#667">Field agent / ড্রোন অপারেটর</div><div style="font-size:12px;color:#667">Owner / মালিক</div></div>
+      <div style="margin-top:26px;border-top:1px solid #DDE3EC;padding-top:8px;font-size:10.5px;color:#99A">KRTaker Land Guard · Generated ${new Date().toISOString().slice(0,16).replace('T',' ')} · ${esc(p.id)}</div></div>`);
+  }
 }
 
 /* ═══ Phase 34: utilities & service billing ═══ */
@@ -4363,7 +4651,14 @@ const renderers={
     setTimeout(()=>legalEngineLoad(),0);
     return h;
   },
-  vendors(){
+  land(){
+    const isStaff=landStaff();
+    let h=pageHead(t('Land Guard','ভূমি গার্ড'),isStaff?t('Anti-encroachment monitoring for NRB owners — parcels, field/drone visits, proof.','এনআরবি মালিকদের জন্য দখল-বিরোধী মনিটরিং — প্লট, ফিল্ড/ড্রোন পরিদর্শন, প্রমাণ।'):t('Your parcels under guard.','আপনার প্লট গার্ডের আওতায়।'),isStaff?`<button class="btn-primary" onclick="landNewParcel()">＋ ${t('Register parcel','প্লট নিবন্ধন')}</button>`:``);
+    h+=`<div id="landLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>landLoad(),0);
+    return h;
+  },
+    vendors(){
     const isStaff = ['superadmin','owner','manager','svc_mgr','accountant'].includes(role().id);
     let h=pageHead(t('Vendors','ভেন্ডর'),isStaff?t('Partners, jobs, invoices and payouts — QC signed off by the service manager.','পার্টনার, কাজ, ইনভয়েস ও পেআউট — সার্ভিস ম্যানেজারের কিউসি অনুমোদনসহ।'):t('My jobs, invoices and payouts.','আমার কাজ, ইনভয়েস ও পেআউট।'));
     h+=`<div id="vendorsLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
