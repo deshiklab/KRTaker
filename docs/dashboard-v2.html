@@ -1044,34 +1044,47 @@ const SEED = {
     {id:'HT-001',owner_email:'owner@krtaker.com',parcel:'',prop:'P-001',city_corp:'DSCC',ward:'27',holding_no:'1842',fy:'2025-26',annual_value:480000,rate_pct:7,tax_amount:33600,paid_amount:0,status:'Due',due_date:'2026-08-31',paid_date:'',receipt_no:'',notes:'City corporation holding tax — FY 2025-26',ts:'2026-08-01 09:00:00',updated_at:'2026-08-01 09:00:00'},
     {id:'HT-002',owner_email:'owner@krtaker.com',parcel:'',prop:'P-002',city_corp:'DNCC',ward:'12',holding_no:'558',fy:'2025-26',annual_value:360000,rate_pct:7,tax_amount:25200,paid_amount:25200,status:'Paid',due_date:'2026-07-31',paid_date:'2026-07-15',receipt_no:'DSCC-RCP-2026-7741',notes:'Paid via concierge — receipt attached',ts:'2026-07-10 09:00:00',updated_at:'2026-07-15 10:00:00'},
     {id:'HT-003',owner_email:'owner@krtaker.com',parcel:'LP-003',prop:'',city_corp:'CCC',ward:'4',holding_no:'901',fy:'2026-27',annual_value:240000,rate_pct:7,tax_amount:16800,paid_amount:0,status:'Due',due_date:'2026-07-15',paid_date:'',receipt_no:'',notes:'Holding tax for LP-003 — overdue demo',ts:'2026-06-20 09:00:00',updated_at:'2026-06-20 09:00:00'}
+  ],
+  smart_locks:[
+    {id:'SL-001',owner_email:'owner@krtaker.com',prop:'P-001',unit:'U-002',lock_name:'Unit 2 — front door',model:'Yale YRD226',code:'483920',status:'active',purpose:'broker',grant_for:'Bikroy Broker',showing:'',valid_from:'2026-07-20 09:00:00',valid_until:'2026-08-04 20:00:00',used_count:0,notes:'Broker walkthrough code — expires 04 Aug',ts:'2026-07-20 09:00:00',updated_at:'2026-07-20 09:00:00'},
+    {id:'SL-002',owner_email:'owner@krtaker.com',prop:'P-001',unit:'U-002',lock_name:'Unit 2 — front door',model:'Yale YRD226',code:'118374',status:'revoked',purpose:'showing',grant_for:'Farhana Akter',showing:'SH-001',valid_from:'2026-08-05 08:00:00',valid_until:'2026-08-05 20:00:00',used_count:1,notes:'Showing code for SH-001 — used and revoked',ts:'2026-07-25 09:00:00',updated_at:'2026-08-01 10:00:00'}
+  ],
+  cctv_cameras:[
+    {id:'CV-001',owner_email:'owner@krtaker.com',prop:'P-001',name:'Lobby — main entrance',location:'Front lobby entrance',status:'online',feed_url:'https://stream.krtaker.com/cam/cv001',last_seen:'2026-08-03 13:00:00',notes:'24/7 recording — NVR on site',ts:'2026-06-01 09:00:00',updated_at:'2026-08-03 13:00:00'},
+    {id:'CV-002',owner_email:'owner@krtaker.com',prop:'P-002',name:'Roof terrace',location:'Banani tower roof — west side',status:'offline',feed_url:'https://stream.krtaker.com/cam/cv002',last_seen:'2026-08-01 09:00:00',notes:'Check NVR port 3 — no signal since 01 Aug',ts:'2026-06-01 09:00:00',updated_at:'2026-08-01 09:00:00'}
+  ],
+  health_plans:[
+    {id:'HP-001',owner_email:'owner@krtaker.com',prop:'P-001',unit:'',season:'pre_monsoon',service:'roof_waterproof',scheduled_for:'2026-08',status:'Scheduled',assigned_to:'EcoClean Services',cost:12000,paid:0,checklist:[{task:'Inspect roof membrane',done:0},{task:'Clear drainage outlets',done:0},{task:'Patch cracks',done:0},{task:'Water test',done:0}],findings:'',completed_at:'',notes:'Waterproofing before monsoon peak',ts:'2026-07-25 09:00:00',updated_at:'2026-07-25 09:00:00'},
+    {id:'HP-002',owner_email:'owner@krtaker.com',prop:'P-002',unit:'U-010',season:'pre_summer',service:'ac_service',scheduled_for:'2026-05',status:'Completed',assigned_to:'EcoClean Services',cost:4000,paid:4000,checklist:[{task:'Clean filters',done:1},{task:'Check gas pressure',done:1},{task:'Inspect outdoor unit',done:1},{task:'Test cooling',done:1}],findings:'All 3 units serviced — cooling OK',completed_at:'2026-05-20 16:00:00',notes:'Pre-summer AC servicing',ts:'2026-04-15 09:00:00',updated_at:'2026-05-20 16:00:00'},
+    {id:'HP-003',owner_email:'owner@krtaker.com',prop:'P-003',unit:'U-008',season:'quarterly',service:'deep_clean',scheduled_for:'2026-09',status:'Planned',assigned_to:'',cost:0,paid:0,checklist:[],findings:'',completed_at:'',notes:'Empty flat — deep clean before renting',ts:'2026-08-01 09:00:00',updated_at:'2026-08-01 09:00:00'}
   ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','ai','analytics','notices','documents']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','concierge','ai','notices','documents','templates']},
-  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','concierge','ai','notices','documents','referrals']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','concierge','ai','analytics','notices','documents','recon','templates']},
+  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','concierge','smarthome','health','ai','notices','documents','referrals']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','concierge','health','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['nrb','🌐','NRB Hub'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -2838,7 +2851,7 @@ function nrbVacHtml(d){
     +`</tbody></table></div></div>`;
   const upcoming=sh.filter(s=>s.status==='Scheduled').sort((a,b)=>(a.scheduled_at||'').localeCompare(b.scheduled_at||''));
   h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">👀</span>${t('Upcoming showings','আসন্ন শোকেস')}</div></div><div class="panel-b">`+
-    (upcoming.map(s=>{ const v=vc.find(x=>x.id===s.vacancy); return `<div class="row-item"><div class="ri-ic">👀</div><div class="ri-body"><div class="ri-t">${esc(s.prospect)} · ${esc(v?v.unit_name||v.unit:s.vacancy)}</div><div class="c-sub">${esc(s.id)} · ${esc(s.scheduled_at)} · ${esc(s.phone||'')}</div></div><div class="ri-r"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbShowStatus('${esc(s.id)}','Done')">✅</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbShowStatus('${esc(s.id)}','No_Show')">✕</button></div></div>`; }).join('')
+    (upcoming.map(s=>{ const v=vc.find(x=>x.id===s.vacancy); return `<div class="row-item"><div class="ri-ic">👀</div><div class="ri-body"><div class="ri-t">${esc(s.prospect)} · ${esc(v?v.unit_name||v.unit:s.vacancy)}</div><div class="c-sub">${esc(s.id)} · ${esc(s.scheduled_at)} · ${esc(s.phone||'')}</div></div><div class="ri-r"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="smarthomeCodeFor('${esc(s.id)}')">🔑</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbShowStatus('${esc(s.id)}','Done')">✅</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbShowStatus('${esc(s.id)}','No_Show')">✕</button></div></div>`; }).join('')
     || `<div class="c-sub">${t('No showings scheduled.','কোনো শোকেস নির্ধারিত নেই।')}</div>`)
     +`</div></div>`;
   return h;
@@ -2999,7 +3012,7 @@ async function nrbVacDrawer(id){
       :`<div class="c-sub">${t('No candidate yet — market the unit and log showings.','এখনো কোনো প্রার্থী নেই — ইউনিট মার্কেটিং করুন এবং শোকেস লগ করুন।')}</div>`)+
     `</div></div>
     <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">👀</span>${t('Showings','শোকেস')} (${v._showings.length})</div>${v.status!=='Filled'&&v.status!=='Cancelled'?`<span class="link" onclick="nrbShowForm('${esc(v.id)}')">＋ ${t('Add','যোগ')}</span>`:''}</div><div class="panel-b">`+
-    (v._showings.map(s=>`<div class="row-item"><div class="ri-ic">👀</div><div class="ri-body"><div class="ri-t">${esc(s.prospect)} ${nrbShBadge(s.status)}</div><div class="c-sub">${esc(s.id)} · ${esc(s.scheduled_at)} · ${esc(s.phone||'')}${s.feedback?' · "'+esc(s.feedback)+'"':''}${s.rating?' · ★'.repeat(s.rating):''}</div></div>${s.status==='Scheduled'?`<div class="ri-r"><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nrbShowDone('${esc(s.id)}')">✅</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nrbShowStatus('${esc(s.id)}','No_Show')">✕</button></div>`:''}</div>`).join('')
+    (v._showings.map(s=>`<div class="row-item"><div class="ri-ic">👀</div><div class="ri-body"><div class="ri-t">${esc(s.prospect)} ${nrbShBadge(s.status)}</div><div class="c-sub">${esc(s.id)} · ${esc(s.scheduled_at)} · ${esc(s.phone||'')}${s.feedback?' · "'+esc(s.feedback)+'"':''}${s.rating?' · ★'.repeat(s.rating):''}</div></div>${s.status==='Scheduled'?`<div class="ri-r"><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="smarthomeCodeFor('${esc(s.id)}')">🔑</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nrbShowDone('${esc(s.id)}')">✅</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nrbShowStatus('${esc(s.id)}','No_Show')">✕</button></div>`:''}</div>`).join('')
     || `<div class="c-sub">${t('No showings yet.','এখনো কোনো শোকেস নেই।')}</div>`)+
     `</div></div>
     ${v.notes?`<div class="c-sub">${t('Notes','নোট')}: ${esc(v.notes)}</div>`:''}`;
@@ -3511,6 +3524,348 @@ async function conciergeCfgSave(){
   else { d=await apiCall('app-concierge',{action:'config-save',config:cfg}); }
   if(!d.ok){ toast(d.error||'Failed'); return; }
   toast(t('Concierge settings saved','কনসিয়ার্জ সেটিংস সেভ হয়েছে')); closeDrawer(); if(state.view==='concierge') render();
+}
+/* ── Phase 48: Smart Home & Security + Property Health Check ── */
+function smarthomeStaff(){ return ['superadmin','owner','manager','svc_mgr','crm'].includes(role().id); }
+function healthStaff(){ return ['superadmin','owner','manager','svc_mgr','crm','accountant'].includes(role().id); }
+function smartLockBadge(st){ return st==='active'?'<span class="badge b-green">Active</span>':st==='revoked'?'<span class="badge b-red">Revoked</span>':'<span class="badge b-orange">'+esc(st)+'</span>'; }
+function smartCamBadge(st){ return st==='online'?'<span class="badge b-green">Online</span>':'<span class="badge b-red">Offline</span>'; }
+function smartPurposeBadge(p){ const m={showing:'b-blue',broker:'b-orange',maintenance:'b-gray',other:'b-gray'}; return `<span class="badge ${m[p]||'b-gray'}">${esc(p)}</span>`; }
+function healthBadge(st){ return st==='Completed'?'<span class="badge b-green">Completed</span>':st==='Skipped'?'<span class="badge b-gray">Skipped</span>':st==='In_Progress'?'<span class="badge b-blue">In progress</span>':st==='Scheduled'?'<span class="badge b-blue">Scheduled</span>':'<span class="badge b-orange">Planned</span>'; }
+function healthSeasonBadge(s){ const m={pre_monsoon:'b-blue',pre_summer:'b-orange',quarterly:'b-gray'}; return `<span class="badge ${m[s]||'b-gray'}">${s==='pre_monsoon'?'Pre-monsoon':s==='pre_summer'?'Pre-summer':'Quarterly'}</span>`; }
+function demoSmartEnrich(){
+  const units={};(DB.units||[]).forEach(u=>units[u.id]=u);
+  const props={};(DB.properties||[]).forEach(p=>props[p.id]=p);
+  const sl=(DB.smart_locks||[]).map(l=>({...l,unit_name:units[l.unit]?units[l.unit].name:'',prop_name:props[l.prop]?props[l.prop].name:'',expired:l.status==='active'&&l.valid_until&&l.valid_until<new Date().toISOString().slice(0,19).replace('T',' '),days_left:l.valid_until?Math.floor((new Date(l.valid_until)-Date.now())/864e5):null}));
+  const cv=(DB.cctv_cameras||[]).map(c=>({...c,prop_name:props[c.prop]?props[c.prop].name:''}));
+  return {sl,cv};
+}
+function demoSmartData(){
+  const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+  const scope=arr=>arr.filter(x=>x.owner_email===''||x.owner_email===em);
+  const {sl,cv}=demoSmartEnrich();
+  const locks=scope(sl), cams=scope(cv);
+  const lstat={active:0,revoked:0,expired:0};
+  locks.forEach(l=>{ if(l.status==='active')lstat.active++; else if(l.status==='revoked')lstat.revoked++; if(l.expired)lstat.expired++; });
+  const cstat={online:0,offline:0};
+  cams.forEach(c=>cstat[c.status]=(cstat[c.status]||0)+1);
+  return {locks:{rows:locks,by_status:lstat},cameras:{rows:cams,by_status:cstat},config:{lock_valid_hours:48,health_alert_days:30,health_default_vendor:'EcoClean Services'}};
+}
+function demoHealthEnrich(){
+  const units={};(DB.units||[]).forEach(u=>units[u.id]=u);
+  const props={};(DB.properties||[]).forEach(p=>props[p.id]=p);
+  const pl=(DB.health_plans||[]).map(p=>({...p,unit_name:units[p.unit]?units[p.unit].name:'',prop_name:props[p.prop]?props[p.prop].name:'',checklist:p.checklist||[],tasks_done:(p.checklist||[]).filter(c=>c.done).length,tasks_total:(p.checklist||[]).length,pct:(p.checklist||[]).length?Math.round((p.checklist||[]).filter(c=>c.done).length*100/(p.checklist||[]).length):0,season_label:(p.season||'').replace(/_/g,' '),service_label:(p.service||'').replace(/_/g,' ')}));
+  return pl;
+}
+function demoHealthData(){
+  const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+  const scope=arr=>arr.filter(x=>x.owner_email===''||x.owner_email===em);
+  const rows=scope(demoHealthEnrich());
+  const by=(rows,keys)=>{const o={};keys.forEach(k=>o[k]=0);rows.forEach(r=>o[r.status]=(o[r.status]||0)+1);return o;};
+  const season={pre_monsoon:0,pre_summer:0,quarterly:0}; rows.forEach(r=>season[r.season]=(season[r.season]||0)+1);
+  const svc={ac_service:0,roof_waterproof:0,drainage_clear:0,deep_clean:0,pest_control:0}; rows.forEach(r=>svc[r.service]=(svc[r.service]||0)+1);
+  const thisMonth=new Date().toISOString().slice(0,7);
+  const overdue=rows.filter(p=>!['Completed','Skipped'].includes(p.status)&&p.scheduled_for&&p.scheduled_for<thisMonth).length;
+  const upcoming=rows.filter(p=>!['Completed','Skipped'].includes(p.status)&&p.scheduled_for&&p.scheduled_for>=thisMonth).length;
+  return {plans:{rows,by_status:by(rows,['Planned','Scheduled','In_Progress','Completed','Skipped']),by_season:season,by_service:svc,overdue,upcoming},config:{lock_valid_hours:48,health_alert_days:30,health_default_vendor:'EcoClean Services'}};
+}
+async function smarthomeLoad(){
+  const host=document.getElementById('smarthomeLive'); if(!host) return;
+  let d;
+  if(TOKEN&&!DEMO_MODE){
+    d=await apiCall('app-smarthome',{action:'summary'});
+    if(!d.ok){ host.innerHTML=`<div class="m">${esc(d.error||'Failed to load')}</div>`; return; }
+  } else { d=demoSmartData(); }
+  state.smarthomeTab=state.smarthomeTab||'locks';
+  if(state.smarthomeTab==='cams') host.innerHTML=smartCamsHtml(d);
+  else host.innerHTML=smartLocksHtml(d);
+}
+function smarthomeTab(t){ state.smarthomeTab=t; render(); }
+function smartLocksHtml(d){
+  const locks=d.locks.rows, bs=d.locks.by_status;
+  const active=locks.filter(l=>l.status==='active').length;
+  const expiring=locks.filter(l=>l.status==='active'&&l.valid_until&&new Date(l.valid_until)<new Date(Date.now()+48*36e5)).length;
+  const used=locks.reduce((s,l)=>s+(+l.used_count||0),0);
+  let h=statsRow([
+    stat(t('Locks','লক'),locks.length,t('total','মোট'),'','🔐'),
+    stat(t('Active','সক্রিয়'),active,t('codes live','সক্রিয় কোড'),active?'warn':'','✅'),
+    stat(t('Expiring','মেয়াদোত্তীর্ণ হওয়া'),expiring,t('within 48h','৪৮ ঘণ্টায়'),expiring?'warn':'','⏳'),
+    stat(t('Uses','ব্যবহার'),used,t('unlocks','আনলক'),used?'up':'','🔑')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔐</span>${t('Smart lock codes','স্মার্ট লক কোড')}</div><span class="link" onclick="smartGrantCode()">🔑 ${t('Grant showing code','শোকেস কোড দিন')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Unit','ইউনিট')}</th><th>${t('Purpose','উদ্দেশ্য')}</th><th>${t('Granted to','কার জন্য')}</th><th>${t('Code','কোড')}</th><th>${t('Valid window','বৈধ সময়')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (locks.map(x=>`<tr><td><span class="c-name">${esc(x.unit_name||x.prop_name||'—')}</span><div class="c-sub">${x.id}${x.showing?' · '+esc(x.showing):''}</div></td><td>${smartPurposeBadge(x.purpose)}</td><td>${esc(x.grant_for||'—')}</td><td><b style="letter-spacing:2px">${esc(x.code)}</b><div class="c-sub">used ${x.used_count||0}×</div></td><td>${esc((x.valid_from||'').slice(0,16))} → ${esc((x.valid_until||'').slice(0,16))}</td><td>${smartLockBadge(x.status)}</td><td><div style="display:flex;gap:4px">${x.status==='active'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="smartUse('${esc(x.id)}')">🔑</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="smartRevoke('${esc(x.id)}')">✕</button>`:''}</div></td></tr>`).join('')
+    || `<tr><td colspan="7" class="m">${t('No smart locks yet.','এখনো কোনো স্মার্ট লক নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  return h;
+}
+function smartCamsHtml(d){
+  const cams=d.cameras.rows, bs=d.cameras.by_status;
+  let h=statsRow([
+    stat(t('Cameras','ক্যামেরা'),cams.length,t('registered','নিবন্ধিত'),'','📹'),
+    stat(t('Online','অনলাইন'),bs.online||0,t('streaming','স্ট্রিমিং'),(bs.online||0)?'up':'','🟢'),
+    stat(t('Offline','অফলাইন'),bs.offline||0,t('no signal','সিগন্যাল নেই'),(bs.offline||0)?'warn':'','🔴'),
+    stat(t('Coverage','কভারেজ'),cams.length?Math.round((bs.online||0)*100/cams.length)+'%':'—',t('online rate','অনলাইন হার'),(bs.offline||0)?'warn':'','📊')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">📹</span>${t('CCTV cameras','সিসিটিভি ক্যামেরা')}</div><span class="link" onclick="smartNewCam()">＋ ${t('Add camera','ক্যামেরা যোগ')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Camera','ক্যামেরা')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Location','অবস্থান')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Last seen','শেষ দেখা')}</th><th></th></tr></thead><tbody>`+
+    (cams.map(x=>`<tr><td><span class="c-name">${esc(x.name||x.id)}</span><div class="c-sub">${x.id}</div></td><td>${esc(x.prop_name||x.prop||'—')}</td><td>${esc(x.location||'—')}</td><td>${smartCamBadge(x.status)}</td><td>${esc((x.last_seen||'').slice(0,16)||'—')}</td><td><div style="display:flex;gap:4px">${x.status==='online'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="smartCamToggle('${esc(x.id)}','offline')">🔴 ${t('Offline','অফলাইন')}</button>`:`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="smartCamToggle('${esc(x.id)}','online')">🟢 ${t('Online','অনলাইন')}</button>`}</div></td></tr>`).join('')
+    || `<tr><td colspan="6" class="m">${t('No cameras registered.','কোনো ক্যামেরা নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  return h;
+}
+function smartNewLock(){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Purpose','উদ্দেশ্য')}</label><select id="sl_purpose"><option value="showing">Showing</option><option value="broker">Broker</option><option value="maintenance">Maintenance</option><option value="other">Other</option></select></div>
+    <div class="form-field"><label>${t('Unit','ইউনিট')}</label><input id="sl_unit" placeholder="U-001"></div>
+    <div class="form-field"><label>${t('Property','সম্পত্তি')}</label><input id="sl_prop" placeholder="P-001"></div>
+    <div class="form-field full"><label>${t('Granted to','কার জন্য')}</label><input id="sl_grant" placeholder="${t('e.g. broker name','যেমন: ব্রোকার নাম')}"></div>
+    <div class="form-field"><label>${t('Code (blank = auto)','কোড (ফাঁকা = অটো)')}</label><input id="sl_code" maxlength="6" placeholder="6 digits"></div>
+    <div class="form-field"><label>${t('Valid until','বৈধ পর্যন্ত')}</label><input id="sl_until" type="datetime-local"></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><input id="sl_notes"></div>
+  </div>`;
+  openDrawer(t('New lock code','নতুন লক কোড'), body, `<button class="btn-primary" onclick="smartSubmitLock()">${t('Create','তৈরি')}</button>`);
+}
+async function smartSubmitLock(){
+  const cfg=demoSmartData().config;
+  const until=val('sl_until')||new Date(Date.now()+cfg.lock_valid_hours*36e5).toISOString().slice(0,16);
+  let d;
+  if(DEMO_MODE){
+    const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+    const maxN=Math.max(100,...(DB.smart_locks||[]).map(x=>+(x.id||'SL-0').replace('SL-','')||0));
+    DB.smart_locks=DB.smart_locks||[];
+    DB.smart_locks.unshift({id:'SL-'+String(maxN+1).padStart(3,'0'),owner_email:em,prop:val('sl_prop'),unit:val('sl_unit'),lock_name:'Smart lock',model:'Yale YRD226',code:val('sl_code')||String(Math.floor(Math.random()*1000000)).padStart(6,'0'),status:'active',purpose:val('sl_purpose')||'other',grant_for:val('sl_grant'),showing:'',valid_from:new Date().toISOString().slice(0,16),valid_until:until,used_count:0,notes:val('sl_notes'),ts:'',updated_at:''});
+    d={ok:true};
+  } else {
+    d=await apiCall('app-smarthome',{action:'lock-create',purpose:val('sl_purpose')||'other',prop:val('sl_prop'),unit:val('sl_unit'),grant_for:val('sl_grant'),code:val('sl_code'),valid_until:until,notes:val('sl_notes')});
+  }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Lock code created','লক কোড তৈরি হয়েছে')); closeDrawer(); if(state.view==='smarthome') render();
+}
+function smartGrantCode(){
+  const showings=(DB.nrb_showings||[]).filter(s=>s.status==='Scheduled');
+  const opts=showings.map(s=>{const v=(DB.nrb_vacancies||[]).find(x=>x.id===s.vacancy);return `<option value="${esc(s.id)}">${esc(s.id)} · ${esc(s.prospect)} · ${esc(s.scheduled_at||'')} · ${v?esc(v.unit||''):''}</option>`;}).join('')||`<option value="">${t('No scheduled showings','কোনো নির্ধারিত শোকেস নেই')}</option>`;
+  const body=`<div class="form-grid"><div class="form-field full"><label>${t('Showing','শোকেস')}</label><select id="sg_showing">${opts}</select></div></div>`;
+  openDrawer(t('Grant showing lock code','শোকেস লক কোড দিন'), body, `<button class="btn-primary" onclick="smartGrantCodeGo()">🔑 ${t('Generate code','কোড তৈরি')}</button>`);
+}
+async function smartGrantCodeGo(){
+  const sid=val('sg_showing'); if(!sid){ toast('Choose a showing'); return; }
+  let d;
+  if(DEMO_MODE){
+    const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+    const sh=(DB.nrb_showings||[]).find(x=>x.id===sid);
+    const v=(DB.nrb_vacancies||[]).find(x=>x.id===(sh&&sh.vacancy));
+    const maxN=Math.max(100,...(DB.smart_locks||[]).map(x=>+(x.id||'SL-0').replace('SL-','')||0));
+    const day=(sh&&sh.scheduled_at||new Date().toISOString().slice(0,10)).slice(0,10);
+    DB.smart_locks=DB.smart_locks||[];
+    DB.smart_locks.unshift({id:'SL-'+String(maxN+1).padStart(3,'0'),owner_email:em,prop:(v&&v.prop)||'',unit:(v&&v.unit)||'',lock_name:'Showing code',model:'Yale YRD226',code:String(Math.floor(Math.random()*1000000)).padStart(6,'0'),status:'active',purpose:'showing',grant_for:sh&&sh.prospect,showing:sid,valid_from:day+'T08:00',valid_until:day+'T20:00',used_count:0,notes:'Auto-generated for showing '+sid,ts:'',updated_at:''});
+    d={ok:true,code:DB.smart_locks[0].code,id:DB.smart_locks[0].id};
+  } else {
+    d=await apiCall('app-smarthome',{action:'showing-code',showing:sid});
+  }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Code','কোড')+': '+d.code); closeDrawer(); if(state.view==='smarthome') render();
+}
+async function smarthomeCodeFor(sid){
+  let d;
+  if(DEMO_MODE){
+    const sh=(DB.nrb_showings||[]).find(x=>x.id===sid);
+    const v=(DB.nrb_vacancies||[]).find(x=>x.id===(sh&&sh.vacancy));
+    if((DB.smart_locks||[]).some(l=>l.showing===sid&&l.status==='active')){ toast(t('Code already exists','কোড ইতিমধ্যে আছে')); return; }
+    const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+    const maxN=Math.max(100,...(DB.smart_locks||[]).map(x=>+(x.id||'SL-0').replace('SL-','')||0));
+    const day=(sh&&sh.scheduled_at||new Date().toISOString().slice(0,10)).slice(0,10);
+    const code=String(Math.floor(Math.random()*1000000)).padStart(6,'0');
+    DB.smart_locks=DB.smart_locks||[];
+    DB.smart_locks.unshift({id:'SL-'+String(maxN+1).padStart(3,'0'),owner_email:em,prop:(v&&v.prop)||'',unit:(v&&v.unit)||'',lock_name:'Showing code',model:'Yale YRD226',code,status:'active',purpose:'showing',grant_for:sh&&sh.prospect,showing:sid,valid_from:day+'T08:00',valid_until:day+'T20:00',used_count:0,notes:'',ts:'',updated_at:''});
+    d={ok:true,code};
+  } else {
+    d=await apiCall('app-smarthome',{action:'showing-code',showing:sid});
+  }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Lock code','লক কোড')+': '+d.code);
+}
+async function smartRevoke(id){
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.smart_locks||[]).find(x=>x.id===id); if(r) r.status='revoked';
+    d={ok:true};
+  } else { d=await apiCall('app-smarthome',{action:'lock-revoke',id}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Code revoked','কোড বাতিল হয়েছে')); if(state.view==='smarthome') render();
+}
+async function smartUse(id){
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.smart_locks||[]).find(x=>x.id===id); if(r){ r.used_count=(+r.used_count||0)+1; r.used_at=new Date().toISOString().slice(0,19).replace('T',' '); }
+    d={ok:true};
+  } else { d=await apiCall('app-smarthome',{action:'lock-use',id}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Code used','কোড ব্যবহৃত হয়েছে')); if(state.view==='smarthome') render();
+}
+function smartNewCam(){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Name','নাম')}</label><input id="cv_name" placeholder="${t('e.g. Lobby entrance','যেমন: লবি প্রবেশপথ')}"></div>
+    <div class="form-field"><label>${t('Property','সম্পত্তি')}</label><input id="cv_prop" placeholder="P-001"></div>
+    <div class="form-field full"><label>${t('Location','অবস্থান')}</label><input id="cv_loc" placeholder="${t('e.g. Front lobby','যেমন: সামনের লবি')}"></div>
+    <div class="form-field full"><label>${t('Feed URL (optional)','ফিড ইউআরএল (ঐচ্ছিক)')}</label><input id="cv_url" placeholder="https://…"></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><input id="cv_notes"></div>
+  </div>`;
+  openDrawer(t('Add camera','ক্যামেরা যোগ'), body, `<button class="btn-primary" onclick="smartSubmitCam()">${t('Save','সেভ')}</button>`);
+}
+async function smartSubmitCam(){
+  let d;
+  if(DEMO_MODE){
+    const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+    const maxN=Math.max(100,...(DB.cctv_cameras||[]).map(x=>+(x.id||'CV-0').replace('CV-','')||0));
+    DB.cctv_cameras=DB.cctv_cameras||[];
+    DB.cctv_cameras.unshift({id:'CV-'+String(maxN+1).padStart(3,'0'),owner_email:em,prop:val('cv_prop'),name:val('cv_name')||'Camera',location:val('cv_loc'),status:'online',feed_url:val('cv_url'),last_seen:new Date().toISOString().slice(0,19).replace('T',' '),notes:val('cv_notes'),ts:'',updated_at:''});
+    d={ok:true};
+  } else {
+    d=await apiCall('app-smarthome',{action:'camera-create',name:val('cv_name'),prop:val('cv_prop'),location:val('cv_loc'),feed_url:val('cv_url'),notes:val('cv_notes')});
+  }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Camera added','ক্যামেরা যোগ হয়েছে')); closeDrawer(); if(state.view==='smarthome') render();
+}
+async function smartCamToggle(id,st){
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.cctv_cameras||[]).find(x=>x.id===id); if(r){ r.status=st; r.last_seen=new Date().toISOString().slice(0,19).replace('T',' '); }
+    d={ok:true};
+  } else { d=await apiCall('app-smarthome',{action:'camera-status',id,status:st}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Camera','ক্যামেরা')+' → '+st); if(state.view==='smarthome') render();
+}
+function smartCfgForm(){
+  const cfg=demoSmartData().config;
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Lock valid hours','লক বৈধ ঘণ্টা')}</label><input id="cc_lock_valid_hours" type="number" min="1" max="720" value="${cfg.lock_valid_hours}"></div>
+    <div class="form-field"><label>${t('Health alert days','হেলথ অ্যালার্ট দিন')}</label><input id="cc_health_alert_days" type="number" min="1" max="720" value="${cfg.health_alert_days}"></div>
+    <div class="form-field full"><label>${t('Default health vendor','ডিফল্ট হেলথ ভেন্ডর')}</label><input id="cc_health_default_vendor" value="${esc(cfg.health_default_vendor||'')}"></div>
+  </div>`;
+  openDrawer(t('Smart Home & Health settings','স্মার্ট হোম ও হেলথ সেটিংস'), body, `<button class="btn-primary" onclick="smartCfgSave()">${t('Save','সেভ')}</button>`);
+}
+async function smartCfgSave(){
+  let d;
+  if(DEMO_MODE){ d={ok:true}; }
+  else { d=await apiCall('app-smarthome',{action:'config-save',config:{lock_valid_hours:+val('cc_lock_valid_hours')||48,health_alert_days:+val('cc_health_alert_days')||30,health_default_vendor:val('cc_health_default_vendor')}}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Settings saved','সেটিংস সেভ হয়েছে')); closeDrawer(); if(state.view==='smarthome'||state.view==='health') render();
+}
+async function healthLoad(){
+  const host=document.getElementById('healthLive'); if(!host) return;
+  let d;
+  if(TOKEN&&!DEMO_MODE){
+    d=await apiCall('app-healthcheck',{action:'summary'});
+    if(!d.ok){ host.innerHTML=`<div class="m">${esc(d.error||'Failed to load')}</div>`; return; }
+  } else { d=demoHealthData(); }
+  host.innerHTML=healthHtml(d);
+}
+function healthHtml(d){
+  const rows=d.plans.rows, bs=d.plans.by_status;
+  const active=rows.filter(p=>!['Completed','Skipped'].includes(p.status)).length;
+  let h=statsRow([
+    stat(t('Plans','প্ল্যান'),rows.length,t('total','মোট'),'','🌦️'),
+    stat(t('Active','সক্রিয়'),active,t('in progress','চলমান'),active?'warn':'','📋'),
+    stat(t('Overdue','ওভারডিউ'),d.plans.overdue,t('past month','মেয়াদোত্তীর্ণ'),d.plans.overdue?'warn':'','🚨'),
+    stat(t('Upcoming','আসন্ন'),d.plans.upcoming,t('this/next month','এই/আগামী মাস'),d.plans.upcoming?'up':'','📅')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🌦️</span>${t('Seasonal health plans','ঋতুভিত্তিক হেলথ প্ল্যান')}</div><span class="link" onclick="healthNewPlan()">＋ ${t('New plan','নতুন প্ল্যান')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Plan','প্ল্যান')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Scheduled','নির্ধারিত')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Cost','খরচ')}</th><th>${t('Progress','অগ্রগতি')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (rows.map(x=>`<tr><td><span class="c-name">${healthSeasonBadge(x.season)} ${esc(x.service_label||x.service)}</span><div class="c-sub">${x.id}</div></td><td>${esc(x.prop_name||x.prop||'—')}<div class="c-sub">${x.unit_name||''}</div></td><td>${esc(x.scheduled_for||'—')}</td><td>${esc(x.assigned_to||'—')}</td><td>${x.cost?money(x.cost):'—'}</td><td>${x.tasks_total?`<div class="c-sub">${x.tasks_done}/${x.tasks_total} · ${x.pct}%</div>`:'—'}</td><td>${healthBadge(x.status)}</td><td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="healthPlanDrawer('${esc(x.id)}')">👁</button></td></tr>`).join('')
+    || `<tr><td colspan="8" class="m">${t('No health plans yet.','এখনো কোনো হেলথ প্ল্যান নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  return h;
+}
+function healthNewPlan(){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Season','ঋতু')}</label><select id="hp_season" onchange="healthSvcPreview()"><option value="pre_monsoon">Pre-monsoon</option><option value="pre_summer">Pre-summer</option><option value="quarterly">Quarterly</option></select></div>
+    <div class="form-field"><label>${t('Service','সার্ভিস')}</label><select id="hp_service" onchange="healthSvcPreview()"><option value="roof_waterproof">Roof waterproofing</option><option value="ac_service">AC service</option><option value="drainage_clear">Drainage clear</option><option value="deep_clean">Deep clean</option><option value="pest_control">Pest control</option></select></div>
+    <div class="form-field"><label>${t('Property','সম্পত্তি')}</label><input id="hp_prop" placeholder="P-001"></div>
+    <div class="form-field"><label>${t('Unit (optional)','ইউনিট (ঐচ্ছিক)')}</label><input id="hp_unit" placeholder="U-001"></div>
+    <div class="form-field full"><label>${t('Scheduled month','নির্ধারিত মাস')}</label><input id="hp_sched" type="month" value="${new Date().toISOString().slice(0,7)}"></div>
+    <div class="form-field full"><label>${t('Tasks','কাজ')}</label><div id="hp_tasks" class="c-sub"></div></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><input id="hp_notes"></div>
+  </div>`;
+  openDrawer(t('New health plan','নতুন হেলথ প্ল্যান'), body, `<button class="btn-primary" onclick="healthSubmitPlan()">${t('Create','তৈরি')}</button>`);
+  healthSvcPreview();
+}
+function healthSvcPreview(){
+  const map={ac_service:['Clean filters','Check gas pressure','Inspect outdoor unit','Test cooling'],roof_waterproof:['Inspect roof membrane','Clear drainage outlets','Patch cracks','Water test'],drainage_clear:['Clear roof drains','Flush downpipes','Check waterlogging','Anti-mosquito treatment'],deep_clean:['Vacuum & mop floors','Clean kitchen/bathroom','Wipe windows','Check for mold','Pest inspection'],pest_control:['Interior spray','Perimeter treatment','Seal entry points','Place traps']};
+  const t2=document.getElementById('hp_tasks');
+  if(t2) t2.innerHTML=(map[val('hp_service')]||[]).map(x=>'• '+esc(x)).join('<br>');
+}
+async function healthSubmitPlan(){
+  let d;
+  if(DEMO_MODE){
+    const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+    const maxN=Math.max(100,...(DB.health_plans||[]).map(x=>+(x.id||'HP-0').replace('HP-','')||0));
+    const svc=val('hp_service')||'deep_clean';
+    const map={ac_service:['Clean filters','Check gas pressure','Inspect outdoor unit','Test cooling'],roof_waterproof:['Inspect roof membrane','Clear drainage outlets','Patch cracks','Water test'],drainage_clear:['Clear roof drains','Flush downpipes','Check waterlogging','Anti-mosquito treatment'],deep_clean:['Vacuum & mop floors','Clean kitchen/bathroom','Wipe windows','Check for mold','Pest inspection'],pest_control:['Interior spray','Perimeter treatment','Seal entry points','Place traps']};
+    DB.health_plans=DB.health_plans||[];
+    DB.health_plans.unshift({id:'HP-'+String(maxN+1).padStart(3,'0'),owner_email:em,prop:val('hp_prop'),unit:val('hp_unit'),season:val('hp_season')||'quarterly',service:svc,scheduled_for:val('hp_sched')||new Date().toISOString().slice(0,7),status:'Planned',assigned_to:'EcoClean Services',cost:0,paid:0,checklist:(map[svc]||[]).map(t=>({task:t,done:0})),findings:'',completed_at:'',notes:val('hp_notes'),ts:'',updated_at:''});
+    d={ok:true};
+  } else {
+    d=await apiCall('app-healthcheck',{action:'plan-create',season:val('hp_season')||'quarterly',service:val('hp_service')||'deep_clean',prop:val('hp_prop'),unit:val('hp_unit'),scheduled_for:val('hp_sched')||new Date().toISOString().slice(0,7),notes:val('hp_notes')});
+  }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Plan created','প্ল্যান তৈরি হয়েছে')); closeDrawer(); if(state.view==='health') render();
+}
+async function healthPlanDrawer(id){
+  let r;
+  if(TOKEN&&!DEMO_MODE){
+    const d=await apiCall('app-healthcheck',{action:'plan-list'});
+    if(!d.ok){ toast(d.error||'Failed'); return; }
+    r=d.rows.find(x=>x.id===id)||null;
+    if(!r){ toast('Not found'); return; }
+  } else {
+    r=demoHealthEnrich().find(x=>x.id===id)||null;
+    if(!r){ toast('Not found'); return; }
+  }
+  const isStaff=healthStaff();
+  const chk=(r.checklist||[]).map((c,i)=>{const lbl=c.done?t('Undo','পূর্বাবস্থা'):t('Done','সম্পন্ন');return `<div class="row-item" style="padding:6px 0"><div class="ri-ic">${c.done?'✅':'⬜'}</div><div class="ri-body"><div class="ri-t">${esc(c.task)}</div></div>${!['Completed','Skipped'].includes(r.status)?`<div class="ri-r"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="healthCheckToggle('${esc(r.id)}',${i})">${lbl}</button></div>`:''}</div>`;}).join('')||`<div class="c-sub">${t('No tasks defined.','কোনো কাজ নেই।')}</div>`;
+  const statuses=['Planned','Scheduled','In_Progress','Completed','Skipped'];
+  const actions=[];
+  if(isStaff&&!['Completed','Skipped'].includes(r.status)){
+    actions.push(`<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:10px"><select id="hp_status_${esc(r.id)}" style="flex:1;min-width:140px">${statuses.map(s=>`<option value="${s}" ${s===r.status?'selected':''}>${s.replace(/_/g,' ')}</option>`).join('')}</select><button class="btn-primary" onclick="healthAdvance('${esc(r.id)}')">${t('Update status','স্ট্যাটাস আপডেট')}</button></div>`);
+    actions.push(`<div style="display:flex;gap:6px;margin-top:8px"><input id="hp_cost_${esc(r.id)}" type="number" min="0" placeholder="${t('Cost','খরচ')}" value="${r.cost||0}" style="flex:1"><button class="btn-ghost" onclick="healthSavePlan('${esc(r.id)}')">${t('Save cost','খরচ সেভ')}</button></div>`);
+  }
+  const body=`<div class="form-grid">
+    <div class="form-field full"><div class="ri-t">${healthSeasonBadge(r.season)} ${esc(r.service_label||r.service)} ${healthBadge(r.status)}</div><div class="c-sub">${esc(r.id)} · ${esc(r.prop_name||r.prop||'—')}${r.unit_name?' · '+esc(r.unit_name):''} · ${esc(r.scheduled_for||'—')} · ${esc(r.assigned_to||t('no vendor','কোনো ভেন্ডর নেই'))}</div></div>
+    ${r.notes?`<div class="form-field full"><label>${t('Notes','নোট')}</label><div class="c-sub">${esc(r.notes)}</div></div>`:''}
+    ${r.findings?`<div class="form-field full"><label>${t('Findings','ফলাফল')}</label><div class="c-sub">${esc(r.findings)}</div></div>`:''}
+    <div class="form-field full"><label>${t('Checklist','চেকলিস্ট')} · ${r.tasks_done||0}/${r.tasks_total||0}</label>${chk}</div>
+    ${actions.join('')}
+  </div>`;
+  openDrawer(t('Health plan','হেলথ প্ল্যান'), body, `<button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>`);
+}
+async function healthCheckToggle(id,i){
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.health_plans||[]).find(x=>x.id===id);
+    if(r&&r.checklist&&r.checklist[i]) r.checklist[i].done=r.checklist[i].done?0:1;
+    d={ok:true};
+  } else { d=await apiCall('app-healthcheck',{action:'checklist-save',id,index:i,done:1}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  if(state.view==='health') render();
+}
+async function healthAdvance(id){
+  const status=val('hp_status_'+id); if(!status) return;
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.health_plans||[]).find(x=>x.id===id);
+    if(r){ r.status=status; if(status==='Completed') r.completed_at=new Date().toISOString().slice(0,19).replace('T',' '); }
+    d={ok:true};
+  } else { d=await apiCall('app-healthcheck',{action:'plan-status',id,status}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Status updated','স্ট্যাটাস আপডেট')); if(state.view==='health') render();
+}
+async function healthSavePlan(id){
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.health_plans||[]).find(x=>x.id===id);
+    if(r) r.cost=+val('hp_cost_'+id)||0;
+    d={ok:true};
+  } else { d=await apiCall('app-healthcheck',{action:'plan-save',id,cost:+val('hp_cost_'+id)||0}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Plan updated','প্ল্যান আপডেট হয়েছে')); if(state.view==='health') render();
 }
 function val(id){ const el=document.getElementById(id); return el?el.value:''; }
 function landStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
@@ -5488,6 +5843,26 @@ const renderers={
     </div>`;
     h+=`<div id="conciergeLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>conciergeLoad(),0);
+    return h;
+  },
+  smarthome(){
+    const isStaff=smarthomeStaff();
+    let h=pageHead(t('Smart Home & Security','স্মার্ট হোম ও নিরাপত্তা'),isStaff?t('Smart-lock codes for vacancy showings and CCTV cameras per property.','ভ্যাক্যান্সি শোকেসের জন্য স্মার্ট-লক কোড ও প্রতি সম্পত্তির সিসিটিভি ক্যামেরা।'):t('Locks and cameras on your portfolio.','আপনার পোর্টফোলিওর লক ও ক্যামেরা।'),isStaff?`<button class="btn-primary" onclick="smartNewLock()">＋ ${t('New lock code','নতুন লক কোড')}</button>`:'');
+    h+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="${state.smarthomeTab==='locks'?'btn-primary':'btn-ghost'}" onclick="smarthomeTab('locks')">🔐 ${t('Smart locks','স্মার্ট লক')}</button>
+      <button class="${state.smarthomeTab==='cams'?'btn-primary':'btn-ghost'}" onclick="smarthomeTab('cams')">📹 ${t('CCTV','সিসিটিভি')}</button>
+      <span style="flex:1"></span>
+      ${isStaff?`<button class="btn-ghost" onclick="smartCfgForm()">⚙️ ${t('Settings','সেটিংস')}</button>`:''}
+    </div>`;
+    h+=`<div id="smarthomeLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>smarthomeLoad(),0);
+    return h;
+  },
+  health(){
+    const isStaff=healthStaff();
+    let h=pageHead(t('Health Check','হেলথ চেক'),isStaff?t('Seasonal property health plans — pre-monsoon waterproofing, pre-summer AC service, quarterly deep clean.','ঋতুভিত্তিক সম্পত্তি হেলথ প্ল্যান — প্রি-মৌসুমি ওয়াটারপ্রুফিং, প্রি-গ্রীষ্ম এসি সার্ভিস, কোয়ার্টারলি ডিপ ক্লিন।'):t('Your property health plans.','আপনার সম্পত্তির হেলথ প্ল্যান।'),isStaff?`<button class="btn-primary" onclick="healthNewPlan()">＋ ${t('New plan','নতুন প্ল্যান')}</button>`:'');
+    h+=`<div id="healthLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>healthLoad(),0);
     return h;
   },
   remit(){
