@@ -1095,18 +1095,39 @@ const SEED = {
   ],
   gate_watchlist:[
     {id:'GW-001',vehicle_no:'DHAKA-METRO-9999',name:'Unknown pickup',reason:'Suspicious activity — reported by neighbour, avoid entry',active:1,ts:'2026-07-28 09:00:00'}
+  ],
+  fire_assets:[
+    {id:'FA-001',owner_email:'owner@krtaker.com',prop:'P-001',asset_type:'extinguisher',location:'Lobby — ground floor',model:'ABC-4kg Dry Powder',serial_no:'SN-101',install_date:'2025-08-01',expiry_date:'2026-09-17',status:'active',last_inspected:'2026-07-19',next_inspection:'2026-08-18',notes:'Expiring soon — recharge after expiry',ts:'2026-07-01 09:00:00'},
+    {id:'FA-002',owner_email:'owner@krtaker.com',prop:'P-002',asset_type:'extinguisher',location:'Kitchen — 3rd floor',model:'CO2-5kg',serial_no:'SN-102',install_date:'2024-06-10',expiry_date:'2026-07-14',status:'active',last_inspected:'2026-05-15',next_inspection:'2026-06-14',notes:'EXPIRED — replace immediately',ts:'2026-07-01 09:00:00'},
+    {id:'FA-003',owner_email:'owner@krtaker.com',prop:'P-001',asset_type:'detector',location:'Hallway — 2nd floor',model:'SD-2000',serial_no:'SN-103',install_date:'2026-01-15',expiry_date:'2027-04-30',status:'active',last_inspected:'2026-07-04',next_inspection:'2026-09-02',notes:'Smoke detector — annual battery check',ts:'2026-07-01 09:00:00'},
+    {id:'FA-004',owner_email:'owner@krtaker.com',prop:'P-003',asset_type:'alarm',location:'Fire alarm panel — lobby',model:'FP-9000',serial_no:'SN-104',install_date:'2025-03-01',expiry_date:'2027-02-19',status:'faulty',last_inspected:'2026-07-24',next_inspection:'2026-08-23',notes:'Zone 2 sensor fault — technician needed',ts:'2026-07-01 09:00:00'}
+  ],
+  fire_incidents:[
+    {id:'FI-001',owner_email:'owner@krtaker.com',prop:'P-002',incident_type:'fire',severity:'high',status:'Responding',reported_by:'Arif Chowdhury',occurred_at:'2026-08-03 14:20:00',location:'Kitchen — 3rd floor flat U-004',description:'Smoke reported from kitchen; gas stove left on',timeline:[{t:'2026-08-03 14:20:00',by:'Arif Chowdhury',note:'Incident reported — kitchen smoke from 3rd floor'},{t:'2026-08-03 14:40:00',by:'Fire Service',note:'Responding — crew dispatched'}],resolved_at:'',ts:'2026-08-03 14:20:00'},
+    {id:'FI-002',owner_email:'owner@krtaker.com',prop:'P-001',incident_type:'electrical',severity:'low',status:'Resolved',reported_by:'Rahim Uddin',occurred_at:'2026-07-14 14:30:00',location:'Parking — basement',description:'Circuit breaker tripped, no fire',timeline:[],resolved_at:'2026-07-14 15:00:00',ts:'2026-07-14 14:30:00'}
+  ],
+  evacuation_plans:[
+    {id:'EP-001',owner_email:'owner@krtaker.com',prop:'P-001',name:'Tower A Evacuation Plan',assembly_point:'South gate car park',route:'Stairwell A → Ground → South gate car park',last_drill:'2026-01-25',next_drill:'2026-07-24',status:'active',ts:'2026-06-01 09:00:00'},
+    {id:'EP-002',owner_email:'owner@krtaker.com',prop:'P-002',name:'Banani Tower Evacuation Plan',assembly_point:'Road 11 corner',route:'Stairwell B → Lobby → Road 11 corner',last_drill:'',next_drill:'',status:'draft',ts:'2026-06-01 09:00:00'}
+  ],
+  emergency_contacts:[
+    {id:'EC-001',owner_email:'owner@krtaker.com',prop:'',contact_type:'fire',name:'Fire Service & Civil Defence',phone:'999',notes:'National fire emergency',ts:'2026-06-01 09:00:00'},
+    {id:'EC-002',owner_email:'owner@krtaker.com',prop:'',contact_type:'police',name:'Police Emergency',phone:'999',notes:'National police emergency',ts:'2026-06-01 09:00:00'},
+    {id:'EC-003',owner_email:'owner@krtaker.com',prop:'',contact_type:'ambulance',name:'Ambulance — National Helpline',phone:'199',notes:'National ambulance service',ts:'2026-06-01 09:00:00'},
+    {id:'EC-004',owner_email:'owner@krtaker.com',prop:'P-001',contact_type:'building_manager',name:'Arif Chowdhury',phone:'01712345678',notes:'Building manager — on site 8am-8pm',ts:'2026-06-01 09:00:00'},
+    {id:'EC-005',owner_email:'owner@krtaker.com',prop:'P-001',contact_type:'electric',name:'DESCO Emergency',phone:'16106',notes:'Electricity — line fault',ts:'2026-06-01 09:00:00'}
   ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','ai','analytics','notices','documents']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','concierge','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','concierge','smarthome','health','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','concierge','health','ai','analytics','notices','documents','recon','templates']},
@@ -1115,20 +1136,20 @@ const ROLES = [
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['nrb','🌐','NRB Hub'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch'],['firesafety','🧯','Fire Safety']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','firesafety':'🧯','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','firesafety':'Fire Safety','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Build Watch':'নির্মাণ মনিটরিং','Gate Watch':'গেট ওয়াচ','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Build Watch':'নির্মাণ মনিটরিং','Gate Watch':'গেট ওয়াচ','Fire Safety':'ফায়ার সেফটি','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
 
 /* ═══ State ═══ */
-let state = {role:'owner', view:'dashboard', gateTab:'live', theme:localStorage.getItem('krtaker_dash_theme')||'light', lang:localStorage.getItem('krtaker_dash_lang')||'en'};
+let state = {role:'owner', view:'dashboard', gateTab:'live', firesafetyTab:'assets', theme:localStorage.getItem('krtaker_dash_theme')||'light', lang:localStorage.getItem('krtaker_dash_lang')||'en'};
 let DB = JSON.parse(JSON.stringify(SEED));
 
 /* ═══ Phase 2: API layer (backend + RBAC + subscriptions) ═══ */
@@ -3813,6 +3834,272 @@ async function gateReport(){
     previewDoc(title, html);
   }catch(e){ toast(t('Report failed','রিপোর্ট ব্যর্থ')); }
 }
+
+/* ═══ Phase 51: Fire Safety (VAS-G) ═══ */
+function fireStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
+function fireCap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+function fireAssetTypeLabel(v){ return ({extinguisher:t('Fire extinguisher','অগ্নি নির্বাপক'),detector:t('Smoke detector','স্মোক ডিটেক্টর'),sprinkler:t('Sprinkler','স্প্রিংকলার'),alarm:t('Alarm','অ্যালার্ম'),exit_light:t('Exit light','এগজিট লাইট'),hose:t('Hose reel','হোস রিল')})[v]||v; }
+function fireContactTypeLabel(v){ return ({fire:t('Fire service','ফায়ার সার্ভিস'),police:t('Police','পুলিশ'),ambulance:t('Ambulance','অ্যাম্বুলেন্স'),electric:t('Electricity','বিদ্যুৎ'),gas:t('Gas','গ্যাস'),water:t('Water','পানি'),building_manager:t('Building manager','বিল্ডিং ম্যানেজার'),owner:t('Owner','মালিক'),other:t('Other','অন্যান্য')})[v]||v; }
+function fireAssetEnrich(a){
+  a=Object.assign({},a);
+  a.property_name=(DB.properties||[]).find(x=>x.id===a.prop)?.name||'';
+  const alertDays=(window.__fireCfg||{}).expiry_alert_days||60;
+  const today=new Date().toISOString().slice(0,10);
+  a.expired=0; a.expiring=0; a.days_to_expiry=null;
+  if(a.expiry_date){
+    a.days_to_expiry=Math.round((new Date(a.expiry_date)-new Date(today))/864e5);
+    if(a.days_to_expiry<0) a.expired=1; else if(a.days_to_expiry<=alertDays) a.expiring=1;
+  }
+  a.inspection_overdue=0;
+  if(a.next_inspection&&a.next_inspection<today&&a.status!=='decommissioned') a.inspection_overdue=1;
+  return a;
+}
+function demoFireData(){
+  const assets=(DB.fire_assets||[]).map(fireAssetEnrich);
+  const incidents=(DB.fire_incidents||[]).map(x=>Object.assign({},x)).map(x=>{x.property_name=(DB.properties||[]).find(p=>p.id===x.prop)?.name||''; x.timeline_arr=x.timeline||[]; return x;});
+  const plans=(DB.evacuation_plans||[]).map(x=>Object.assign({},x)).map(x=>{x.property_name=(DB.properties||[]).find(p=>p.id===x.prop)?.name||''; const today=new Date().toISOString().slice(0,10); x.drill_overdue=(x.status==='active'&&x.next_drill&&x.next_drill<today)?1:0; return x;});
+  const contacts=(DB.emergency_contacts||[]).map(x=>Object.assign({},x)).map(x=>{x.property_name=(DB.properties||[]).find(p=>p.id===x.prop)?.name||''; return x;});
+  const byStatus={active:assets.filter(a=>a.status==='active').length,faulty:assets.filter(a=>a.status==='faulty').length,decommissioned:assets.filter(a=>a.status==='decommissioned').length};
+  const sev={low:0,medium:0,high:0,critical:0};
+  incidents.forEach(i=>sev[i.severity]=(sev[i.severity]||0)+1);
+  const cfg0=window.__fireCfg||{};
+  return {summary:{
+    assets, assets_total:assets.length, by_status:byStatus,
+    expired:assets.filter(a=>a.expired).length, expiring:assets.filter(a=>a.expiring).length,
+    inspection_overdue:assets.filter(a=>a.inspection_overdue).length,
+    incidents, incidents_open:incidents.filter(i=>!['Resolved','Closed'].includes(i.status)).length, incidents_by_severity:sev,
+    plans, plans_active:plans.filter(p=>p.status==='active').length, drill_overdue:plans.filter(p=>p.drill_overdue).length,
+    contacts,
+    config:{inspection_days:cfg0.inspection_days||30,expiry_alert_days:cfg0.expiry_alert_days||60,drill_days:cfg0.drill_days||180}
+  },config:{inspection_days:cfg0.inspection_days||30,expiry_alert_days:cfg0.expiry_alert_days||60,drill_days:cfg0.drill_days||180}};
+}
+async function fireLoad(){
+  const host=document.getElementById('fireLive'); if(!host) return;
+  let d;
+  if(TOKEN&&!DEMO_MODE){
+    d=await apiCall('app-firesafety',{action:'summary'});
+    if(!d.ok){ host.innerHTML=`<div class="m">${esc(d.error||'Failed to load')}</div>`; return; }
+    const sm=d.summary||{}; d={summary:sm, config:d.config||sm.config||{}};
+    DB.fire_assets=sm.assets||[]; DB.fire_incidents=sm.incidents||[]; DB.evacuation_plans=sm.plans||[]; DB.emergency_contacts=sm.contacts||[];
+  } else { d=demoFireData(); }
+  window.__fireCfg=d.config||{inspection_days:30,expiry_alert_days:60,drill_days:180};
+  host.innerHTML=fireHtml(d);
+}
+function fireTab(tab){ state.firesafetyTab=tab; fireLoad(); }
+function fireHtml(d){
+  const sm=d.summary||{};
+  const assets=sm.assets||[], incidents=sm.incidents||[], plans=sm.plans||[], contacts=sm.contacts||[];
+  const canWrite=fireStaff();
+  let h=statsRow([
+    stat(t('Assets','যন্ত্রপাতি'),sm.assets_total||0,t('total','মোট'),'','🧯'),
+    stat(t('Expired','মেয়াদোত্তীর্ণ'),sm.expired||0,t('need action','কার্যক্রম প্রয়োজন'),(sm.expired||0)?'warn':'','⛔'),
+    stat(t('Expiring','মেয়াদ নিকটে'),sm.expiring||0,t('soon','শীঘ্রই'),(sm.expiring||0)?'warn':'','⏳'),
+    stat(t('Open incidents','চলমান ঘটনা'),sm.incidents_open||0,t('active','সক্রিয়'),(sm.incidents_open||0)?'warn':'','🔥')
+  ]);
+  h+=`<div class="kr-tabs" style="margin-bottom:12px">`+
+    `<button class="${state.firesafetyTab==='assets'?'btn-primary':'btn-ghost'}" onclick="fireTab('assets')">🧯 ${t('Assets','যন্ত্রপাতি')}</button>`+
+    `<button class="${state.firesafetyTab==='incidents'?'btn-primary':'btn-ghost'}" onclick="fireTab('incidents')">🔥 ${t('Incidents','ঘটনা')}</button>`+
+    `<button class="${state.firesafetyTab==='plans'?'btn-primary':'btn-ghost'}" onclick="fireTab('plans')">🏃 ${t('Evacuation','উচ্ছেদ')}</button>`+
+    `<button class="${state.firesafetyTab==='contacts'?'btn-primary':'btn-ghost'}" onclick="fireTab('contacts')">☎️ ${t('Contacts','যোগাযোগ')}</button>`+
+    `<button class="btn-ghost" onclick="fireReport()">🖨 ${t('Report','রিপোর্ট')}</button></div>`;
+  if(state.firesafetyTab==='assets'){
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🧯</span>${t('Fire assets','অগ্নি নিরাপত্তা যন্ত্রপাতি')}</div>${canWrite?`<span class="link" onclick="fireAssetForm()">＋ ${t('Add asset','যন্ত্রপাতি যোগ')}</span>`:''}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Asset','যন্ত্রপাতি')}</th><th>${t('Type','ধরন')}</th><th>${t('Location','অবস্থান')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Expiry','মেয়াদ')}</th><th>${t('Inspection','পরিদর্শন')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+      (assets.map(a=>`<tr><td><span class="c-name">${esc(a.id)}</span><div class="c-sub">${esc(a.model||'')}</div></td><td>${fireAssetTypeLabel(a.asset_type)}</td><td>${esc(a.location||'—')}</td><td>${esc(a.property_name||'—')}</td><td>${esc(a.expiry_date||'—')}${a.expired?` <span class="badge b-red">${t('EXPIRED','মেয়াদোত্তীর্ণ')}</span>`:a.expiring?` <span class="badge b-orange">${t('expiring','নিকটে')}</span>`:''}</td><td>${esc(a.next_inspection||'—')}${a.inspection_overdue?` <span class="badge b-orange">${t('due','বাকি')}</span>`:''}</td><td>${a.status==='active'?`<span class="badge b-green">${t('active','সক্রিয়')}</span>`:a.status==='faulty'?`<span class="badge b-red">${t('faulty','ত্রুটিপূর্ণ')}</span>`:`<span class="badge b-gray">${t('off','বন্ধ')}</span>`}</td><td>${canWrite?`<button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="fireAssetForm('${esc(a.id)}')">✎</button><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="fireAssetInspect('${esc(a.id)}')">🔎</button><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="fireAssetDelete('${esc(a.id)}')">✕</button>`:''}</td></tr>`).join('')||`<tr><td colspan="8" class="empty">${t('No fire assets yet.','এখনো কোনো যন্ত্রপাতি নেই।')}</td></tr>`)+`</tbody></table></div></div>`;
+  } else if(state.firesafetyTab==='incidents'){
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔥</span>${t('Incidents','ঘটনা')}</div>${canWrite?`<span class="link" onclick="fireIncidentForm()">＋ ${t('Report incident','ঘটনা রিপোর্ট')}</span>`:''}</div><div class="panel-b">`+
+      (incidents.map(i=>`<div class="row-item"><div class="ri-ic">${i.severity==='critical'||i.severity==='high'?'🔴':'🟠'}</div><div class="ri-body"><div class="ri-t">${esc(i.id)} — ${esc(fireCap(i.incident_type.replace('_',' ')))} <span class="badge ${i.severity==='critical'||i.severity==='high'?'b-red':'b-orange'}">${esc(fireCap(i.severity))}</span> <span class="badge ${i.status==='Resolved'||i.status==='Closed'?'b-gray':'b-blue'}">${esc(i.status)}</span></div><div class="ri-s">${esc(i.location||'—')}${i.property_name?' · '+esc(i.property_name):''}${i.occurred_at?' · '+esc(i.occurred_at):''}</div><div class="ri-s">${esc(i.description||'')}</div><div class="ri-s">${i.timeline_arr&&i.timeline_arr.length?`<b>${t('Timeline','টাইমলাইন')}:</b> ${i.timeline_arr.slice(-3).map(e=>esc(e.note)).join(' → ')}`:''}</div></div><div class="ri-r">${canWrite?`<button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="fireIncidentEvent('${esc(i.id)}')">✚</button><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="fireIncidentStatus('${esc(i.id)}')">➡️</button><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="fireIncidentDelete('${esc(i.id)}')">✕</button>`:''}</div></div>`).join('')||`<div class="empty">${t('No incidents.','কোনো ঘটনা নেই।')}</div>`)+`</div></div>`;
+  } else if(state.firesafetyTab==='plans'){
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏃</span>${t('Evacuation plans','উচ্ছেদ পরিকল্পনা')}</div>${canWrite?`<span class="link" onclick="firePlanForm()">＋ ${t('Add plan','পরিকল্পনা যোগ')}</span>`:''}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Plan','পরিকল্পনা')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Assembly point','সমাবেশ বিন্দু')}</th><th>${t('Route','রুট')}</th><th>${t('Last drill','শেষ ড্রিল')}</th><th>${t('Next drill','পরবর্তী ড্রিল')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+      (plans.map(p=>`<tr><td><span class="c-name">${esc(p.name||p.id)}</span><div class="c-sub">${esc(p.id)}</div></td><td>${esc(p.property_name||'—')}</td><td>${esc(p.assembly_point||'—')}</td><td>${esc(p.route||'—')}</td><td>${esc(p.last_drill||'—')}</td><td>${esc(p.next_drill||'—')}${p.drill_overdue?` <span class="badge b-orange">${t('overdue','ওভারডিউ')}</span>`:''}</td><td>${p.status==='active'?`<span class="badge b-green">${t('active','সক্রিয়')}</span>`:`<span class="badge b-gray">${t('draft','খসড়া')}</span>`}</td><td>${canWrite?`<button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="firePlanForm('${esc(p.id)}')">✎</button>${p.status==='active'?`<button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="firePlanDrill('${esc(p.id)}')">🏃</button>`:''}<button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="firePlanDelete('${esc(p.id)}')">✕</button>`:''}</td></tr>`).join('')||`<tr><td colspan="8" class="empty">${t('No evacuation plans.','কোনো উচ্ছেদ পরিকল্পনা নেই।')}</td></tr>`)+`</tbody></table></div></div>`;
+  } else {
+    h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">☎️</span>${t('Emergency contacts','জরুরি যোগাযোগ')}</div>${canWrite?`<span class="link" onclick="fireContactForm()">＋ ${t('Add contact','যোগাযোগ যোগ')}</span>`:''}</div><div class="panel-b">`+
+      (contacts.map(c=>`<div class="row-item"><div class="ri-ic">${c.contact_type==='fire'?'🚒':c.contact_type==='police'?'🚓':c.contact_type==='ambulance'?'🚑':'☎️'}</div><div class="ri-body"><div class="ri-t">${esc(c.name)} <span class="badge b-blue">${fireContactTypeLabel(c.contact_type)}</span></div><div class="ri-s">📞 ${esc(c.phone||'')}${c.property_name?' · '+esc(c.property_name):''}${c.notes?' · '+esc(c.notes):''}</div></div><div class="ri-r">${canWrite?`<button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="fireContactForm('${esc(c.id)}')">✎</button><button class="btn-ghost" style="padding:3px 8px;font-size:10.5px" onclick="fireContactDelete('${esc(c.id)}')">✕</button>`:''}</div></div>`).join('')||`<div class="empty">${t('No contacts.','কোনো যোগাযোগ নেই।')}</div>`)+`</div></div>`;
+  }
+  return h;
+}
+function fireAssetForm(id){
+  const a=id?(DB.fire_assets||[]).find(x=>x.id===id):null;
+  const props=(DB.properties||[]).map(p=>`<option value="${esc(p.id)}" ${a&&a.prop===p.id?'selected':''}>${esc(p.name)}</option>`).join('');
+  const types=['extinguisher','detector','sprinkler','alarm','exit_light','hose'].map(v=>`<option value="${v}" ${a&&a.asset_type===v?'selected':''}>${fireAssetTypeLabel(v)}</option>`).join('');
+  const body=`<div class="f"><label>${t('Type','ধরন')}</label><select id="faType">${types}</select></div>
+    <div class="f"><label>${t('Location','অবস্থান')} *</label><input id="faLoc" value="${esc(a?a.location:'')}"></div>
+    <div class="f"><label>${t('Property','সম্পত্তি')}</label><select id="faProp"><option value="">—</option>${props}</select></div>
+    <div class="f"><label>${t('Model','মডেল')}</label><input id="faModel" value="${esc(a?a.model:'')}"></div>
+    <div class="f"><label>${t('Serial no','সিরিয়াল')}</label><input id="faSn" value="${esc(a?a.serial_no:'')}"></div>
+    <div class="f"><label>${t('Install date','স্থাপনের তারিখ')}</label><input type="date" id="faInstall" value="${esc(a?a.install_date:'')}"></div>
+    <div class="f"><label>${t('Expiry date','মেয়াদের তারিখ')}</label><input type="date" id="faExpiry" value="${esc(a?a.expiry_date:'')}"></div>
+    <div class="f"><label>${t('Notes','নোট')}</label><input id="faNotes" value="${esc(a?a.notes:'')}"></div>`;
+  openDrawer(t(a?'Edit asset':'Add asset',a?'যন্ত্রপাতি সম্পাদনা':'যন্ত্রপাতি যোগ'),body,
+    `<button class="btn-primary" onclick="submitFireAsset('${esc(a?a.id:'')}')">${t('Save','সেভ')}</button>`);
+}
+async function submitFireAsset(id){
+  const payload={action:id?'asset-save':'asset-create',id,asset_type:val('faType'),location:val('faLoc'),prop:val('faProp'),model:val('faModel'),serial_no:val('faSn'),install_date:val('faInstall'),expiry_date:val('faExpiry'),notes:val('faNotes')};
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const a=(DB.fire_assets||[]).find(x=>x.id===id); if(a) Object.assign(a,payload); }
+    else { const n=Math.max(100,...(DB.fire_assets||[]).map(x=>+(x.id||'FA-0').replace('FA-','')||0))+1; const now=new Date().toISOString().slice(0,19).replace('T',' '); const insp=+(window.__fireCfg||{}).inspection_days||30; DB.fire_assets=DB.fire_assets||[]; DB.fire_assets.push({id:'FA-'+n,owner_email:'owner@krtaker.com',asset_type:payload.asset_type,location:payload.location,prop:payload.prop,model:payload.model,serial_no:payload.serial_no,install_date:payload.install_date,expiry_date:payload.expiry_date,status:'active',last_inspected:now.slice(0,10),next_inspection:new Date(Date.now()+insp*864e5).toISOString().slice(0,10),notes:payload.notes,ts:now}); }
+    toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad(); return;
+  }
+  const d=await apiCall('app-firesafety',payload);
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad();
+}
+async function fireAssetInspect(id){
+  if(DEMO_MODE||!TOKEN){ const a=(DB.fire_assets||[]).find(x=>x.id===id); if(a){ const insp=+(window.__fireCfg||{}).inspection_days||30; a.last_inspected=new Date().toISOString().slice(0,10); a.next_inspection=new Date(Date.now()+insp*864e5).toISOString().slice(0,10); } toast(t('Inspected','পরিদর্শন সম্পন্ন')); fireLoad(); return; }
+  const d=await apiCall('app-firesafety',{action:'asset-inspect',id});
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Inspected','পরিদর্শন সম্পন্ন')); fireLoad();
+}
+async function fireAssetDelete(id){
+  if(DEMO_MODE||!TOKEN){ DB.fire_assets=(DB.fire_assets||[]).filter(x=>x.id!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); fireLoad(); return; }
+  const d=await apiCall('app-firesafety',{action:'asset-delete',id});
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Deleted','মুছে ফেলা হয়েছে')); fireLoad();
+}
+function fireIncidentForm(id){
+  const i=id?(DB.fire_incidents||[]).find(x=>x.id===id):null;
+  const props=(DB.properties||[]).map(p=>`<option value="${esc(p.id)}" ${i&&i.prop===p.id?'selected':''}>${esc(p.name)}</option>`).join('');
+  const types=['fire','gas_leak','electrical','medical','water','security','other'].map(v=>`<option value="${v}" ${i&&i.incident_type===v?'selected':''}>${esc(fireCap(v.replace('_',' ')))}</option>`).join('');
+  const sevs=['low','medium','high','critical'].map(v=>`<option value="${v}" ${i&&i.severity===v?'selected':''}>${esc(fireCap(v))}</option>`).join('');
+  const body=`<div class="f"><label>${t('Type','ধরন')}</label><select id="fiType">${types}</select></div>
+    <div class="f"><label>${t('Severity','তীব্রতা')}</label><select id="fiSev">${sevs}</select></div>
+    <div class="f"><label>${t('Location','অবস্থান')} *</label><input id="fiLoc" value="${esc(i?i.location:'')}"></div>
+    <div class="f"><label>${t('Property','সম্পত্তি')}</label><select id="fiProp"><option value="">—</option>${props}</select></div>
+    <div class="f"><label>${t('Occurred at','ঘটার সময়')}</label><input id="fiAt" value="${esc(i?i.occurred_at:'')}"></div>
+    <div class="f"><label>${t('Description','বিবরণ')}</label><textarea id="fiDesc" rows="3">${esc(i?i.description:'')}</textarea></div>`;
+  openDrawer(t('Report incident','ঘটনা রিপোর্ট'),body,
+    `<button class="btn-primary" onclick="submitFireIncident('${esc(i?i.id:'')}')">${t('Save','সেভ')}</button>`);
+}
+async function submitFireIncident(id){
+  const payload={action:id?'incident-save':'incident-create',id,incident_type:val('fiType'),severity:val('fiSev'),location:val('fiLoc'),prop:val('fiProp'),occurred_at:val('fiAt'),description:val('fiDesc')};
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const i=(DB.fire_incidents||[]).find(x=>x.id===id); if(i) Object.assign(i,payload); }
+    else { const n=Math.max(100,...(DB.fire_incidents||[]).map(x=>+(x.id||'FI-0').replace('FI-','')||0))+1; const now=new Date().toISOString().slice(0,19).replace('T',' '); DB.fire_incidents=DB.fire_incidents||[]; DB.fire_incidents.unshift({id:'FI-'+n,owner_email:'owner@krtaker.com',incident_type:payload.incident_type,severity:payload.severity,status:'Reported',reported_by:'Demo',occurred_at:payload.occurred_at||now,location:payload.location,description:payload.description,timeline:[{t:now,by:'Demo',note:'Incident reported'}],timeline_arr:[{t:now,by:'Demo',note:'Incident reported'}],resolved_at:'',ts:now}); }
+    toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad(); return;
+  }
+  const d=await apiCall('app-firesafety',payload);
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad();
+}
+async function fireIncidentStatus(id){
+  if(DEMO_MODE||!TOKEN){ const i=(DB.fire_incidents||[]).find(x=>x.id===id); if(i){ const seq=['Reported','Assessing','Responding','Resolved','Closed']; const idx=seq.indexOf(i.status); if(idx>=0&&idx<seq.length-1){ i.status=seq[idx+1]; const now=new Date().toISOString().slice(0,19).replace('T',' '); i.timeline_arr=i.timeline_arr||i.timeline||[]; i.timeline_arr.push({t:now,by:'Demo',note:'Status → '+i.status}); if(i.status==='Resolved') i.resolved_at=now; } } toast(t('Advanced','এগিয়েছে')); fireLoad(); return; }
+  const d=await apiCall('app-firesafety',{action:'incident-status',id});
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Advanced','এগিয়েছে')); fireLoad();
+}
+function fireIncidentEvent(id){
+  openDrawer(t('Add event','ইভেন্ট যোগ'),`<div class="f"><label>${t('Note','নোট')} *</label><textarea id="fiEv" rows="3"></textarea></div>`,
+    `<button class="btn-primary" onclick="submitFireIncidentEvent('${esc(id)}')">${t('Add','যোগ')}</button>`);
+}
+async function submitFireIncidentEvent(id){
+  const note=val('fiEv'); if(!note) return;
+  if(DEMO_MODE||!TOKEN){ const i=(DB.fire_incidents||[]).find(x=>x.id===id); if(i){ const now=new Date().toISOString().slice(0,19).replace('T',' '); i.timeline_arr=i.timeline_arr||i.timeline||[]; i.timeline_arr.push({t:now,by:'Demo',note}); } toast(t('Added','যোগ হয়েছে')); closeDrawer(); fireLoad(); return; }
+  const d=await apiCall('app-firesafety',{action:'incident-event',id,note});
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Added','যোগ হয়েছে')); closeDrawer(); fireLoad();
+}
+async function fireIncidentDelete(id){
+  if(DEMO_MODE||!TOKEN){ DB.fire_incidents=(DB.fire_incidents||[]).filter(x=>x.id!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); fireLoad(); return; }
+  const d=await apiCall('app-firesafety',{action:'incident-delete',id});
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Deleted','মুছে ফেলা হয়েছে')); fireLoad();
+}
+function firePlanForm(id){
+  const p=id?(DB.evacuation_plans||[]).find(x=>x.id===id):null;
+  const props=(DB.properties||[]).map(p2=>`<option value="${esc(p2.id)}" ${p&&p.prop===p2.id?'selected':''}>${esc(p2.name)}</option>`).join('');
+  const body=`<div class="f"><label>${t('Plan name','পরিকল্পনার নাম')} *</label><input id="epName" value="${esc(p?p.name:'')}"></div>
+    <div class="f"><label>${t('Property','সম্পত্তি')}</label><select id="epProp"><option value="">—</option>${props}</select></div>
+    <div class="f"><label>${t('Assembly point','সমাবেশ বিন্দু')}</label><input id="epAp" value="${esc(p?p.assembly_point:'')}"></div>
+    <div class="f"><label>${t('Route','রুট')}</label><textarea id="epRoute" rows="2">${esc(p?p.route:'')}</textarea></div>
+    <div class="f"><label>${t('Status','স্ট্যাটাস')}</label><select id="epStatus"><option value="draft" ${p&&p.status==='draft'?'selected':''}>${t('draft','খসড়া')}</option><option value="active" ${p&&p.status==='active'?'selected':''}>${t('active','সক্রিয়')}</option></select></div>`;
+  openDrawer(t(p?'Edit plan':'Add plan',p?'পরিকল্পনা সম্পাদনা':'পরিকল্পনা যোগ'),body,
+    `<button class="btn-primary" onclick="submitFirePlan('${esc(p?p.id:'')}')">${t('Save','সেভ')}</button>`);
+}
+async function submitFirePlan(id){
+  const payload={action:id?'plan-save':'plan-create',id,name:val('epName'),prop:val('epProp'),assembly_point:val('epAp'),route:val('epRoute'),status:val('epStatus')};
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const p=(DB.evacuation_plans||[]).find(x=>x.id===id); if(p) Object.assign(p,payload); }
+    else { const n=Math.max(100,...(DB.evacuation_plans||[]).map(x=>+(x.id||'EP-0').replace('EP-','')||0))+1; DB.evacuation_plans=DB.evacuation_plans||[]; DB.evacuation_plans.push({id:'EP-'+n,owner_email:'owner@krtaker.com',name:payload.name,prop:payload.prop,assembly_point:payload.assembly_point,route:payload.route,last_drill:'',next_drill:'',status:payload.status||'draft',ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+    toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad(); return;
+  }
+  const d=await apiCall('app-firesafety',payload);
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad();
+}
+async function firePlanDrill(id){
+  if(DEMO_MODE||!TOKEN){ const p=(DB.evacuation_plans||[]).find(x=>x.id===id); if(p){ const days=+(window.__fireCfg||{}).drill_days||180; p.last_drill=new Date().toISOString().slice(0,10); p.next_drill=new Date(Date.now()+days*864e5).toISOString().slice(0,10); } toast(t('Drill logged','ড্রিল লগ হয়েছে')); fireLoad(); return; }
+  const d=await apiCall('app-firesafety',{action:'plan-drill',id});
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Drill logged','ড্রিল লগ হয়েছে')); fireLoad();
+}
+async function firePlanDelete(id){
+  if(DEMO_MODE||!TOKEN){ DB.evacuation_plans=(DB.evacuation_plans||[]).filter(x=>x.id!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); fireLoad(); return; }
+  const d=await apiCall('app-firesafety',{action:'plan-delete',id});
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Deleted','মুছে ফেলা হয়েছে')); fireLoad();
+}
+function fireContactForm(id){
+  const c=id?(DB.emergency_contacts||[]).find(x=>x.id===id):null;
+  const props=(DB.properties||[]).map(p=>`<option value="${esc(p.id)}" ${c&&c.prop===p.id?'selected':''}>${esc(p.name)}</option>`).join('');
+  const types=['fire','police','ambulance','electric','gas','water','building_manager','owner','other'].map(v=>`<option value="${v}" ${c&&c.contact_type===v?'selected':''}>${fireContactTypeLabel(v)}</option>`).join('');
+  const body=`<div class="f"><label>${t('Name','নাম')} *</label><input id="ecName" value="${esc(c?c.name:'')}"></div>
+    <div class="f"><label>${t('Phone','ফোন')} *</label><input id="ecPhone" value="${esc(c?c.phone:'')}"></div>
+    <div class="f"><label>${t('Type','ধরন')}</label><select id="ecType">${types}</select></div>
+    <div class="f"><label>${t('Property','সম্পত্তি')}</label><select id="ecProp"><option value="">—</option>${props}</select></div>
+    <div class="f"><label>${t('Notes','নোট')}</label><input id="ecNotes" value="${esc(c?c.notes:'')}"></div>`;
+  openDrawer(t(c?'Edit contact':'Add contact',c?'যোগাযোগ সম্পাদনা':'যোগাযোগ যোগ'),body,
+    `<button class="btn-primary" onclick="submitFireContact('${esc(c?c.id:'')}')">${t('Save','সেভ')}</button>`);
+}
+async function submitFireContact(id){
+  const payload={action:id?'contact-save':'contact-create',id,name:val('ecName'),phone:val('ecPhone'),contact_type:val('ecType'),prop:val('ecProp'),notes:val('ecNotes')};
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const c=(DB.emergency_contacts||[]).find(x=>x.id===id); if(c) Object.assign(c,payload); }
+    else { const n=Math.max(100,...(DB.emergency_contacts||[]).map(x=>+(x.id||'EC-0').replace('EC-','')||0))+1; DB.emergency_contacts=DB.emergency_contacts||[]; DB.emergency_contacts.push({id:'EC-'+n,owner_email:'owner@krtaker.com',name:payload.name,phone:payload.phone,contact_type:payload.contact_type,prop:payload.prop,notes:payload.notes,ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+    toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad(); return;
+  }
+  const d=await apiCall('app-firesafety',payload);
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad();
+}
+async function fireContactDelete(id){
+  if(DEMO_MODE||!TOKEN){ DB.emergency_contacts=(DB.emergency_contacts||[]).filter(x=>x.id!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); fireLoad(); return; }
+  const d=await apiCall('app-firesafety',{action:'contact-delete',id});
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Deleted','মুছে ফেলা হয়েছে')); fireLoad();
+}
+function fireConfigDrawer(){
+  const cfg=window.__fireCfg||{inspection_days:30,expiry_alert_days:60,drill_days:180};
+  const body=`<div class="f"><label>${t('Inspection interval (days)','পরিদর্শন ব্যবধান (দিন)')}</label><input type="number" id="fcInsp" value="${cfg.inspection_days||30}"></div>
+    <div class="f"><label>${t('Expiry alert window (days)','মেয়াদ অ্যালার্ট উইন্ডো (দিন)')}</label><input type="number" id="fcExp" value="${cfg.expiry_alert_days||60}"></div>
+    <div class="f"><label>${t('Drill interval (days)','ড্রিল ব্যবধান (দিন)')}</label><input type="number" id="fcDrill" value="${cfg.drill_days||180}"></div>`;
+  openDrawer(t('Fire Safety settings','ফায়ার সেফটি সেটিংস'),body,
+    `<button class="btn-primary" onclick="fireSaveConfig()">${t('Save','সেভ')}</button>`);
+}
+async function fireSaveConfig(){
+  const payload={action:'config-save',inspection_days:+(val('fcInsp')||30),expiry_alert_days:+(val('fcExp')||60),drill_days:+(val('fcDrill')||180)};
+  if(DEMO_MODE||!TOKEN){ window.__fireCfg={inspection_days:payload.inspection_days,expiry_alert_days:payload.expiry_alert_days,drill_days:payload.drill_days}; toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad(); return; }
+  const d=await apiCall('app-firesafety',payload);
+  if(!d.ok){ toast(d.error||'Error'); return; }
+  toast(t('Saved','সেভ হয়েছে')); closeDrawer(); fireLoad();
+}
+async function fireReport(){
+  const title=t('Fire Safety report','অগ্নি নিরাপত্তা রিপোর্ট');
+  if(DEMO_MODE||!TOKEN){
+    const assets=(DB.fire_assets||[]).map(fireAssetEnrich);
+    const incidents=(DB.fire_incidents||[]).map(x=>{x.property_name=(DB.properties||[]).find(p=>p.id===x.prop)?.name||''; return x;});
+    const atr=assets.map(a=>`<tr><td>${esc(a.id)}</td><td>${fireAssetTypeLabel(a.asset_type)}</td><td>${esc(a.location||'—')}</td><td>${esc(a.property_name||'—')}</td><td>${esc(a.expiry_date||'—')}</td><td>${esc(a.last_inspected||'—')}</td><td>${esc(a.status)}${a.expired?' ★EXPIRED':a.expiring?' ★expiring':''}</td></tr>`).join('');
+    const itr=incidents.map(i=>`<tr><td>${esc(i.id)}</td><td>${esc(fireCap(i.incident_type.replace('_',' ')))}</td><td>${esc(i.severity)}</td><td>${esc(i.status)}</td><td>${esc(i.location||'—')}</td><td>${esc(i.reported_by||'—')}</td><td>${esc(i.occurred_at||'—')}</td></tr>`).join('');
+    const html=`<h1>${esc(title)} — Fire Safety (অগ্নি নিরাপত্তা)</h1><div style="color:#666;font-size:12px">${new Date().toDateString()} · ${assets.length} assets · ${incidents.length} incidents</div>
+      <h2 style="font-size:14px">Fire assets / অগ্নি নিরাপত্তা যন্ত্রপাতি</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:12px"><tr><th>ID</th><th>Type</th><th>Location</th><th>Property</th><th>Expiry</th><th>Last inspected</th><th>Status</th></tr>${atr}</table>
+      <h2 style="font-size:14px">Incidents / ঘটনা</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:12px"><tr><th>ID</th><th>Type</th><th>Severity</th><th>Status</th><th>Location</th><th>Reported by</th><th>Occurred</th></tr>${itr}</table>
+      <div style="display:flex;gap:60px;margin-top:40px;font-size:12px"><div style="border-top:1px solid #333;padding-top:4px;flex:1">Prepared by (তৈরি করেছেন)</div><div style="border-top:1px solid #333;padding-top:4px;flex:1">Fire safety officer (অগ্নি নিরাপত্তা কর্মকর্তা)</div><div style="border-top:1px solid #333;padding-top:4px;flex:1">Owner (মালিক)</div></div>`;
+    previewDoc(title, html); return;
+  }
+  try{
+    const res=await fetch(API+'app-firesafety?action=report',{headers:{Authorization:'Bearer '+TOKEN}});
+    const html=await res.text();
+    previewDoc(title, html);
+  }catch(e){ toast(t('Report failed','রিপোর্ট ব্যর্থ')); }
+}
 async function buildLoad(){
   const host=document.getElementById('buildLive'); if(!host) return;
   let d;
@@ -6367,6 +6654,13 @@ const renderers={
     let h=pageHead(t('Gate Watch','গেট ওয়াচ'),isStaff?t('Visitor & vehicle control — who is in and out of your buildings, watchlist alerts and the daily gate register. Built for NRB owners monitoring from abroad.','আগন্তুক ও যানবাহন নিয়ন্ত্রণ — কার ভবনে কে ঢুকেছে/বেরিয়েছে, ওয়াচলিস্ট অ্যালার্ট ও দৈনিক গেট রেজিস্টার। বিদেশ থেকে মনিটর করা এনআরবি মালিকদের জন্য।'):t('Your gate log.','আপনার গেট লগ।'),isStaff?`<button class="btn-primary" onclick="gateCheckIn()">＋ ${t('Check in','চেক-ইন')}</button><button class="btn-ghost" onclick="gateConfigDrawer()">⚙️</button>`:'');
     h+=`<div id="gateLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>gateLoad(),0);
+    return h;
+  },
+  firesafety(){
+    const isStaff=fireStaff();
+    let h=pageHead(t('Fire Safety','ফায়ার সেফটি'),isStaff?t('Extinguishers, detectors, incidents, evacuation drills and emergency contacts — the building fire-readiness board for NRB owners.','অগ্নি নির্বাপক, ডিটেক্টর, ঘটনা, উচ্ছেদ ড্রিল ও জরুরি যোগাযোগ — এনআরবি মালিকদের জন্য ভবনের অগ্নি-প্রস্তুতি বোর্ড।'):t('Your fire safety records.','আপনার অগ্নি নিরাপত্তা রেকর্ড।'),isStaff?`<button class="btn-ghost" onclick="fireConfigDrawer()">⚙️</button>`:'');
+    h+=`<div id="fireLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>fireLoad(),0);
     return h;
   },
   remit(){
