@@ -1009,34 +1009,56 @@ const SEED = {
     {id:'LE-006',parcel:'LP-003',ev_type:'created',body:'Parcel registered — semi-annual monitoring plan',actor:'Kabir Ahmed',ts:'2026-02-20 09:00:00'},
     {id:'LE-007',parcel:'LP-003',ev_type:'encroachment',body:'Visit LV-003 found illegal tin-shed + fencing — status Encroached',actor:'Karim Uddin',ts:'2026-05-20 09:10:00'},
     {id:'LE-008',parcel:'LP-004',ev_type:'created',body:'Parcel registered — annual drone sweep',actor:'Kabir Ahmed',ts:'2026-01-05 09:00:00'}
+  ],  nrb_tax_returns:[
+    {id:'TX-001',owner_email:'owner@krtaker.com',prop:'P-001',fy:'2025-26',rental_income:480000,tds_deducted:48000,tax_estimate:14400,status:'Filed',ca_firm:'Ahmed & Co. Chartered Accountants',ca_ref:'CA-8821',filing_date:'2026-05-30',paid_date:'',notes:'Filed via CA — TDS certificates attached',ts:'2026-05-30 10:00:00',updated_at:'2026-05-30 10:00:00'},
+    {id:'TX-002',owner_email:'owner@krtaker.com',prop:'P-002',fy:'2026-27',rental_income:360000,tds_deducted:36000,tax_estimate:10800,status:'Draft',ca_firm:'Ahmed & Co. Chartered Accountants',ca_ref:'',filing_date:'',paid_date:'',notes:'Estimate auto-computed at 13% less TDS',ts:'2026-08-01 09:00:00',updated_at:'2026-08-01 09:00:00'}
+  ],
+  nrb_repatriations:[
+    {id:'RP-001',owner_email:'owner@krtaker.com',amount_bdt:420000,amount_fx:3456.79,rate:121.5,currency:'USD',method:'SWIFT',bank_channel:'NRP_Account',documents:['BB form C','Tax clearance certificate'],status:'Submitted',ref:'BB/NRP/2026/1147',submitted_at:'2026-07-20',approved_at:'',completed_at:'',ts:'2026-07-20 10:00:00',updated_at:'2026-07-20 10:00:00'},
+    {id:'RP-002',owner_email:'owner@krtaker.com',amount_bdt:250000,amount_fx:2049.18,rate:122.0,currency:'USD',method:'bKash',bank_channel:'BB_Approval',documents:['Form C','Property ownership deed'],status:'Docs_Submitted',ref:'',submitted_at:'',approved_at:'',completed_at:'',ts:'2026-08-02 12:00:00',updated_at:'2026-08-02 12:00:00'}
+  ],
+  nrb_vacancies:[
+    {id:'VC-001',owner_email:'owner@krtaker.com',prop:'P-002',unit:'U-006',status:'Marketing',started_at:'2026-07-25',tenant_left:'T-003 (moved out)',target_rent:350000,channels:['Bikroy','PropertyBarta'],listing_url:'',candidate:{},vet_status:'none',approved_at:'',notes:'High-end commercial floor — premium NRB segment',ts:'2026-07-25 09:00:00',updated_at:'2026-07-25 09:00:00'},
+    {id:'VC-002',owner_email:'owner@krtaker.com',prop:'P-001',unit:'U-002',status:'Awaiting_Approval',started_at:'2026-07-10',tenant_left:'',target_rent:32000,channels:['Bikroy'],listing_url:'',candidate:{name:'Farhana Akter',phone:'+880****5678',email:'farhana@example.com',nid:'',rent:32000,start:'2026-09-01',months:12,advance:64000},vet_status:'passed',approved_at:'',notes:'NID check done via Trust Engine — candidate passed',ts:'2026-07-10 09:00:00',updated_at:'2026-08-02 09:00:00'},
+    {id:'VC-003',owner_email:'owner@krtaker.com',prop:'P-003',unit:'U-008',status:'Vetting',started_at:'2026-08-01',tenant_left:'',target_rent:210000,channels:['PropertyBarta'],listing_url:'',candidate:{name:'Minhaj Hossain',phone:'+880****2233',email:'',nid:'',rent:210000,start:'2026-10-01',months:24,advance:0},vet_status:'pending',approved_at:'',notes:'Background check in progress',ts:'2026-08-01 10:00:00',updated_at:'2026-08-01 10:00:00'}
+  ],
+  nrb_showings:[
+    {id:'SH-001',vacancy:'VC-002',prospect:'Farhana Akter',phone:'+880****5678',scheduled_at:'2026-08-05',status:'Done',feedback:'Liked the flat — ready to sign on 1 Sep',rating:5,ts:'2026-08-01 11:00:00'},
+    {id:'SH-002',vacancy:'VC-001',prospect:'Tanvir Ahmed',phone:'+880****3344',scheduled_at:'2026-08-03',status:'Done',feedback:'Wants dedicated parking space',rating:4,ts:'2026-08-01 12:00:00'},
+    {id:'SH-003',vacancy:'VC-003',prospect:'Minhaj Hossain',phone:'+880****2233',scheduled_at:'2026-08-08',status:'Scheduled',feedback:'',rating:0,ts:'2026-08-02 09:00:00'}
+  ],
+  nrb_disputes:[
+    {id:'DS-001',owner_email:'owner@krtaker.com',prop:'P-004',unit:'U-004',tenant:'T-004 (refusing to vacate)',dtype:'eviction',advocate:'Adv. Salma Khatun — Bar Council 4451',fee:50000,status:'Notice_Served',notice_ref:'LN-592',last_update:'Eviction notice served — 30-day period running',next_action:'File suit if tenant does not vacate by 2026-08-11',timeline:[{ts:'2026-07-01 10:00:00',action:'Dispute opened — tenant refusing to vacate after lease end',by:'Kabir Ahmed'},{ts:'2026-07-05 14:30:00',action:'Advocate assigned — Adv. Salma Khatun',by:'Kabir Ahmed'},{ts:'2026-07-12 09:00:00',action:'Eviction notice LN-592 served — 30-day notice period running',by:'Adv. Salma Khatun'}],ts:'2026-07-01 10:00:00',updated_at:'2026-07-12 09:00:00'},
+    {id:'DS-002',owner_email:'owner@krtaker.com',prop:'P-001',unit:'U-001',tenant:'T-001',dtype:'damages',advocate:'Adv. Rafiq Islam — Bar Council 2233',fee:15000,status:'Open',notice_ref:'',last_update:'Claim filed — photos collected',next_action:'Inspect unit and finalize claim amount',timeline:[{ts:'2026-08-02 11:00:00',action:'Dispute opened — wall damage claim ৳18,000',by:'Kabir Ahmed'}],ts:'2026-08-02 11:00:00',updated_at:'2026-08-02 11:00:00'}
   ]
+
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','ai','analytics','notices','documents']},
-  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','ai','notices','documents','templates']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','ai','analytics','notices','documents']},
+  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','ai','notices','documents','referrals']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','ai','analytics','notices','documents','recon','templates']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
-  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
+  {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['nrb','🌐','NRB Hub'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
   {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -2716,6 +2738,485 @@ async function legalCaseUpdate(id){
 }
 
 /* ═══ Phase 45: Land/Plot Guard — anti-encroachment monitoring ═══ */
+
+/* ---------- Phase 46: NRB Hub (tax & repatriation, vacancy management, virtual disputes) ---------- */
+function nrbStaff(){ return ['superadmin','owner','manager','accountant','svc_mgr','legal'].includes(role().id); }
+function nrbTaxBadge(st){ return st==='Filed'?'<span class="badge b-green">Filed</span>':st==='Paid'?'<span class="badge b-blue">Paid</span>':'<span class="badge b-orange">Draft</span>'; }
+function nrbRpBadge(st){ return st==='Completed'?'<span class="badge b-green">Completed</span>':st==='Approved'?'<span class="badge b-blue">Approved</span>':st==='Submitted'?'<span class="badge b-blue">Submitted</span>':st==='Docs_Submitted'?'<span class="badge b-orange">Docs sent</span>':st==='Rejected'?'<span class="badge b-red">Rejected</span>':'<span class="badge b-gray">Requested</span>'; }
+function nrbVcBadge(st){ return st==='Filled'?'<span class="badge b-green">Filled</span>':st==='Awaiting_Approval'?'<span class="badge b-orange">Awaiting approval</span>':st==='Cancelled'?'<span class="badge b-red">Cancelled</span>':'<span class="badge b-blue">'+esc(st)+'</span>'; }
+function nrbShBadge(st){ return st==='Done'?'<span class="badge b-green">Done</span>':st==='No_Show'?'<span class="badge b-red">No-show</span>':st==='Cancelled'?'<span class="badge b-gray">Cancelled</span>':'<span class="badge b-blue">Scheduled</span>'; }
+function nrbDsBadge(st){ return st==='Resolved'?'<span class="badge b-green">Resolved</span>':st==='Closed'?'<span class="badge b-gray">Closed</span>':st==='Escalated'?'<span class="badge b-red">Escalated</span>':st==='Notice_Served'?'<span class="badge b-orange">Notice served</span>':st==='In_Progress'?'<span class="badge b-blue">In progress</span>':'<span class="badge b-orange">Open</span>'; }
+function nrbVetBadge(v){ return v==='passed'?'<span class="badge b-green">vetted ✓</span>':v==='pending'?'<span class="badge b-orange">vetting…</span>':v==='failed'?'<span class="badge b-red">failed</span>':'<span class="badge b-gray">—</span>'; }
+function nrbJ(s){ try{ return typeof s==='string'?(s?JSON.parse(s):null):s; }catch(e){ return s; } }
+function demoNrbEnrich(){
+  const units={};(DB.units||[]).forEach(u=>units[u.id]=u);
+  const props={};(DB.properties||[]).forEach(p=>props[p.id]=p);
+  const vc=(DB.nrb_vacancies||[]).map(v=>({...v,unit_name:units[v.unit]?units[v.unit].name:'',prop_name:props[v.prop]?props[v.prop].name:'',showings:(DB.nrb_showings||[]).filter(s=>s.vacancy===v.id).length,channels:nrbJ(v.channels)||[],candidate:nrbJ(v.candidate)||{},days_in_status:0}));
+  const ds=(DB.nrb_disputes||[]).map(d=>({...d,timeline:nrbJ(d.timeline)||[],days_open:0}));
+  return {vc,ds};
+}
+function demoNrbData(){
+  const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+  const scope=arr=>arr.filter(x=>x.owner_email===''||x.owner_email===em);
+  const {vc,ds}=demoNrbEnrich();
+  const tax=scope(DB.nrb_tax_returns||[]);
+  const rp=scope(DB.nrb_repatriations||[]);
+  const vac=scope(vc);
+  const dis=scope(ds);
+  const by=(rows,keys)=>{const o={};keys.forEach(k=>o[k]=0);rows.forEach(r=>o[r.status]=(o[r.status]||0)+1);return o;};
+  return {tax:{rows:tax,by_status:by(tax,['Draft','Filed','Paid'])},
+    repat:{rows:rp,by_status:by(rp,['Requested','Docs_Submitted','Submitted','Approved','Completed','Rejected'])},
+    vacancies:{rows:vac,by_status:by(vac,['Vacant','Marketing','Showing','Vetting','Awaiting_Approval','Filled','Cancelled']),pending_approval:vac.filter(v=>v.status==='Awaiting_Approval').length},
+    showings:(DB.nrb_showings||[]),
+    disputes:{rows:dis,by_status:by(dis,['Open','Notice_Served','In_Progress','Escalated','Resolved','Closed'])},
+    config:{default_ca_firm:'Ahmed & Co. Chartered Accountants',default_advocate:'Adv. Salma Khatun',vacancy_alert_days:30,dispute_alert_days:14}};
+}
+async function nrbLoad(){
+  const host=document.getElementById('nrbLive'); if(!host) return;
+  let d;
+  if(TOKEN&&!DEMO_MODE){
+    d=await apiCall('app-nrb',{action:'summary'});
+    if(!d.ok){ host.innerHTML=`<div class="m">${esc(d.error||'Failed to load')}</div>`; return; }
+  } else { d=demoNrbData(); }
+  state.nrbTab=state.nrbTab||'vac';
+  if(state.nrbTab==='tax') host.innerHTML=nrbTaxHtml(d);
+  else if(state.nrbTab==='ds') host.innerHTML=nrbDsHtml(d);
+  else host.innerHTML=nrbVacHtml(d);
+}
+function nrbTab(t){ state.nrbTab=t; render(); }
+function nrbTaxHtml(d){
+  const tax=d.tax.rows, rp=d.repat.rows;
+  const filed=tax.filter(t=>t.status==='Filed').length, paid=tax.filter(t=>t.status==='Paid').length, draft=tax.filter(t=>t.status==='Draft').length;
+  const activeRp=rp.filter(r=>r.status!=='Completed'&&r.status!=='Rejected');
+  const fxTotal=activeRp.reduce((s,r)=>s+(+r.amount_fx||0),0);
+  let h=statsRow([
+    stat(t('Returns','রিটার্ন'),tax.length,t('on file','ফাইলে'),'','🧾'),
+    stat(t('Filed','দাখিল'),filed,t('by CA','সিএ কর্তৃক'),'up','📄'),
+    stat(t('Draft','খসড়া'),draft,t('estimate ready','আনুমানিক প্রস্তুত'),draft?'warn':'','✏️'),
+    stat(t('Repat in flight','রিপ্যাট চলমান'),activeRp.length,t('≈ '+money(fxTotal)+' FX','প্রায়'),activeRp.length?'warn':'','🌍')
+  ]);
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Tax returns','কর রিটার্ন')}</div><span class="link" onclick="nrbTaxForm()">＋ ${t('New return','নতুন রিটার্ন')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('FY','অর্থবছর')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Income','আয়')}</th><th>${t('TDS','টিডিএস')}</th><th>${t('Est. tax','আনুমানিক কর')}</th><th>${t('CA firm','সিএ ফার্ম')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (tax.map(x=>`<tr><td><span class="c-name">${esc(x.fy||'—')}</span><div class="c-sub">${x.id}</div></td><td>${esc(x.prop||'—')}</td><td>${money(x.rental_income)}</td><td>${money(x.tds_deducted)}</td><td>${money(x.tax_estimate)}</td><td>${esc(x.ca_firm||'—')}</td><td>${nrbTaxBadge(x.status)}</td><td><div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbTaxForm('${esc(x.id)}')">✏️</button>${x.status==='Draft'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbTaxStatus('${esc(x.id)}','Filed')">📄 ${t('File','দাখিল')}</button>`:x.status==='Filed'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbTaxStatus('${esc(x.id)}','Paid')">✅ ${t('Paid','পরিশোধ')}</button>`:''}</div></td></tr>`).join('')
+    || `<tr><td colspan="8" class="m">${t('No tax returns yet.','এখনো কোনো কর রিটার্ন নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🌍</span>${t('Repatriation — Bangladesh Bank / NRP channels','রিপ্যাট্রিয়েশন — বাংলাদেশ ব্যাংক / এনআরপি চ্যানেল')}</div><span class="link" onclick="nrbRepatForm()">＋ ${t('New request','নতুন রিকোয়েস্ট')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Amount','পরিমাণ')}</th><th>${t('FX','বৈদেশিক')}</th><th>${t('Channel','চ্যানেল')}</th><th>${t('Docs','ডকুমেন্ট')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (rp.map(r=>`<tr><td><span class="c-name">${money(r.amount_bdt)}</span><div class="c-sub">${r.id}${r.ref?' · '+esc(r.ref):''}</div></td><td>${r.currency} ${Number(r.amount_fx).toFixed(2)} <div class="c-sub">@ ${r.rate}</div></td><td>${esc(r.bank_channel||'—')} <div class="c-sub">${esc(r.method||'')}</div></td><td>${(nrbJ(r.documents)||[]).map(d=>`<span class="badge b-blue">${esc(d)}</span>`).join(' ')||'—'}</td><td>${nrbRpBadge(r.status)}</td><td><div style="display:flex;gap:4px">${r.status==='Requested'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbRepatDocs('${esc(r.id)}')">📎 ${t('Docs','ডকুমেন্ট')}</button>`:''}${['Requested','Docs_Submitted','Submitted','Approved'].includes(r.status)?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbRepatNext('${esc(r.id)}','${esc(r.status)}')">→</button>`:''}</div></td></tr>`).join('')
+    || `<tr><td colspan="6" class="m">${t('No repatriation requests.','কোনো রিপ্যাট্রিয়েশন রিকোয়েস্ট নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  return h;
+}
+function nrbVacHtml(d){
+  const vc=d.vacancies.rows, bs=d.vacancies.by_status, sh=d.showings||[];
+  const pending=vc.filter(v=>v.status==='Awaiting_Approval');
+  let h=statsRow([
+    stat(t('Tracked','ট্র্যাকড'),vc.length,t('vacancies','ভ্যাক্যান্সি'),'','🏠'),
+    stat(t('Awaiting approval','অনুমোদন বাকি'),d.vacancies.pending_approval,t('press Approve','অ্যাপ্রুভ করুন'),d.vacancies.pending_approval?'warn':'','⏳'),
+    stat(t('Showings','শোকেস'),sh.filter(s=>s.status==='Scheduled').length,t('scheduled','নির্ধারিত'),'','👀'),
+    stat(t('Filled','ভাড়া হয়েছে'),bs.Filled||0,t('signed','চুক্তি সম্পন্ন'),(bs.Filled||0)?'up':'','✅')
+  ]);
+  if(pending.length){
+    h+=`<div class="panel" style="margin-bottom:16px;border-color:#F2C94C"><div class="panel-h"><div class="t"><span class="pi">⏳</span>${t('Awaiting your approval','আপনার অনুমোদন অপেক্ষমাণ')}</div><span class="tagline">${pending.length} ${t('lease(s) ready to sign — approve from your phone','টি লিজ সইয়ের জন্য প্রস্তুত — ফোন থেকে অনুমোদন দিন')}</span></div><div class="panel-b">`+
+      pending.map(v=>`<div class="row-item"><div class="ri-ic">🏠</div><div class="ri-body"><div class="ri-t">${esc(v.unit_name||v.unit)} · ${esc(v.candidate&&v.candidate.name||'—')}</div><div class="c-sub">${esc(v.id)} · ${esc(v.prop_name||v.prop)} · ${money(v.candidate&&v.candidate.rent||v.target_rent)}/mo · ${t('vetting','ভেটিং')} ${esc(v.vet_status)} · ${t('start','শুরু')} ${esc(v.candidate&&v.candidate.start||'—')}</div></div><div class="ri-r"><button class="btn-primary" style="padding:5px 14px;font-size:12px" onclick="nrbApprove('${esc(v.id)}')">✅ ${t('Approve','অনুমোদন')}</button> <button class="btn-ghost" style="padding:5px 10px;font-size:12px" onclick="nrbVacDrawer('${esc(v.id)}')">👁</button></div></div>`).join('')+
+    `</div></div>`;
+  }
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🏠</span>${t('Vacancy pipeline','ভ্যাক্যান্সি পাইপলাইন')}</div><span class="link" onclick="nrbVacForm()">＋ ${t('New vacancy','নতুন ভ্যাক্যান্সি')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Unit','ইউনিট')}</th><th>${t('Property','সম্পত্তি')}</th><th>${t('Target rent','প্রস্তাবিত ভাড়া')}</th><th>${t('Channels','চ্যানেল')}</th><th>${t('Showings','দর্শন')}</th><th>${t('Candidate','প্রার্থী')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (vc.map(v=>`<tr><td><span class="c-name">${esc(v.unit_name||v.unit)}</span><div class="c-sub">${v.id}</div></td><td>${esc(v.prop_name||v.prop||'—')}</td><td>${money(v.target_rent)}</td><td>${(v.channels||[]).map(c=>`<span class="badge b-blue">${esc(c)}</span>`).join(' ')||'—'}</td><td>${v.showings||0}</td><td>${v.candidate&&v.candidate.name?esc(v.candidate.name)+' '+nrbVetBadge(v.vet_status):'—'}</td><td>${nrbVcBadge(v.status)}</td><td><div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbVacDrawer('${esc(v.id)}')">👁</button>${v.status!=='Filled'&&v.status!=='Cancelled'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbShowForm('${esc(v.id)}')">📅</button>`:''}</div></td></tr>`).join('')
+    || `<tr><td colspan="8" class="m">${t('No vacancies tracked.','কোনো ভ্যাক্যান্সি নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  const upcoming=sh.filter(s=>s.status==='Scheduled').sort((a,b)=>(a.scheduled_at||'').localeCompare(b.scheduled_at||''));
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">👀</span>${t('Upcoming showings','আসন্ন শোকেস')}</div></div><div class="panel-b">`+
+    (upcoming.map(s=>{ const v=vc.find(x=>x.id===s.vacancy); return `<div class="row-item"><div class="ri-ic">👀</div><div class="ri-body"><div class="ri-t">${esc(s.prospect)} · ${esc(v?v.unit_name||v.unit:s.vacancy)}</div><div class="c-sub">${esc(s.id)} · ${esc(s.scheduled_at)} · ${esc(s.phone||'')}</div></div><div class="ri-r"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbShowStatus('${esc(s.id)}','Done')">✅</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbShowStatus('${esc(s.id)}','No_Show')">✕</button></div></div>`; }).join('')
+    || `<div class="c-sub">${t('No showings scheduled.','কোনো শোকেস নির্ধারিত নেই।')}</div>`)
+    +`</div></div>`;
+  return h;
+}
+function nrbDsHtml(d){
+  const ds=d.disputes.rows;
+  const open=ds.filter(x=>!['Resolved','Closed'].includes(x.status));
+  const ev=ds.filter(x=>x.dtype==='eviction');
+  let h=statsRow([
+    stat(t('Disputes','বিরোধ'),ds.length,t('tracked','ট্র্যাকড'),'','⚖️'),
+    stat(t('Open','খোলা'),open.length,t('with advocate','অ্যাডভোকেটসহ'),open.length?'warn':'','📂'),
+    stat(t('Evictions','উচ্ছেদ'),ev.length,t('notice-driven','নোটিশ প্রক্রিয়া'),ev.length?'warn':'','🚪'),
+    stat(t('Legal fees','আইনি ব্যয়'),money(ds.reduce((s,x)=>s+(+x.fee||0),0)),t('committed','নির্ধারিত'),'','💰')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚖️</span>${t('Virtual dispute resolution','ভার্চুয়াল বিরোধ নিষ্পত্তি')}</div><span class="link" onclick="nrbDsForm()">＋ ${t('New dispute','নতুন বিরোধ')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Dispute','বিরোধ')}</th><th>${t('Tenant','ভাড়াটিয়া')}</th><th>${t('Type','ধরন')}</th><th>${t('Advocate','অ্যাডভোকেট')}</th><th>${t('Notice','নোটিশ')}</th><th>${t('Next action','পরবর্তী পদক্ষেপ')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (ds.map(x=>`<tr><td><span class="c-name">${x.id}</span><div class="c-sub">${esc(x.unit||'')}</div></td><td>${esc(x.tenant||'—')}</td><td>${esc(x.dtype)}</td><td>${esc(x.advocate||'—')}</td><td>${x.notice_ref?`<span class="badge b-blue">${esc(x.notice_ref)}</span>`:'—'}</td><td>${esc(x.next_action||'—')}</td><td>${nrbDsBadge(x.status)}</td><td><div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="nrbDsDrawer('${esc(x.id)}')">👁</button></div></td></tr>`).join('')
+    || `<tr><td colspan="8" class="m">${t('No disputes tracked.','কোনো বিরোধ নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  return h;
+}
+function nrbTaxForm(id){
+  const row=id?(DB.nrb_tax_returns||[]).find(t=>t.id===id)||{}:{};
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Financial year','অর্থবছর')} *</label><input id="txFy" value="${esc(row.fy||'2026-27')}" placeholder="e.g. 2026-27"></div>
+    <div class="form-field full"><label>${t('Property','সম্পত্তি')}</label><select id="txProp"><option value="">${t('— none —','— নেই —')}</option>${(DB.properties||[]).map(p=>`<option value="${esc(p.id)}" ${row.prop===p.id?'selected':''}>${esc(p.name)} (${esc(p.id)})</option>`).join('')}</select></div>
+    <div class="form-field"><label>${t('Rental income (৳)','ভাড়া আয় (৳)')} *</label><input id="txIncome" type="number" min="0" value="${row.rental_income||''}"></div>
+    <div class="form-field"><label>${t('TDS deducted (৳)','কাটা টিডিএস (৳)')}</label><input id="txTds" type="number" min="0" value="${row.tds_deducted||''}"></div>
+    <div class="form-field full"><label>${t('CA firm','সিএ ফার্ম')}</label><input id="txCa" value="${esc(row.ca_firm||'')}"></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><textarea id="txNotes" rows="2">${esc(row.notes||'')}</textarea></div>
+  </div>`;
+  openDrawer(t('Tax return','কর রিটার্ন')+(id?' — '+id:''), body,
+    `<button class="btn-primary" onclick="nrbTaxSave('${id||''}')">${t('Save','সেভ')}</button>`);
+}
+async function nrbTaxSave(id){
+  const payload={action:id?'tax-save':'tax-create',fy:val('txFy'),prop:val('txProp'),rental_income:+val('txIncome')||0,tds_deducted:+val('txTds')||0,ca_firm:val('txCa'),notes:val('txNotes')};
+  if(id) payload.id=id;
+  let d;
+  if(DEMO_MODE){
+    const est=Math.max(0,Math.round((+val('txIncome')||0)*0.13)-(+val('txTds')||0));
+    if(id){ const r=(DB.nrb_tax_returns||[]).find(x=>x.id===id); if(r){ r.fy=val('txFy'); r.prop=val('txProp'); r.rental_income=+val('txIncome')||0; r.tds_deducted=+val('txTds')||0; r.tax_estimate=est; r.ca_firm=val('txCa'); r.notes=val('txNotes'); } }
+    else { (DB.nrb_tax_returns||[]).push({id:'TX-1'+(DB.nrb_tax_returns||[]).length,owner_email:(LIVE.user&&LIVE.user.email)||'owner@krtaker.com',prop:val('txProp'),fy:val('txFy'),rental_income:+val('txIncome')||0,tds_deducted:+val('txTds')||0,tax_estimate:est,status:'Draft',ca_firm:val('txCa'),ca_ref:'',filing_date:'',paid_date:'',notes:val('txNotes'),ts:new Date().toISOString().slice(0,16),updated_at:new Date().toISOString().slice(0,16)}); }
+    d={ok:true,tax_estimate:est};
+  } else { d=await apiCall('app-nrb',payload); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(id?t('Tax return updated','কর রিটার্ন আপডেট হয়েছে'):t('Tax return created — est. ','কর রিটার্ন তৈরি — আনুমানিক ')+'৳'+(d.tax_estimate||0));
+  closeDrawer(); if(state.view==='nrb') render();
+}
+async function nrbTaxStatus(id,st){
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.nrb_tax_returns||[]).find(x=>x.id===id); if(r){ r.status=st; if(st==='Filed'&&!r.filing_date) r.filing_date=new Date().toISOString().slice(0,10); if(st==='Paid') r.paid_date=new Date().toISOString().slice(0,10); }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',{action:'tax-status',id,status:st}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Tax return','কর রিটার্ন')+' → '+st); if(state.view==='nrb') render();
+}
+function nrbRepatForm(){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Amount (৳)','পরিমাণ (৳)')} *</label><input id="rpAmt" type="number" min="1" placeholder="420000"></div>
+    <div class="form-field"><label>${t('FX rate','বিনিময় হার')} *</label><input id="rpRate" type="number" step="0.01" min="0.01" placeholder="121.5"></div>
+    <div class="form-field"><label>${t('Currency','মুদ্রা')}</label><select id="rpCur"><option value="USD">USD</option><option value="GBP">GBP</option><option value="EUR">EUR</option><option value="AED">AED</option><option value="SAR">SAR</option></select></div>
+    <div class="form-field"><label>${t('Method','পদ্ধতি')}</label><select id="rpMethod"><option>SWIFT</option><option>bKash</option><option>Remitly</option><option>Western Union</option><option>Other</option></select></div>
+    <div class="form-field full"><label>${t('Bank channel','ব্যাংক চ্যানেল')}</label><select id="rpChan"><option value="NRP_Account">NRP Account</option><option value="BB_Approval">Bangladesh Bank approval</option><option value="Overseas_Transfer">Overseas transfer</option></select></div>
+    <div class="form-field full"><label>${t('Reference','রেফারেন্স')}</label><input id="rpRef" placeholder="BB/NRP/2026/…"></div>
+  </div><div class="c-sub" id="rpFxPrev"></div>`;
+  openDrawer(t('Repatriation request','রিপ্যাট্রিয়েশন রিকোয়েস্ট'), body,
+    `<button class="btn-primary" onclick="nrbRepatSave()">${t('Request','রিকোয়েস্ট')}</button>`);
+  setTimeout(()=>{ const amt=document.getElementById('rpAmt'),rate=document.getElementById('rpRate');
+    const upd=()=>{ const a=+amt.value||0, r=+rate.value||0; const fx=document.getElementById('rpFxPrev');
+      if(fx) fx.textContent=a&&r?t('≈ ','প্রায় ')+document.getElementById('rpCur').value+' '+(a/r).toFixed(2):''; };
+    amt.oninput=upd; rate.oninput=upd; },0);
+}
+async function nrbRepatSave(){
+  let d;
+  if(DEMO_MODE){
+    const amt=+val('rpAmt')||0, rate=+val('rpRate')||0;
+    (DB.nrb_repatriations||[]).push({id:'RP-1'+(DB.nrb_repatriations||[]).length,owner_email:(LIVE.user&&LIVE.user.email)||'owner@krtaker.com',amount_bdt:amt,amount_fx:rate?Math.round(amt/rate*100)/100:0,rate:rate,currency:val('rpCur')||'USD',method:val('rpMethod')||'SWIFT',bank_channel:val('rpChan')||'NRP_Account',documents:[],status:'Requested',ref:val('rpRef'),submitted_at:'',approved_at:'',completed_at:'',ts:new Date().toISOString().slice(0,16),updated_at:new Date().toISOString().slice(0,16)});
+    d={ok:true,amount_fx:rate?Math.round(amt/rate*100)/100:0};
+  } else { d=await apiCall('app-nrb',{action:'repat-create',amount_bdt:+val('rpAmt')||0,rate:+val('rpRate')||0,currency:val('rpCur')||'USD',method:val('rpMethod')||'SWIFT',bank_channel:val('rpChan')||'NRP_Account',ref:val('rpRef')}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Repatriation requested 🌍','রিপ্যাট্রিয়েশন রিকোয়েস্ট করা হয়েছে 🌍')+' — '+(d.amount_fx||0)+' '+(val('rpCur')||'USD')); closeDrawer(); if(state.view==='nrb') render();
+}
+async function nrbRepatNext(id,st){
+  const next={Requested:'Docs_Submitted',Docs_Submitted:'Submitted',Submitted:'Approved',Approved:'Completed'}[st];
+  if(!next) return;
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.nrb_repatriations||[]).find(x=>x.id===id); if(r){ r.status=next; const today=new Date().toISOString().slice(0,10); if(next==='Submitted'&&!r.submitted_at) r.submitted_at=today; if(next==='Approved') r.approved_at=today; if(next==='Completed') r.completed_at=today; }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',{action:'repat-status',id,status:next}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Repatriation','রিপ্যাট্রিয়েশন')+' → '+next); if(state.view==='nrb') render();
+}
+function nrbRepatDocs(id){
+  const row=(DB.nrb_repatriations||[]).find(r=>r.id===id)||{};
+  const docs=nrbJ(row.documents)||[];
+  const body=`<div class="c-sub" style="margin-bottom:8px">${t('Attach document names (Form C, tax clearance, deed…)','ডকুমেন্টের নাম দিন (ফর্ম সি, ট্যাক্স ক্লিয়ারেন্স, দলিল…)')}</div><div id="repDocs">`+
+    (docs.map((d,i)=>`<div style="display:flex;gap:6px;margin-bottom:6px"><input id="rd${i}" value="${esc(d)}" style="flex:1"><button class="btn-ghost" onclick="this.parentElement.remove()">✕</button></div>`).join('')
+    || `<div style="display:flex;gap:6px;margin-bottom:6px"><input id="rd0" style="flex:1" placeholder="Form C"></div>`)+
+    `</div><button class="btn-ghost" style="margin-top:4px" onclick="const w=document.getElementById('repDocs');const i=w.children.length;w.insertAdjacentHTML('beforeend','<div style=\\"display:flex;gap:6px;margin-bottom:6px\\"><input id=\\"rd'+i+'\\" style=\\"flex:1\\"></div>')">＋ ${t('Add','যোগ')}</button>`;
+  openDrawer(t('Repatriation documents','রিপ্যাট্রিয়েশন ডকুমেন্ট')+' — '+id, body,
+    `<button class="btn-primary" onclick="nrbRepatDocsSave('${id}')">${t('Save','সেভ')}</button>`);
+}
+async function nrbRepatDocsSave(id){
+  const wrap=document.getElementById('repDocs');
+  const docs=[...wrap.querySelectorAll('input')].map(i=>i.value.trim()).filter(Boolean);
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.nrb_repatriations||[]).find(x=>x.id===id); if(r){ r.documents=docs; if(r.status==='Requested') r.status='Docs_Submitted'; }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',{action:'repat-docs',id,documents:docs}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Documents added','ডকুমেন্ট যোগ হয়েছে')); closeDrawer(); if(state.view==='nrb') render();
+}
+function nrbVacForm(){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Property','সম্পত্তি')} *</label><select id="vcProp"><option value="">—</option>${(DB.properties||[]).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></div>
+    <div class="form-field"><label>${t('Unit','ইউনিট')} *</label><select id="vcUnit"><option value="">—</option>${(DB.units||[]).map(u=>`<option value="${esc(u.id)}">${esc(u.name)} (${esc(u.id)})</option>`).join('')}</select></div>
+    <div class="form-field full"><label>${t('Target rent (৳)','প্রস্তাবিত ভাড়া (৳)')}</label><input id="vcRent" type="number" min="0" placeholder="32000"></div>
+    <div class="form-field"><label>${t('Channels','চ্যানেল')}</label><input id="vcChan" placeholder="Bikroy, PropertyBarta"></div>
+    <div class="form-field"><label>${t('Tenant left','আগের ভাড়াটিয়া')}</label><input id="vcLeft" placeholder="T-003 (moved out)"></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><textarea id="vcNotes" rows="2"></textarea></div>
+  </div>`;
+  openDrawer(t('New vacancy','নতুন ভ্যাক্যান্সি'), body,
+    `<button class="btn-primary" onclick="nrbVacSave()">${t('Create','তৈরি করুন')}</button>`);
+}
+async function nrbVacSave(){
+  const channels=val('vcChan').split(',').map(s=>s.trim()).filter(Boolean);
+  let d;
+  if(DEMO_MODE){
+    const nid='VC-1'+(DB.nrb_vacancies||[]).length;
+    (DB.nrb_vacancies||[]).push({id:nid,owner_email:(LIVE.user&&LIVE.user.email)||'owner@krtaker.com',prop:val('vcProp'),unit:val('vcUnit'),status:'Vacant',started_at:new Date().toISOString().slice(0,10),tenant_left:val('vcLeft'),target_rent:+val('vcRent')||0,channels,candidate:{},vet_status:'none',approved_at:'',notes:val('vcNotes'),ts:new Date().toISOString().slice(0,16),updated_at:new Date().toISOString().slice(0,16)});
+    d={ok:true,id:nid};
+  } else { d=await apiCall('app-nrb',{action:'vacancy-create',prop:val('vcProp'),unit:val('vcUnit'),target_rent:+val('vcRent')||0,channels,tenant_left:val('vcLeft'),notes:val('vcNotes')}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Vacancy registered','ভ্যাক্যান্সি নিবন্ধিত হয়েছে')+' — '+(d.id||'')); closeDrawer(); if(state.view==='nrb') render();
+}
+async function nrbVacDrawer(id){
+  let v;
+  if(TOKEN&&!DEMO_MODE){
+    const d=await apiCall('app-nrb',{action:'vacancy-list'});
+    if(!d.ok){ toast(d.error||'Failed'); return; }
+    v=(d.rows||[]).find(x=>x.id===id);
+    const s=await apiCall('app-nrb',{action:'showing-list'});
+    v._showings=(s.rows||[]).filter(x=>x.vacancy===id);
+  } else {
+    v=(demoNrbEnrich().vc).find(x=>x.id===id)||{};
+    v._showings=(DB.nrb_showings||[]).filter(x=>x.vacancy===id);
+  }
+  if(!v){ toast('Not found'); return; }
+  const c=v.candidate||{};
+  const isAwaiting=v.status==='Awaiting_Approval';
+  const body=`<div style="margin-bottom:10px"><div class="c-name" style="font-size:16px">${esc(v.unit_name||v.unit)} <span class="c-sub">${esc(v.id)}</span></div><div class="c-sub">${esc(v.prop_name||v.prop||'')} · target ${money(v.target_rent)}/mo · started ${esc(v.started_at||'—')}</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${nrbVcBadge(v.status)}${v.channels&&v.channels.length?v.channels.map(c=>`<span class="badge b-blue">${esc(c)}</span>`).join(''):''}${v.listing_url?`<a class="badge b-green" href="${esc(v.listing_url)}" target="_blank">listing ↗</a>`:''}</div>
+    ${v.tenant_left?`<div class="c-sub" style="margin-bottom:10px">${t('Previous tenant','আগের ভাড়াটিয়া')}: ${esc(v.tenant_left)}</div>`:''}
+    <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">👤</span>${t('Candidate','প্রার্থী')} ${nrbVetBadge(v.vet_status)}</div>${v.status!=='Filled'&&v.status!=='Cancelled'?`<span class="link" onclick="nrbCandidateForm('${esc(v.id)}')">✏️ ${t('Set','সেট করুন')}</span>`:''}</div><div class="panel-b">`+
+    (c.name?`<div class="row-item"><div class="ri-ic">👤</div><div class="ri-body"><div class="ri-t">${esc(c.name)}</div><div class="c-sub">${esc(c.phone||'')}${c.email?' · '+esc(c.email):''}${c.nid?' · NID '+esc(c.nid):''}</div><div class="c-sub">${money(c.rent)}/mo · ${esc(c.start||'—')} · ${c.months||12} ${t('months','মাস')} · advance ${money(c.advance||0)}</div></div></div>`
+      :`<div class="c-sub">${t('No candidate yet — market the unit and log showings.','এখনো কোনো প্রার্থী নেই — ইউনিট মার্কেটিং করুন এবং শোকেস লগ করুন।')}</div>`)+
+    `</div></div>
+    <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">👀</span>${t('Showings','শোকেস')} (${v._showings.length})</div>${v.status!=='Filled'&&v.status!=='Cancelled'?`<span class="link" onclick="nrbShowForm('${esc(v.id)}')">＋ ${t('Add','যোগ')}</span>`:''}</div><div class="panel-b">`+
+    (v._showings.map(s=>`<div class="row-item"><div class="ri-ic">👀</div><div class="ri-body"><div class="ri-t">${esc(s.prospect)} ${nrbShBadge(s.status)}</div><div class="c-sub">${esc(s.id)} · ${esc(s.scheduled_at)} · ${esc(s.phone||'')}${s.feedback?' · "'+esc(s.feedback)+'"':''}${s.rating?' · ★'.repeat(s.rating):''}</div></div>${s.status==='Scheduled'?`<div class="ri-r"><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nrbShowDone('${esc(s.id)}')">✅</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nrbShowStatus('${esc(s.id)}','No_Show')">✕</button></div>`:''}</div>`).join('')
+    || `<div class="c-sub">${t('No showings yet.','এখনো কোনো শোকেস নেই।')}</div>`)+
+    `</div></div>
+    ${v.notes?`<div class="c-sub">${t('Notes','নোট')}: ${esc(v.notes)}</div>`:''}`;
+  const foot=isAwaiting?`<button class="btn-primary" onclick="nrbApprove('${esc(v.id)}')">✅ ${t('Approve & sign lease','অনুমোদন ও লিজ সই')}</button> `:'';
+  const foot2=v.status!=='Filled'&&v.status!=='Cancelled'?`<button class="btn-ghost" onclick="nrbVacStatus('${esc(v.id)}','Cancelled')">${t('Cancel vacancy','ভ্যাক্যান্সি বাতিল')}</button>`:'';
+  openDrawer(t('Vacancy','ভ্যাক্যান্সি')+' — '+id, body, foot+foot2);
+}
+function nrbCandidateForm(id){
+  const v=(DB.nrb_vacancies||[]).find(x=>x.id===id)||{};
+  const c=v.candidate||{};
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Candidate name','প্রার্থীর নাম')} *</label><input id="cName" value="${esc(c.name||'')}"></div>
+    <div class="form-field"><label>${t('Phone','ফোন')}</label><input id="cPhone" value="${esc(c.phone||'')}"></div>
+    <div class="form-field"><label>${t('Email','ইমেইল')}</label><input id="cEmail" value="${esc(c.email||'')}"></div>
+    <div class="form-field full"><label>${t('NID','এনআইডি')}</label><input id="cNid" value="${esc(c.nid||'')}"></div>
+    <div class="form-field"><label>${t('Rent (৳)','ভাড়া (৳)')}</label><input id="cRent" type="number" min="0" value="${c.rent||v.target_rent||''}"></div>
+    <div class="form-field"><label>${t('Advance (৳)','অগ্রিম (৳)')}</label><input id="cAdv" type="number" min="0" value="${c.advance||''}"></div>
+    <div class="form-field"><label>${t('Start date','শুরুর তারিখ')}</label><input id="cStart" type="date" value="${esc(c.start||'')}"></div>
+    <div class="form-field"><label>${t('Months','মাস')}</label><input id="cMonths" type="number" min="1" max="36" value="${c.months||12}"></div>
+    <div class="form-field full"><label>${t('Vetting status','ভেটিং স্ট্যাটাস')}</label><select id="cVet"><option value="none" ${v.vet_status==='none'?'selected':''}>${t('Not vetted','ভেট করা হয়নি')}</option><option value="pending" ${v.vet_status==='pending'?'selected':''}>${t('Vetting…','ভেটিং চলছে…')}</option><option value="passed" ${v.vet_status==='passed'?'selected':''}>${t('Passed ✓','পাস ✓')}</option><option value="failed" ${v.vet_status==='failed'?'selected':''}>${t('Failed','ফেল')}</option></select></div>
+  </div>`;
+  openDrawer(t('Candidate & vetting','প্রার্থী ও ভেটিং')+' — '+id, body,
+    `<button class="btn-primary" onclick="nrbCandidateSave('${id}')">${t('Save','সেভ')}</button>`);
+}
+async function nrbCandidateSave(id){
+  let d;
+  if(DEMO_MODE){
+    const v=(DB.nrb_vacancies||[]).find(x=>x.id===id); if(v){ v.candidate={name:val('cName'),phone:val('cPhone'),email:val('cEmail'),nid:val('cNid'),rent:+val('cRent')||0,start:val('cStart'),months:Math.max(1,Math.min(36,+val('cMonths')||12)),advance:+val('cAdv')||0}; v.vet_status=val('cVet'); }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',{action:'vacancy-candidate',id,candidate:{name:val('cName'),phone:val('cPhone'),email:val('cEmail'),nid:val('cNid'),rent:+val('cRent')||0,start:val('cStart'),months:Math.max(1,Math.min(36,+val('cMonths')||12)),advance:+val('cAdv')||0},vet_status:val('cVet')}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Candidate updated','প্রার্থী আপডেট হয়েছে')); closeDrawer(); if(state.view==='nrb') render();
+}
+async function nrbVacStatus(id,st){
+  let d;
+  if(DEMO_MODE){
+    const v=(DB.nrb_vacancies||[]).find(x=>x.id===id); if(v){ v.status=st; v.updated_at=new Date().toISOString().slice(0,16); }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',{action:'vacancy-status',id,status:st}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Vacancy','ভ্যাক্যান্সি')+' → '+st); closeDrawer(); if(state.view==='nrb') render();
+}
+async function nrbApprove(id){
+  if(!confirm(t('Approve this candidate and sign the lease? The tenant, lease, handover and first invoice will be created automatically.','এই প্রার্থীকে অনুমোদন করে লিজ সই করবেন? ভাড়াটিয়া, লিজ, হ্যান্ডওভার ও প্রথম ইনভয়েস স্বয়ংক্রিয়ভাবে তৈরি হবে।'))) return;
+  let d;
+  if(DEMO_MODE){
+    const v=(DB.nrb_vacancies||[]).find(x=>x.id===id);
+    if(v){ v.status='Filled'; v.approved_at=new Date().toISOString().slice(0,10); }
+    const u=(DB.units||[]).find(x=>x.id===(v?v.unit:''));
+    if(u) u.status='Leased';
+    const tn=(DB.tenants||[]).length+1;
+    const tx=(DB.leases||[]).length+1;
+    const iid='INV-2026-0'+(900+tn);
+    (DB.tenants||[]).push({id:'T-1'+tn,name:(v&&v.candidate&&v.candidate.name)||'New Tenant',phone:'',email:'',nid:'',nrb:0,kind:'Individual',sub_email:(v&&v.candidate&&v.candidate.email)||''});
+    (DB.leases||[]).push({id:'L-1'+tx,u:v?v.unit:'',t:'T-1'+tn,start:(v&&v.candidate&&v.candidate.start)||new Date().toISOString().slice(0,10),end:'',rent:(v&&v.candidate&&v.candidate.rent)||(v?v.target_rent:0),adv:(v&&v.candidate&&v.candidate.advance)||0,res:1,status:'Active'});
+    (DB.invoices||[]).push({id:iid,l:'L-1'+tx,m:new Date().toISOString().slice(0,7),gross:(v&&v.candidate&&v.candidate.rent)||(v?v.target_rent:0),tds:0,net:(v&&v.candidate&&v.candidate.rent)||(v?v.target_rent:0),status:'Unpaid'});
+    d={ok:true,tenant:'T-1'+tn,lease:'L-1'+tx,handover:'HOV-'+(900+tn),invoice:iid};
+  } else { d=await apiCall('app-nrb',{action:'vacancy-approve',id}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Lease signed 🎉','লিজ সই হয়েছে 🎉')+' — '+(d.tenant||'')+' '+(d.lease||'')+' '+(d.invoice||''));
+  closeDrawer(); if(state.view==='nrb'){ render(); }
+}
+function nrbShowForm(vid){
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Prospect name','আগ্রহী প্রার্থীর নাম')} *</label><input id="shName" placeholder="e.g. Farhana Akter"></div>
+    <div class="form-field"><label>${t('Phone','ফোন')}</label><input id="shPhone"></div>
+    <div class="form-field"><label>${t('Date','তারিখ')}</label><input id="shDate" type="date"></div>
+  </div>`;
+  openDrawer(t('Schedule showing','শোকেস নির্ধারণ'), body,
+    `<button class="btn-primary" onclick="nrbShowSave('${vid}')">${t('Schedule','নির্ধারণ')}</button>`);
+}
+async function nrbShowSave(vid){
+  let d;
+  if(DEMO_MODE){
+    const nid='SH-1'+(DB.nrb_showings||[]).length;
+    (DB.nrb_showings||[]).push({id:nid,vacancy:vid,prospect:val('shName'),phone:val('shPhone'),scheduled_at:val('shDate')||new Date().toISOString().slice(0,10),status:'Scheduled',feedback:'',rating:0,ts:new Date().toISOString().slice(0,16)});
+    d={ok:true,id:nid};
+  } else { d=await apiCall('app-nrb',{action:'showing-create',vacancy:vid,prospect:val('shName'),phone:val('shPhone'),scheduled_at:val('shDate')}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Showing scheduled','শোকেস নির্ধারিত হয়েছে')+' — '+(d.id||'')); closeDrawer(); if(state.view==='nrb') render();
+}
+async function nrbShowDone(id){
+  const body=`<div class="form-field"><label>${t('Feedback','মতামত')}</label><textarea id="shFb" rows="2"></textarea></div>
+    <div class="form-field"><label>${t('Rating (1–5)','রেটিং (১–৫)')}</label><input id="shRt" type="number" min="1" max="5" value="5"></div>`;
+  openDrawer(t('Complete showing','শোকেস সম্পন্ন'), body,
+    `<button class="btn-primary" onclick="nrbShowDoneSave('${id}')">${t('Complete','সম্পন্ন')}</button>`);
+}
+async function nrbShowDoneSave(id){
+  let d;
+  if(DEMO_MODE){
+    const s=(DB.nrb_showings||[]).find(x=>x.id===id); if(s){ s.status='Done'; s.feedback=val('shFb')||s.feedback; s.rating=Math.max(1,Math.min(5,+val('shRt')||5)); }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',{action:'showing-status',id,status:'Done',feedback:val('shFb'),rating:+val('shRt')||5}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Showing completed','শোকেস সম্পন্ন হয়েছে')); closeDrawer(); if(state.view==='nrb') render();
+}
+async function nrbShowStatus(id,st){
+  let d;
+  if(DEMO_MODE){
+    const s=(DB.nrb_showings||[]).find(x=>x.id===id); if(s){ s.status=st; if(st==='No_Show') s.feedback='No show'; }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',{action:'showing-status',id,status:st}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Showing','শোকেস')+' → '+st); if(state.view==='nrb') render();
+}
+function nrbDsForm(){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Property','সম্পত্তি')}</label><select id="dsProp"><option value="">—</option>${(DB.properties||[]).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></div>
+    <div class="form-field"><label>${t('Unit','ইউনিট')}</label><select id="dsUnit"><option value="">—</option>${(DB.units||[]).map(u=>`<option value="${esc(u.id)}">${esc(u.name)}</option>`).join('')}</select></div>
+    <div class="form-field full"><label>${t('Tenant','ভাড়াটিয়া')} *</label><input id="dsTenant" placeholder="T-004 (refusing to vacate)"></div>
+    <div class="form-field"><label>${t('Type','ধরন')}</label><select id="dsType"><option value="eviction">${t('Eviction','উচ্ছেদ')}</option><option value="damages">${t('Damages','ক্ষতি')}</option><option value="arrears">${t('Rent arrears','বকেয়া ভাড়া')}</option><option value="other">${t('Other','অন্যান্য')}</option></select></div>
+    <div class="form-field"><label>${t('Advocate fee (৳)','অ্যাডভোকেট ফি (৳)')}</label><input id="dsFee" type="number" min="0" value="15000"></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><textarea id="dsNotes" rows="2" placeholder="What happened?"></textarea></div>
+  </div>`;
+  openDrawer(t('Open dispute','নতুন বিরোধ'), body,
+    `<button class="btn-primary" onclick="nrbDsSave()">${t('Open','খুলুন')}</button>`);
+}
+async function nrbDsSave(){
+  let d;
+  if(DEMO_MODE){
+    const nid='DS-1'+(DB.nrb_disputes||[]).length;
+    (DB.nrb_disputes||[]).push({id:nid,owner_email:(LIVE.user&&LIVE.user.email)||'owner@krtaker.com',prop:val('dsProp'),unit:val('dsUnit'),tenant:val('dsTenant'),dtype:val('dsType'),advocate:'Adv. Salma Khatun — Bar Council 4451',fee:+val('dsFee')||0,status:'Open',notice_ref:'',last_update:'Dispute opened',next_action:'',timeline:[{ts:new Date().toISOString().slice(0,19).replace('T',' '),action:'Dispute opened — '+(val('dsNotes')||'case registered'),by:(LIVE.user&&LIVE.user.name)||'Owner'}],ts:new Date().toISOString().slice(0,16),updated_at:new Date().toISOString().slice(0,16)});
+    d={ok:true,id:nid};
+  } else { d=await apiCall('app-nrb',{action:'dispute-create',prop:val('dsProp'),unit:val('dsUnit'),tenant:val('dsTenant'),dtype:val('dsType'),fee:+val('dsFee')||0,notes:val('dsNotes')}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Dispute opened','বিরোধ খোলা হয়েছে')+' — '+(d.id||'')); closeDrawer(); if(state.view==='nrb') render();
+}
+async function nrbDsDrawer(id){
+  let x;
+  if(TOKEN&&!DEMO_MODE){
+    const d=await apiCall('app-nrb',{action:'dispute-list'});
+    if(!d.ok){ toast(d.error||'Failed'); return; }
+    x=(d.rows||[]).find(r=>r.id===id);
+  } else {
+    x=(demoNrbEnrich().ds).find(r=>r.id===id)||{};
+  }
+  if(!x){ toast('Not found'); return; }
+  const locked=['Resolved','Closed'].includes(x.status);
+  const steps=['Open','Notice_Served','In_Progress','Escalated','Resolved','Closed'];
+  const ci=steps.indexOf(x.status);
+  const body=`<div style="margin-bottom:10px"><div class="c-name" style="font-size:16px">${esc(x.id)} · ${esc(x.dtype)} <span class="c-sub">${esc(x.unit||'')}</span></div><div class="c-sub">${t('Tenant','ভাড়াটিয়া')}: ${esc(x.tenant||'—')} · ${t('days open','দিন ধরে খোলা')}: ${x.days_open||0}</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${nrbDsBadge(x.status)}${x.notice_ref?`<span class="badge b-blue">${esc(x.notice_ref)}</span>`:''}</div>
+    <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">🧑‍⚖️</span>${t('Advocate','অ্যাডভোকেট')}</div></div><div class="panel-b"><div class="row-item"><div class="ri-ic">🧑‍⚖️</div><div class="ri-body"><div class="ri-t">${esc(x.advocate||'—')}</div><div class="c-sub">${t('Fee','ফি')}: ${money(x.fee||0)}</div></div></div><div class="row-item"><div class="ri-ic">📌</div><div class="ri-body"><div class="ri-t">${t('Last update','সর্বশেষ আপডেট')}</div><div class="c-sub">${esc(x.last_update||'—')}</div></div></div><div class="row-item"><div class="ri-ic">➡️</div><div class="ri-body"><div class="ri-t">${t('Next action','পরবর্তী পদক্ষেপ')}</div><div class="c-sub">${esc(x.next_action||'—')}</div></div></div></div></div>
+    <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">📜</span>${t('Timeline','টাইমলাইন')}</div>${locked?'':`<span class="link" onclick="nrbDsEvent('${esc(x.id)}')">＋ ${t('Add event','ইভেন্ট যোগ')}</span>`}</div><div class="panel-b">`+
+    ((x.timeline||[]).map(e=>`<div class="row-item"><div class="ri-ic">•</div><div class="ri-body"><div class="ri-t">${esc(e.action)}</div><div class="c-sub">${esc(e.ts||'')}${e.by?' · '+esc(e.by):''}</div></div></div>`).join('')
+    || `<div class="c-sub">${t('No events yet.','এখনো কোনো ইভেন্ট নেই।')}</div>`)+
+    `</div></div>`;
+  let foot='';
+  if(!locked){
+    const nxt=steps[ci+1];
+    foot+=`<button class="btn-primary" onclick="nrbDsStatus('${esc(x.id)}','${nxt}')">${t('Move to','পরবর্তী')}: ${esc(nxt.replace(/_/g,' '))}</button> `;
+    foot+=`<button class="btn-ghost" onclick="nrbDsEdit('${esc(x.id)}')">✏️</button>`;
+  }
+  openDrawer(t('Dispute','বিরোধ')+' — '+id, body, foot);
+}
+function nrbDsEdit(id){
+  const x=(DB.nrb_disputes||[]).find(r=>r.id===id)||{};
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Advocate','অ্যাডভোকেট')}</label><input id="dsAdv" value="${esc(x.advocate||'')}"></div>
+    <div class="form-field"><label>${t('Fee (৳)','ফি (৳)')}</label><input id="dsFee2" type="number" min="0" value="${x.fee||''}"></div>
+    <div class="form-field"><label>${t('Notice ref','নোটিশ রেফ')}</label><input id="dsNr" value="${esc(x.notice_ref||'')}"></div>
+    <div class="form-field full"><label>${t('Last update','সর্বশেষ আপডেট')}</label><input id="dsLu" value="${esc(x.last_update||'')}"></div>
+    <div class="form-field full"><label>${t('Next action','পরবর্তী পদক্ষেপ')}</label><textarea id="dsNa" rows="2">${esc(x.next_action||'')}</textarea></div>
+  </div>`;
+  openDrawer(t('Edit dispute','বিরোধ সম্পাদনা'), body,
+    `<button class="btn-primary" onclick="nrbDsEditSave('${id}')">${t('Save','সেভ')}</button>`);
+}
+async function nrbDsEditSave(id){
+  let d;
+  if(DEMO_MODE){
+    const x=(DB.nrb_disputes||[]).find(r=>r.id===id); if(x){ x.advocate=val('dsAdv'); x.fee=+val('dsFee2')||0; x.notice_ref=val('dsNr'); x.last_update=val('dsLu'); x.next_action=val('dsNa'); }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',{action:'dispute-save',id,advocate:val('dsAdv'),fee:+val('dsFee2')||0,notice_ref:val('dsNr'),last_update:val('dsLu'),next_action:val('dsNa')}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Dispute updated','বিরোধ আপডেট হয়েছে')); closeDrawer(); if(state.view==='nrb') render();
+}
+async function nrbDsStatus(id,st){
+  const body=(st==='Notice_Served')?`<div class="form-field"><label>${t('Notice ref (LN-###)','নোটিশ রেফ (LN-###)')}</label><input id="dsNref" placeholder="LN-600"></div>`:`<div class="form-field"><label>${t('Note','নোট')}</label><textarea id="dsNote" rows="2"></textarea></div>`;
+  openDrawer(t('Dispute','বিরোধ')+' → '+st.replace(/_/g,' '), body,
+    `<button class="btn-primary" onclick="nrbDsStatusSave('${id}','${st}')">${t('Confirm','নিশ্চিত')}</button>`);
+}
+async function nrbDsStatusSave(id,st){
+  const payload={action:'dispute-status',id,status:st};
+  if(st==='Notice_Served'&&val('dsNref')) payload.notice_ref=val('dsNref');
+  if(val('dsNote')) payload.note=val('dsNote');
+  let d;
+  if(DEMO_MODE){
+    const x=(DB.nrb_disputes||[]).find(r=>r.id===id);
+    if(x){ x.status=st; if(st==='Notice_Served'&&val('dsNref')) x.notice_ref=val('dsNref'); const tl=x.timeline||[]; tl.push({ts:new Date().toISOString().slice(0,19).replace('T',' '),action:'Status → '+st.replace(/_/g,' ')+(val('dsNote')?' — '+val('dsNote'):''),by:(LIVE.user&&LIVE.user.name)||'Owner'}); x.timeline=tl; }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',payload); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Dispute','বিরোধ')+' → '+st.replace(/_/g,' ')); closeDrawer(); if(state.view==='nrb') render();
+}
+function nrbDsEvent(id){
+  const body=`<div class="form-field"><label>${t('Event note','ইভেন্ট নোট')} *</label><textarea id="dsE" rows="3" placeholder="e.g. Tenant's lawyer called — seeking 2-week extension"></textarea></div>
+    <div class="form-field"><label>${t('Last update','সর্বশেষ আপডেট')}</label><input id="dsELu"></div>`;
+  openDrawer(t('Add dispute event','বিরোধে ইভেন্ট যোগ'), body,
+    `<button class="btn-primary" onclick="nrbDsEventSave('${id}')">${t('Add','যোগ')}</button>`);
+}
+async function nrbDsEventSave(id){
+  const payload={action:'dispute-event',id,note:val('dsE')};
+  if(val('dsELu')) payload.last_update=val('dsELu');
+  let d;
+  if(DEMO_MODE){
+    const x=(DB.nrb_disputes||[]).find(r=>r.id===id);
+    if(x){ const tl=x.timeline||[]; tl.push({ts:new Date().toISOString().slice(0,19).replace('T',' '),action:val('dsE'),by:(LIVE.user&&LIVE.user.name)||'Owner'}); x.timeline=tl; if(val('dsELu')) x.last_update=val('dsELu'); }
+    d={ok:true};
+  } else { d=await apiCall('app-nrb',payload); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Event added','ইভেন্ট যোগ হয়েছে')); closeDrawer(); if(state.view==='nrb') render();
+}
+function nrbCfgForm(cfg){
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Default CA firm','ডিফল্ট সিএ ফার্ম')}</label><input id="cf1" value="${esc(cfg&&cfg.default_ca_firm||'')}"></div>
+    <div class="form-field full"><label>${t('Default advocate','ডিফল্ট অ্যাডভোকেট')}</label><input id="cf2" value="${esc(cfg&&cfg.default_advocate||'')}"></div>
+    <div class="form-field"><label>${t('Vacancy alert days','ভ্যাক্যান্সি অ্যালার্ট দিন')}</label><input id="cf3" type="number" min="1" max="120" value="${(cfg&&cfg.vacancy_alert_days)||30}"></div>
+    <div class="form-field"><label>${t('Dispute alert days','বিরোধ অ্যালার্ট দিন')}</label><input id="cf4" type="number" min="1" max="120" value="${(cfg&&cfg.dispute_alert_days)||14}"></div>
+  </div>`;
+  openDrawer(t('NRB Hub settings','এনআরবি হাব সেটিংস'), body,
+    `<button class="btn-primary" onclick="nrbCfgSave()">${t('Save','সেভ')}</button>`);
+}
+async function nrbCfgSave(){
+  let d;
+  if(DEMO_MODE){ d={ok:true}; }
+  else { d=await apiCall('app-nrb',{action:'config-save',config:{default_ca_firm:val('cf1'),default_advocate:val('cf2'),vacancy_alert_days:+val('cf3')||30,dispute_alert_days:+val('cf4')||14}}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('NRB settings saved','এনআরবি সেটিংস সেভ হয়েছে')); closeDrawer(); if(state.view==='nrb') render();
+}
+function val(id){ const el=document.getElementById(id); return el?el.value:''; }
 function landStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
 function landMonitorBadge(m){ return m==='quarterly'?'<span class="badge b-blue">Quarterly</span>':m==='semi_annual'?'<span class="badge b-orange">Semi-annual</span>':m==='annual'?'<span class="badge b-gray">Annual</span>':'<span class="badge b-gray">Off</span>'; }
 function landStatusBadge(st){ return st==='Secure'?'<span class="badge b-green">Secure</span>':st==='Needs Review'?'<span class="badge b-orange">Needs review</span>':st==='Encroached'?'<span class="badge b-red">Encroached</span>':'<span class="badge b-blue">Under monitoring</span>'; }
@@ -4663,6 +5164,21 @@ const renderers={
     let h=pageHead(t('Vendors','ভেন্ডর'),isStaff?t('Partners, jobs, invoices and payouts — QC signed off by the service manager.','পার্টনার, কাজ, ইনভয়েস ও পেআউট — সার্ভিস ম্যানেজারের কিউসি অনুমোদনসহ।'):t('My jobs, invoices and payouts.','আমার কাজ, ইনভয়েস ও পেআউট।'));
     h+=`<div id="vendorsLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>vendorsLoad(),0);
+    return h;
+  },
+
+  nrb(){
+    const isStaff=nrbStaff();
+    let h=pageHead(t('NRB Hub','এনআরবি হাব'),isStaff?t('Tax & repatriation, end-to-end vacancy management and virtual dispute resolution for NRB owners.','এনআরবি মালিকদের জন্য ট্যাক্স ও রিপ্যাট্রিয়েশন, এন্ড-টু-এন্ড ভ্যাক্যান্সি ম্যানেজমেন্ট এবং ভার্চুয়াল বিরোধ নিষ্পত্তি।'):t('Your NRB portfolio desk.','আপনার এনআরবি পোর্টফোলিও ডেস্ক।'),'');
+    h+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="${state.nrbTab==='vac'?'btn-primary':'btn-ghost'}" onclick="nrbTab('vac')">🏠 ${t('Vacancies','ভ্যাক্যান্সি')}</button>
+      <button class="${state.nrbTab==='tax'?'btn-primary':'btn-ghost'}" onclick="nrbTab('tax')">🧾 ${t('Tax & Repat','ট্যাক্স ও রিপ্যাট')}</button>
+      <button class="${state.nrbTab==='ds'?'btn-primary':'btn-ghost'}" onclick="nrbTab('ds')">⚖️ ${t('Disputes','বিরোধ')}</button>
+      <span style="flex:1"></span>
+      <button class="btn-ghost" onclick="nrbCfgForm(demoNrbData().config)">⚙️ ${t('Settings','সেটিংস')}</button>
+    </div>`;
+    h+=`<div id="nrbLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>nrbLoad(),0);
     return h;
   },
   remit(){
