@@ -1030,35 +1030,48 @@ const SEED = {
   nrb_disputes:[
     {id:'DS-001',owner_email:'owner@krtaker.com',prop:'P-004',unit:'U-004',tenant:'T-004 (refusing to vacate)',dtype:'eviction',advocate:'Adv. Salma Khatun — Bar Council 4451',fee:50000,status:'Notice_Served',notice_ref:'LN-592',last_update:'Eviction notice served — 30-day period running',next_action:'File suit if tenant does not vacate by 2026-08-11',timeline:[{ts:'2026-07-01 10:00:00',action:'Dispute opened — tenant refusing to vacate after lease end',by:'Kabir Ahmed'},{ts:'2026-07-05 14:30:00',action:'Advocate assigned — Adv. Salma Khatun',by:'Kabir Ahmed'},{ts:'2026-07-12 09:00:00',action:'Eviction notice LN-592 served — 30-day notice period running',by:'Adv. Salma Khatun'}],ts:'2026-07-01 10:00:00',updated_at:'2026-07-12 09:00:00'},
     {id:'DS-002',owner_email:'owner@krtaker.com',prop:'P-001',unit:'U-001',tenant:'T-001',dtype:'damages',advocate:'Adv. Rafiq Islam — Bar Council 2233',fee:15000,status:'Open',notice_ref:'',last_update:'Claim filed — photos collected',next_action:'Inspect unit and finalize claim amount',timeline:[{ts:'2026-08-02 11:00:00',action:'Dispute opened — wall damage claim ৳18,000',by:'Kabir Ahmed'}],ts:'2026-08-02 11:00:00',updated_at:'2026-08-02 11:00:00'}
+  ],
+  concierge_requests:[
+    {id:'CR-001',owner_email:'owner@krtaker.com',parcel:'LP-002',prop:'',service:'namjari',district:'Dhaka',upazila:'Dhamrai',mouza:'Kushura',khatian:'KH-2105',dag:'DAG-47',status:'In_Progress',assigned_to:'Mithila Rahman',est_days:45,fee:5000,fee_status:'paid',fee_paid_at:'2026-07-22 11:00:00',service_ref:'AC/NA/MUT/2026/881',notes:'Mutation application filed — awaiting AC Land approval',timeline:[{ts:'2026-07-18 10:00:00',action:'Request submitted — Namjari for LP-002',by:'Kabir Ahmed'},{ts:'2026-07-19 12:00:00',action:'Under review — documents collected',by:'Mithila Rahman'},{ts:'2026-07-25 15:30:00',action:'Filed at AC Land office — case no AC/NA/MUT/2026/881',by:'Mithila Rahman'}],ts:'2026-07-18 10:00:00',updated_at:'2026-07-25 15:30:00'},
+    {id:'CR-002',owner_email:'owner@krtaker.com',parcel:'LP-004',prop:'',service:'e_porcha',district:'Mymensingh',upazila:'Trishal',mouza:'Kanthal',khatian:'KH-0451',dag:'DAG-9',status:'Completed',assigned_to:'Mithila Rahman',est_days:15,fee:2500,fee_status:'paid',fee_paid_at:'2026-07-11 10:00:00',service_ref:'E-POR/2026/114',notes:'Verified e-Porcha delivered with CS digital seal',timeline:[{ts:'2026-07-05 09:00:00',action:'Request submitted — e-Porcha for LP-004',by:'Kabir Ahmed'},{ts:'2026-07-10 14:00:00',action:'e-Porcha extracted and verified — CS portal',by:'Mithila Rahman'},{ts:'2026-07-28 10:00:00',action:'Delivered to owner — CD-002 attached',by:'Mithila Rahman'}],ts:'2026-07-05 09:00:00',updated_at:'2026-07-28 10:00:00'},
+    {id:'CR-003',owner_email:'owner@krtaker.com',parcel:'',prop:'P-001',service:'holding_tax',district:'Dhaka',upazila:'',mouza:'',khatian:'',dag:'',status:'Awaiting_Fee',assigned_to:'Mithila Rahman',est_days:10,fee:1500,fee_status:'unpaid',fee_paid_at:'',service_ref:'',notes:'Holding tax payment ready — pay service fee ৳1,500 to complete',timeline:[{ts:'2026-08-01 09:30:00',action:'Request submitted — holding tax payment for P-001',by:'Kabir Ahmed'},{ts:'2026-08-02 11:00:00',action:'Bill collected — DSCC holding 1842, FY 2025-26',by:'Mithila Rahman'}],ts:'2026-08-01 09:30:00',updated_at:'2026-08-02 11:00:00'}
+  ],
+  concierge_docs:[
+    {id:'CD-001',request:'CR-001',kind:'application',name:'Namjari application form',fname:'cd_app_form.pdf',size:482103,mime:'application/pdf',uploaded_by:'Mithila Rahman',ts:'2026-07-19 12:00:00'},
+    {id:'CD-002',request:'CR-002',kind:'porcha',name:'Verified e-Porcha (CS seal)',fname:'cd_porcha_lp004.pdf',size:1204488,mime:'application/pdf',uploaded_by:'Mithila Rahman',ts:'2026-07-28 10:00:00'}
+  ],
+  holding_taxes:[
+    {id:'HT-001',owner_email:'owner@krtaker.com',parcel:'',prop:'P-001',city_corp:'DSCC',ward:'27',holding_no:'1842',fy:'2025-26',annual_value:480000,rate_pct:7,tax_amount:33600,paid_amount:0,status:'Due',due_date:'2026-08-31',paid_date:'',receipt_no:'',notes:'City corporation holding tax — FY 2025-26',ts:'2026-08-01 09:00:00',updated_at:'2026-08-01 09:00:00'},
+    {id:'HT-002',owner_email:'owner@krtaker.com',parcel:'',prop:'P-002',city_corp:'DNCC',ward:'12',holding_no:'558',fy:'2025-26',annual_value:360000,rate_pct:7,tax_amount:25200,paid_amount:25200,status:'Paid',due_date:'2026-07-31',paid_date:'2026-07-15',receipt_no:'DSCC-RCP-2026-7741',notes:'Paid via concierge — receipt attached',ts:'2026-07-10 09:00:00',updated_at:'2026-07-15 10:00:00'},
+    {id:'HT-003',owner_email:'owner@krtaker.com',parcel:'LP-003',prop:'',city_corp:'CCC',ward:'4',holding_no:'901',fy:'2026-27',annual_value:240000,rate_pct:7,tax_amount:16800,paid_amount:0,status:'Due',due_date:'2026-07-15',paid_date:'',receipt_no:'',notes:'Holding tax for LP-003 — overdue demo',ts:'2026-06-20 09:00:00',updated_at:'2026-06-20 09:00:00'}
   ]
-
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','ai','analytics','notices','documents']},
-  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','ai','notices','documents','templates']},
-  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','ai','notices','documents','referrals']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','ai','analytics','notices','documents','recon','templates']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','ai','analytics','notices','documents']},
+  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','concierge','ai','notices','documents','templates']},
+  {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','concierge','ai','notices','documents','referrals']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','concierge','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['nrb','🌐','NRB Hub'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -3216,6 +3229,289 @@ async function nrbCfgSave(){
   if(!d.ok){ toast(d.error||'Failed'); return; }
   toast(t('NRB settings saved','এনআরবি সেটিংস সেভ হয়েছে')); closeDrawer(); if(state.view==='nrb') render();
 }
+/* ── Phase 47: Legal Concierge — namjari/mutation, e-Porcha/Khatian, holding-tax tracking ── */
+function conciergeStaff(){ return ['superadmin','owner','manager','svc_mgr','legal','accountant','crm'].includes(role().id); }
+function conciergeSvcLabel(s){ return {namjari:'Namjari',e_porcha:'e-Porcha',khatian:'Khatian',holding_tax:'Holding Tax',registration:'Registration'}[s]||s; }
+function conciergeSvcBadge(s){ const m={namjari:'b-blue',e_porcha:'b-orange',khatian:'b-gray',holding_tax:'b-blue',registration:'b-purple'}; return `<span class="badge ${m[s]||'b-gray'}">${esc(conciergeSvcLabel(s))}</span>`; }
+function conciergeCrBadge(st){ return st==='Completed'?'<span class="badge b-green">Completed</span>':st==='Rejected'||st==='Cancelled'?'<span class="badge b-red">'+esc(st)+'</span>':st==='Awaiting_Fee'?'<span class="badge b-orange">Awaiting fee</span>':st==='Under_Review'?'<span class="badge b-blue">Under review</span>':st==='Docs_Requested'?'<span class="badge b-orange">Docs requested</span>':st==='In_Progress'?'<span class="badge b-blue">In progress</span>':'<span class="badge b-gray">'+esc(st)+'</span>'; }
+function conciergeHtBadge(st){ return st==='Paid'?'<span class="badge b-green">Paid</span>':st==='Overdue'?'<span class="badge b-red">Overdue</span>':'<span class="badge b-orange">Due</span>'; }
+function conciergeFeeChip(r){ return r.fee_status==='paid'?'<span class="badge b-green">'+t('paid','পরিশোধিত')+'</span>':(r.fee>0?'<span class="badge b-red">'+t('unpaid','অপরিশোধিত')+'</span>':'—'); }
+function demoConciergeEnrich(){
+  const parcels={};(DB.land_parcels||[]).forEach(p=>parcels[p.id]=p.name);
+  const props={};(DB.properties||[]).forEach(p=>props[p.id]=p.name);
+  const cr=(DB.concierge_requests||[]).map(r=>({...r,parcel_name:parcels[r.parcel]||'',prop_name:props[r.prop]||'',docs_count:(DB.concierge_docs||[]).filter(d=>d.request===r.id).length,timeline:r.timeline||[],days_in_status:0,service_label:conciergeSvcLabel(r.service)}));
+  const today=new Date().toISOString().slice(0,10);
+  const ht=(DB.holding_taxes||[]).map(h=>{const eff=h.status==='Due'&&h.due_date&&h.due_date<today?'Overdue':h.status;return {...h,parcel_name:parcels[h.parcel]||'',prop_name:props[h.prop]||'',status:eff};});
+  return {cr,ht};
+}
+function demoConciergeData(){
+  const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+  const scope=arr=>arr.filter(x=>x.owner_email===''||x.owner_email===em);
+  const {cr,ht}=demoConciergeEnrich();
+  const rows=scope(cr), hs=scope(ht);
+  const by=(rows,keys)=>{const o={};keys.forEach(k=>o[k]=0);rows.forEach(r=>o[r.status]=(o[r.status]||0)+1);return o;};
+  const fees=rows.filter(r=>r.status==='Awaiting_Fee'&&r.fee_status!=='paid').reduce((s,r)=>s+(+r.fee||0),0);
+  const htDue=hs.filter(h=>h.status!=='Paid').reduce((s,h)=>s+(+h.tax_amount||0),0);
+  return {requests:{rows,by_status:by(rows,['Submitted','Under_Review','Docs_Requested','In_Progress','Awaiting_Fee','Completed','Rejected','Cancelled']),by_service:by(rows,['namjari','e_porcha','khatian','holding_tax','registration']),fees_due:fees},
+    holdings:{rows:hs,due_total:htDue},
+    config:{concierge_agent:'Mithila Rahman',namjari_fee:5000,e_porcha_fee:2500,khatian_fee:3000,holding_tax_fee:1500,registration_fee:10000,namjari_days:45,e_porcha_days:15,khatian_days:20,holding_tax_days:10,registration_days:30,docs_stuck_days:7,holding_alert_days:30}};
+}
+async function conciergeLoad(){
+  const host=document.getElementById('conciergeLive'); if(!host) return;
+  let d;
+  if(TOKEN&&!DEMO_MODE){
+    d=await apiCall('app-concierge',{action:'summary'});
+    if(!d.ok){ host.innerHTML=`<div class="m">${esc(d.error||'Failed to load')}</div>`; return; }
+  } else { d=demoConciergeData(); }
+  state.conciergeTab=state.conciergeTab||'req';
+  if(state.conciergeTab==='ht') host.innerHTML=conciergeHtHtml(d);
+  else host.innerHTML=conciergeReqHtml(d);
+}
+function conciergeTab(t){ state.conciergeTab=t; render(); }
+function conciergeReqHtml(d){
+  const rows=d.requests.rows, bs=d.requests.by_status;
+  const active=rows.filter(r=>!['Completed','Rejected','Cancelled'].includes(r.status)).length;
+  const awf=bs.Awaiting_Fee||0;
+  let h=statsRow([
+    stat(t('Tracked','ট্র্যাকড'),rows.length,t('requests','রিকোয়েস্ট'),'','🗂️'),
+    stat(t('Active','সক্রিয়'),active,t('in pipeline','পাইপলাইনে'),active?'warn':'','📋'),
+    stat(t('Awaiting fee','ফি অপেক্ষমাণ'),awf,t(money(d.requests.fees_due),'ফি বকেয়া'),awf?'warn':'','💰'),
+    stat(t('Completed','সম্পন্ন'),bs.Completed||0,t('delivered','ডেলিভারি'),(bs.Completed||0)?'up':'','✅')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🗂️</span>${t('Concierge requests','কনসিয়ার্জ রিকোয়েস্ট')}</div><span class="link" onclick="conciergeNewRequest()">＋ ${t('New request','নতুন রিকোয়েস্ট')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('Service','সার্ভিস')}</th><th>${t('Land / Property','জমি/সম্পত্তি')}</th><th>${t('Status','স্ট্যাটাস')}</th><th>${t('Agent','এজেন্ট')}</th><th>${t('Est.','আনুমানিক')}</th><th>${t('Fee','ফি')}</th><th></th></tr></thead><tbody>`+
+    (rows.map(x=>`<tr><td><span class="c-name">${conciergeSvcBadge(x.service)}</span><div class="c-sub">${x.id}${x.service_ref?' · '+esc(x.service_ref):''}</div></td><td>${esc(x.parcel_name||x.prop_name||'—')}<div class="c-sub">${x.parcel?esc(x.parcel):x.prop?esc(x.prop):''}</div></td><td>${conciergeCrBadge(x.status)}</td><td>${esc(x.assigned_to||'—')}</td><td>${x.est_days?x.est_days+'d':'—'}</td><td>${x.fee>0?money(x.fee)+' '+conciergeFeeChip(x):'—'}</td><td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="conciergeRequestDrawer('${esc(x.id)}')">👁</button></td></tr>`).join('')
+    || `<tr><td colspan="7" class="m">${t('No concierge requests yet.','এখনো কোনো কনসিয়ার্জ রিকোয়েস্ট নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  return h;
+}
+function conciergeHtHtml(d){
+  const rows=d.holdings.rows;
+  const due=rows.filter(h=>h.status!=='Paid');
+  let h=statsRow([
+    stat(t('Holdings','হোল্ডিং'),rows.length,t('tracked','ট্র্যাকড'),'','🏛️'),
+    stat(t('Due','বকেয়া'),due.length,t('now','এখন'),due.length?'warn':'','⏳'),
+    stat(t('Overdue','ওভারডিউ'),rows.filter(h=>h.status==='Overdue').length,t('past due','মেয়াদোত্তীর্ণ'),rows.filter(h=>h.status==='Overdue').length?'warn':'','🚨'),
+    stat(t('Due total','মোট বকেয়া'),money(d.holdings.due_total),t('city corp tax','সিটি কর্প কর'),d.holdings.due_total?'warn':'','💰')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏛️</span>${t('Holding taxes — city corporation','হোল্ডিং ট্যাক্স — সিটি কর্পোরেশন')}</div><span class="link" onclick="conciergeNewHolding()">＋ ${t('Add holding','হোল্ডিং যোগ')}</span></div><div class="tbl-wrap"><table><thead><tr><th>${t('City corp','সিটি কর্প')}</th><th>${t('Holding no','হোল্ডিং নং')}</th><th>${t('FY','অর্থবছর')}</th><th>${t('NAV','বার্ষিক মূল্য')}</th><th>${t('Rate','হার')}</th><th>${t('Tax','কর')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (rows.map(x=>`<tr><td><span class="c-name">${esc(x.city_corp||'—')}</span><div class="c-sub">ward ${esc(x.ward||'—')}${x.parcel?' · '+esc(x.parcel_name||x.parcel):x.prop?' · '+esc(x.prop_name||x.prop):''}</div></td><td>${esc(x.holding_no||'—')}</td><td>${esc(x.fy||'—')}</td><td>${money(x.annual_value)}</td><td>${x.rate_pct}%</td><td>${money(x.tax_amount)}</td><td>${conciergeHtBadge(x.status)}</td><td>${x.status!=='Paid'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="conciergePayHolding('${esc(x.id)}')">📥 ${t('Pay','পরিশোধ')}</button>`:'<span class="c-sub">'+esc(x.receipt_no||'paid')+'</span>'}</td></tr>`).join('')
+    || `<tr><td colspan="8" class="m">${t('No holding taxes tracked.','কোনো হোল্ডিং ট্যাক্স নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  return h;
+}
+function conciergeNewRequest(){
+  const cfg=demoConciergeData().config;
+  const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+  const parcels=(DB.land_parcels||[]).filter(p=>!LIVE.user||p.owner_email===''||p.owner_email===em);
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Service','সার্ভিস')}</label><select id="cr_service" onchange="conciergeFeePreview()"><option value="namjari">Namjari / Mutation (নামজারি)</option><option value="e_porcha">e-Porcha (ই-পর্চা)</option><option value="khatian">Khatian (খতিয়ান)</option><option value="holding_tax">Holding tax (হোল্ডিং ট্যাক্স)</option><option value="registration">Registration (রেজিস্ট্রেশন)</option></select></div>
+    <div class="form-field full"><label>${t('Land parcel (optional)','জমির প্লট (ঐচ্ছিক)')}</label><select id="cr_parcel"><option value="">— ${t('none','কিছু না')} —</option>${parcels.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} (${esc(p.id)})</option>`).join('')}</select></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><input id="cr_notes" placeholder="${t('e.g. mutation after inheritance','যেমন: উত্তরাধিকারের পর মিউটেশন')}"></div>
+    <div class="form-field"><label>${t('Fee (৳)','ফি (৳)')}</label><input id="cr_fee" type="number" min="0" value="${cfg.namjari_fee}"></div>
+    <div class="form-field"><label>${t('Est. days','আনুমানিক দিন')}</label><input id="cr_est" type="number" min="1" value="${cfg.namjari_days}"></div>
+  </div>`;
+  openDrawer(t('New concierge request','নতুন কনসিয়ার্জ রিকোয়েস্ট'), body,
+    `<button class="btn-primary" onclick="conciergeSubmitRequest()">${t('Submit','জমা দিন')}</button>`);
+}
+function conciergeFeePreview(){
+  const cfg=demoConciergeData().config;
+  const s=val('cr_service');
+  const f=document.getElementById('cr_fee'), e=document.getElementById('cr_est');
+  if(f) f.value=cfg[s+'_fee']||0;
+  if(e) e.value=cfg[s+'_days']||30;
+}
+async function conciergeSubmitRequest(){
+  const service=val('cr_service')||'namjari';
+  const cfg=demoConciergeData().config;
+  const fee=+val('cr_fee')||cfg[service+'_fee']||0;
+  const est=+val('cr_est')||cfg[service+'_days']||30;
+  let d;
+  if(DEMO_MODE){
+    const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+    const maxN=Math.max(100,...(DB.concierge_requests||[]).map(r=>+(r.id||'CR-0').replace('CR-','')||0));
+    const id='CR-'+String(maxN+1).padStart(3,'0');
+    DB.concierge_requests=DB.concierge_requests||[];
+    DB.concierge_requests.unshift({id,owner_email:em,parcel:val('cr_parcel'),prop:'',service,district:'',upazila:'',mouza:'',khatian:'',dag:'',status:'Submitted',assigned_to:cfg.concierge_agent,est_days:est,fee,fee_status:'unpaid',fee_paid_at:'',service_ref:'',notes:val('cr_notes'),timeline:[{ts:new Date().toISOString().slice(0,19).replace('T',' '),action:'Request submitted — '+conciergeSvcLabel(service),by:'You'}],ts:'',updated_at:''});
+    d={ok:true,id};
+  } else {
+    d=await apiCall('app-concierge',{action:'request-create',service,parcel:val('cr_parcel'),notes:val('cr_notes')});
+  }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Request created','রিকোয়েস্ট তৈরি হয়েছে')+' · '+d.id); closeDrawer(); if(state.view==='concierge') render();
+}
+async function conciergeRequestDrawer(id){
+  let r, docs=[];
+  if(TOKEN&&!DEMO_MODE){
+    const d=await apiCall('app-concierge',{action:'request-get',id});
+    if(!d.ok){ toast(d.error||'Failed'); return; }
+    r=d.request; docs=r.docs||[];
+  } else {
+    r=demoConciergeEnrich().cr.find(x=>x.id===id)||null;
+    docs=(DB.concierge_docs||[]).filter(dd=>dd.request===id);
+    if(!r){ toast('Not found'); return; }
+  }
+  const cfg=demoConciergeData().config;
+  const isStaff=conciergeStaff();
+  const statuses=['Submitted','Under_Review','Docs_Requested','In_Progress','Awaiting_Fee','Completed','Rejected','Cancelled'];
+  const tl=(r.timeline||[]).map(ev=>`<div class="row-item" style="padding:6px 0"><div class="ri-ic">⚡</div><div class="ri-body"><div class="ri-t">${esc(ev.action)}</div><div class="c-sub">${esc(ev.ts||'')}${ev.by?' · '+esc(ev.by):''}</div></div></div>`).join('')||`<div class="c-sub">${t('No activity yet.','এখনো কোনো কার্যক্রম নেই।')}</div>`;
+  const docRows=docs.map(dd=>`<div class="row-item" style="padding:6px 0"><div class="ri-ic">📎</div><div class="ri-body"><div class="ri-t">${esc(dd.name)} <span class="badge b-blue">${esc(dd.kind)}</span></div><div class="c-sub">${esc(dd.uploaded_by||'')} · ${dd.size?Math.round(dd.size/1024)+' KB':''}</div></div><div class="ri-r"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="conciergeDocRemove('${esc(dd.id)}','${esc(id)}')">✕</button></div></div>`).join('')||`<div class="c-sub">${t('No documents yet.','এখনো কোনো ডকুমেন্ট নেই।')}</div>`;
+  const actions=[];
+  if(isStaff&&!['Completed','Rejected','Cancelled'].includes(r.status)){
+    actions.push(`<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:10px"><select id="cr_status_${esc(id)}" style="flex:1;min-width:140px">${statuses.map(s=>`<option value="${s}" ${s===r.status?'selected':''}>${s.replace(/_/g,' ')}</option>`).join('')}</select><button class="btn-primary" onclick="conciergeAdvance('${esc(id)}')">${t('Update status','স্ট্যাটাস আপডেট')}</button></div>`);
+    actions.push(`<button class="btn-ghost" style="margin-top:8px" onclick="conciergeAddEventForm('${esc(id)}')">➕ ${t('Add note','নোট যোগ')}</button>`);
+    actions.push(`<div style="margin-top:8px"><input type="file" id="cr_docfile" accept=".jpg,.jpeg,.png,.webp,.pdf" style="font-size:12px"> <button class="btn-ghost" onclick="conciergeDocUpload('${esc(id)}')">📎 ${t('Upload doc','ডকুমেন্ট আপলোড')}</button></div>`);
+  }
+  if(r.fee>0){
+    actions.push(`<div style="margin-top:10px" class="panel" style="padding:10px"><div class="ri-t">${t('Service fee','সার্ভিস ফি')}: ${money(r.fee)} ${conciergeFeeChip(r)}</div>${r.fee_status!=='paid'?`<button class="btn-primary" style="margin-top:6px" onclick="conciergePayFee('${esc(id)}')">✅ ${t('Mark fee paid','ফি পরিশোধ চিহ্নিত')}</button>`:`<div class="c-sub">${r.fee_paid_at?'paid '+esc(r.fee_paid_at):'paid'}</div>`}</div>`);
+  }
+  const body=`<div class="form-grid">
+    <div class="form-field full"><div class="ri-t">${conciergeSvcBadge(r.service)} ${conciergeCrBadge(r.status)}</div><div class="c-sub">${esc(r.id)} · ${t('agent','এজেন্ট')}: ${esc(r.assigned_to||'—')} · ${t('est','আনুমানিক')}: ${r.est_days?r.est_days+'d':'—'}${r.service_ref?' · '+t('ref','রেফারেন্স')+': '+esc(r.service_ref):''}</div></div>
+    <div class="form-field full"><div class="ri-t">📍 ${esc(r.parcel_name||r.prop_name||t('No land linked','কোনো জমি লিংক নেই'))}</div><div class="c-sub">${[r.district,r.upazila,r.mouza,r.khatian,r.dag].filter(Boolean).join(' · ')||''}</div></div>
+    ${r.notes?`<div class="form-field full"><label>${t('Notes','নোট')}</label><div class="c-sub">${esc(r.notes)}</div></div>`:''}
+    <div class="form-field full"><label>${t('Timeline','টাইমলাইন')}</label>${tl}</div>
+    <div class="form-field full"><label>${t('Documents','ডকুমেন্ট')}</label>${docRows}</div>
+    ${actions.join('')}
+  </div>`;
+  openDrawer(t('Concierge request','কনসিয়ার্জ রিকোয়েস্ট'), body, `<button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>`);
+}
+async function conciergeAdvance(id){
+  const status=val('cr_status_'+id); if(!status) return;
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.concierge_requests||[]).find(x=>x.id===id);
+    if(r){ r.status=status; r.timeline=r.timeline||[]; r.timeline.push({ts:new Date().toISOString().slice(0,19).replace('T',' '),action:'Status → '+status.replace(/_/g,' '),by:'You'}); if(status==='Completed') r.completed_at=new Date().toISOString().slice(0,19).replace('T',' '); }
+    d={ok:true};
+  } else { d=await apiCall('app-concierge',{action:'request-status',id,status}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Status updated','স্ট্যাটাস আপডেট')); if(state.view==='concierge') render();
+}
+async function conciergePayFee(id){
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.concierge_requests||[]).find(x=>x.id===id);
+    if(r){ r.fee_status='paid'; r.fee_paid_at=new Date().toISOString().slice(0,19).replace('T',' '); }
+    d={ok:true};
+  } else { d=await apiCall('app-concierge',{action:'request-fee',id}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Fee marked paid','ফি পরিশোধ হয়েছে')); if(state.view==='concierge') render();
+}
+function conciergeAddEventForm(id){
+  const body=`<div class="form-grid"><div class="form-field full"><label>${t('Note','নোট')}</label><input id="cr_evnote" placeholder="${t('e.g. called AC land office','যেমন: এসি ল্যান্ড অফিসে কল')}"></div></div>`;
+  openDrawer(t('Add note','নোট যোগ'), body, `<button class="btn-primary" onclick="conciergeAddEvent('${esc(id)}')">${t('Add','যোগ')}</button>`);
+}
+async function conciergeAddEvent(id){
+  const note=val('cr_evnote'); if(!note){ toast('Note required'); return; }
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.concierge_requests||[]).find(x=>x.id===id);
+    if(r){ r.timeline=r.timeline||[]; r.timeline.push({ts:new Date().toISOString().slice(0,19).replace('T',' '),action:note,by:'You'}); }
+    d={ok:true};
+  } else { d=await apiCall('app-concierge',{action:'request-event',id,note}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Note added','নোট যোগ হয়েছে')); closeDrawer(); if(state.view==='concierge') render();
+}
+async function conciergeDocUpload(id){
+  const f=document.getElementById('cr_docfile');
+  if(!f||!f.files[0]){ toast('Choose a file'); return; }
+  let d;
+  if(DEMO_MODE){
+    const maxN=Math.max(100,...(DB.concierge_docs||[]).map(x=>+(x.id||'CD-0').replace('CD-','')||0));
+    DB.concierge_docs=DB.concierge_docs||[];
+    DB.concierge_docs.unshift({id:'CD-'+String(maxN+1).padStart(3,'0'),request:id,kind:'other',name:f.files[0].name,fname:'demo_'+f.files[0].name,size:f.files[0].size,mime:f.files[0].type||'application/octet-stream',uploaded_by:'You',ts:new Date().toISOString().slice(0,19).replace('T',' ')});
+    d={ok:true};
+  } else {
+    const fd=new FormData(); fd.append('request',id); fd.append('kind','other'); fd.append('file',f.files[0]);
+    const res=await fetch(API+'app-concierge?action=doc-upload',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd});
+    d=await res.json();
+  }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Document uploaded','ডকুমেন্ট আপলোড হয়েছে')); if(state.view==='concierge') render();
+}
+async function conciergeDocRemove(cd,id){
+  let d;
+  if(DEMO_MODE){
+    DB.concierge_docs=(DB.concierge_docs||[]).filter(x=>x.id!==cd);
+    d={ok:true};
+  } else { d=await apiCall('app-concierge',{action:'doc-remove',id:cd}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Document removed','ডকুমেন্ট মুছে ফেলা হয়েছে')); if(state.view==='concierge') render();
+}
+function conciergeNewHolding(){
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('City corp','সিটি কর্প')}</label><input id="ht_city" value="DSCC"></div>
+    <div class="form-field"><label>${t('Ward','ওয়ার্ড')}</label><input id="ht_ward"></div>
+    <div class="form-field"><label>${t('Holding no','হোল্ডিং নং')}</label><input id="ht_no"></div>
+    <div class="form-field"><label>${t('FY','অর্থবছর')}</label><input id="ht_fy" value="2026-27"></div>
+    <div class="form-field full"><label>${t('Annual value (NAV)','বার্ষিক মূল্য')}</label><input id="ht_av" type="number" min="0" value="500000" oninput="conciergeHtPreview()"></div>
+    <div class="form-field"><label>${t('Rate %','হার %')}</label><input id="ht_rate" type="number" min="0" step="0.1" value="7" oninput="conciergeHtPreview()"></div>
+    <div class="form-field"><label>${t('Tax (auto)','কর (অটো)')}</label><input id="ht_tax" disabled value="35000"></div>
+    <div class="form-field"><label>${t('Due date','নির্ধারিত তারিখ')}</label><input id="ht_due" type="date"></div>
+  </div>`;
+  openDrawer(t('Add holding tax','হোল্ডিং ট্যাক্স যোগ'), body, `<button class="btn-primary" onclick="conciergeSubmitHolding()">${t('Save','সেভ')}</button>`);
+}
+function conciergeHtPreview(){
+  const av=+val('ht_av')||0, rate=+val('ht_rate')||0;
+  const t2=document.getElementById('ht_tax'); if(t2) t2.value=Math.round(av*rate/100);
+}
+async function conciergeSubmitHolding(){
+  let d;
+  if(DEMO_MODE){
+    const em=(LIVE.user&&LIVE.user.email)||'owner@krtaker.com';
+    const maxN=Math.max(100,...(DB.holding_taxes||[]).map(x=>+(x.id||'HT-0').replace('HT-','')||0));
+    const av=+val('ht_av')||0, rate=+val('ht_rate')||0;
+    const id='HT-'+String(maxN+1).padStart(3,'0');
+    DB.holding_taxes=DB.holding_taxes||[];
+    DB.holding_taxes.unshift({id,owner_email:em,parcel:'',prop:'',city_corp:val('ht_city'),ward:val('ht_ward'),holding_no:val('ht_no'),fy:val('ht_fy'),annual_value:av,rate_pct:rate,tax_amount:Math.round(av*rate/100),paid_amount:0,status:'Due',due_date:val('ht_due'),paid_date:'',receipt_no:'',notes:'',ts:'',updated_at:''});
+    d={ok:true,id};
+  } else {
+    d=await apiCall('app-concierge',{action:'holding-create',city_corp:val('ht_city'),ward:val('ht_ward'),holding_no:val('ht_no'),fy:val('ht_fy'),annual_value:+val('ht_av')||0,rate_pct:+val('ht_rate')||0,due_date:val('ht_due')});
+  }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Holding added','হোল্ডিং যোগ হয়েছে')+' · '+d.id); closeDrawer(); if(state.view==='concierge') render();
+}
+function conciergePayHolding(id){
+  const body=`<div class="form-grid"><div class="form-field full"><label>${t('Receipt no','রসিদ নং')}</label><input id="ht_rcpt" placeholder="${t('e.g. DSCC-RCP-2026-…','যেমন: ডিএসসিসি-আরসিপি-২০২৬-…')}"></div></div>`;
+  openDrawer(t('Pay holding tax','হোল্ডিং ট্যাক্স পরিশোধ'), body, `<button class="btn-primary" onclick="conciergePayHoldingGo('${esc(id)}')">✅ ${t('Mark paid','পরিশোধ চিহ্নিত')}</button>`);
+}
+async function conciergePayHoldingGo(id){
+  let d;
+  if(DEMO_MODE){
+    const r=(DB.holding_taxes||[]).find(x=>x.id===id);
+    if(r){ r.status='Paid'; r.paid_amount=r.tax_amount; r.paid_date=new Date().toISOString().slice(0,19).replace('T',' '); r.receipt_no=val('ht_rcpt'); }
+    d={ok:true};
+  } else { d=await apiCall('app-concierge',{action:'holding-pay',id,receipt_no:val('ht_rcpt')}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Holding tax paid','হোল্ডিং ট্যাক্স পরিশোধ হয়েছে')); closeDrawer(); if(state.view==='concierge') render();
+}
+function conciergeCfgForm(){
+  const cfg=demoConciergeData().config;
+  const f=(k,label)=>{const v=cfg[k];return `<div class="form-field"><label>${label}</label><input id="cc_${k}" type="number" min="0" value="${v}"></div>`;};
+  const body=`<div class="form-grid">
+    <div class="form-field full"><label>${t('Concierge agent','কনসিয়ার্জ এজেন্ট')}</label><input id="cc_concierge_agent" value="${esc(cfg.concierge_agent||'')}"></div>
+    ${f('namjari_fee',t('Namjari fee (৳)','নামজারি ফি (৳)'))}
+    ${f('e_porcha_fee',t('e-Porcha fee (৳)','ই-পর্চা ফি (৳)'))}
+    ${f('khatian_fee',t('Khatian fee (৳)','খতিয়ান ফি (৳)'))}
+    ${f('holding_tax_fee',t('Holding-tax fee (৳)','হোল্ডিং ট্যাক্স ফি (৳)'))}
+    ${f('registration_fee',t('Registration fee (৳)','রেজিস্ট্রেশন ফি (৳)'))}
+    ${f('namjari_days',t('Namjari est. days','নামজারি আনুমানিক দিন'))}
+    ${f('e_porcha_days',t('e-Porcha est. days','ই-পর্চা আনুমানিক দিন'))}
+    ${f('khatian_days',t('Khatian est. days','খতিয়ান আনুমানিক দিন'))}
+    ${f('holding_tax_days',t('Holding-tax est. days','হোল্ডিং ট্যাক্স আনুমানিক দিন'))}
+    ${f('registration_days',t('Registration est. days','রেজিস্ট্রেশন আনুমানিক দিন'))}
+    ${f('docs_stuck_days',t('Stuck alert (days)','স্থবির অ্যালার্ট (দিন)'))}
+    ${f('holding_alert_days',t('Holding alert (days)','হোল্ডিং অ্যালার্ট (দিন)'))}
+  </div>`;
+  openDrawer(t('Legal Concierge settings','লিগ্যাল কনসিয়ার্জ সেটিংস'), body, `<button class="btn-primary" onclick="conciergeCfgSave()">${t('Save','সেভ')}</button>`);
+}
+async function conciergeCfgSave(){
+  const keys=['concierge_agent','namjari_fee','e_porcha_fee','khatian_fee','holding_tax_fee','registration_fee','namjari_days','e_porcha_days','khatian_days','holding_tax_days','registration_days','docs_stuck_days','holding_alert_days'];
+  const cfg={}; keys.forEach(k=>{const v=val('cc_'+k); cfg[k]=k==='concierge_agent'?v:(+v||0);});
+  let d;
+  if(DEMO_MODE){ d={ok:true}; }
+  else { d=await apiCall('app-concierge',{action:'config-save',config:cfg}); }
+  if(!d.ok){ toast(d.error||'Failed'); return; }
+  toast(t('Concierge settings saved','কনসিয়ার্জ সেটিংস সেভ হয়েছে')); closeDrawer(); if(state.view==='concierge') render();
+}
 function val(id){ const el=document.getElementById(id); return el?el.value:''; }
 function landStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
 function landMonitorBadge(m){ return m==='quarterly'?'<span class="badge b-blue">Quarterly</span>':m==='semi_annual'?'<span class="badge b-orange">Semi-annual</span>':m==='annual'?'<span class="badge b-gray">Annual</span>':'<span class="badge b-gray">Off</span>'; }
@@ -5179,6 +5475,19 @@ const renderers={
     </div>`;
     h+=`<div id="nrbLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>nrbLoad(),0);
+    return h;
+  },
+  concierge(){
+    const isStaff=conciergeStaff();
+    let h=pageHead(t('Legal Concierge','লিগ্যাল কনসিয়ার্জ'),isStaff?t('Namjari/mutation, e-Porcha/Khatian extraction and holding-tax payments — tracked from the land office to your inbox.','নামজারি/মিউটেশন, ই-পর্চা/খতিয়ান উত্তোলন ও হোল্ডিং ট্যাক্স পরিশোধ — ভূমি অফিস থেকে আপনার ইনবক্স পর্যন্ত ট্র্যাক করা।'):t('Your service requests with KRTaker Concierge.','কেআরটেকার কনসিয়ার্জে আপনার সার্ভিস রিকোয়েস্ট।'),isStaff?`<button class="btn-primary" onclick="conciergeNewRequest()">＋ ${t('New request','নতুন রিকোয়েস্ট')}</button>`:'');
+    h+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="${state.conciergeTab==='req'?'btn-primary':'btn-ghost'}" onclick="conciergeTab('req')">🗂️ ${t('Requests','রিকোয়েস্ট')}</button>
+      <button class="${state.conciergeTab==='ht'?'btn-primary':'btn-ghost'}" onclick="conciergeTab('ht')">🏛️ ${t('Holding Tax','হোল্ডিং ট্যাক্স')}</button>
+      <span style="flex:1"></span>
+      ${isStaff?`<button class="btn-ghost" onclick="conciergeCfgForm()">⚙️ ${t('Settings','সেটিংস')}</button>`:''}
+    </div>`;
+    h+=`<div id="conciergeLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>conciergeLoad(),0);
     return h;
   },
   remit(){
