@@ -1110,6 +1110,23 @@ const SEED = {
     {id:'EP-001',owner_email:'owner@krtaker.com',prop:'P-001',name:'Tower A Evacuation Plan',assembly_point:'South gate car park',route:'Stairwell A → Ground → South gate car park',last_drill:'2026-01-25',next_drill:'2026-07-24',status:'active',ts:'2026-06-01 09:00:00'},
     {id:'EP-002',owner_email:'owner@krtaker.com',prop:'P-002',name:'Banani Tower Evacuation Plan',assembly_point:'Road 11 corner',route:'Stairwell B → Lobby → Road 11 corner',last_drill:'',next_drill:'',status:'draft',ts:'2026-06-01 09:00:00'}
   ],
+  sys_assets:[
+    {id:'SA-001',owner_email:'owner@krtaker.com',prop:'P-002',asset_type:'generator',location:'Basement — generator room',model:'Perkins 100kVA',serial_no:'SN-G1',install_date:'2024-02-10',next_service:'2026-07-29',service_interval_days:90,cert_expiry:'2026-09-17',cert_ref:'RAJUK-LC-2026',status:'operational',fuel_capacity:500,fuel_level:110,fuel_burn_rate:6,notes:'Low fuel — refill before next load shed',ts:'2026-06-01 09:00:00'},
+    {id:'SA-002',owner_email:'owner@krtaker.com',prop:'P-001',asset_type:'lift',location:'Lift shaft — Tower A',model:'Otis Gen2',serial_no:'SN-L1',install_date:'2023-06-01',next_service:'2026-08-13',service_interval_days:90,cert_expiry:'2026-07-19',cert_ref:'RAJUK-LIFT-2026',status:'operational',fuel_capacity:0,fuel_level:0,fuel_burn_rate:0,notes:'RAJUK annual certificate EXPIRED',ts:'2026-06-01 09:00:00'},
+    {id:'SA-003',owner_email:'owner@krtaker.com',prop:'P-001',asset_type:'water_pump',location:'Sump — basement',model:'Kirloskar 5HP',serial_no:'SN-W1',install_date:'2025-01-20',next_service:'2026-08-23',service_interval_days:60,cert_expiry:'',cert_ref:'',status:'operational',fuel_capacity:0,fuel_level:0,fuel_burn_rate:0,notes:'',ts:'2026-06-01 09:00:00'},
+    {id:'SA-004',owner_email:'owner@krtaker.com',prop:'P-003',asset_type:'transformer',location:'Substation — ground floor',model:'ABB 500kVA',serial_no:'SN-T1',install_date:'2022-11-05',next_service:'2026-08-11',service_interval_days:180,cert_expiry:'2026-11-01',cert_ref:'DESCO-TR-2026',status:'faulty',fuel_capacity:0,fuel_level:0,fuel_burn_rate:0,notes:'Oil leak — technician scheduled',ts:'2026-06-01 09:00:00'}
+  ],
+  sys_services:[
+    {id:'SS-001',owner_email:'owner@krtaker.com',asset:'SA-001',service_date:'2026-04-30',service_type:'major',technician:'Mehedi Hasan',vendor:'PowerGen Services',cost:8500,hours_run:1750,notes:'Full overhaul + filter change',ts:'2026-04-30 10:00:00'},
+    {id:'SS-002',owner_email:'owner@krtaker.com',asset:'SA-002',service_date:'2026-05-15',service_type:'amc',technician:'Rafiq Ahmed',vendor:'LiftCare BD',cost:12000,hours_run:0,notes:'Monthly AMC visit',ts:'2026-05-15 11:00:00'},
+    {id:'SS-003',owner_email:'owner@krtaker.com',asset:'SA-004',service_date:'2026-07-04',service_type:'routine',technician:'Jahidul Islam',vendor:'DESCO Sub',cost:3000,hours_run:0,notes:'Oil top-up — leak reported',ts:'2026-07-04 09:30:00'}
+  ],
+  sys_fuel:[
+    {id:'SF-001',owner_email:'owner@krtaker.com',asset:'SA-001',refill_date:'2026-07-09',liters:180,rate_per_litre:112,amount:20160,vendor:'Meghna Petroleum',hours_run:1800,notes:'',ts:'2026-07-09 14:00:00'},
+    {id:'SF-002',owner_email:'owner@krtaker.com',asset:'SA-001',refill_date:'2026-07-31',liters:210,rate_per_litre:114,amount:23940,vendor:'Padma Oil',hours_run:1840,notes:'',ts:'2026-07-31 16:00:00'}
+  ]
+,
+
   emergency_contacts:[
     {id:'EC-001',owner_email:'owner@krtaker.com',prop:'',contact_type:'fire',name:'Fire Service & Civil Defence',phone:'999',notes:'National fire emergency',ts:'2026-06-01 09:00:00'},
     {id:'EC-002',owner_email:'owner@krtaker.com',prop:'',contact_type:'police',name:'Police Emergency',phone:'999',notes:'National police emergency',ts:'2026-06-01 09:00:00'},
@@ -1120,14 +1137,14 @@ const SEED = {
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','ai','analytics','notices','documents']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','ai','analytics','notices','documents']},
   {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','nrb','concierge','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','concierge','smarthome','health','ai','notices','documents','referrals']},
   {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','nrb','concierge','health','ai','analytics','notices','documents','recon','templates']},
@@ -1136,12 +1153,12 @@ const ROLES = [
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['nrb','🌐','NRB Hub'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch'],['firesafety','🧯','Fire Safety']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine'],['land','🛰️','Land Guard'],['concierge','🗂️','Legal Concierge'],['smarthome','🔐','Smart Home'],['health','🌦️','Health Check'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch'],['firesafety','🧯','Fire Safety'],['systems','⚙️','Systems Watch']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','firesafety':'🧯','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','firesafety':'Fire Safety','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','firesafety':'🧯','systems':'⚙️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','firesafety':'Fire Safety','systems':'Systems Watch','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
   'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Land Guard':'ভূমি গার্ড','NRB Hub':'এনআরবি হাব','Legal Concierge':'লিগ্যাল কনসিয়ার্জ','Smart Home':'স্মার্ট হোম','Health Check':'হেলথ চেক','Build Watch':'নির্মাণ মনিটরিং','Gate Watch':'গেট ওয়াচ','Fire Safety':'ফায়ার সেফটি','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
@@ -4100,6 +4117,271 @@ async function fireReport(){
     previewDoc(title, html);
   }catch(e){ toast(t('Report failed','রিপোর্ট ব্যর্থ')); }
 }
+function sysStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
+function sysCap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+function sysTypeLabel(v){ return ({lift:t('Lift','লিফট'),generator:t('Generator','জেনারেটর'),water_pump:t('Water pump','ওয়াটার পাম্প'),sewage_pump:t('Sewage pump','স্যুয়েজ পাম্প'),transformer:t('Transformer','ট্রান্সফরমার'),solar:t('Solar','সোলার'),booster_pump:t('Booster pump','বুস্টার পাম্প'),other:t('Other','অন্যান্য')})[v]||v; }
+function sysSvcTypeLabel(v){ return ({routine:t('Routine','রুটিন'),repair:t('Repair','মেরামত'),major:t('Major','মেজর'),amc:t('AMC','এএমসি')})[v]||v; }
+function sysAssetEnrich(a){
+  const cfg=window.__sysCfg||{service_alert_days:14,cert_alert_days:60,fuel_low_pct:25};
+  const today=new Date().toISOString().slice(0,10);
+  a=a?Object.assign({},a):{};
+  a.asset_type_label=sysTypeLabel(a.asset_type);
+  a.property_name=propById(a.prop)?.name||'';
+  a.service_overdue=0; a.service_due_soon=0;
+  if(a.status!=='decommissioned'&&a.next_service){
+    if(a.next_service<today) a.service_overdue=1;
+    else if(a.next_service<=new Date(Date.now()+cfg.service_alert_days*864e5).toISOString().slice(0,10)) a.service_due_soon=1;
+  }
+  a.cert_overdue=0; a.cert_expiring=0;
+  if(a.cert_expiry){
+    if(a.cert_expiry<today) a.cert_overdue=1;
+    else if(a.cert_expiry<=new Date(Date.now()+cfg.cert_alert_days*864e5).toISOString().slice(0,10)) a.cert_expiring=1;
+  }
+  a.fuel_pct=null; a.fuel_low=0;
+  if(+a.fuel_capacity>0){
+    a.fuel_pct=Math.round((+a.fuel_level||0)/+a.fuel_capacity*100);
+    if(a.fuel_pct<=cfg.fuel_low_pct) a.fuel_low=1;
+  }
+  const svcs=(DB.sys_services||[]).filter(s=>s.asset===a.id);
+  a.services_count=svcs.length;
+  a.last_service=svcs.length?svcs.map(s=>s.service_date).sort().pop():'';
+  return a;
+}
+function sysStatusBadge(st){ const m={operational:['b-green','✅'],service_due:['b-orange','🛠️'],faulty:['b-red','⚠️'],decommissioned:['b-gray','⏹️']}; const e=m[st]||['b-gray','']; return `<span class="badge ${e[0]}">${e[1]} ${esc(st)}</span>`; }
+function demoSysData(){
+  const cfg=window.__sysCfg||{service_alert_days:14,cert_alert_days:60,fuel_low_pct:25};
+  const assets=(DB.sys_assets||[]).map(a=>sysAssetEnrich(a));
+  const svc=(DB.sys_services||[]).slice();
+  const fuel=(DB.sys_fuel||[]).slice();
+  const t=new Date();
+  const d=(n)=>new Date(t.getTime()+n*864e5).toISOString().slice(0,10);
+  const cut=d(-30);
+  let fl30=0, fc30=0;
+  fuel.forEach(f=>{ if(f.refill_date&&f.refill_date>=cut){ fl30+=+f.liters||0; fc30+=+f.amount||0; } });
+  return {stats:{assets_total:assets.length,operational:assets.filter(a=>a.status==='operational').length,faulty:assets.filter(a=>a.status==='faulty').length,service_overdue:assets.filter(a=>a.service_overdue).length,service_due_soon:assets.filter(a=>a.service_due_soon).length,cert_overdue:assets.filter(a=>a.cert_overdue).length,cert_expiring:assets.filter(a=>a.cert_expiring).length,fuel_low:assets.filter(a=>a.fuel_low).length,services_total:svc.length,fuel_refills:fuel.length,fuel_liters_30d:fl30,fuel_cost_30d:fc30},assets:assets,services:svc,fuel:fuel};
+}
+async function sysLoad(){
+  const host=$('sysLive'); if(!host) return;
+  if(DEMO_MODE||!TOKEN){
+    const d=demoSysData();
+    DB.sys_assets=d.assets.map(a=>{const c=Object.assign({},a); delete c.asset_type_label; delete c.property_name; delete c.service_overdue; delete c.service_due_soon; delete c.cert_overdue; delete c.cert_expiring; delete c.fuel_pct; delete c.fuel_low; delete c.services_count; delete c.last_service; return c;});
+    host.innerHTML=sysHtml(d);
+    return;
+  }
+  const r=await apiCall('app-systems',{action:'summary'});
+  if(!r||!r.ok){ host.innerHTML=`<div class="m">${t('Failed to load systems.','সিস্টেম লোড করা যায়নি।')}</div>`; return; }
+  const d=r.summary||{};
+  DB.sys_assets=d.assets||[]; DB.sys_services=d.services||[]; DB.sys_fuel=d.fuel||[];
+  window.__sysCfg=r.config||{service_alert_days:14,cert_alert_days:60,fuel_low_pct:25,fuel_alert_days:14};
+  host.innerHTML=sysHtml(d);
+}
+function sysTab(tab){ state.sysTab=tab; sysLoad(); }
+function sysHtml(d){
+  const rows=d.assets||[], st=d.stats||{};
+  const svc=d.services||[], fuel=d.fuel||[];
+  const isStaff=sysStaff();
+  const t0=state.sysTab||'assets';
+  let h=statsRow([
+    stat(t('Assets','যন্ত্রপাতি'),st.assets_total||rows.length,t('tracked','ট্র্যাকড'),'','⚙️'),
+    stat(t('Service due','সার্ভিস বাকি'),(st.service_overdue||0)+(st.service_due_soon||0),t('overdue','ওভারডিউ')+': '+(st.service_overdue||0),(st.service_overdue||0)?'warn':'','🛠️'),
+    stat(t('Certs','সার্টিফিকেট'),(st.cert_overdue||0)+(st.cert_expiring||0),t('expiring','মেয়াদোত্তীর্ণ')+': '+(st.cert_overdue||0),(st.cert_overdue||0)?'warn':'','📜'),
+    stat(t('Fuel low','জ্বালানি কম'),st.fuel_low||0,t('generators','জেনারেটর'),(st.fuel_low||0)?'warn':'','⛽')
+  ]);
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚙️</span>${t('Systems Watch','সিস্টেম ওয়াচ')}</div><div style="display:flex;gap:6px">
+    <button class="${t0==='assets'?'btn-primary':'btn-ghost'}" onclick="sysTab('assets')">⚙️ ${t('Assets','যন্ত্রপাতি')}</button>
+    <button class="${t0==='services'?'btn-primary':'btn-ghost'}" onclick="sysTab('services')">🛠️ ${t('Service log','সার্ভিস লগ')}</button>
+    <button class="${t0==='fuel'?'btn-primary':'btn-ghost'}" onclick="sysTab('fuel')">⛽ ${t('Fuel ledger','ডিজেল লেজার')}</button>
+    <span style="flex:1"></span>
+    ${isStaff?`<button class="btn-ghost" onclick="sysReport()">🖨 ${t('Report','রিপোর্ট')}</button>`:''}
+  </div></div><div class="panel-b">`;
+  if(t0==='assets'){
+    h+=`<div class="tbl-wrap"><table><thead><tr><th>${t('Asset','যন্ত্র')}</th><th>${t('Type','ধরন')}</th><th>${t('Next service','পরবর্তী সার্ভিস')}</th><th>${t('Certificate','সার্টিফিকেট')}</th><th>${t('Fuel','জ্বালানি')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+      rows.map(x=>`<tr><td><span class="c-name">${esc(x.asset_type_label)}</span><div class="c-sub">${x.id}${x.property_name?' · '+esc(x.property_name):''}</div></td><td>${esc(x.location||'—')}<div class="c-sub">${esc(x.model||'')}</div></td><td>${esc(x.next_service||'—')}${x.service_overdue?' <span class="badge b-red">'+t('OVERDUE','ওভারডিউ')+'</span>':x.service_due_soon?' <span class="badge b-orange">'+t('due','বাকি')+'</span>':''}</td><td>${esc(x.cert_expiry||'—')}${x.cert_overdue?' <span class="badge b-red">'+t('EXPIRED','মেয়াদোত্তীর্ণ')+'</span>':x.cert_expiring?' <span class="badge b-orange">'+t('expiring','মেয়াদ শেষ')+'</span>':''}</td><td>${x.fuel_pct!==null?`<div class="c-sub">${x.fuel_level}/${x.fuel_capacity}L</div><div style="height:6px;background:#eef1f5;border-radius:3px;overflow:hidden;width:70px"><div style="width:${x.fuel_pct}%;height:100%;background:${x.fuel_low?'#dc2626':'#2F80ED'}"></div></div>${x.fuel_low?' <span class="badge b-red">'+t('LOW','কম')+'</span>':''}`:'—'}</td><td>${sysStatusBadge(x.status)}</td><td>${isStaff?`<div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="sysAssetForm('${esc(x.id)}')">✎</button><button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="sysAssetService('${esc(x.id)}')" title="${t('Service stamp','সার্ভিস স্ট্যাম্প')}">🛠️</button>${x.fuel_capacity>0?`<button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="sysAssetFuel('${esc(x.id)}')" title="${t('Refill','রিফিল')}">⛽</button>`:''}<button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="sysAssetDelete('${esc(x.id)}')">✕</button></div>`:''}</td></tr>`).join('')
+      || `<tr><td colspan="7" class="m">${t('No systems registered yet.','এখনো কোনো সিস্টেম নিবন্ধিত নেই।')}</td></tr></tbody></table></div>`;
+  } else if(t0==='services'){
+    h+=`<div class="panel-h" style="margin-bottom:8px"><span class="link" onclick="sysServiceForm()">＋ ${t('Log service','সার্ভিস লগ করুন')}</span></div>`;
+    h+=`<div class="tbl-wrap"><table><thead><tr><th>${t('Date','তারিখ')}</th><th>${t('Asset','যন্ত্র')}</th><th>${t('Type','ধরন')}</th><th>${t('Technician','টেকনিশিয়ান')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Cost','খরচ')}</th><th>${t('Hours','ঘন্টা')}</th><th></th></tr></thead><tbody>`+
+      svc.map(s=>{ const a=(DB.sys_assets||[]).find(x=>x.id===s.asset); return `<tr><td>${esc(s.service_date)}</td><td>${a?esc(sysTypeLabel(a.asset_type))+' <span class="c-sub">'+esc(s.asset)+'</span>':esc(s.asset)}</td><td>${esc(sysSvcTypeLabel(s.service_type))}</td><td>${esc(s.technician||'—')}</td><td>${esc(s.vendor||'—')}</td><td class="t-amount">${money(s.cost)}</td><td>${s.hours_run?esc(String(s.hours_run)):'—'}</td><td>${isStaff?`<button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="sysServiceDelete('${esc(s.id)}')">✕</button>`:''}</td></tr>`; }).join('')
+      || `<tr><td colspan="8" class="m">${t('No service entries yet.','এখনো কোনো সার্ভিস এন্ট্রি নেই।')}</td></tr></tbody></table></div>`;
+  } else {
+    h+=`<div class="panel-h" style="margin-bottom:8px"><span class="link" onclick="sysFuelForm()">＋ ${t('Log refill','রিফিল লগ করুন')}</span></div>`;
+    h+=`<div class="tbl-wrap"><table><thead><tr><th>${t('Date','তারিখ')}</th><th>${t('Asset','যন্ত্র')}</th><th>${t('Liters','লিটার')}</th><th>${t('Rate','দর')}</th><th>${t('Amount','টাকা')}</th><th>${t('Vendor','ভেন্ডর')}</th><th>${t('Hours','ঘন্টা')}</th><th></th></tr></thead><tbody>`+
+      fuel.map(f=>{ const a=(DB.sys_assets||[]).find(x=>x.id===f.asset); return `<tr><td>${esc(f.refill_date)}</td><td>${a?esc(sysTypeLabel(a.asset_type))+' <span class="c-sub">'+esc(f.asset)+'</span>':esc(f.asset)}</td><td>${esc(String(f.liters))} L</td><td>৳${esc(String(f.rate_per_litre))}</td><td class="t-amount">${money(f.amount)}</td><td>${esc(f.vendor||'—')}</td><td>${f.hours_run?esc(String(f.hours_run)):'—'}</td><td>${isStaff?`<button class="btn-ghost" style="padding:3px 8px;font-size:11px" onclick="sysFuelDelete('${esc(f.id)}')">✕</button>`:''}</td></tr>`; }).join('')
+      || `<tr><td colspan="8" class="m">${t('No fuel entries yet.','এখনো কোনো জ্বালানি এন্ট্রি নেই।')}</td></tr></tbody></table></div>`;
+  }
+  h+=`</div></div>`;
+  return h;
+}
+function sysAssetForm(id){
+  const a=id?(DB.sys_assets||[]).find(x=>x.id===id):null;
+  const rows=[];
+  const props=(DB.properties||[]).map(p=>`<option value="${esc(p.id)}" ${a&&a.prop===p.id?'selected':''}>${esc(p.name)}</option>`).join('');
+  const types=['lift','generator','water_pump','sewage_pump','transformer','solar','booster_pump','other'].map(v=>`<option value="${v}" ${a&&a.asset_type===v?'selected':''}>${sysTypeLabel(v)}</option>`).join('');
+  rows.push(rowItem('location',`<label class="lb">${t('Location','অবস্থান')} *</label><input id="sa_loc" class="inp" value="${a?esc(a.location||''):''}">`));
+  rows.push(rowItem('type',`<label class="lb">${t('Type','ধরন')}</label><select id="sa_type" class="inp">${types}</select>`));
+  rows.push(rowItem('prop',`<label class="lb">${t('Property','সম্পত্তি')}</label><select id="sa_prop" class="inp"><option value="">—</option>${props}</select>`));
+  rows.push(rowItem('model',`<label class="lb">${t('Model','মডেল')}</label><input id="sa_model" class="inp" value="${a?esc(a.model||''):''}">`));
+  rows.push(rowItem('serial',`<label class="lb">${t('Serial no','সিরিয়াল নং')}</label><input id="sa_serial" class="inp" value="${a?esc(a.serial_no||''):''}">`));
+  rows.push(rowItem('interval',`<label class="lb">${t('Service interval (days)','সার্ভিস ব্যবধান (দিন)')}</label><input id="sa_interval" class="inp" type="number" min="1" max="720" value="${a?a.service_interval_days||90:90}">`));
+  rows.push(rowItem('cert',`<label class="lb">${t('Certificate expiry','সার্টিফিকেট মেয়াদ')}</label><input id="sa_cert" class="inp" type="date" value="${a?esc(a.cert_expiry||''):''}">`));
+  rows.push(rowItem('certref',`<label class="lb">${t('Certificate ref','সার্টিফিকেট রেফারেন্স')}</label><input id="sa_certref" class="inp" value="${a?esc(a.cert_ref||''):''}">`));
+  rows.push(rowItem('fuelcap',`<label class="lb">${t('Fuel capacity (L)','জ্বালানি ধারণক্ষমতা (লি)')}</label><input id="sa_fcap" class="inp" type="number" min="0" value="${a?a.fuel_capacity||0:0}">`));
+  rows.push(rowItem('fuelburn',`<label class="lb">${t('Burn rate (L/h)','বার্ন রেট (লি/ঘণ্টা)')}</label><input id="sa_fburn" class="inp" type="number" min="0" step="0.1" value="${a?a.fuel_burn_rate||0:0}">`));
+  rows.push(rowItem('notes',`<label class="lb">${t('Notes','নোট')}</label><textarea id="sa_notes" class="inp" rows="2">${a?esc(a.notes||''):''}</textarea>`));
+  openDrawer(t(id?'Edit asset':'Add asset',id?'যন্ত্র সম্পাদনা':'যন্ত্র যোগ করুন'),rows.join(''),`<button class="btn-primary" onclick="submitSysAsset('${id||''}')">${t('Save','সেভ')}</button>`);
+}
+async function submitSysAsset(id){
+  const loc=val('sa_loc').trim(); if(!loc){ toast(t('Location is required.','অবস্থান আবশ্যক।')); return; }
+  const payload={action: id?'asset-save':'asset-create',location:loc,asset_type:val('sa_type'),prop:val('sa_prop'),model:val('sa_model'),serial_no:val('sa_serial'),service_interval_days:+(val('sa_interval')||90),cert_expiry:val('sa_cert'),cert_ref:val('sa_certref'),fuel_capacity:+(val('sa_fcap')||0),fuel_burn_rate:+(val('sa_fburn')||0),notes:val('sa_notes')};
+  if(id) payload.id=id;
+  if(DEMO_MODE||!TOKEN){
+    if(id){ const a=(DB.sys_assets||[]).find(x=>x.id===id); if(a) Object.assign(a,{location:loc,asset_type:payload.asset_type,prop:payload.prop,model:payload.model,serial_no:payload.serial_no,service_interval_days:payload.service_interval_days,cert_expiry:payload.cert_expiry,cert_ref:payload.cert_ref,fuel_capacity:payload.fuel_capacity,fuel_burn_rate:payload.fuel_burn_rate,notes:payload.notes}); }
+    else { const n=Math.max(100,...(DB.sys_assets||[]).map(x=>+(x.id||'SA-0').replace('SA-','')||0))+1; const iv=payload.service_interval_days||90; DB.sys_assets=DB.sys_assets||[]; DB.sys_assets.push({id:'SA-'+n,owner_email:'owner@krtaker.com',prop:payload.prop,asset_type:payload.asset_type,location:loc,model:payload.model,serial_no:payload.serial_no,install_date:new Date().toISOString().slice(0,10),next_service:new Date(Date.now()+iv*864e5).toISOString().slice(0,10),service_interval_days:iv,cert_expiry:payload.cert_expiry,cert_ref:payload.cert_ref,status:'operational',fuel_capacity:payload.fuel_capacity,fuel_level:0,fuel_burn_rate:payload.fuel_burn_rate,notes:payload.notes,ts:new Date().toISOString().slice(0,19).replace('T',' ')}); }
+    toast(t('Saved','সেভ হয়েছে')); closeDrawer(); sysLoad(); return;
+  }
+  const r=await apiCall('app-systems',payload);
+  if(r&&r.ok){ toast(id?t('Updated','আপডেট হয়েছে'):r.id+' '+t('created','তৈরি হয়েছে')); closeDrawer(); sysLoad(); }
+}
+async function sysStatus(id,st){
+  if(DEMO_MODE||!TOKEN){ const a=(DB.sys_assets||[]).find(x=>x.id===id); if(a) a.status=st; toast(t('Status updated','স্ট্যাটাস আপডেট')); sysLoad(); return; }
+  const r=await apiCall('app-systems',{action:'asset-status',id:id,status:st});
+  if(r&&r.ok){ toast(t('Status updated','স্ট্যাটাস আপডেট')); sysLoad(); }
+}
+function sysAssetService(id){
+  const a=(DB.sys_assets||[]).find(x=>x.id===id); if(!a){ toast(t('Asset not found','যন্ত্র পাওয়া যায়নি')); return; }
+  const rows=[];
+  rows.push(rowItem('svc',`<label class="lb">${t('Asset','যন্ত্র')}</label><div class="c-name">${sysTypeLabel(a.asset_type)} · ${esc(a.location||'')}</div>`));
+  rows.push(rowItem('type',`<label class="lb">${t('Service type','সার্ভিস ধরন')}</label><select id="ss_type" class="inp"><option value="routine">${sysSvcTypeLabel('routine')}</option><option value="repair">${sysSvcTypeLabel('repair')}</option><option value="major">${sysSvcTypeLabel('major')}</option><option value="amc">${sysSvcTypeLabel('amc')}</option></select>`));
+  rows.push(rowItem('tech',`<label class="lb">${t('Technician','টেকনিশিয়ান')}</label><input id="ss_tech" class="inp">`));
+  rows.push(rowItem('vendor',`<label class="lb">${t('Vendor','ভেন্ডর')}</label><input id="ss_vendor" class="inp">`));
+  rows.push(rowItem('cost',`<label class="lb">${t('Cost (৳)','খরচ (৳)')}</label><input id="ss_cost" class="inp" type="number" min="0" value="0">`));
+  rows.push(rowItem('hours',`<label class="lb">${t('Hours run','চালানো ঘন্টা')}</label><input id="ss_hours" class="inp" type="number" min="0" value="0">`));
+  rows.push(rowItem('interval',`<label class="lb">${t('Next interval (days)','পরবর্তী ব্যবধান (দিন)')}</label><input id="ss_interval" class="inp" type="number" min="1" max="720" value="${a.service_interval_days||90}">`));
+  rows.push(rowItem('notes',`<label class="lb">${t('Notes','নোট')}</label><textarea id="ss_notes" class="inp" rows="2"></textarea>`));
+  openDrawer(t('Service stamp','সার্ভিস স্ট্যাম্প')+' — '+id,rows.join(''),`<button class="btn-primary" onclick="submitSysService('${esc(id)}')">${t('Stamp service','স্ট্যাম্প করুন')}</button>`);
+}
+async function submitSysService(id){
+  const payload={action:'asset-service',id:id,service_type:val('ss_type'),technician:val('ss_tech'),vendor:val('ss_vendor'),cost:+(val('ss_cost')||0),hours_run:+(val('ss_hours')||0),service_interval_days:+(val('ss_interval')||90),notes:val('ss_notes')};
+  if(DEMO_MODE||!TOKEN){
+    const a=(DB.sys_assets||[]).find(x=>x.id===id); if(a){ const n=Math.max(100,...(DB.sys_services||[]).map(x=>+(x.id||'SS-0').replace('SS-','')||0))+1; DB.sys_services=DB.sys_services||[]; DB.sys_services.push({id:'SS-'+n,owner_email:'owner@krtaker.com',asset:id,service_date:new Date().toISOString().slice(0,10),service_type:payload.service_type,technician:payload.technician,vendor:payload.vendor,cost:payload.cost,hours_run:payload.hours_run,notes:payload.notes,ts:new Date().toISOString().slice(0,19).replace('T',' ')}); a.service_interval_days=payload.service_interval_days; a.next_service=new Date(Date.now()+payload.service_interval_days*864e5).toISOString().slice(0,10); }
+    toast(t('Service stamped','সার্ভিস স্ট্যাম্প হয়েছে')); closeDrawer(); sysLoad(); return;
+  }
+  const r=await apiCall('app-systems',payload);
+  if(r&&r.ok){ toast(r.id+' '+t('stamped','স্ট্যাম্প হয়েছে')); closeDrawer(); sysLoad(); }
+}
+function sysAssetFuel(id){
+  const a=(DB.sys_assets||[]).find(x=>x.id===id); if(!a){ toast(t('Asset not found','যন্ত্র পাওয়া যায়নি')); return; }
+  const rows=[];
+  rows.push(rowItem('ast',`<label class="lb">${t('Generator','জেনারেটর')}</label><div class="c-name">${esc(a.location||'')}</div><div class="c-sub">${t('Level','লেভেল')}: ${a.fuel_level}/${a.fuel_capacity}L</div>`));
+  rows.push(rowItem('liters',`<label class="lb">${t('Liters','লিটার')} *</label><input id="sf_liters" class="inp" type="number" min="1">`));
+  rows.push(rowItem('rate',`<label class="lb">${t('Rate per litre (৳)','প্রতি লিটার দর (৳)')}</label><input id="sf_rate" class="inp" type="number" min="0" step="0.1">`));
+  rows.push(rowItem('vendor',`<label class="lb">${t('Vendor','ভেন্ডর')}</label><input id="sf_vendor" class="inp">`));
+  rows.push(rowItem('hours',`<label class="lb">${t('Hours run','চালানো ঘন্টা')}</label><input id="sf_hours" class="inp" type="number" min="0">`));
+  openDrawer(t('Fuel refill','জ্বালানি রিফিল')+' — '+id,rows.join(''),`<button class="btn-primary" onclick="submitSysFuel('${esc(id)}')">${t('Log refill','রিফিল লগ')}</button>`);
+}
+async function submitSysFuel(id){
+  const liters=+(val('sf_liters')||0); if(liters<=0){ toast(t('Liters must be positive.','লিটার ধনাত্মক হতে হবে।')); return; }
+  const payload={action:'asset-fuel',id:id,liters:liters,rate_per_litre:+(val('sf_rate')||0),vendor:val('sf_vendor'),hours_run:+(val('sf_hours')||0)};
+  if(DEMO_MODE||!TOKEN){
+    const a=(DB.sys_assets||[]).find(x=>x.id===id); if(a){ const n=Math.max(100,...(DB.sys_fuel||[]).map(x=>+(x.id||'SF-0').replace('SF-','')||0))+1; const rate=payload.rate_per_litre||0; DB.sys_fuel=DB.sys_fuel||[]; DB.sys_fuel.push({id:'SF-'+n,owner_email:'owner@krtaker.com',asset:id,refill_date:new Date().toISOString().slice(0,10),liters:liters,rate_per_litre:rate,amount:Math.round(liters*rate),vendor:payload.vendor,hours_run:payload.hours_run,notes:'',ts:new Date().toISOString().slice(0,19).replace('T',' ')}); let lv=+a.fuel_level+liters; if(+a.fuel_capacity>0&&lv>+a.fuel_capacity) lv=+a.fuel_capacity; a.fuel_level=lv; }
+    toast(t('Refill logged','রিফিল লগ হয়েছে')); closeDrawer(); sysLoad(); return;
+  }
+  const r=await apiCall('app-systems',payload);
+  if(r&&r.ok){ toast(r.id+' '+t('logged','লগ হয়েছে')); closeDrawer(); sysLoad(); }
+}
+async function sysAssetDelete(id){
+  if(!confirm(t('Delete this asset and its service/fuel history?','এই যন্ত্র এবং এর সার্ভিস/জ্বালানি ইতিহাস মুছবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){ DB.sys_assets=(DB.sys_assets||[]).filter(x=>x.id!==id); DB.sys_services=(DB.sys_services||[]).filter(x=>x.asset!==id); DB.sys_fuel=(DB.sys_fuel||[]).filter(x=>x.asset!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); sysLoad(); return; }
+  const r=await apiCall('app-systems',{action:'asset-delete',id:id});
+  if(r&&r.ok){ toast(t('Deleted','মুছে ফেলা হয়েছে')); sysLoad(); }
+}
+function sysServiceForm(){
+  const gens=(DB.sys_assets||[]).map(a=>`<option value="${esc(a.id)}">${sysTypeLabel(a.asset_type)} · ${esc(a.location||'')}</option>`).join('');
+  const rows=[];
+  rows.push(rowItem('asset',`<label class="lb">${t('Asset','যন্ত্র')} *</label><select id="sl_asset" class="inp">${gens}</select>`));
+  rows.push(rowItem('date',`<label class="lb">${t('Service date','সার্ভিস তারিখ')} *</label><input id="sl_date" class="inp" type="date">`));
+  rows.push(rowItem('type',`<label class="lb">${t('Type','ধরন')}</label><select id="sl_type" class="inp"><option value="routine">${sysSvcTypeLabel('routine')}</option><option value="repair">${sysSvcTypeLabel('repair')}</option><option value="major">${sysSvcTypeLabel('major')}</option><option value="amc">${sysSvcTypeLabel('amc')}</option></select>`));
+  rows.push(rowItem('tech',`<label class="lb">${t('Technician','টেকনিশিয়ান')}</label><input id="sl_tech" class="inp">`));
+  rows.push(rowItem('vendor',`<label class="lb">${t('Vendor','ভেন্ডর')}</label><input id="sl_vendor" class="inp">`));
+  rows.push(rowItem('cost',`<label class="lb">${t('Cost (৳)','খরচ (৳)')}</label><input id="sl_cost" class="inp" type="number" min="0" value="0">`));
+  rows.push(rowItem('hours',`<label class="lb">${t('Hours run','চালানো ঘন্টা')}</label><input id="sl_hours" class="inp" type="number" min="0" value="0">`));
+  openDrawer(t('Log service','সার্ভিস লগ'),rows.join(''),`<button class="btn-primary" onclick="submitSysLogService()">${t('Save','সেভ')}</button>`);
+}
+async function submitSysLogService(){
+  const asset=val('sl_asset'); const date=val('sl_date');
+  if(!asset||!date){ toast(t('Asset and date are required.','যন্ত্র ও তারিখ আবশ্যক।')); return; }
+  const payload={action:'service-create',asset:asset,service_date:date,service_type:val('sl_type'),technician:val('sl_tech'),vendor:val('sl_vendor'),cost:+(val('sl_cost')||0),hours_run:+(val('sl_hours')||0)};
+  if(DEMO_MODE||!TOKEN){
+    const n=Math.max(100,...(DB.sys_services||[]).map(x=>+(x.id||'SS-0').replace('SS-','')||0))+1; DB.sys_services=DB.sys_services||[]; DB.sys_services.push({id:'SS-'+n,owner_email:'owner@krtaker.com',asset:asset,service_date:date,service_type:payload.service_type,technician:payload.technician,vendor:payload.vendor,cost:payload.cost,hours_run:payload.hours_run,notes:'',ts:new Date().toISOString().slice(0,19).replace('T',' ')});
+    toast(t('Logged','লগ হয়েছে')); closeDrawer(); sysLoad(); return;
+  }
+  const r=await apiCall('app-systems',payload);
+  if(r&&r.ok){ toast(r.id+' '+t('logged','লগ হয়েছে')); closeDrawer(); sysLoad(); }
+}
+async function sysServiceDelete(id){
+  if(!confirm(t('Delete this service entry?','এই সার্ভিস এন্ট্রি মুছবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){ DB.sys_services=(DB.sys_services||[]).filter(x=>x.id!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); sysLoad(); return; }
+  const r=await apiCall('app-systems',{action:'service-delete',id:id});
+  if(r&&r.ok){ toast(t('Deleted','মুছে ফেলা হয়েছে')); sysLoad(); }
+}
+function sysFuelForm(){
+  const gens=(DB.sys_assets||[]).filter(a=>+a.fuel_capacity>0).map(a=>`<option value="${esc(a.id)}">${sysTypeLabel(a.asset_type)} · ${esc(a.location||'')}</option>`).join('') || `<option value="">${t('No fuel-tracked assets','জ্বালানি ট্র্যাকড যন্ত্র নেই')}</option>`;
+  const rows=[];
+  rows.push(rowItem('asset',`<label class="lb">${t('Generator','জেনারেটর')} *</label><select id="fl_asset" class="inp">${gens}</select>`));
+  rows.push(rowItem('date',`<label class="lb">${t('Refill date','রিফিল তারিখ')}</label><input id="fl_date" class="inp" type="date">`));
+  rows.push(rowItem('liters',`<label class="lb">${t('Liters','লিটার')} *</label><input id="fl_liters" class="inp" type="number" min="1">`));
+  rows.push(rowItem('rate',`<label class="lb">${t('Rate (৳/L)','দর (৳/লি)')}</label><input id="fl_rate" class="inp" type="number" min="0" step="0.1">`));
+  rows.push(rowItem('vendor',`<label class="lb">${t('Vendor','ভেন্ডর')}</label><input id="fl_vendor" class="inp">`));
+  rows.push(rowItem('hours',`<label class="lb">${t('Hours run','চালানো ঘন্টা')}</label><input id="fl_hours" class="inp" type="number" min="0">`));
+  openDrawer(t('Log fuel refill','জ্বালানি রিফিল লগ'),rows.join(''),`<button class="btn-primary" onclick="submitSysLogFuel()">${t('Save','সেভ')}</button>`);
+}
+async function submitSysLogFuel(){
+  const asset=val('fl_asset'); const liters=+(val('fl_liters')||0);
+  if(!asset||liters<=0){ toast(t('Asset and positive liters required.','যন্ত্র ও ধনাত্মক লিটার আবশ্যক।')); return; }
+  const rate=+(val('fl_rate')||0);
+  const payload={action:'fuel-create',asset:asset,liters:liters,rate_per_litre:rate,vendor:val('fl_vendor'),hours_run:+(val('fl_hours')||0),refill_date:val('fl_date')};
+  if(DEMO_MODE||!TOKEN){
+    const n=Math.max(100,...(DB.sys_fuel||[]).map(x=>+(x.id||'SF-0').replace('SF-','')||0))+1; DB.sys_fuel=DB.sys_fuel||[]; DB.sys_fuel.push({id:'SF-'+n,owner_email:'owner@krtaker.com',asset:asset,refill_date:payload.refill_date||new Date().toISOString().slice(0,10),liters:liters,rate_per_litre:rate,amount:Math.round(liters*rate),vendor:payload.vendor,hours_run:payload.hours_run,notes:'',ts:new Date().toISOString().slice(0,19).replace('T',' ')});
+    const a=(DB.sys_assets||[]).find(x=>x.id===asset); if(a){ let lv=+a.fuel_level+liters; if(+a.fuel_capacity>0&&lv>+a.fuel_capacity) lv=+a.fuel_capacity; a.fuel_level=lv; }
+    toast(t('Logged','লগ হয়েছে')); closeDrawer(); sysLoad(); return;
+  }
+  const r=await apiCall('app-systems',payload);
+  if(r&&r.ok){ toast(r.id+' '+t('logged','লগ হয়েছে')); closeDrawer(); sysLoad(); }
+}
+async function sysFuelDelete(id){
+  if(!confirm(t('Delete this fuel entry?','এই জ্বালানি এন্ট্রি মুছবেন?'))) return;
+  if(DEMO_MODE||!TOKEN){ DB.sys_fuel=(DB.sys_fuel||[]).filter(x=>x.id!==id); toast(t('Deleted','মুছে ফেলা হয়েছে')); sysLoad(); return; }
+  const r=await apiCall('app-systems',{action:'fuel-delete',id:id});
+  if(r&&r.ok){ toast(t('Deleted','মুছে ফেলা হয়েছে')); sysLoad(); }
+}
+function sysConfigDrawer(){
+  const cfg=window.__sysCfg||{service_alert_days:14,cert_alert_days:60,fuel_low_pct:25,fuel_alert_days:14};
+  const rows=[];
+  rows.push(rowItem('svc',`<label class="lb">${t('Service alert (days)','সার্ভিস অ্যালার্ট (দিন)')}</label><input id="sy_svc" class="inp" type="number" min="1" max="365" value="${cfg.service_alert_days||14}">`));
+  rows.push(rowItem('cert',`<label class="lb">${t('Certificate alert (days)','সার্টিফিকেট অ্যালার্ট (দিন)')}</label><input id="sy_cert" class="inp" type="number" min="1" max="365" value="${cfg.cert_alert_days||60}">`));
+  rows.push(rowItem('low',`<label class="lb">${t('Low fuel threshold (%)','জ্বালানি কম থ্রেশহোল্ড (%)')}</label><input id="sy_low" class="inp" type="number" min="1" max="50" value="${cfg.fuel_low_pct||25}">`));
+  rows.push(rowItem('fa',`<label class="lb">${t('Fuel alert (days)','জ্বালানি অ্যালার্ট (দিন)')}</label><input id="sy_fa" class="inp" type="number" min="1" max="120" value="${cfg.fuel_alert_days||14}">`));
+  openDrawer(t('Systems Watch settings','সিস্টেম ওয়াচ সেটিংস'),rows.join(''),`<button class="btn-primary" onclick="sysSaveConfig()">${t('Save','সেভ')}</button>`);
+}
+async function sysSaveConfig(){
+  const payload={action:'config-save',service_alert_days:+(val('sy_svc')||14),cert_alert_days:+(val('sy_cert')||60),fuel_low_pct:+(val('sy_low')||25),fuel_alert_days:+(val('sy_fa')||14)};
+  if(DEMO_MODE||!TOKEN){ window.__sysCfg={service_alert_days:payload.service_alert_days,cert_alert_days:payload.cert_alert_days,fuel_low_pct:payload.fuel_low_pct,fuel_alert_days:payload.fuel_alert_days}; toast(t('Saved','সেভ হয়েছে')); closeDrawer(); sysLoad(); return; }
+  const r=await apiCall('app-systems',payload);
+  if(r&&r.ok){ window.__sysCfg={service_alert_days:payload.service_alert_days,cert_alert_days:payload.cert_alert_days,fuel_low_pct:payload.fuel_low_pct,fuel_alert_days:payload.fuel_alert_days}; toast(t('Saved','সেভ হয়েছে')); closeDrawer(); sysLoad(); }
+}
+async function sysReport(){
+  if(DEMO_MODE||!TOKEN){
+    const cfg=window.__sysCfg||{service_alert_days:14,cert_alert_days:60,fuel_low_pct:25};
+    const assets=(DB.sys_assets||[]).map(sysAssetEnrich);
+    const svc=DB.sys_services||[], fuel=DB.sys_fuel||[];
+    let rows=assets.map(a=>{ const fl=[]; if(a.cert_overdue)fl.push('CERT EXPIRED'); if(a.cert_expiring)fl.push('cert expiring'); if(a.service_overdue)fl.push('SERVICE OVERDUE'); if(a.service_due_soon)fl.push('service due soon'); if(a.fuel_low)fl.push('LOW FUEL '+a.fuel_pct+'%'); if(a.status==='faulty')fl.push('FAULTY'); return `<tr><td>${esc(a.id)}</td><td>${esc(a.asset_type_label)}</td><td>${esc(a.location||'')}</td><td>${esc(a.model||'')}</td><td>${esc(a.next_service||'—')}</td><td>${esc(a.cert_expiry||'—')}</td><td>${a.fuel_pct!==null?a.fuel_pct+'%':'—'}</td><td>${esc(fl.join(', '))}</td></tr>`; }).join('');
+    let frows=fuel.map(f=>{ const a=(DB.sys_assets||[]).find(x=>x.id===f.asset); return `<tr><td>${esc(f.id)}</td><td>${esc(f.refill_date)}</td><td>${a?esc(sysTypeLabel(a.asset_type)):esc(f.asset)}</td><td>${esc(String(f.liters))} L</td><td>৳${esc(String(f.rate_per_litre))}</td><td>৳${money(f.amount)}</td><td>${esc(f.vendor||'')}</td><td>${esc(String(f.hours_run||''))}</td></tr>`; }).join('');
+    const html=`<!doctype html><html><head><meta charset="utf-8"><title>Essential Systems Report</title></head><body style="font-family:Arial,sans-serif;color:#1A2433;padding:32px"><h1>Essential Systems Report — Systems Watch (সিস্টেম ওয়াচ)</h1><p>Generated ${new Date().toLocaleString()}</p><h2>Assets / যন্ত্রপাতি</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:13px"><tr style="background:#F6F9FE"><th>ID</th><th>Type</th><th>Location</th><th>Model</th><th>Next service</th><th>Cert expiry</th><th>Fuel</th><th>Flags</th></tr>${rows}</table>${frows?`<h2>Fuel ledger / ডিজেল লেজার</h2><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:13px"><tr style="background:#F6F9FE"><th>ID</th><th>Date</th><th>Asset</th><th>Liters</th><th>Rate</th><th>Amount</th><th>Vendor</th><th>Hours</th></tr>${frows}</table>`:''}<div style="margin-top:48px;display:flex;gap:48px"><div>Prepared by (তৈরি করেছেন)<div style="border-bottom:1px solid #999;width:180px;height:24px"></div></div><div>Technician (টেকনিশিয়ান)<div style="border-bottom:1px solid #999;width:180px;height:24px"></div></div><div>Owner (মালিক)<div style="border-bottom:1px solid #999;width:180px;height:24px"></div></div></div></body></html>`;
+    previewDoc('Systems Report',html); return;
+  }
+  const r=await fetch('/api/app-systems?action=report',{headers:{Authorization:'Bearer '+TOKEN}});
+  if(r.ok){ const html=await r.text(); previewDoc('Systems Report',html); }
+}
 async function buildLoad(){
   const host=document.getElementById('buildLive'); if(!host) return;
   let d;
@@ -6661,6 +6943,13 @@ const renderers={
     let h=pageHead(t('Fire Safety','ফায়ার সেফটি'),isStaff?t('Extinguishers, detectors, incidents, evacuation drills and emergency contacts — the building fire-readiness board for NRB owners.','অগ্নি নির্বাপক, ডিটেক্টর, ঘটনা, উচ্ছেদ ড্রিল ও জরুরি যোগাযোগ — এনআরবি মালিকদের জন্য ভবনের অগ্নি-প্রস্তুতি বোর্ড।'):t('Your fire safety records.','আপনার অগ্নি নিরাপত্তা রেকর্ড।'),isStaff?`<button class="btn-ghost" onclick="fireConfigDrawer()">⚙️</button>`:'');
     h+=`<div id="fireLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>fireLoad(),0);
+    return h;
+  },
+  systems(){
+    const isStaff=sysStaff();
+    let h=pageHead(t('Systems Watch','সিস্টেম ওয়াচ'),isStaff?t('Lift, generator, pumps & transformer — service schedules, RAJUK certificates and the diesel ledger. Built for NRB owners monitoring from abroad.','লিফট, জেনারেটর, পাম্প ও ট্রান্সফরমার — সার্ভিস সময়সূচি, সার্টিফিকেট ও ডিজেল লেজার। বিদেশ থেকে মনিটর করা এনআরবি মালিকদের জন্য।'):t('Your essential systems.','আপনার অত্যাবশ্যকীয় সিস্টেম।'),isStaff?`<button class="btn-primary" onclick="sysAssetForm()">＋ ${t('Add asset','যন্ত্র যোগ করুন')}</button><button class="btn-ghost" onclick="sysConfigDrawer()">⚙️</button>`:'');
+    h+=`<div id="sysLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>sysLoad(),0);
     return h;
   },
   remit(){
