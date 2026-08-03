@@ -967,34 +967,47 @@ const SEED = {
   thana_forms:[
     {id:'TF-001',tenant:'T-001',unit:'U-001',prop:'P-001',thana:'Mirpur',district:'Dhaka',status:'Verified',payload:{unit:'U-001',prop:'P-001',name:'Rafiqul Islam',nid:'19900123456789012',dob:'1990-01-23',phone:'01711-223344',father:'Abdul Karim',mother:'Rahima Khatun',profession:'Business',employer:'Rafi Traders',present_flat:'Flat 3B, Green View Residency',present_road:'12/5, Mirpur-10',present_area:'Mirpur',permanent_address:'Village: Charpara, P.O. Sirajganj',spouse:'Nasima Begum',spouse_phone:'01711-334455',family_count:'4',ref1_name:'Md. Hanif',ref1_phone:'01811-112233',ref1_address:'Mirpur-12',ref2_name:'Shahidul Islam',ref2_phone:'01911-556677',ref2_address:'Pallabi',landlord_name:'Rofiqul Islam (Owner)',landlord_nid:'',landlord_phone:'01700-000000',move_in:'2026-01-01',lease_term:'12',vehicle:'None',remarks:'Corporate lease reference NA'},submitted_at:'2026-02-01 10:00:00',verified_by:'Kabir Ahmed',verified_at:'2026-02-02 12:00:00',created_by:'Kabir Ahmed',ts:'2026-02-01 10:00:00'},
     {id:'TF-002',tenant:'T-002',unit:'U-010',prop:'P-001',thana:'Mirpur',district:'Dhaka',status:'Submitted',payload:{unit:'U-010',prop:'P-001',name:'Sultana Rahman',nid:'19850112233445021',dob:'1985-11-22',phone:'01712-445566',father:'Late A. Rahman',mother:'Jahanara Begum',profession:'Banker',employer:'Dutch-Bangla Bank',present_flat:'Flat 10A, Green View Residency',present_road:'12/5, Mirpur-10',present_area:'Mirpur',permanent_address:'House 22, Road 4, Dhanmondi',spouse:'Kamal Hossain',spouse_phone:'01712-778899',family_count:'3',ref1_name:'Rafiqul Islam',ref1_phone:'01711-223344',ref1_address:'Green View Residency',ref2_name:'Nusrat Jahan',ref2_phone:'01611-223344',ref2_address:'Mirpur DOHS',landlord_name:'Rofiqul Islam (Owner)',landlord_nid:'',landlord_phone:'01700-000000',move_in:'2026-01-15',lease_term:'11',vehicle:'Toyota Axio (Dhaka Metro-GHA-12-3456)',remarks:''},submitted_at:'2026-07-20 09:30:00',verified_by:'',verified_at:'',created_by:'Kabir Ahmed',ts:'2026-07-20 09:30:00'}
+  ],
+  legal_notices:[
+    {id:'LN-001',ntype:'eviction',lease:'L-004',tenant:'T-005',unit:'U-005',reason:'Recurring rent default — 2 months outstanding',body:'NOTICE TO QUIT / উচ্ছেদ নোটিশ\nTo: Bengal Agro Foods (L-004)\nPremises: Floor 1 (Retail) — Banani Commercial Tower (rent ৳3,80,000/month)\nYou are hereby given 90 days notice to vacate the premises.\nআপনাকে ৯০ দিনের নোটিশ দেওয়া হল।',notice_days:90,effective_date:'2026-10-30',served_on:'2026-07-01 10:00:00',served_by:'Kabir Ahmed',status:'Served',created_by:'Kabir Ahmed',ts:'2026-07-01 10:00:00'},
+    {id:'LN-002',ntype:'rent_hike',lease:'L-006',tenant:'T-006',unit:'U-008',reason:'Market adjustment — 10% proposed',body:'NOTICE OF RENT INCREASE / ভাড়া বৃদ্ধি নোটিশ\nTo: Tanvir Hossain (L-006)\nYour monthly rent will increase effective +60 days.\nআপনার মাসিক ভাড়া ৬০ দিন পর থেকে বৃদ্ধি পাবে।',notice_days:60,effective_date:'2026-10-02',served_on:'',served_by:'',status:'Draft',created_by:'Naima Rahman',ts:'2026-07-20 11:00:00'}
+  ],
+  cases:[
+    {id:'CASE-001',title:'Eviction proceedings — Bengal Agro Foods',ref_lease:'L-004',type:'eviction',status:'Open',opened:'2026-07-01',notes:'90-day notice served 01 Jul; tenant seeking time',stage:'Legal Notice',lawyer:'Barrister Naima',next_hearing:'2026-08-15',updated_at:'2026-07-15'},
+    {id:'CASE-002',title:'Rent arrears — Tanvir Hossain',ref_lease:'L-006',type:'arrears',status:'Open',opened:'2026-07-05',notes:'Two months arrears; payment plan proposed',stage:'Negotiation',lawyer:'',next_hearing:'2026-07-30',updated_at:'2026-07-05'}
+  ],
+  case_events:[
+    {id:'EV-001',case_id:'CASE-001',ev_type:'stage',body:'Case opened — stage: Legal Notice',actor:'Kabir Ahmed',ts:'2026-07-01 10:05:00'},
+    {id:'EV-002',case_id:'CASE-001',ev_type:'hearing',body:'Next hearing listed for 15 Aug at Dhaka Chief Metropolitan Magistrate Court',actor:'Barrister Naima',ts:'2026-07-12 14:00:00'},
+    {id:'EV-003',case_id:'CASE-002',ev_type:'stage',body:'Case opened — stage: Negotiation',actor:'Kabir Ahmed',ts:'2026-07-05 09:30:00'}
   ]
 };
 
 /* ═══ Roles & modules ═══ */
-const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','trust','ai','analytics','notices','documents','referrals','recon','templates'];
+const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
   {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
-  {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','trust','ai','notices','documents','analytics']},
+  {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
   {id:'partner',name:'Rahim Steel Works',ava:'RS',role:'Service Partner',tag:'Partner Works',ico:'🛠️',desc:'Jobs, QC feedback, payouts',mods:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals']},
-  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','trust','ai','analytics','notices','documents']},
-  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','trust','ai','notices','documents','templates']},
+  {id:'svc_mgr',name:'Arif Chowdhury',ava:'AC',role:'Service Manager',tag:'QC',ico:'✅',desc:'Quality control & SLA across partners',mods:['dashboard','maintenance','vendors','compliance','legal','trust','ai','analytics','notices','documents']},
+  {id:'legal',name:'Barrister Naima',ava:'BN',role:'Legal Counsel',tag:'Legal',ico:'⚖️',desc:'Registrations, PRCA cases, compliance docket',mods:['dashboard','compliance','leases','legal','trust','ai','notices','documents','templates']},
   {id:'crm',name:'Mithila Rahman',ava:'MR',role:'CRM & Help Desk',tag:'Support',ico:'🎧',desc:'Tickets, CSAT, tenant onboarding, leads',mods:['dashboard','maintenance','leads','onboarding','ai','notices','documents','referrals']},
-  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','ai','analytics','notices','documents','recon','templates']},
+  {id:'accountant',name:'Sohel Rana',ava:'SR',role:'Accountant',tag:'Finance',ico:'💰',desc:'Cash flow, TDS, invoices, aging',mods:['dashboard','invoices','receipts','payments','taxes','statements','remit','utilities','vendors','legal','ai','analytics','notices','documents','recon','templates']},
   {id:'hr',name:'Nusrat Jahan',ava:'NJ',role:'HR & Admin',tag:'HR',ico:'👥',desc:'Staff, onboarding, org admin',mods:['dashboard','ai','notices','documents']}
 ];
 const GROUPS = [
   {id:'workspace',label:'Workspace',items:[['dashboard','📊','Overview'],['properties','🏢','Properties'],['units','🚪','Units'],['tenants','👤','Tenants'],['leases','📄','Leases'],['renewals','🔄','Renewals'],['documents','📁','Documents'],['templates','🗂️','Templates'],['notices','📢','Notice Board'],['referrals','🤝','Referrals']]},
   {id:'finance',label:'Finance',items:[['invoices','🧾','Invoices'],['receipts','📎','Receipts'],['payments','💳','Payments'],['taxes','🏛️','Taxes'],['statements','💰','Statements'],['remit','🌍','Remittances'],['recon','🔄','Reconciliation'],['analytics','📈','Analytics'],['subscriptions','💠','Subscriptions']]},
-  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['trust','🪪','Trust Engine']]},
+  {id:'ops',label:'Operations',items:[['utilities','🔌','Utilities'],['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['onboarding','📋','Onboarding'],['leads','📥','Leads'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['trust','🪪','Trust Engine']]},
   {id:'assist',label:'Assist',items:[['ai','🤖','AI Caretaker (KR)']]},
   {id:'premium',label:'Premium',items:[['caretaker','👑','Caretaker']]}
 ];
-const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','trust':'🪪','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
-const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','trust':'Trust Engine','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
+const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑'};
+const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker'};
 const BN = {
-  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Trust Engine':'ট্রাস্ট ইঞ্জিন','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
+  'Overview':'ওভারভিউ','Properties':'সম্পত্তি','Units':'ইউনিট','Tenants':'ভাড়াটিয়া','Leases':'লিজ','Renewals':'রিনিউয়াল','Invoices':'ইনভয়েস','Receipts':'রসিদ','Payments':'পেমেন্ট','Taxes':'কর','Statements':'স্টেটমেন্ট','Remittances':'রেমিট্যান্স','Utilities':'ইউটিলিটি','Maintenance':'রক্ষণাবেক্ষণ','Vendors':'ভেন্ডর','Onboarding':'অনবোর্ডিং','Leads':'লিড','Compliance':'কমপ্লায়েন্স','Legal Engine':'লিগ্যাল ইঞ্জিন','Trust Engine':'ট্রাস্ট ইঞ্জিন','Subscriptions':'সাবস্ক্রিপশন','AI Caretaker':'এআই কেয়ারটেকার','Analytics':'অ্যানালিটিক্স','Notice Board':'নোটিশ বোর্ড','Documents':'ডকুমেন্ট','Templates':'টেমপ্লেট','Referrals':'রেফারেল','Reconciliation':'রিকনসিলিয়েশন','Caretaker':'কেয়ারটেকার',
   'Dashboard':'ড্যাশবোর্ড','Switch role':'রোল পরিবর্তন','Workspace':'ওয়ার্কস্পেস','Finance':'ফাইন্যান্স','Operations':'অপারেশনস','Assist':'সহায়তা','Premium':'প্রিমিয়াম',
   'Add property':'সম্পত্তি যোগ করুন','Generate invoice':'ইনভয়েস তৈরি করুন','Pay rent':'ভাড়া পরিশোধ করুন','New ticket':'নতুন টিকিট','View all':'সব দেখুন','Search':'অনুসন্ধান'
 };
@@ -2462,6 +2475,215 @@ async function tfPrint(id){
     if(!res.ok){let msg='Cannot open: '+res.status;try{const j=await res.json();if(j.error)msg=j.error;}catch(e){}toast(msg);return;}
     previewDoc(id+' — Tenant Information Form', await res.text());
   }catch(e){ toast('Print error: '+e.message); }
+}
+
+/* ═══ Phase 44: Legal Engine v2 — notices, audits, TDS, disputes ═══ */
+function legalStaff(){ return ['superadmin','owner','manager','legal','accountant','svc_mgr'].includes(role().id); }
+const LEGAL_TYPES={eviction:{en:'NOTICE TO QUIT',bn:'উচ্ছেদ',ico:'🚪'},rent_hike:{en:'RENT INCREASE',bn:'ভাড়া বৃদ্ধি',ico:'📈'},termination:{en:'LEASE TERMINATION',bn:'লিজ সমাপ্তি',ico:'📄'},tds_alert:{en:'TDS ADVISORY',bn:'টিডিএস পরামর্শ',ico:'🏛️'}};
+function legalBadge(st){ return st==='Served'?'<span class="badge b-blue">↑ Served</span>':st==='Void'?'<span class="badge b-gray">Void</span>':'<span class="badge b-orange">✎ Draft</span>'; }
+function legalCaseBadge(st){ return st==='Resolved'||st==='Closed'?'<span class="badge b-gray">'+esc(st)+'</span>':st==='Hearing'?'<span class="badge b-red">'+esc(st)+'</span>':'<span class="badge b-blue">'+esc(st)+'</span>'; }
+function legalSev(s){ return s==='high'?'<span class="badge b-red">High</span>':s==='med'?'<span class="badge b-orange">Medium</span>':'<span class="badge b-blue">Info</span>'; }
+function legalAuditFor(l){
+  const cfg={dep_res:2,dep_com:3,tds_com:10};
+  if(!l) return null;
+  const rent=+l.rent||0, adv=+l.adv||0, isRes=+l.res===1, cap=isRes?cfg.dep_res:cfg.dep_com;
+  const f=[];
+  if(rent>0&&adv>cap*rent) f.push({sev:'high',code:'DEPOSIT',label:'Advance exceeds '+cap+'× rent',detail:'Advance ৳'+money(adv)+' > cap ৳'+money(cap*rent)});
+  const sm=((new Date(l.end)-new Date(l.start))/2592000000);
+  if(sm>12&&!l.reg) f.push({sev:'high',code:'REG',label:'Lease > 12 months must be registered',detail:'TPA §107 — deed + Sub-Registry required'});
+  if(!isRes&&!l.reg_office) f.push({sev:'med',code:'REGOFF',label:'Commercial lease missing registration office',detail:'Set reg_office on the lease record'});
+  if(!isRes) f.push({sev:'info',code:'TDS',label:'TDS obligation on commercial rent',detail:'Withhold '+cfg.tds_com+'% of gross rent under ITA 2023 §109'});
+  if(l.end&&(new Date(l.end)-new Date())/86400000<60&&['Active','Pending Registration'].includes(l.status)) f.push({sev:'med',code:'EXP',label:'Lease ends within 60 days',detail:'Plan renewal or vacation notice before '+l.end});
+  const hi=f.filter(x=>x.sev==='high').length, me=f.filter(x=>x.sev==='med').length;
+  return {lease:l.id,tenant:l.t,rent:rent,adv:adv,term_months:Math.round(sm),res:isRes,status:l.status,score:Math.max(0,100-25*hi-10*me),findings:f};
+}
+function legalAuditAllDemo(){
+  const leases=(DB.leases||[]).filter(l=>['Active','Pending Registration'].includes(l.status));
+  const done=leases.map(l=>legalAuditFor(l)).filter(Boolean);
+  const total=done.reduce((s,a)=>s+a.score,0);
+  return {count:done.length,total_score:total,avg:done.length?Math.round(total/done.length):0,high:done.reduce((s,a)=>s+a.findings.filter(f=>f.sev==='high').length,0),items:done};
+}
+function legalTdsDemo(){
+  const cfg={tds_com:10}; const items=[]; let total=0;
+  (DB.leases||[]).filter(l=>['Active','Pending Registration'].includes(l.status)&&+l.res===0).forEach(l=>{
+    const g=+l.rent||0, td=Math.round(g*cfg.tds_com/100); total+=td;
+    items.push({lease:l.id,tenant:tenantById(l.t)?.name||l.t,unit:unitById(l.u)?.name||l.u,property:propById(l.p)?.name||'',gross:g,rate:cfg.tds_com,tds:td});
+  });
+  return {month:'2026-08',rate:cfg.tds_com,items:items,total:total};
+}
+async function legalEngineLoad(){
+  const host=document.getElementById('legalLive'); if(!host) return;
+  const isStaff=legalStaff();
+  let sum={},notices=[],audits={count:0,avg:0,high:0,items:[]},tds={month:'',items:[],total:0,rate:10},cases=[];
+  if(TOKEN&&!DEMO_MODE){
+    const [a,b,c,d,e]=await Promise.all([apiCall('app-legal?action=summary'),apiCall('app-legal?action=notices-list'),apiCall('app-legal?action=audit-all'),apiCall('app-legal?action=tds-due'),apiCall('app-legal?action=cases-list')]);
+    if(a.ok) sum=a; if(b.ok) notices=b.items||[]; if(c.ok) audits=c.audits||{count:0,avg:0,high:0,items:[]};
+    if(d.ok) tds=d; if(e.ok) cases=e.items||[];
+  } else {
+    notices=(DB.legal_notices||[]).map(x=>({...x}));
+    cases=(DB.cases||[]).map(x=>({...x,events:(DB.case_events||[]).filter(ev=>ev.case_id===x.id)}));
+    if(!isStaff){ const myL=(DB.leases||[]).filter(x=>x.t==='T-002').map(x=>x.id); notices=notices.filter(n=>myL.includes(n.lease)); cases=cases.filter(c=>myL.includes(c.ref_lease)); }
+    audits=legalAuditAllDemo(); tds=legalTdsDemo();
+    sum={notices_open:notices.filter(n=>['Draft','Served'].includes(n.status)).length,cases_open:cases.filter(c=>c.status!=='Closed').length,audits_done:audits.count,audit_avg:audits.avg,audit_high:audits.high,tds_total:tds.total,tds_month:tds.month,tds_rate:tds.rate};
+  }
+  const NT=LEGAL_TYPES;
+  let h=statsRow(isStaff ? [
+    stat(t('Open notices','খোলা নোটিশ'),sum.notices_open||0,t('draft + served','ড্রাফট + সার্ভড'),sum.notices_open?'warn':'','📜'),
+    stat(t('Active cases','চলমান মামলা'),sum.cases_open||0,t('dispute docket','বিরোধ ডকেট'),sum.cases_open?'warn':'','⚖️'),
+    stat(t('Audit avg','গড় অডিট'),(sum.audit_avg!==undefined?sum.audit_avg+'/100':'—'),sum.audit_high?t(sum.audit_high+' high findings','উচ্চ ঝুঁকি '+sum.audit_high):t('portfolio','পোর্টফোলিও'),sum.audit_high?'down':'up','🛡️'),
+    stat(t('TDS due (month)','মাসিক টিডিএস'),moneyC(sum.tds_total||0),sum.tds_month||'',sum.tds_total?'warn':'up','🏛️')
+  ] : [
+    stat(t('My notices','আমার নোটিশ'),notices.length,t('on my lease','আমার লিজে'),notices.length?'warn':'','📜'),
+    stat(t('Active cases','চলমান মামলা'),sum.cases_open||0,t('on my lease','আমার লিজে'),sum.cases_open?'warn':'','⚖️'),
+    stat(t('My lease','আমার লিজ'),(DB.leases||[]).filter(l=>l.t==='T-002').length,t('tenant view','ভাড়াটিয়া ভিউ'),'','📄'),
+    stat(t('Rent','ভাড়া'),moneyC((DB.leases||[]).find(l=>l.t==='T-002'&&['Active','Pending Registration'].includes(l.status))?.rent||0),t('per month','মাসিক'),'','🏠')
+  ]);
+  /* notices */
+  h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">📜</span>${t('Statutory notices','স্ট্যাটিউটরি নোটিশ')}</div>${isStaff?`<span class="link" onclick="legalNoticeForm()">＋ ${t('Generate','তৈরি')}</span>`:''}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Notice','নোটিশ')}</th><th>${t('Type','ধরন')}</th><th>${t('Tenant','ভাড়াটিয়া')}</th><th>${t('Effective','কার্যকর')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>`+
+    (notices.map(n=>`<tr><td><span class="c-name">${esc(n.id)}</span><div class="c-sub">${esc(NT[n.ntype]?.en||n.ntype)}</div></td><td>${esc(NT[n.ntype]?.ico||'')} ${esc(NT[n.ntype]?.bn||'')}</td><td>${esc(tenantById(n.tenant)?.name||n.tenant)}</td><td>${esc(n.effective_date||'—')}</td><td>${legalBadge(n.status)}</td><td><div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="legalNoticePrint('${esc(n.id)}')">🖨</button>${isStaff&&n.status==='Draft'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="legalNoticeServe('${esc(n.id)}')">↑ ${t('Serve','জারি')}</button>`:''}${isStaff&&n.status!=='Void'?`<button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="legalNoticeVoid('${esc(n.id)}')">✕</button>`:''}</div></td></tr>`).join('')
+    || `<tr><td colspan="6" class="m">${t('No notices yet — generate an eviction, rent-hike or termination notice.','এখনো কোনো নোটিশ নেই — উচ্ছেদ, ভাড়া বৃদ্ধি বা সমাপ্তি নোটিশ তৈরি করুন।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  if(isStaff){
+    h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🛡️</span>${t('Lease compliance audit','লিজ কমপ্লায়েন্স অডিট')}</div><span class="link" onclick="legalAuditAll()">${t('Run portfolio','পুরো পোর্টফোলিও')} →</span></div><div class="panel-b">${(audits.items||[]).slice(0,6).map(a=>{
+      const pct=a.score, col=pct>=80?'#27AE60':pct>=60?'#F2994A':'#EB5757';
+      return `<div class="row-item"><div class="ri-ic">🛡️</div><div class="ri-body"><div class="ri-t">${esc(a.lease)} · ${esc(tenantById(a.tenant)?.name||a.tenant)}</div><div class="c-sub">${a.findings.length?t(a.findings.length+' finding(s)','টি ফলাফল'):t('No red flags','কোনো ঝুঁকি নেই')}${a.findings.length?` · ${a.findings.slice(0,3).map(f=>f.code).join(', ')}`:''}</div></div><div class="ri-r"><span style="font-weight:800;color:${col}">${pct}</span><div class="prog ${pct>=80?'':pct>=60?'orange':'red'}" style="width:64px;margin-top:2px"><i style="width:${pct}%"></i></div></div></div>`;
+    }).join('')||`<div class="c-sub">${t('No active leases to audit.','অডিট করার মতো সক্রিয় লিজ নেই।')}</div>`}</div></div>`;
+    h+=`<div class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="t"><span class="pi">🏛️</span>${t('TDS obligation','টিডিএস বাধ্যবাধকতা')} <span class="tagline">${t('commercial · ITA 2023 §109','কমার্শিয়াল · আইটিএ ২০২৩ §১০৯')}</span></div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Lease','লিজ')}</th><th>${t('Tenant','ভাড়াটিয়া')}</th><th>${t('Gross','মোট')}</th><th>${t('Rate','হার')}</th><th>${t('TDS','টিডিএস')}</th></tr></thead><tbody>`+
+      (tds.items.map(i=>`<tr><td>${esc(i.lease)}</td><td>${esc(i.tenant)}</td><td>${moneyC(i.gross)}</td><td>${i.rate}%</td><td><b>${moneyC(i.tds)}</b></td></tr>`).join('')
+      || `<tr><td colspan="5" class="m">${t('No commercial leases.','কোনো কমার্শিয়াল লিজ নেই।')}</td></tr>`)
+      +`<tr><td colspan="4" class="r"><b>${t('Total','মোট')}</b></td><td><b>${moneyC(tds.total||0)}</b></td></tr></tbody></table></div></div>`;
+  }
+  /* cases */
+  h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚖️</span>${t('Dispute cases','বিরোধ মামলা')}</div>${isStaff?`<span class="link" onclick="legalCaseForm()">＋ ${t('Open case','মামলা খুলুন')}</span>`:''}</div><div class="tbl-wrap"><table><thead><tr><th>${t('Case','মামলা')}</th><th>${t('Type','ধরন')}</th><th>${t('Stage','পর্যায়')}</th><th>${t('Counsel','উকিল')}</th><th>${t('Next hearing','পরবর্তী শুনানি')}</th><th></th></tr></thead><tbody>`+
+    (cases.map(c=>`<tr><td><span class="c-name">${esc(c.title||c.id)}</span><div class="c-sub">${esc(c.id)} · ${esc(c.ref_lease)}</div></td><td>${esc(c.type)}</td><td>${legalCaseBadge(c.stage||'Notice')}</td><td>${esc(c.lawyer||'—')}</td><td>${esc(c.next_hearing||'—')}</td><td><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="legalCaseDrawer('${esc(c.id)}')">👁</button></td></tr>`).join('')
+    || `<tr><td colspan="6" class="m">${t('No dispute cases.','কোনো বিরোধ মামলা নেই।')}</td></tr>`)
+    +`</tbody></table></div></div>`;
+  host.innerHTML=h;
+}
+function legalNoticeForm(){
+  if(!legalStaff()){ toast('Staff only'); return; }
+  const leases=(DB.leases||[]).filter(l=>['Active','Pending Registration'].includes(l.status));
+  const opts=leases.map(l=>`<option value="${esc(l.id)}">${esc(l.id)} · ${esc(tenantById(l.t)?.name||l.t)} (৳${(+l.rent).toLocaleString()})</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Type','ধরন')}</label><select id="ln_type">${Object.keys(LEGAL_TYPES).map(k=>`<option value="${k}">${LEGAL_TYPES[k].ico} ${LEGAL_TYPES[k].en} / ${LEGAL_TYPES[k].bn}</option>`).join('')}</select></div>
+    <div class="form-field"><label>${t('Lease','লিজ')}</label><select id="ln_lease">${opts}</select></div>
+    <div class="form-field full"><label>${t('Reason','কারণ')}</label><input id="ln_reason" placeholder="${t('Optional — e.g. 2 months rent default','ঐচ্ছিক — যেমন ২ মাস ভাড়া বাকি')}"></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="legalNoticeCreate()">📜 ${t('Generate','তৈরি')}</button></div>`;
+  openDrawer(`📜 ${t('Generate statutory notice','স্ট্যাটিউটরি নোটিশ তৈরি')}`, body, foot);
+}
+async function legalNoticeCreate(){
+  const ntype=document.getElementById('ln_type')?.value, lease=document.getElementById('ln_lease')?.value, reason=document.getElementById('ln_reason')?.value||'';
+  if(!ntype||!lease){ toast(t('Type and lease required','ধরন ও লিজ প্রয়োজন')); return; }
+  if(DEMO_MODE){
+    const l=(DB.leases||[]).find(x=>x.id===lease); if(!l){ toast('Lease not found'); return; }
+    const cfg={eviction:90,rent_hike:60,termination:30,tds_alert:90};
+    const days=cfg[ntype]||30;
+    const eff=new Date(Date.now()+days*86400000).toISOString().slice(0,10);
+    const id='LN-'+Math.floor(Math.random()*900+100);
+    (DB.legal_notices=DB.legal_notices||[]).push({id,ntype,lease,tenant:l.t,unit:l.u,reason,body:LEGAL_TYPES[ntype].en+' drafted for '+lease,notice_days:days,effective_date:eff,served_on:'',served_by:'',status:'Draft',created_by:user().name,ts:new Date().toISOString().slice(0,19)});
+    toast('📜 '+LEGAL_TYPES[ntype].en+' drafted ('+days+' days, effective '+eff+')');
+  } else {
+    const d=await apiCall('app-legal',{action:'notice-create',ntype,lease,reason});
+    if(!d.ok){ toast(d.error||'Create failed'); return; }
+    toast('📜 Notice '+d.id+' drafted — effective '+d.effective_date);
+  }
+  closeDrawer(); if(state.view==='legal'){ render(); }
+}
+async function legalNoticeServe(id){
+  if(DEMO_MODE){ const n=(DB.legal_notices||[]).find(x=>x.id===id); if(n){ n.status='Served'; n.served_on=new Date().toISOString().slice(0,19); n.served_by=user().name; } }
+  else { const d=await apiCall('app-legal',{action:'notice-serve',id}); if(!d.ok){ toast(d.error||'Serve failed'); return; } }
+  toast('↑ Notice served'); if(state.view==='legal'){ render(); }
+}
+async function legalNoticeVoid(id){
+  if(DEMO_MODE){ const n=(DB.legal_notices||[]).find(x=>x.id===id); if(n) n.status='Void'; }
+  else { const d=await apiCall('app-legal',{action:'notice-void',id}); if(!d.ok){ toast(d.error||'Void failed'); return; } }
+  toast('Notice voided'); if(state.view==='legal'){ render(); }
+}
+async function legalNoticePrint(id){
+  const n=(DB.legal_notices||[]).find(x=>x.id===id);
+  const meta=LEGAL_TYPES[n?.ntype||'eviction'];
+  if(DEMO_MODE){
+    const t0=tenantById(n.tenant), u0=unitById(n.unit);
+    const rows=Object.entries({Notice:meta.en+' / '+meta.bn,'To':(t0?.name||'')+(t0?.phone?' · '+t0.phone:''),Premises:(u0?.name||'')+' — Lease '+n.lease,'Notice period':n.notice_days+' days','Effective date':n.effective_date,'Status':n.status,'Issued by':n.created_by}).map(([k,v])=>`<tr><td style="padding:8px 12px;border:1px solid #DDE3EC;background:#F7F9FC;font-size:12px;font-weight:700;width:200px">${esc(k)}</td><td style="padding:8px 12px;border:1px solid #DDE3EC;font-size:13px">${esc(v)}</td></tr>`).join('');
+    previewDoc(id+' — '+meta.en, `<div style="font-family:Arial;max-width:820px;margin:0 auto;padding:20px"><div style="border-bottom:3px solid #2F80ED;padding-bottom:12px;margin-bottom:16px"><div style="font-size:20px;font-weight:800">${esc(meta.en)}</div><div style="font-size:12px;color:#667">${esc(meta.bn)}</div></div><table style="border-collapse:collapse;width:100%">${rows}</table><div style="margin-top:16px;padding:14px;border:1px solid #E4EAF3;border-radius:8px;background:#FAFCFE;font-size:13px;white-space:pre-line">${esc(n.body||'')}</div></div>`);
+    return;
+  }
+  try{
+    const res=await fetch(API+'app-legal?action=notice-print&id='+encodeURIComponent(id),{headers:{Authorization:'Bearer '+TOKEN}});
+    if(!res.ok){ let msg='Cannot open: '+res.status; try{ const j=await res.json(); if(j.error) msg=j.error; }catch(e){} toast(msg); return; }
+    previewDoc(id+' — '+meta.en, await res.text());
+  }catch(e){ toast('Print error: '+e.message); }
+}
+function legalAuditAll(){
+  if(!legalStaff()){ toast('Staff only'); return; }
+  const audits=DEMO_MODE?legalAuditAllDemo():null;
+  if(DEMO_MODE){ legalAuditDrawer(audits); return; }
+  apiCall('app-legal?action=audit-all').then(d=>{ if(d.ok) legalAuditDrawer(d.audits); else toast(d.error||'Audit failed'); });
+}
+function legalAuditDrawer(audits){
+  const items=audits.items||[];
+  let rows=items.map(a=>{
+    const col=a.score>=80?'#27AE60':a.score>=60?'#F2994A':'#EB5757';
+    return `<div class="row-item" style="border-bottom:1px solid var(--line);padding:10px 0"><div class="ri-body"><div class="ri-t">${esc(a.lease)} · ${esc(tenantById(a.tenant)?.name||a.tenant)} <span style="float:right;font-weight:800;color:${col}">${a.score}/100</span></div>${a.findings.map(f=>`<div class="c-sub" style="margin-top:2px">${legalSev(f.sev)} ${esc(f.label)} — ${esc(f.detail)}</div>`).join('')||'<div class="c-sub">✅ No red flags.</div>'}</div></div>`;
+  }).join('');
+  openDrawer(`🛡️ ${t('Compliance audit','কমপ্লায়েন্স অডিট')} <span class="tagline">${audits.count} leases · avg ${audits.avg} · ${audits.high} high</span>`, `<div style="max-height:520px;overflow:auto">${rows||'<div class="c-sub">No leases.</div>'}</div>`, `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button></div>`);
+}
+function legalCaseForm(){
+  if(!legalStaff()){ toast('Staff only'); return; }
+  const leases=(DB.leases||[]).filter(l=>['Active','Pending Registration'].includes(l.status));
+  const opts=leases.map(l=>`<option value="${esc(l.id)}">${esc(l.id)} · ${esc(tenantById(l.t)?.name||l.t)}</option>`).join('');
+  const body=`<div class="form-grid">
+    <div class="form-field"><label>${t('Lease','লিজ')}</label><select id="cc_lease">${opts}</select></div>
+    <div class="form-field"><label>${t('Type','ধরন')}</label><select id="cc_type"><option value="eviction">Eviction</option><option value="arrears">Arrears</option><option value="damages">Damages</option><option value="other">Other</option></select></div>
+    <div class="form-field"><label>${t('Stage','পর্যায়')}</label><select id="cc_stage"><option>Notice</option><option>Negotiation</option><option>Legal Notice</option><option>Hearing</option><option>Resolved</option></select></div>
+    <div class="form-field"><label>${t('Counsel','উকিল')}</label><input id="cc_lawyer" placeholder="Barrister Naima"></div>
+    <div class="form-field"><label>${t('Next hearing','পরবর্তী শুনানি')}</label><input id="cc_hearing" type="date"></div>
+    <div class="form-field full"><label>${t('Title','শিরোনাম')}</label><input id="cc_title"></div>
+    <div class="form-field full"><label>${t('Notes','নোট')}</label><textarea id="cc_notes" rows="2"></textarea></div>
+  </div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="legalCaseCreate()">⚖️ ${t('Open','খুলুন')}</button></div>`;
+  openDrawer(`⚖️ ${t('Open dispute case','বিরোধ মামলা খুলুন')}`, body, foot);
+}
+async function legalCaseCreate(){
+  const ref_lease=document.getElementById('cc_lease')?.value, type=document.getElementById('cc_type')?.value, stage=document.getElementById('cc_stage')?.value, lawyer=document.getElementById('cc_lawyer')?.value||'', next_hearing=document.getElementById('cc_hearing')?.value||'', title=document.getElementById('cc_title')?.value||'', notes=document.getElementById('cc_notes')?.value||'';
+  if(!ref_lease){ toast(t('Lease required','লিজ প্রয়োজন')); return; }
+  if(DEMO_MODE){
+    const id='CASE-'+Math.floor(Math.random()*900+100);
+    (DB.cases=DB.cases||[]).push({id,title:title||(type+' — '+ref_lease),ref_lease,type,status:'Open',opened:new Date().toISOString().slice(0,10),notes,stage,lawyer,next_hearing,updated_at:new Date().toISOString().slice(0,10)});
+    (DB.case_events=DB.case_events||[]).push({id:'EV-'+Math.floor(Math.random()*900+100),case_id:id,ev_type:'stage',body:'Case opened — stage: '+stage,actor:user().name,ts:new Date().toISOString().slice(0,19)});
+    toast('⚖️ Case '+id+' opened');
+  } else {
+    const d=await apiCall('app-legal',{action:'case-create',ref_lease,type,stage,lawyer,next_hearing,title,notes});
+    if(!d.ok){ toast(d.error||'Create failed'); return; }
+    toast('⚖️ Case '+d.id+' opened');
+  }
+  closeDrawer(); if(state.view==='legal'){ render(); }
+}
+function legalCaseDrawer(id){
+  const c=(DB.cases||[]).find(x=>x.id===id); if(!c){ toast('Case not found'); return; }
+  const events=(DB.case_events||[]).filter(e=>e.case_id===id).sort((a,b)=>b.ts.localeCompare(a.ts));
+  const body=`<div class="c-sub" style="margin-bottom:8px">${esc(c.id)} · ${esc(c.type)} · ${esc(c.ref_lease)}</div>
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><span class="badge b-blue">${esc(c.stage||'Notice')}</span><span class="badge ${c.status==='Open'?'b-blue':'b-gray'}">${esc(c.status)}</span>${c.lawyer?`<span class="badge">⚖️ ${esc(c.lawyer)}</span>`:''}${c.next_hearing?`<span class="badge b-orange">📅 ${esc(c.next_hearing)}</span>`:''}</div>
+    <div class="c-sub">${esc(c.notes||'')}</div>
+    <div style="font-weight:700;margin:14px 0 6px">${t('Timeline','টাইমলাইন')}</div>
+    ${events.map(e=>`<div class="row-item" style="border-bottom:1px solid var(--line);padding:8px 0"><div class="ri-ic">${e.ev_type==='hearing'?'📅':e.ev_type==='stage'?'⚖️':'📝'}</div><div class="ri-body"><div class="ri-t">${esc(e.body)}</div><div class="c-sub">${esc(e.actor||'')} · ${esc((e.ts||'').slice(0,16))}</div></div></div>`).join('')||'<div class="c-sub">No events.</div>'}
+    <div class="form-grid" style="margin-top:12px"><div class="form-field"><label>${t('New stage','নতুন পর্যায়')}</label><select id="cu_stage"><option>Notice</option><option>Negotiation</option><option>Legal Notice</option><option>Hearing</option><option>Resolved</option></select></div><div class="form-field"><label>${t('Next hearing','পরবর্তী শুনানি')}</label><input id="cu_hearing" type="date"></div><div class="form-field full"><label>${t('Note','নোট')}</label><input id="cu_note" placeholder="${t('Add timeline note','টাইমলাইন নোট যোগ করুন')}"></div></div>`;
+  const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-primary" onclick="legalCaseUpdate('${esc(id)}')">${t('Update','আপডেট')}</button></div>`;
+  openDrawer(`⚖️ ${esc(c.title||c.id)}`, body, foot);
+}
+async function legalCaseUpdate(id){
+  const stage=document.getElementById('cu_stage')?.value, next_hearing=document.getElementById('cu_hearing')?.value||'', note=document.getElementById('cu_note')?.value||'';
+  if(DEMO_MODE){
+    const c=(DB.cases||[]).find(x=>x.id===id); if(c){ c.stage=stage; if(next_hearing) c.next_hearing=next_hearing; c.updated_at=new Date().toISOString().slice(0,10); }
+    (DB.case_events=DB.case_events||[]).push({id:'EV-'+Math.floor(Math.random()*900+100),case_id:id,ev_type:'stage',body:'Stage → '+stage+(note?' — '+note:''),actor:user().name,ts:new Date().toISOString().slice(0,19)});
+    toast('⚖️ Case updated');
+  } else {
+    const d=await apiCall('app-legal',{action:'case-update',id,stage,next_hearing,note});
+    if(!d.ok){ toast(d.error||'Update failed'); return; }
+    toast('⚖️ Case updated');
+  }
+  closeDrawer(); if(state.view==='legal'){ render(); }
 }
 
 /* ═══ Phase 34: utilities & service billing ═══ */
@@ -4132,6 +4354,13 @@ const renderers={
     let h=pageHead(t('Trust Engine','ট্রাস্ট ইঞ্জিন'),isStaff?t('NID check-digit verification + Thana Tenant Information Forms for every tenant.','এনআইডি চেক-ডিজিট যাচাই + প্রতিটি ভাড়াটিয়ার জন্য থানা ভাড়াটিয়া তথ্য ফরম।'):t('Your NID verification and Thana information form.','আপনার এনআইডি যাচাই ও থানা তথ্য ফরম।'),isStaff?`<button class="btn-primary" onclick="trustNidForm()">🪪 ${t('Verify NID','এনআইডি যাচাই')}</button>`:'');
     h+=`<div id="trustLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
     setTimeout(()=>trustLoad(),0);
+    return h;
+  },
+  legal(){
+    const isStaff=legalStaff();
+    let h=pageHead(t('Legal Engine','লিগ্যাল ইঞ্জিন'),isStaff?t('Statutory notices, lease compliance audits, TDS obligations and dispute cases.','স্ট্যাটিউটরি নোটিশ, লিজ কমপ্লায়েন্স অডিট, টিডিএস বাধ্যবাধকতা ও বিরোধ মামলা।'):t('Notices and dispute cases on your lease.','আপনার লিজের নোটিশ ও মামলা।'),isStaff?`<button class="btn-primary" onclick="legalNoticeForm()">📜 ${t('Generate notice','নোটিশ তৈরি')}</button>`:``);
+    h+=`<div id="legalLive"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>`;
+    setTimeout(()=>legalEngineLoad(),0);
     return h;
   },
   vendors(){
