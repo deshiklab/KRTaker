@@ -219,6 +219,16 @@ td .c-sub{font-size:11px;color:var(--text-mute)}
 .kr-input input{flex:1;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:12.5px;background:var(--bg-alt);color:var(--text);outline:none}
 .kr-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 4px}
 .th-bubble{background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:8px}
+/* ── P56.2c: tenant chat + private note ── */
+.ten-chat{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto;padding:2px 2px 6px}
+.chat-b{max-width:86%;padding:8px 12px;border-radius:12px;line-height:1.5;font-size:12.5px}
+.chat-b.you{background:var(--grad);color:#fff;border-top-right-radius:4px;align-self:flex-end}
+.chat-b.them{background:var(--bg-alt);border:1px solid var(--border);border-top-left-radius:4px;align-self:flex-start}
+.chat-b .cb-h{font-size:10px;font-weight:700;opacity:.8;margin-bottom:2px;display:flex;justify-content:space-between;gap:10px}
+.chat-b.you .cb-h{color:#fff}
+.chat-b.them .cb-h{color:var(--text-mute)}
+.dr-note{background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-top:16px}
+.dr-note-h{font-size:11px;font-weight:700;color:var(--text-mute);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
 .th-head{font-size:11px;font-weight:700;display:flex;justify-content:space-between;gap:8px}
 .th-ts{font-weight:400;color:var(--text-mute);font-size:10px}
 .th-body{font-size:12.5px;color:var(--text-soft);margin-top:4px;line-height:1.5}
@@ -7671,7 +7681,7 @@ function tenantPhotoDrawer(id){
       <div class="c-sub" style="font-size:10.5px">${t('JPG / PNG / WebP, max 2 MB','JPG / PNG / WebP, সর্বোচ্চ 2 MB')}</div>
       <input type="file" id="tnPhotoFile" accept="image/*" style="display:none" onchange="tnPhotoPreview(this)">
     </div>`,
-    `<button class="btn-outline" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="submitTenantPhoto('${id}')">📷 ${t('Upload','আপলোড')}</button>`);
+    `<button class="btn-ghost" onclick="openDetail('tenants','${id}')">← ${t('Back','ফিরুন')}</button><button class="btn-primary" onclick="submitTenantPhoto('${id}')">📷 ${t('Upload','আপলোড')}</button>`);
   const zone=document.getElementById('tpdZone');
   if(zone){
     zone.addEventListener('click',()=>{ const fi=document.getElementById('tnPhotoFile'); if(fi) fi.click(); });
@@ -8410,11 +8420,83 @@ function propertyTabsHtml(propId){
 }
 /* ── P56: tenant tab profile view ── */
 function tenantTabsHtml(tenId){
-  return `${'__HDR__'}`+krTabBar([{id:'profile',l:'📋 '+t('Profile','প্রোফাইল')},{id:'lease',l:'📄 '+t('Lease','লিজ')},{id:'billing',l:'💳 '+t('Billing','বিলিং')},{id:'tickets',l:'🔧 '+t('Tickets','টিকিট')}], 'ten', 'profile')
-    +`<div class="kr-tab-panel active" data-p="ten" data-tab="profile"><div class="dr-kv">${'__KV__'}</div>${'__REL__'}</div>`
+  const canChat=['superadmin','owner','manager'].includes(role().id);
+  const isOwner=['superadmin','owner'].includes(role().id);
+  return `${'__HDR__'}`+krTabBar([{id:'profile',l:'📋 '+t('Profile','প্রোফাইল')},{id:'lease',l:'📄 '+t('Lease','লিজ')},{id:'billing',l:'💳 '+t('Billing','বিলিং')},{id:'tickets',l:'🔧 '+t('Tickets','টিকিট')}].concat(canChat?[{id:'chat',l:'💬 '+t('Chat','চ্যাট')}]:[]), 'ten', 'profile')
+    +`<div class="kr-tab-panel active" data-p="ten" data-tab="profile"><div class="dr-kv">${'__KV__'}</div>${isOwner?'__NOTE__':''}${'__REL__'}</div>`
     +`<div class="kr-tab-panel" data-p="ten" data-tab="lease">${tenantLeaseTab(tenId)}</div>`
     +`<div class="kr-tab-panel" data-p="ten" data-tab="billing">${tenantBillingTab(tenId)}</div>`
-    +`<div class="kr-tab-panel" data-p="ten" data-tab="tickets">${tenantTicketsTab(tenId)}</div>`;
+    +`<div class="kr-tab-panel" data-p="ten" data-tab="tickets">${tenantTicketsTab(tenId)}</div>`
+    +(canChat?`<div class="kr-tab-panel" data-p="ten" data-tab="chat">${tenantChatTab(tenId)}</div>`:'');
+}
+function tenantChatTab(tenId){
+  return `<div class="tab-pad"><div class="ten-chat" id="tenChatBox"><div class="c-sub" style="padding:12px 4px">${t('Loading messages…','মেসেজ লোড হচ্ছে…')}</div></div>
+    <div class="kr-input" style="border:1px solid var(--border);border-radius:12px;background:var(--bg-alt);margin-top:10px"><input id="tenChatMsg" placeholder="${t('Send a message…','মেসেজ পাঠান…')}" onkeydown="if(event.key==='Enter')sendTenantChat('${tenId}')"><button onclick="sendTenantChat('${tenId}')">➤</button></div></div>`;
+}
+let DEMO_CHAT={
+  'T-002':[{id:1,sender:'Rofiqul Islam',sender_role:'owner',body:'Welcome to the building! Let me know if you need anything.',ts:'2026-07-30 09:00:00'}]
+};
+let DEMO_NOTES={};
+async function loadTenantChat(tenId){
+  const box=document.getElementById('tenChatBox'); if(!box) return;
+  let msgs=[];
+  if(DEMO_MODE){ msgs=(DEMO_CHAT[tenId]||[]); }
+  else {
+    const d=await apiCall('app-tenant-chat',{tenant_id:tenId});
+    if(!d.ok){ box.innerHTML=`<div class="c-sub" style="padding:12px 4px">${esc(d.error||'Failed to load')}</div>`; return; }
+    msgs=d.messages||[];
+  }
+  const meName=(LIVE.user&&LIVE.user.name)||'';
+  box.innerHTML=msgs.length?msgs.map(m=>`<div class="chat-b ${m.sender===meName?'you':'them'}"><div class="cb-h"><span>${esc(m.sender)}${m.sender_role&&m.sender_role!=='tenant'?' · '+esc(m.sender_role):''}</span><span>${esc((m.ts||'').slice(0,16))}</span></div><div>${esc(m.body)}</div></div>`).join(''):`<div class="c-sub" style="padding:12px 4px">${t('No messages yet.','এখনো কোনো মেসেজ নেই।')}</div>`;
+  box.scrollTop=box.scrollHeight;
+}
+async function sendTenantChat(tenId){
+  const el=document.getElementById('tenChatMsg'); if(!el||!el.value.trim()){toast(t('Write a message first','আগে একটি মেসেজ লিখুন'),'error');return}
+  const body=el.value.trim(); el.value='';
+  if(DEMO_MODE){
+    const arr=DEMO_CHAT[tenId]=DEMO_CHAT[tenId]||[];
+    arr.push({id:arr.length+1,sender:(LIVE.user&&LIVE.user.name)||'Rofiqul Islam',sender_role:role().id,body,ts:new Date().toISOString().slice(0,16).replace('T',' ')});
+    toast(t('Message sent (demo)','মেসেজ পাঠানো হয়েছে (ডেমো)'),'ok');
+    loadTenantChat(tenId);
+    return;
+  }
+  const d=await apiCall('app-tenant-chat-send',{tenant_id:tenId,body});
+  if(d.ok){ toast(t('Message sent','মেসেজ পাঠানো হয়েছে'),'ok'); loadTenantChat(tenId); }
+  else { el.value=body; toast(d.error||t('Failed to send','পাঠানো ব্যর্থ'),'error'); }
+}
+function tenantNoteBlockHtml(tenId){
+  if(!['superadmin','owner'].includes(role().id)) return '';
+  setTimeout(()=>loadTenantNote(tenId),0);
+  return `<div class="dr-note">
+    <div class="dr-note-h">📝 ${t('Private note (owner only)','ব্যক্তিগত নোট (শুধু মালিক)')}</div>
+    <textarea id="tnNote" class="inp" rows="3" placeholder="${t('Internal note about this tenant…','এই ভাড়াটিয়া সম্পর্কে অভ্যন্তরীণ নোট…')}">${t('Loading…','লোড হচ্ছে…')}</textarea>
+    <div style="display:flex;justify-content:flex-end;margin-top:8px"><button class="btn-outline" style="padding:6px 14px;font-size:12px" onclick="saveTenantNote('${tenId}')">💾 ${t('Save note','নোট সেভ')}</button></div>
+  </div>`;
+}
+async function loadTenantNote(tenId){
+  let note='';
+  if(DEMO_MODE){ note=DEMO_NOTES[tenId]||''; }
+  else {
+    const d=await apiCall('app-tenant-note',{tenant_id:tenId});
+    if(d.ok) note=d.note||'';
+  }
+  const el=document.getElementById('tnNote'); if(el) el.value=note;
+}
+async function saveTenantNote(tenId){
+  const el=document.getElementById('tnNote'); if(!el) return;
+  const note=el.value;
+  if(DEMO_MODE){ DEMO_NOTES[tenId]=note; toast(t('Note saved (demo)','নোট সেভ হয়েছে (ডেমো)'),'ok'); return; }
+  const d=await apiCall('app-tenant-note-save',{tenant_id:tenId,note});
+  if(d.ok) toast(t('Note saved','নোট সেভ হয়েছে'),'ok');
+  else toast(d.error||t('Failed to save','সেভ ব্যর্থ'),'error');
+}
+function telHref(ph){
+  let d=(ph||'').replace(/[^\d+]/g,'');
+  if(!d||d==='+') return '#';
+  if(d.startsWith('+')) return 'tel:'+d;
+  if(d.startsWith('880')) return 'tel:+'+d;
+  if(d.startsWith('0')) return 'tel:+880'+d.slice(1);
+  return 'tel:+880'+d;
 }
 function tenantProfileHeaderHtml(tenId){
   const te=tenantById(tenId); if(!te) return '';
@@ -8425,7 +8507,7 @@ function tenantProfileHeaderHtml(tenId){
       <div class="c-sub">${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'} · ${te.nrb?'NRB':'Local'}</div>
       <div class="c-sub">${esc(te.phone||'')}${te.email?' · '+esc(te.email):''}</div>
     </div>
-    ${['superadmin','owner','manager'].includes(role().id)?`<button class="btn-ghost" style="padding:6px 12px;font-size:12px" onclick="tenantPhotoDrawer('${te.id}')">📷 ${t('Change photo','ছবি বদলান')}</button>`:''}
+    ${['superadmin','owner','manager'].includes(role().id)?`<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">${te.phone?`<a class="btn-ghost" href="${telHref(te.phone)}" style="padding:6px 12px;font-size:12px;text-decoration:none" title="${t('Call','কল')} ${esc(te.phone)}">📞 ${t('Call','কল')}</a>`:''}<button class="btn-ghost" style="padding:6px 12px;font-size:12px" onclick="tenantPhotoDrawer('${te.id}')">📷 ${t('Change photo','ছবি বদলান')}</button></div>`:''}
   </div>`;
 }
 function tenantLeaseTab(tenId){
@@ -8577,9 +8659,9 @@ function openDetail(collection, id){
   if(collection==='tickets'){ extra=ticketThreadHtml(row.id); }
   let body=`<div class="dr-kv">${kvRows}</div>${related}${extra}`;
   if(collection==='properties'){ body=propertyTabsHtml(row.id).replace('__KV__',kvRows).replace('__REL__',related); }
-  if(collection==='tenants'){ body=tenantTabsHtml(row.id).replace('__HDR__',tenantProfileHeaderHtml(row.id)).replace('__KV__',kvRows).replace('__REL__',related); }
+  if(collection==='tenants'){ body=tenantTabsHtml(row.id).replace('__HDR__',tenantProfileHeaderHtml(row.id)).replace('__KV__',kvRows).replace('__NOTE__',tenantNoteBlockHtml(row.id)).replace('__REL__',related); }
   openDrawer(`${s.icon} ${s.label} — ${row.id}`, body, foot);
-  if(collection==='tenants') attachPhoto(document.getElementById('tenPhoto'),'tenant',row.id);
+  if(collection==='tenants'){ attachPhoto(document.getElementById('tenPhoto'),'tenant',row.id); loadTenantChat(row.id); }
 }
 function ticketThreadHtml(ticketId){
   const rows=(DB.ticket_thread||[]).filter(x=>String(x.ticket)===String(ticketId));
