@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.55">
+<link rel="stylesheet" href="css/style.css?v=3.56">
 <!-- KRTaker analytics: replace G-XXXXXXXXXX with your GA4 Measurement ID (or swap for Plausible) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
@@ -39,7 +39,7 @@ gtag('config', 'G-XXXXXXXXXX');
 </script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://krtaker.com/index.html"}, {"@type": "ListItem", "position": 2, "name": "Holding Tax in Bangladesh", "item": "https://krtaker.com/blog-holding-tax.html"}]}</script>
 </head>
-<body>
+<body data-page="blog-holding-tax">
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="container">
@@ -104,12 +104,12 @@ gtag('config', 'G-XXXXXXXXXX');
 </nav>
 <div class="page-hero">
   <div class="container">
-    <h1>Holding tax in 4 steps</h1>
-    <p>The Net Annual Value formula city corporations use — decoded for owners.</p>
+    <h1 data-cms="blog-holding-tax.hero.title">Holding tax in 4 steps</h1>
+    <p data-cms="blog-holding-tax.hero.subtitle">The Net Annual Value formula city corporations use — decoded for owners.</p>
   </div>
 </div>
 <div class="page-body">
-  <div class="container" style="max-width:780px">
+  <div class="container" style="max-width:780px" data-cms-html="blog-holding-tax.article.body">
     <div class="blog-meta" style="margin-bottom:24px"><span>📅 Jun 20, 2026</span><span>⏱ 6 min read</span><span>🏷 Tax · Holding tax</span></div>
     <p>Every year, city corporations assess buildings for holding tax. Most owners pay whatever the notice says. Here's the formula — and how to check their math.</p>
     <h2>The Net Annual Value pipeline</h2>
@@ -258,10 +258,11 @@ gtag('config', 'G-XXXXXXXXXX');
 </div>
 <!-- Back to top -->
 <button class="btt-btn" aria-label="Back to top">↑</button>
-<script src="i18n/i18n-dict.js?v=3.55"></script>
-<script src="js/i18n.js?v=3.55"></script>
-<script src="js/main.js?v=3.55"></script>
-<script src="js/chat.js?v=3.55"></script>
+<script src="i18n/i18n-dict.js?v=3.56"></script>
+<script src="js/i18n.js?v=3.56"></script>
+<script src="js/cms-hydrate.js?v=3.56"></script>
+<script src="js/main.js?v=3.56"></script>
+<script src="js/chat.js?v=3.56"></script>
 <script>
 if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 </script>

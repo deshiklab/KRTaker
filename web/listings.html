@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.55">
+<link rel="stylesheet" href="css/style.css?v=3.56">
 <style>
 /* ── Phase 16 listings v2: search, city/type filters, sort, rent-first cards ── */
 .listing-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:20px 0 6px}
@@ -72,7 +72,7 @@
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"KRTaker Property Listings","url":"https://krtaker.com/listings.html","description":"Verified rental properties across Dhaka and Chattogram managed by KRTaker.","isPartOf":{"@type":"WebSite","name":"KRTaker","url":"https://krtaker.com"}}</script>
 </head>
-<body>
+<body data-page="listings">
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="container">
@@ -133,8 +133,8 @@
 
 <div class="page-hero">
   <div class="container">
-    <h1 data-i18n="page.hero.listings">Property listings</h1>
-    <p data-i18n="page.hero.listingsSub">Verified rental properties across Dhaka &amp; Chattogram — every building managed end-to-end by KRTaker. Enquire directly on WhatsApp.</p>
+    <h1 data-i18n="page.hero.listings" data-cms="listings.hero.title">Property listings</h1>
+    <p data-i18n="page.hero.listingsSub" data-cms="listings.hero.subtitle">Verified rental properties across Dhaka &amp; Chattogram — every building managed end-to-end by KRTaker. Enquire directly on WhatsApp.</p>
     <div class="listing-toolbar">
       <label class="ls-search"><span class="ico">🔍</span><input id="lsQ" type="search" placeholder="Search by name, area or holding…" data-i18n-ph="ls.placeholder"></label>
       <label class="ls-sort">
@@ -161,7 +161,7 @@
 
     <!-- USP / value-add strip (why rent through KRTaker) -->
     <div class="usp-band">
-      <div class="usp-item"><span class="u-ic">✅</span><div><h4 data-i18n="ls.usp1t">Verified, managed buildings</h4><p data-i18n="ls.usp1b">Every unit is in a building KRTaker actively manages — rent, maintenance, compliance and handover are all digital.</p></div></div>
+      <div class="usp-item"><span class="u-ic">✅</span><div><h4 data-i18n="ls.usp1t" data-cms="listings.usp.1_title" data-cms="listings.usp.2_title" data-cms="listings.usp.3_title" data-cms="listings.usp.4_title">Verified, managed buildings</h4><p data-i18n="ls.usp1b" data-cms="listings.usp.1_body" data-cms="listings.usp.2_body" data-cms="listings.usp.3_body" data-cms="listings.usp.4_body">Every unit is in a building KRTaker actively manages — rent, maintenance, compliance and handover are all digital.</p></div></div>
       <div class="usp-item"><span class="u-ic">📜</span><div><h4 data-i18n="ls.usp2t">Digital agreement + receipt</h4><p data-i18n="ls.usp2b">Signed standard tenancy agreement, instant money receipt after every payment. No more "advance lost" disputes.</p></div></div>
       <div class="usp-item"><span class="u-ic">💳</span><div><h4 data-i18n="ls.usp3t">Pay rent by bKash / Nagad</h4><p data-i18n="ls.usp3b">Payment link per invoice — pay in 30 seconds, get a receipt instantly, reminders handled by the AI caretaker.</p></div></div>
       <div class="usp-item"><span class="u-ic">🏡</span><div><h4 data-i18n="ls.usp4t">No broker fee</h4><p data-i18n="ls.usp4b">Enquire directly, deal directly. Tenants keep the advance that usually goes to a dalal.</p></div></div>
@@ -243,9 +243,10 @@
   <a href="https://wa.me/8801722759646?text=Hi%2C%20I%27m%20interested%20in%20a%20KRTaker%20listing" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><span>WhatsApp</span></a>
 </div>
 
-<script src="i18n/i18n-dict.js?v=3.55"></script>
-<script src="js/i18n.js?v=3.55"></script>
-<script src="js/main.js?v=3.55"></script>
+<script src="i18n/i18n-dict.js?v=3.56"></script>
+<script src="js/i18n.js?v=3.56"></script>
+<script src="js/cms-hydrate.js?v=3.56"></script>
+<script src="js/main.js?v=3.56"></script>
 <script>
 /* Phase 16: listings v2 — search + city/type filters + sort + rent-first cards (bilingual) */
 (function(){

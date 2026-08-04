@@ -29,7 +29,10 @@
     const map = { 'index': 'home', 'features': 'features', 'pricing': 'pricing', 'about': 'about', 'contact': 'contact',
                   'how-it-works': 'howitworks', 'ai-caretaker': 'ai', 'for-owners': 'owners', 'for-tenants': 'tenants',
                   'for-partners': 'partners', 'for-nrb': 'nrb', 'legal-compliance': 'legal', 'faq': 'faq', 'tools': 'tools',
-                  'blog': 'blog', 'case-studies': 'cases', 'login': 'login', 'register': 'register' };
+                  'blog': 'blog', 'case-studies': 'cases', 'login': 'login', 'register': 'register',
+                  'blog-eviction': 'blog-eviction', 'blog-holding-tax': 'blog-holding-tax', 'blog-lease-registration': 'blog-lease-registration',
+                  'blog-nrb-buying': 'blog-nrb-buying', 'blog-nrb-remittance': 'blog-nrb-remittance', 'blog-tds-commercial': 'blog-tds-commercial',
+                  'terms': 'terms', 'privacy': 'privacy', 'listings': 'listings' };
     return map[p] || 'home';
   }
 
