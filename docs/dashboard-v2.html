@@ -428,6 +428,21 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
 .drawer-b .chk{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;cursor:pointer;user-select:none}
 .drawer-b .chk input{width:16px;height:16px;accent-color:var(--primary);cursor:pointer}
 .drawer-b textarea.inp{min-height:80px;resize:vertical}
+/* ── photo row avatar + photo upload zone (P56.2) ── */
+.tn-av{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:36px;height:40px;border-radius:10px;overflow:hidden;vertical-align:middle;margin-right:8px;background:var(--bg-alt);border:1px solid var(--border);flex-shrink:0}
+.tn-av img{width:100%;height:100%;object-fit:cover;display:block}
+.tn-av-ph{font-size:15px;line-height:1}
+.tn-av-np{font-size:6.5px;font-weight:700;color:var(--text-mute);letter-spacing:.2px;margin-top:2px}
+.tpd-zone{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border:2px dashed var(--border);border-radius:14px;background:var(--bg-alt);cursor:pointer;transition:border-color .15s,background .15s;text-align:center}
+.tpd-zone.drag{border-color:var(--primary);background:var(--primary-light)}
+.tpd-prev{position:relative;width:72px;height:72px;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:26px;color:var(--text-mute)}
+.tpd-prev img{width:100%;height:100%;object-fit:cover;display:block}
+.tpd-prev.up::after{content:'';position:absolute;inset:0;background:rgba(15,23,42,.45);border-radius:inherit}
+.tpd-prev.up::before{content:'';position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:krSpin .7s linear infinite;z-index:2}
+@keyframes krSpin{to{transform:rotate(360deg)}}
+.tpd-ph{font-size:26px;line-height:1}
+.tpd-np{font-size:7px;font-weight:700;color:var(--text-mute);letter-spacing:.2px;margin-top:2px}
+.tpd-hint{font-size:12px;font-weight:600;color:var(--text-soft)}
 .tn-ava{width:26px;height:26px;border-radius:8px;object-fit:cover;vertical-align:middle;margin-right:8px;border:1px solid var(--border)}
 .ph-ava{width:56px;height:56px;border-radius:14px;object-fit:cover;border:1px solid var(--border);background:var(--bg-alt)}
 .dr-kv{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:18px}
@@ -6987,7 +7002,7 @@ const renderers={
   tenants(){
     let h=pageHead(t('Tenants','ভাড়াটিয়া'),t('Individuals, corporates and NRB tenants.','ব্যক্তি, কর্পোরেট ও এনআরবি ভাড়াটিয়া।'),`<button class="btn-primary" onclick="openNew('tenants')">＋ ${t('Add tenant','ভাড়াটিয়া যোগ করুন')}</button>`);
     const canPortal=['superadmin','owner','manager'].includes(role().id);
-    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th>${canPortal?'<th>Score</th>':''}${canPortal?'<th></th>':''}</tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr data-id="${te.id}" onclick="openDetail('tenants','${te.id}')"><td><span id="tph-${te.id}" style="display:${te.photo?'inline-block':'none'};width:26px;height:26px;border-radius:8px;overflow:hidden;vertical-align:middle;margin-right:8px;background:var(--bg-alt);flex-shrink:0"></span><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td>${canPortal?`<td><span class="score-chip" id="sc-${te.id}" data-tid="${te.id}" style="cursor:pointer" onclick="event.stopPropagation();scoreDrawer('${te.id}')">…</span></td>`:''}${canPortal?`<td><div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation();tenantPhotoDrawer('${te.id}')">📷</button><button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation();viewTenantPortal('${te.id}')">👁 ${t('Portal','পোর্টাল')}</button></div></td>`:''}</tr>`}).join('')}</tbody></table></div></div>`;
+    h+=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Tenant</th><th>Contact</th><th>Type</th><th>Unit</th><th>Rent</th><th>Status</th>${canPortal?'<th>Score</th>':''}${canPortal?'<th></th>':''}</tr></thead><tbody>${DB.tenants.map(te=>{const l=DB.leases.find(x=>x.t===te.id&&(x.status==='Active'||x.status==='Pending Registration'));return `<tr data-id="${te.id}" onclick="openDetail('tenants','${te.id}')"><td><span class="tn-av" id="tph-${te.id}">${te.photo?'':'<span class="tn-av-ph">👤</span><span class="tn-av-np">No Photo</span>'}</span><span class="c-name">${esc(te.name)}</span><div class="c-sub">${te.nrb?'🇺🇸 NRB':'🇧🇩 Local'} · NID ${esc(te.nid)}</div></td><td>${esc(te.phone)}<div class="c-sub">${esc(te.email)}</div></td><td>${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'}</td><td>${l?esc(unitById(l.u)?.name||'—'):'—'}</td><td class="t-amount">${l?money(l.rent):'—'}</td><td>${l?badge(l.status):'<span class="badge b-gray">Inactive</span>'}</td>${canPortal?`<td><span class="score-chip" id="sc-${te.id}" data-tid="${te.id}" style="cursor:pointer" onclick="event.stopPropagation();scoreDrawer('${te.id}')">…</span></td>`:''}${canPortal?`<td><div style="display:flex;gap:4px"><button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation();tenantPhotoDrawer('${te.id}')">📷</button><button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation();viewTenantPortal('${te.id}')">👁 ${t('Portal','পোর্টাল')}</button></div></td>`:''}</tr>`}).join('')}</tbody></table></div></div>`;
     return h;
   },
   leases(){
@@ -7605,27 +7620,64 @@ async function loadTenantPhotos(){
 }
 async function uploadPhoto(url, fileInputId, onDone){
   const fi=document.getElementById(fileInputId);
-  if(!fi||!fi.files||!fi.files[0]){ toast(t('Choose a photo first','আগে একটি ছবি বাছুন'),'error'); return; }
-  const fd=new FormData();
-  fd.append('file', fi.files[0]);
-  if(onDone&&onDone.append) onDone(fd);
-  const res=await fetch(url,{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
-  const d=await res.json().catch(()=>({ok:false,error:'Parse error'}));
-  if(d.ok){ toast(t('Photo saved','ছবি সেভ হয়েছে')); if(onDone&&onDone.saved) onDone.saved(d); }
-  else toast(d.error||t('Upload failed','আপলোড ব্যর্থ'),'error');
+  let file = (fi&&fi.files&&fi.files[0]) ? fi.files[0] : (window.__pendingPhotoFile||null);
+  if(!file){ toast(t('Choose a photo first','আগে একটি ছবি বাছুন'),'error'); return; }
+  const prev=document.getElementById('tnPhotoPrev')||document.getElementById('fPhotoPrev')||document.getElementById('setPhotoPrev');
+  const btn=document.querySelector('#dr-foot .btn-primary, #dr-foot .btn-outline[onclick*="Photo"], #dr-foot .btn-primary');
+  const btnOrig=btn?btn.innerHTML:null;
+  if(prev) prev.classList.add('up');
+  if(btn){ btn.disabled=true; btn.innerHTML='⏳ '+t('Uploading…','আপলোড হচ্ছে…'); }
+  try{
+    if(DEMO_MODE){ /* demo: no server — simulate success */
+      await new Promise(r=>setTimeout(r,600));
+      toast(t('Photo saved (demo)','ছবি সেভ হয়েছে (ডেমো)'));
+      if(onDone&&onDone.saved) await onDone.saved({ok:true,photo:'demo'});
+      return;
+    }
+    const fd=new FormData();
+    fd.append('file', file);
+    if(onDone&&onDone.append) onDone.append(fd);
+    const res=await fetch(url,{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
+    const d=await res.json().catch(()=>({ok:false,error:'Parse error'}));
+    if(d.ok){ toast(t('Photo saved','ছবি সেভ হয়েছে')); if(onDone&&onDone.saved) onDone.saved(d); }
+    else toast(d.error||t('Upload failed','আপলোড ব্যর্থ'),'error');
+  } finally {
+    if(prev) prev.classList.remove('up');
+    if(btn){ btn.disabled=false; btn.innerHTML=btnOrig||'📷 '+t('Upload','আপলোড'); }
+    window.__pendingPhotoFile=null;
+  }
 }
 function tenantPhotoDrawer(id){
   const te=(DB.tenants||[]).find(x=>x.id===id); if(!te) return;
   openDrawer(t('Tenant photo — ','ভাড়াটিয়ার ছবি — ')+esc(te.name),
-    `<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px"><div style="width:56px;height:56px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--bg-alt);display:flex;align-items:center;justify-content:center;font-size:18px" id="tnPhotoPrev">${te.photo?'':'👤'}</div><div>
-       <div class="c-sub" style="margin-bottom:6px">${t('JPG / PNG / WebP, max 2 MB','JPG / PNG / WebP, সর্বোচ্চ 2 MB')}</div>
-       <input type="file" id="tnPhotoFile" accept="image/*" class="inp" onchange="tnPhotoPreview(this)">
-     </div></div>`,
+    `<div class="tpd-zone" id="tpdZone">
+      <div class="tpd-prev" id="tnPhotoPrev">${te.photo?'':'<span class="tpd-ph">👤</span><span class="tpd-np">No Photo</span>'}</div>
+      <div class="tpd-hint">${t('Drag & drop a photo here, or click to browse','এখানে ছবি টেনে আনুন, অথবা ক্লিক করে বাছুন')}</div>
+      <div class="c-sub" style="font-size:10.5px">${t('JPG / PNG / WebP, max 2 MB','JPG / PNG / WebP, সর্বোচ্চ 2 MB')}</div>
+      <input type="file" id="tnPhotoFile" accept="image/*" style="display:none" onchange="tnPhotoPreview(this)">
+    </div>`,
     `<button class="btn-outline" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="submitTenantPhoto('${id}')">📷 ${t('Upload','আপলোড')}</button>`);
+  const zone=document.getElementById('tpdZone');
+  if(zone){
+    zone.addEventListener('click',()=>{ const fi=document.getElementById('tnPhotoFile'); if(fi) fi.click(); });
+    zone.addEventListener('dragover',e=>{ e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave',()=>zone.classList.remove('drag'));
+    zone.addEventListener('drop',e=>{
+      e.preventDefault(); zone.classList.remove('drag');
+      const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+      if(f&&f.type.startsWith('image/')){ window.__pendingPhotoFile=f; showPhotoPreview('tnPhotoPrev',f); }
+      else toast(t('Please drop an image file','একটি ছবি ফাইল দিন'),'error');
+    });
+  }
   if(te.photo) attachPhoto(document.getElementById('tnPhotoPrev'),'tenant',id);
 }
+function showPhotoPreview(prevId, file){
+  const el=document.getElementById(prevId); if(!el) return;
+  const u=URL.createObjectURL(file);
+  el.innerHTML=`<img src="${u}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block">`;
+}
 function tnPhotoPreview(inp){
-  if(inp.files&&inp.files[0]){ const u=URL.createObjectURL(inp.files[0]); const el=document.getElementById('tnPhotoPrev'); if(el) el.innerHTML=`<img src="${u}" style="width:100%;height:100%;object-fit:cover">`; }
+  if(inp.files&&inp.files[0]){ window.__pendingPhotoFile=inp.files[0]; showPhotoPreview('tnPhotoPrev',inp.files[0]); }
 }
 async function submitTenantPhoto(id){
   await uploadPhoto(API+'app-photo?action=tenant-upload', 'tnPhotoFile', {
@@ -7638,17 +7690,15 @@ async function submitTenantPhoto(id){
   });
 }
 function tenantPhotoFormBlock(row){
-  return `<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg-alt)">
-    <div style="width:64px;height:64px;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0" id="fPhotoPrev">${row.photo?'':'👤'}</div>
-    <div style="flex:1">
-      <div style="font-size:12.5px;font-weight:700;margin-bottom:6px">${t('Tenant photo','ভাড়াটিয়ার ছবি')}</div>
-      <div class="c-sub" style="margin-bottom:6px">${t('JPG / PNG / WebP, max 2 MB','JPG / PNG / WebP, সর্বোচ্চ 2 MB')}</div>
-      <input type="file" id="f_photo_file" accept="image/*" class="inp" onchange="tenantFormPhotoPreview(this)">
-    </div>
+  return `<div class="tpd-zone" id="fPhotoZone" style="margin-bottom:14px">
+    <div class="tpd-prev" id="fPhotoPrev">${row.photo?'':'<span class="tpd-ph">👤</span><span class="tpd-np">No Photo</span>'}</div>
+    <div class="tpd-hint">${t('Drag & drop a photo here, or click to browse','এখানে ছবি টেনে আনুন, অথবা ক্লিক করে বাছুন')}</div>
+    <div class="c-sub" style="font-size:10.5px">${t('JPG / PNG / WebP, max 2 MB','JPG / PNG / WebP, সর্বোচ্চ 2 MB')}</div>
+    <input type="file" id="f_photo_file" accept="image/*" style="display:none" onchange="tenantFormPhotoPreview(this)">
   </div>`;
 }
 function tenantFormPhotoPreview(inp){
-  if(inp.files&&inp.files[0]){ const u=URL.createObjectURL(inp.files[0]); const el=document.getElementById('fPhotoPrev'); if(el) el.innerHTML=`<img src="${u}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block">`; }
+  if(inp.files&&inp.files[0]){ window.__pendingPhotoFile=inp.files[0]; showPhotoPreview('fPhotoPrev',inp.files[0]); }
 }
 function samityStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
 function samityCap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
@@ -8556,7 +8606,21 @@ function openForm(collection, id, isNew){
   const body=(collection==='tenants'?tenantPhotoFormBlock(row):'')+`<div class="form-grid">${s.fields.map(f=>fieldHtml(f,row)).join('')}</div>`;
   const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="${isNew?'closeDrawer()':'openDetail(\''+collection+'\',\''+id+'\')'}">Cancel</button>`+(isNew?'':`<button class="btn-danger" onclick="deleteRow('${collection}','${id}')">🗑 Delete</button>`)+`<button class="btn-primary" onclick="saveForm('${collection}','${id||''}',${isNew?'true':'false'})">${isNew?'＋ Create':'✓ Save changes'}</button></div>`;
   openDrawer(`${s.icon} ${isNew?'New '+s.label:'Edit '+s.label} ${isNew?'':'— '+id}`, body, foot);
-  if(collection==='tenants'&&row.photo) attachPhoto(document.getElementById('fPhotoPrev'),'tenant',row.id);
+  if(collection==='tenants'){
+    const fz=document.getElementById('fPhotoZone');
+    if(fz){
+      fz.addEventListener('click',()=>{ const fi=document.getElementById('f_photo_file'); if(fi) fi.click(); });
+      fz.addEventListener('dragover',e=>{ e.preventDefault(); fz.classList.add('drag'); });
+      fz.addEventListener('dragleave',()=>fz.classList.remove('drag'));
+      fz.addEventListener('drop',e=>{
+        e.preventDefault(); fz.classList.remove('drag');
+        const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+        if(f&&f.type.startsWith('image/')){ window.__pendingPhotoFile=f; showPhotoPreview('fPhotoPrev',f); }
+        else toast(t('Please drop an image file','একটি ছবি ফাইল দিন'),'error');
+      });
+    }
+    if(row.photo) attachPhoto(document.getElementById('fPhotoPrev'),'tenant',row.id);
+  }
 }
 function openNew(collection){ openForm(collection, null, true); }
 async function saveForm(collection, id, isNew){
@@ -8573,7 +8637,7 @@ async function saveForm(collection, id, isNew){
   if(d&&d.ok){
     const pid=(d.id||id);
     const fi=document.getElementById('f_photo_file');
-    if(collection==='tenants'&&fi&&fi.files&&fi.files[0]){
+    if(collection==='tenants'&&((fi&&fi.files&&fi.files[0])||window.__pendingPhotoFile)){
       await uploadPhoto(API+'app-photo?action=tenant-upload','f_photo_file',{
         append:fd=>fd.append('id',pid),
         saved:async dd=>{
@@ -9202,6 +9266,20 @@ async function openSettings(){
   let ORG_CFG={inv_prefix:'INV-',org_name:'KRTaker',org_tagline:'AI CARETAKER',default_lease_months:12,khajna_calendar:[],invoice_footer:'This is a system-generated invoice from KRTaker — your AI caretaker.'};
   if(canOrg&&TOKEN&&!DEMO_MODE){ const r=await apiCall('app-org-settings-get'); if(r.ok) ORG_CFG=r.cfg; }
   setTimeout(()=>{ if(TOKEN&&!DEMO_MODE&&LIVE.user&&LIVE.user.photo) attachPhoto(document.getElementById('setPhotoPrev'),'user',LIVE.user.id); },120);
+  setTimeout(()=>{
+    const sz=document.getElementById('setPhotoZone');
+    if(sz){
+      sz.addEventListener('click',()=>{ const fi=document.getElementById('setPhotoFile'); if(fi) fi.click(); });
+      sz.addEventListener('dragover',e=>{ e.preventDefault(); sz.classList.add('drag'); });
+      sz.addEventListener('dragleave',()=>sz.classList.remove('drag'));
+      sz.addEventListener('drop',e=>{
+        e.preventDefault(); sz.classList.remove('drag');
+        const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+        if(f&&f.type.startsWith('image/')){ window.__pendingPhotoFile=f; showPhotoPreview('setPhotoPrev',f); }
+        else toast(t('Please drop an image file','একটি ছবি ফাইল দিন'),'error');
+      });
+    }
+  },120);
   const sub=(DEMO_MODE?null:(LIVE.subscription||null));
   const planInfo=sub?`<div class="row-item"><div class="ri-body"><div class="ri-t">${esc(sub.plan_name||'Trial')}</div><div class="ri-s">${t('Current plan','বর্তমান প্ল্যান')} · ${esc(sub.plan_code||'')}</div></div><div class="ri-r"><span class="badge b-blue">${esc(sub.status||'active')}</span></div></div>`:'';
   const tabs=krTabBar([
@@ -9215,11 +9293,12 @@ async function openSettings(){
     tabs+
     `<div class="kr-tab-panel active" data-p="set" data-tab="profile">
       <div class="panel" style="margin-bottom:14px"><div class="panel-h"><div class="t"><span class="pi">👤</span>${t('Profile','প্রোফাইল')}</div></div><div class="panel-b">
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
-          <div style="width:56px;height:56px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--bg-alt);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800" id="setPhotoPrev">${avatarMarkup(u, u.avatar||'👤')}</div>
-          <div style="flex:1"><div class="c-sub" style="margin-bottom:6px">${t('Profile photo (JPG / PNG / WebP)','প্রোফাইল ছবি (JPG / PNG / WebP)')}</div>
-          <input type="file" id="setPhotoFile" accept="image/*" class="inp" onchange="setPhotoPreview(this)">
-          <button class="btn-outline" style="margin-top:8px;padding:7px 12px;font-size:12px" onclick="submitUserPhoto()">📷 ${t('Upload photo','ছবি আপলোড')}</button></div>
+        <div class="tpd-zone" id="setPhotoZone" style="margin-bottom:14px">
+          <div class="tpd-prev" id="setPhotoPrev">${avatarMarkup(u, u.avatar||'👤')}</div>
+          <div class="tpd-hint">${t('Drag & drop a photo here, or click to browse','এখানে ছবি টেনে আনুন, অথবা ক্লিক করে বাছুন')}</div>
+          <div class="c-sub" style="font-size:10.5px">${t('Profile photo (JPG / PNG / WebP)','প্রোফাইল ছবি (JPG / PNG / WebP)')}</div>
+          <input type="file" id="setPhotoFile" accept="image/*" style="display:none" onchange="setPhotoPreview(this)">
+          <button class="btn-outline" style="padding:7px 12px;font-size:12px" onclick="submitUserPhoto()">📷 ${t('Upload photo','ছবি আপলোড')}</button>
         </div>
         <div class="form-field"><label>${t('Name','নাম')}</label><input id="setName" value="${nameVal}"></div>
         ${isStaff?`<div class="form-field"><label>${t('Department','বিভাগ')}</label><input id="setDept" value="${esc(u.dept||'')}"></div>
@@ -9283,7 +9362,7 @@ async function openSettings(){
   });
 }
 function setPhotoPreview(inp){
-  if(inp.files&&inp.files[0]){ const u=URL.createObjectURL(inp.files[0]); const el=document.getElementById('setPhotoPrev'); if(el) el.innerHTML=`<img src="${u}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`; }
+  if(inp.files&&inp.files[0]){ window.__pendingPhotoFile=inp.files[0]; showPhotoPreview('setPhotoPrev',inp.files[0]); }
 }
 async function submitUserPhoto(){
   const u=LIVE.user||{}; if(!TOKEN||DEMO_MODE){ toast('Demo — photo upload needs live login','error'); return; }
