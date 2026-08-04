@@ -99,7 +99,7 @@ img{max-width:100%}
 .section-alt{background:var(--bg-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
 .section-title{font-size:32px;font-weight:800;text-align:center;letter-spacing:-.3px;margin-bottom:10px}
 .section-subtitle{text-align:center;color:var(--text-soft);max-width:640px;margin:0 auto 44px;font-size:15.5px}
-.section-dark .section-subtitle{color:#9FB0C6}
+.section-dark .section-subtitle{color:#C2CFE4}
 
 /* ── Steps ── */
 .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px}
@@ -281,7 +281,7 @@ img{max-width:100%}
 @media(max-width:860px){.contact-grid{grid-template-columns:1fr}}
 
 /* ── Footer ── */
-.footer{background:var(--bg-dark);color:#9FB0C6;padding:58px 0 30px;font-size:13px}
+.footer{background:var(--bg-dark);color:#C2CFE4;padding:58px 0 30px;font-size:13px}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1.2fr;gap:30px;margin-bottom:38px}
 .footer-brand .nav-logo{color:#fff;margin-bottom:12px}
 .footer-brand p{font-size:12.5px;line-height:1.7}
@@ -316,7 +316,7 @@ img{max-width:100%}
 }
 [data-theme="dark"]{
   --bg:#0E1626; --bg-alt:#121C30; --card:#16203A;
-  --text:#E8EEF9; --text-soft:#A8B6CF; --text-mute:#7483A0;
+  --text:#EAF1FC; --text-soft:#C2CFE4; --text-mute:#93A7C8;
   --border:#243350; --nav-bg:rgba(14,22,38,.92);
   --primary-light:rgba(47,128,237,.16);
   --shadow:0 10px 30px rgba(0,0,0,.35);
@@ -334,7 +334,7 @@ img{max-width:100%}
 [data-theme="dark"] .wiz-pane,[data-theme="dark"] .plan-card,[data-theme="dark"] .role-opt,
 [data-theme="dark"] .contact-row .ci{background:var(--card)}
 [data-theme="dark"] .mock-top,[data-theme="dark"] .mock-url{background:#1A2540}
-[data-theme="dark"] .mock-url{color:#8FA3C8}
+[data-theme="dark"] .mock-url{color:#AFC1DE}
 [data-theme="dark"] .form-group input,[data-theme="dark"] .form-group select{background:#16203A;color:var(--text);border-color:var(--border)}
 [data-theme="dark"] .faq-q{color:var(--text)}
 [data-theme="dark"] .page-body p,[data-theme="dark"] .page-body li{color:#C2CFE4}
