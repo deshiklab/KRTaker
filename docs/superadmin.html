@@ -670,7 +670,7 @@ async function providerSave(id){
 }
 /* ── Web CMS ── */
 let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en'};
-const CMS_PAGES={home:{l:'Home',ic:'🏠'},features:{l:'Features',ic:'✨'},pricing:{l:'Pricing',ic:'💎'},about:{l:'About',ic:'ℹ️'},contact:{l:'Contact',ic:'📮'},howitworks:{l:'How it works',ic:'🗺️'},ai:{l:'AI Caretaker',ic:'🤖'},owners:{l:'For Owners',ic:'🏠'},tenants:{l:'For Tenants',ic:'👤'},partners:{l:'For Partners',ic:'🛠️'},nrb:{l:'For NRB',ic:'🌍'},legal:{l:'Legal & Compliance',ic:'⚖️'},faq:{l:'FAQ',ic:'❓'},tools:{l:'Calculators',ic:'🧮'},blog:{l:'Blog',ic:'📰'},cases:{l:'Case Studies',ic:'📈'},login:{l:'Login',ic:'🔐'},register:{l:'Register',ic:'📝'},footer:{l:'Footer',ic:'🔗'},seo:{l:'SEO',ic:'🔍'}};
+const CMS_PAGES={home:{l:'Home',ic:'🏠',f:'index.html'},features:{l:'Features',ic:'✨',f:'features.html'},pricing:{l:'Pricing',ic:'💎',f:'pricing.html'},about:{l:'About',ic:'ℹ️',f:'about.html'},contact:{l:'Contact',ic:'📮',f:'contact.html'},howitworks:{l:'How it works',ic:'🗺️',f:'how-it-works.html'},ai:{l:'AI Caretaker',ic:'🤖',f:'ai-caretaker.html'},owners:{l:'For Owners',ic:'🏠',f:'for-owners.html'},tenants:{l:'For Tenants',ic:'👤',f:'for-tenants.html'},partners:{l:'For Partners',ic:'🛠️',f:'for-partners.html'},nrb:{l:'For NRB',ic:'🌍',f:'for-nrb.html'},legal:{l:'Legal & Compliance',ic:'⚖️',f:'legal-compliance.html'},faq:{l:'FAQ',ic:'❓',f:'faq.html'},tools:{l:'Calculators',ic:'🧮',f:'tools.html'},blog:{l:'Blog',ic:'📰',f:'blog.html'},cases:{l:'Case Studies',ic:'📈',f:'case-studies.html'},login:{l:'Login',ic:'🔐',f:'login.html'},register:{l:'Register',ic:'📝',f:'register.html'},site:{l:'Site',ic:'⚙️',f:'index.html'},footer:{l:'Footer',ic:'🔗',f:'index.html'},seo:{l:'SEO',ic:'🔍',f:'index.html'}};
 const CMS_SEC_LABEL={hero:'Hero',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',stats:'Stats bar',trust:'Trust strip',steps:'How it works steps',roles:'Roles',featcards:'Feature cards',gallery:'Product gallery',legal:'Legal strip',testi:'Testimonials',ctaband:'CTA band',partners:'Partners',sticky:'Sticky CTA',modules:'Feature modules',visual:'Visual band',note:'Pricing note',compare:'Compare table',callout:'Callout',why:'Why we exist',principles:'Principles',team:'Team',milestones:'Milestones',join:'Join CTA',talk:'Talk to the team',rows:'Contact rows',form:'Contact form',items:'Items',sections:'Sections',cols:'Footer columns',contact:'Contact',news:'Newsletter',pay:'Payment chips',bottom:'Footer bottom',home:'Home',features:'Features',pricing:'Pricing',about:'About',contact:'Contact',footer:'Footer'};
 const CMS_LONG=['subtitle','desc','meta_description','tagline','address'];
 function cmsIsLong(k){return CMS_LONG.some(s=>k.includes(s));}
@@ -703,11 +703,12 @@ function cmsHint(b){
 }
 async function renderCms(){
   pageHead('Web CMS — landing content, SEO and section management',
-    `<button class="btn-outline" onclick="cmsPreview()" data-tip="Preview how the landing page will look" data-tip-pos="top">👁 Preview</button><button class="btn-outline" onclick="cmsHistoryDrawer()" data-tip="View change history and restore values" data-tip-pos="top">🗒 History</button><button class="btn-outline" onclick="cmsExport()" data-tip="Download all CMS content as JSON" data-tip-pos="top">⬇ Export</button><button class="btn-outline" onclick="cmsImport()" data-tip="Import CMS content from JSON" data-tip-pos="top">⬆ Import</button><a class="btn-outline" href="https://krtaker.com" target="_blank" data-tip="Open the live landing page" data-tip-pos="top">↗ Landing</a><button class="btn-primary" onclick="cmsSaveAll()" data-tip="Save all unsaved changes" data-tip-pos="top">💾 Save all</button>`);
+    `<button class="btn-outline" onclick="cmsPreview()" data-tip="Preview how the landing page will look" data-tip-pos="top">👁 Preview</button><button class="btn-outline" onclick="cmsHistoryDrawer()" data-tip="View change history and restore values" data-tip-pos="top">🗒 History</button><button class="btn-outline" onclick="cmsExport()" data-tip="Download all CMS content as JSON" data-tip-pos="top">⬇ Export</button><button class="btn-outline" onclick="cmsImport()" data-tip="Import CMS content from JSON" data-tip-pos="top">⬆ Import</button><button class="btn-outline" onclick="cmsMediaDrawer()" data-tip="Upload and browse images for the site" data-tip-pos="top">🖼 Media</button><a class="btn-outline" href="https://krtaker.com" target="_blank" data-tip="Open the live landing page" data-tip-pos="top">↗ Landing</a><button class="btn-primary" onclick="cmsSaveAll()" data-tip="Save all unsaved changes" data-tip-pos="top">💾 Save all</button>`);
   load('pageBody','<div class="empty">Loading…</div>');
   const d=await admin({action:'cms-get'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   CMS.blocks=d.blocks||[];
+  CMS.vis=d.vis||{};
   CMS.defKeys=new Set(CMS.blocks.filter(b=>b.is_default).map(b=>b.page+'|'+b.section+'|'+b.k));
   const cur=CMS_PAGES[CMS.tab]?CMS.tab:'home';
   load('pageBody',
@@ -716,6 +717,7 @@ async function renderCms(){
     `<span style="width:1px;height:22px;background:var(--border);margin:0 4px"></span>`+
     `<button class="chip ${CMS.lang==='en'?'on':''}" onclick="cmsLang('en')" data-tip="Show English fields" data-tip-pos="top">EN</button>`+
     `<button class="chip ${CMS.lang==='bn'?'on':''}" onclick="cmsLang('bn')" data-tip="Show বাংলা fields" data-tip-pos="top">বাংলা</button>`+
+    `<a class="chip" href="https://krtaker.com/${CMS_PAGES[cur].f||'index.html'}" target="_blank" data-tip="Open the live page in a new tab" data-tip-pos="top">↗ Open</a>`+
     `<input id="cmsSearch" placeholder="🔍 Search blocks…" style="max-width:200px;margin-left:auto" oninput="cmsFilter()"></div>`+
     `<div id="cmsPanels">${cmsPageHtml(cur)}</div>`);
 }
@@ -737,7 +739,7 @@ function cmsPageHtml(p){
       <button class="btn-outline" style="color:var(--danger)" onclick="cmsResetPage('${p}')" data-tip="Reset this page to default values (kept in history)" data-tip-pos="top">↺ Reset page</button>
       <button class="btn-outline" onclick="cmsHistoryDrawer('${p}')" data-tip="Change history for this page" data-tip-pos="top">🗒 Page history</button>
     </div>`+
-    (secs.length?secs.map(sec=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${CMS_PAGES[p].ic}</span>${esc(CMS_SEC_LABEL[sec]||sec)}</span><span class="c-sub" style="font-size:11px">${bySec[sec].length} fields</span></div>
+    (secs.length?secs.map(sec=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${CMS_PAGES[p].ic}</span>${esc(CMS_SEC_LABEL[sec]||sec)}</span><span class="c-sub" style="font-size:11px">${bySec[sec].length} fields</span><span style="display:flex;gap:6px"><button class="btn-ghost" style="font-size:11px;${CMS.vis[p+'.'+sec]===0?'color:var(--danger)':''}" onclick="cmsVisToggle('${p}','${esc(sec)}')" data-tip="${CMS.vis[p+'.'+sec]===0?'Section hidden on the site — click to show':'Show/hide this section on the site'}" data-tip-pos="left">${CMS.vis[p+'.'+sec]===0?'🙈 Hidden':'👁 Visible'}</button><button class="btn-ghost" style="font-size:11px;color:var(--danger)" onclick="cmsResetSection('${p}','${esc(sec)}')" data-tip="Reset only this section to defaults" data-tip-pos="left">↺</button></span></div>
       <div class="panel-b"><div class="frm">${bySec[sec].map(b=>cmsFieldHtml(b)).join('')}</div></div></div>`).join(''):'<div class="empty">No fields in this language yet.</div>');
 }
 function cmsFieldHtml(b){
@@ -746,9 +748,10 @@ function cmsFieldHtml(b){
   const long=cmsIsLong(b.k);
   const hint=cmsHint(b);
   const lbl=b.k.replace(/_bn$/,'').replace(/_/g,' ')+(CMS.lang==='bn'?' (বাংলা)':'');
+  const isImg=/image|og_image|logo|favicon|banner/.test(b.k);
   const inp=long
     ? `<textarea data-cms="${esc(tag)}" oninput="cmsCount(this)">${esc(b.v)}</textarea>`
-    : `<input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this)">`;
+    : `<div style="display:flex;gap:6px"><input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this)" style="flex:1">${isImg?`<button class="btn-ghost" onclick="cmsMediaDrawer('${esc(tag)}')" data-tip="Pick or upload an image" data-tip-pos="left" title="Media">🖼</button>`:''}</div>`;
   return `<div class="cms-field">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
       <label class="lb" style="margin:0;text-transform:capitalize" ${hint?`data-tip="${esc(hint)}" data-tip-pos="right"`:''}>${esc(lbl)}${def?'':'<span class="badge b-purple" style="margin-left:6px">custom</span>'}</label>
@@ -1451,6 +1454,74 @@ function renderApi(){
     load('apiBody','<div id="apiKeysBody"></div>');renderApiKeys();
   }else{
     load('apiBody','<div id="apiDataBody"></div>');renderApiData();
+  }
+}
+/* ── Advanced CMS v2 (SA1-fullsite): visibility toggles, section reset, media drawer ── */
+async function cmsVisToggle(p, sec) {
+  const cur = CMS.vis[p + '.' + sec] === 0 ? 1 : 0;
+  const d = await admin({ action: 'cms-vis-save', page: p, section: sec, visible: cur });
+  if (d.ok) { CMS.vis[p + '.' + sec] = cur; toast(cur ? 'Section shown' : 'Section hidden', 'ok'); renderCms(); }
+  else toast(d.error || 'Failed', 'error');
+}
+async function cmsResetSection(p, sec) {
+  if (!confirm('Reset the "' + sec + '" section of ' + (CMS_PAGES[p]?.l || p) + ' to defaults? (kept in history)')) return;
+  const d = await admin({ action: 'cms-reset-section', page: p, section: sec });
+  if (d.ok) { toast('Section reset (' + d.archived + ' values archived)', 'ok'); renderCms(); }
+  else toast(d.error || 'Failed', 'error');
+}
+let CMS_MEDIA_INSERT = null;
+function cmsMediaDrawer(insertTag) {
+  CMS_MEDIA_INSERT = insertTag || null;
+  openDrawer('🖼 Media library',
+    '<div class="empty">Loading…</div>' +
+    '<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:12px">' +
+      '<label class="lb">Upload new image (jpg/png/webp/gif/svg, max 5 MB)</label>' +
+      '<input type="file" id="cmsMediaFile" accept="image/*" style="margin:6px 0">' +
+      '<button class="btn-primary" onclick="cmsMediaUpload()">⬆ Upload</button>' +
+      '<div class="c-sub" style="font-size:11px;margin-top:6px">' + (insertTag ? 'Pick a file to insert it into the selected image field.' : 'Pick a file to copy its URL.') + '</div>' +
+    '</div>',
+    '<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button></div>');
+  cmsMediaList();
+}
+async function cmsMediaList() {
+  const d = await admin({ action: 'cms-media-list' });
+  if (!d.ok) { const b = $('drawerBody'); if (b) b.innerHTML = '<div class="empty">' + esc(d.error || 'Failed') + '</div>'; return; }
+  const files = d.files || [];
+  const b = $('drawerBody');
+  if (!b) return;
+  b.innerHTML = (files.length
+    ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px">` + files.map(f =>
+        `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer" onclick="cmsMediaPick('${esc(f.url)}')" data-tip="Click to ${CMS_MEDIA_INSERT ? 'insert' : 'copy URL'}" data-tip-pos="top">` +
+          `<img src="${esc(f.url)}" style="width:100%;height:80px;object-fit:cover;display:block" loading="lazy" onerror="this.style.display='none'">` +
+          `<div style="padding:6px 8px;font-size:10.5px;color:var(--text-mute);word-break:break-all">${esc(f.name)}</div>` +
+        `</div>`).join('') + `</div>`
+    : '<div class="empty">No uploaded images yet — upload one below.</div>') +
+    '<div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">' +
+      '<label class="lb">Upload new image (jpg/png/webp/gif/svg, max 5 MB)</label>' +
+      '<input type="file" id="cmsMediaFile" accept="image/*" style="margin:6px 0">' +
+      '<button class="btn-primary" onclick="cmsMediaUpload()">⬆ Upload</button>' +
+      '<div class="c-sub" style="font-size:11px;margin-top:6px">' + (CMS_MEDIA_INSERT ? 'Pick a file to insert it into the selected image field.' : 'Pick a file to copy its URL.') + '</div>' +
+    '</div>';
+}
+async function cmsMediaUpload() {
+  const inp = $('cmsMediaFile');
+  if (!inp || !inp.files || !inp.files[0]) { toast('Choose a file first', 'error'); return; }
+  const fd = new FormData();
+  fd.append('file', inp.files[0]);
+  const res = await fetch(API + 'app-admin', { method: 'POST', headers: { 'Authorization': 'Bearer ' + TOKEN }, body: fd });
+  const d = await res.json().catch(() => ({ ok: false, error: 'Parse error' }));
+  if (d.ok) { toast('Uploaded ' + d.name, 'ok'); cmsMediaList(); }
+  else toast(d.error || 'Failed', 'error');
+}
+function cmsMediaPick(url) {
+  if (CMS_MEDIA_INSERT) {
+    const el = document.querySelector('[data-cms="' + CSS.escape(CMS_MEDIA_INSERT) + '"]');
+    if (el) { el.value = url; el.dispatchEvent(new Event('input')); }
+    toast('Image URL inserted — press Save all to publish', 'ok');
+    CMS_MEDIA_INSERT = null;
+    closeDrawer();
+  } else {
+    navigator.clipboard.writeText(location.origin + url).then(() => toast('URL copied', 'ok')).catch(() => toast(url, 'info'));
   }
 }
 </script>
