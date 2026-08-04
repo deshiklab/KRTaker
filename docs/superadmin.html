@@ -341,16 +341,78 @@ function pageHead(sub,actions){if(sub)$('pageSub').textContent=sub;if(actions)$(
 function load(el,html){const e=$(el);if(e)e.innerHTML=html;}
 
 /* ── Dashboard ── */
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const mLabel=m=>{const mm=+(String(m||'').slice(5));return MONTHS[mm-1]||String(m).slice(5)||'—'};
+function barChartSVG(rows,opt){
+  opt=opt||{};
+  const W=opt.w||560,H=opt.h||176,padT=22,padB=30;
+  const vals=rows.map(r=>+(r.n??r.amt??0));
+  const max=Math.max(1,...vals);
+  const step=(W-24)/Math.max(1,rows.length);
+  const bw=Math.max(9,Math.min(34,step*0.52));
+  const inner=H-padT-padB;
+  let s='';
+  rows.forEach((r,i)=>{
+    const v=+(r.n??r.amt??0);
+    const h=Math.max(2,v/max*inner);
+    const x=12+i*step+(step-bw)/2,y=H-padB-h;
+    s+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" rx="4" height="${h.toFixed(1)}" fill="${opt.color||'var(--primary)'}" opacity="0.92"/>`+
+       `<text x="${(x+bw/2).toFixed(1)}" y="${(y-6).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="700" fill="${opt.tc||'var(--text-soft)'}">${opt.fmt?opt.fmt(v):v}</text>`+
+       `<text x="${(x+bw/2).toFixed(1)}" y="${H-10}" text-anchor="middle" font-size="9.5" fill="var(--text-mute)">${opt.ml?opt.ml(r):mLabel(r.m)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${s}</svg>`;
+}
+function hbarChart(rows,opt){
+  opt=opt||{};
+  if(!rows.length)return '<div class="empty">No data yet.</div>';
+  const max=Math.max(...rows.map(r=>+(r.n??0)),1);
+  return `<div style="display:flex;flex-direction:column;gap:11px">`+rows.map(r=>{
+    const pct=Math.max(2,Math.round((+(r.n??0))/max*100));
+    return `<div><div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;margin-bottom:4px"><span style="color:var(--text-soft);font-weight:600">${esc(r.m??r.plan??r.status??r.role??'—')}</span><span style="color:var(--text);font-weight:800">${r.n}</span></div><div style="height:9px;background:var(--bg-alt);border:1px solid var(--border);border-radius:99px;overflow:hidden"><div style="width:${pct}%;height:100%;border-radius:99px;background:${opt.color||'var(--primary)'}"></div></div></div>`;
+  }).join('')+`</div>`;
+}
+function donutChart(rows){
+  const total=rows.reduce((s,r)=>s+(+(r.n??0)),0);
+  if(!total)return '<div class="empty">No tickets yet.</div>';
+  const colors={'Open':'#E74C3C','In Progress':'#2F80ED','Answered':'#27AE60','Resolved':'#27AE60','Closed':'#8A97AB','Pending':'#E67E22'};
+  const CX=72,CY=72,R=50,SW=19;
+  let acc=0,segs='';
+  rows.forEach(r=>{
+    const v=+(r.n??0);const frac=v/total;
+    const a0=acc*2*Math.PI-Math.PI/2,a1=(acc+frac)*2*Math.PI-Math.PI/2;
+    acc+=frac;
+    const large=frac>0.5?1:0;
+    const x0=CX+R*Math.cos(a0),y0=CY+R*Math.sin(a0),x1=CX+R*Math.cos(a1),y1=CY+R*Math.sin(a1);
+    if(v>0)segs+=`<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${R} ${R} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}" fill="none" stroke="${colors[r.status]||'var(--primary)'}" stroke-width="${SW}" stroke-linecap="round"/>`;
+  });
+  const legend=rows.map(r=>`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-soft)"><span style="width:11px;height:11px;border-radius:4px;background:${colors[r.status]||'var(--primary)'};flex-shrink:0"></span>${esc(r.status)}<b style="color:var(--text);margin-left:auto">${r.n}</b></div>`).join('');
+  return `<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap"><svg viewBox="0 0 ${CX*2} ${CY*2}" style="width:150px;height:150px;flex-shrink:0">${segs}<text x="${CX}" y="${CY+1}" text-anchor="middle" font-size="21" font-weight="800" fill="var(--text)">${total}</text><text x="${CX}" y="${CY+16}" text-anchor="middle" font-size="9" fill="var(--text-mute)">tickets</text></svg><div style="flex:1;min-width:130px;display:flex;flex-direction:column;gap:8px">${legend}</div></div>`;
+}
 async function renderDashboard(){
   load('pageBody','<div class="c-sub" style="color:var(--text-mute);padding:20px">Loading…</div>');
-  const d=await admin({action:'overview'});
+  const [d,m]=await Promise.all([admin({action:'overview'}),admin({action:'mis'})]);
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
-  const s=d.stats;
-  pageHead(`Platform at a glance · ${s.subscribers} subscribers · MRR ${moneyC(s.mrr)}`);
-  const cards=[['👥','Subscribers',s.subscribers,'total · '+s.active+' active'],['🟣','Trial',s.trial,'awaiting conversion'],['💰','MRR',moneyC(s.mrr),'ARR '+moneyC(s.arr)],['📦','Packages',s.packages,'catalog'],['👤','Staff users',s.users,'app_users'],['🎫','Open tickets',s.tickets_open,s.tickets_open?'needs attention':'all clear'],['🧲','Leads (30d)',s.leads,'platform CRM'],['🧊','DB size',(s.db_size/1048576).toFixed(1)+' MB',s.tables+' tables · '+s.files+' files']];
+  const s=d.stats, mis=m.ok?(m.mis||{}):{};
+  pageHead(`Platform at a glance · ${s.subscribers} subscribers · MRR ${moneyC(s.mrr)}`,
+    `<button class="btn-primary" onclick="nav('subscribers')">＋ Subscriber</button><button class="btn-outline" onclick="nav('tickets')">🎫 Ticket</button><button class="btn-outline" onclick="nav('backup')">💾 Backup</button><button class="btn-outline" onclick="nav('cms')">🌐 CMS</button>`);
+  const cards=[
+    ['👥','Subscribers',s.subscribers,`+${s.new_subs_30d} in 30d · ${s.active} active`],
+    ['🟣','Trial',s.trial,'awaiting conversion'],
+    ['💰','MRR',moneyC(s.mrr),'ARR '+moneyC(s.arr)],
+    ['📦','Packages',s.packages,'catalog'],
+    ['👤','Staff users',s.users,'app_users'],
+    ['🎫','Open tickets',s.tickets_open,s.tickets_open?'needs attention':'all clear'],
+    ['🧲','Leads',s.leads,'platform CRM'],
+    ['🧊','DB size',(s.db_size/1048576).toFixed(1)+' MB',s.tables+' tables · '+s.files+' files']
+  ];
+  const signups=mis.signups_by_month||[],premium=mis.premium_by_month||[],tix=mis.tickets_by_status||[],plans=mis.subscribers_by_plan||[];
+  const recent=(s.recent_subs||[]).slice(0,6),audit=s.audit||[];
+  const pnl=(ico,t,body)=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${ico}</span>${t}</span></div><div class="panel-b">${body}</div></div>`;
   load('pageBody',
     `<div class="stats">${cards.map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>`+
-    `<div class="grid-dash"><div><div class="panel"><div class="panel-h"><span class="t"><span class="pi">🕒</span>Recent activity</span></div><div class="panel-b">${(s.audit||[]).map(a=>`<div class="kv"><span class="k">${esc(a.user)} · ${esc(a.action)} <span style="color:var(--text-mute);font-size:11px">${esc(a.module)}</span></span><span class="v" style="font-size:11.5px;color:var(--text-mute)">${esc(a.ts||'').slice(0,16)}</span></div>`).join('')||'<div class="empty">No activity yet.</div>'}</div></div></div><div><div class="panel"><div class="panel-h"><span class="t"><span class="pi">🚀</span>Quick actions</span></div><div class="panel-b" style="display:flex;flex-direction:column;gap:8px">${[['👥 Add subscriber','subscribers'],['📦 Create package','packages'],['🎫 New support ticket','tickets'],['💾 Run backup','backup'],['🌐 Edit web CMS','cms']].map(q=>`<button class="btn-outline" style="justify-content:flex-start" onclick="nav('${q[1]}')">${q[0]}</button>`).join('')}</div></div></div></div>`);
+    `<div class="grid-2" style="gap:18px">${pnl('📈','Signups by month',signups.length?barChartSVG(signups):'<div class="empty">No signups yet.</div>')}${pnl('💰','Subscription revenue by month',premium.length?barChartSVG(premium,{color:'var(--accent)',tc:'#1E8A4C',fmt:moneyC}):'<div class="empty">No revenue yet.</div>')}</div>`+
+    `<div class="grid-2" style="gap:18px">${pnl('📦','Subscribers by plan',hbarChart(plans))}${pnl('🎫','Tickets by status',donutChart(tix))}</div>`+
+    `<div class="grid-2" style="gap:18px">${pnl('🆕','Recent subscribers',recent.length?`<div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>Subscriber</th><th>Plan</th><th>Status</th><th>Joined</th></tr></thead><tbody>${recent.map(x=>`<tr><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.email)}</div></td><td>${x.plan?badge(x.plan):'—'}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.created_at||'').slice(0,10))}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No subscribers yet.</div>')}${pnl('🕒','Recent activity',audit.length?audit.map(a=>`<div class="kv"><span class="k">${esc(a.user)} · ${esc(a.action)} <span style="color:var(--text-mute);font-size:11px">${esc(a.module)}</span></span><span class="v" style="font-size:11.5px;color:var(--text-mute)">${esc(a.ts||'').slice(0,16)}</span></div>`).join(''):'<div class="empty">No activity yet.</div>')}</div>`);
 }
 /* ── Subscribers ── */
 let SUBS={list:[],plans:[]};
