@@ -249,8 +249,12 @@ td .c-sub{font-size:11px;color:var(--text-mute)}
 .role-opt .ro-d{font-size:11px;color:var(--text-mute);margin-top:2px;line-height:1.45}
 
 /* ── Toast ── */
-.toast-wrap{position:fixed;top:76px;right:22px;z-index:99;display:flex;flex-direction:column;gap:8px}
-.toast{background:var(--text);color:var(--bg);font-size:12.5px;font-weight:600;padding:11px 16px;border-radius:11px;box-shadow:0 12px 30px rgba(0,0,0,.25);animation:pop .2s ease;max-width:320px}
+.toast-wrap{position:fixed;top:76px;right:22px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--text);color:var(--bg);font-size:12.5px;font-weight:600;padding:11px 16px;border-radius:11px;box-shadow:0 12px 30px rgba(0,0,0,.25);animation:pop .2s ease;max-width:320px;display:flex;align-items:center;gap:8px}
+.toast.ok::before{content:'✓';color:#16a34a;font-weight:800}
+.toast.error{background:#dc2626;color:#fff}
+.toast.error::before{content:'✕';color:#fff;font-weight:800}
+.toast.info{background:var(--text);color:var(--bg)}
 [data-theme="dark"] .toast{background:#E8EEF9;color:#0E1626}
 
 /* ── Empty / misc ── */
@@ -1327,7 +1331,7 @@ function stat(label,value,trend,cls,ico){return `<div class="stat"><div class="s
 function panel(title,body,ico,link){return `<div class="panel"><div class="panel-h"><div class="t"><span class="pi">${ico||''}</span>${title}</div>${link?`<span class="link" onclick="nav('${link}')">${t('View all','সব দেখুন')} →</span>`:''}</div><div class="panel-b">${body}</div></div>`}
 function kv(k,v,cls){return `<div class="kv"><span class="k">${k}</span><span class="v ${cls||''}">${v}</span></div>`}
 function rowItem(ic,title,sub,right){return `<div class="row-item"><div class="ri-ic">${ic}</div><div class="ri-body"><div class="ri-t">${title}</div><div class="ri-s">${sub}</div></div><div class="ri-r">${right}</div></div>`}
-function toast(msg,type){const d=document.createElement('div');d.className='toast '+(type||'');d.textContent=msg;$('toastWrap').appendChild(d);setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),300)},2600)}
+function toast(msg,type){const d=document.createElement('div');const t=type==='ok'||type==='success'?'ok':(type==='error'?'error':'info');d.className='toast '+t;d.textContent=msg;$('toastWrap').appendChild(d);setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),300)},2600)}
 function pageHead(title,sub,actions){return `<div class="page-head"><div><h1>${title}</h1><div class="sub">${sub}</div></div><div class="head-actions">${actions||''}</div></div>`}
 function statsRow(list){return `<div class="stats">${list.join('')}</div>`}
 function barChart(data,labels,color){const w=560,h=150,pad=26;const max=Math.max(...data)*1.15;const bw=(w-pad*2)/data.length;const bars=data.map((v,i)=>{const bh=(v/max)*(h-pad*2);const x=pad+i*bw+bw*.18;const y=h-pad-bh;return `<rect x="${x}" y="${y}" width="${bw*.64}" height="${bh}" rx="5" fill="${color||'url(#gBar)'}"><title>${labels[i]}: ${money(v)}</title></rect>`}).join('');
@@ -7615,6 +7619,12 @@ async function attachPhoto(el, target, id){
   const url = await photoBlobUrl(target, id);
   if(url && el) el.innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block">`;
 }
+function photoCacheClear(target, id){
+  delete PHOTO_CACHE[target+':'+id];
+}
+async function photoCacheClearAll(target){
+  Object.keys(PHOTO_CACHE).forEach(k=>{ if(k.startsWith(target+':')) delete PHOTO_CACHE[k]; });
+}
 async function loadTenantPhotos(){
   (DB.tenants||[]).forEach(te=>{ if(te.photo) attachPhoto(document.getElementById('tph-'+te.id), 'tenant', te.id); });
 }
@@ -7630,7 +7640,7 @@ async function uploadPhoto(url, fileInputId, onDone){
   try{
     if(DEMO_MODE){ /* demo: no server — simulate success */
       await new Promise(r=>setTimeout(r,600));
-      toast(t('Photo saved (demo)','ছবি সেভ হয়েছে (ডেমো)'));
+      toast(t('Photo saved (demo)','ছবি সেভ হয়েছে (ডেমো)'),'ok');
       if(onDone&&onDone.saved) await onDone.saved({ok:true,photo:'demo'});
       return;
     }
@@ -7639,7 +7649,12 @@ async function uploadPhoto(url, fileInputId, onDone){
     if(onDone&&onDone.append) onDone.append(fd);
     const res=await fetch(url,{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
     const d=await res.json().catch(()=>({ok:false,error:'Parse error'}));
-    if(d.ok){ toast(t('Photo saved','ছবি সেভ হয়েছে')); if(onDone&&onDone.saved) onDone.saved(d); }
+    if(d.ok){
+      toast(t('Photo saved','ছবি সেভ হয়েছে'),'ok');
+      if(url.includes('action=tenant-upload')) photoCacheClear('tenant', (fd.get('id')||'').trim());
+      if(url.includes('action=user-upload')) photoCacheClear('user', String(LIVE.user?LIVE.user.id:'').trim());
+      if(onDone&&onDone.saved) await onDone.saved(d);
+    }
     else toast(d.error||t('Upload failed','আপলোড ব্যর্থ'),'error');
   } finally {
     if(prev) prev.classList.remove('up');
@@ -8647,7 +8662,7 @@ async function saveForm(collection, id, isNew){
         }
       });
     }
-    closeDrawer(); toast((isNew?'Created ':'Saved ')+(d.id||pid));
+    closeDrawer(); toast((isNew?'Created ':'Saved ')+(d.id||pid),'ok');
   }
 }
 async function deleteRow(collection, id){
