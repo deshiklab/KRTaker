@@ -113,6 +113,20 @@ label.lb{display:block;font-size:11.5px;font-weight:600;color:var(--text-soft);m
 .topbar-in{display:flex;align-items:center;gap:14px;height:62px;max-width:1240px;margin:0 auto}
 .tb-title{font-size:15px;font-weight:800;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.gs-wrap{position:relative}
+.gs-input{width:220px;background:var(--primary-light);border:1px solid var(--border);border-radius:9px;padding:8px 12px;font-size:12.5px;color:var(--text);outline:none;transition:all .15s}
+.gs-input:focus{width:280px;border-color:var(--primary);box-shadow:0 0 0 3px rgba(47,128,237,.15)}
+.gs-drop{position:absolute;top:calc(100% + 8px);right:0;width:min(560px,90vw);max-height:min(540px,70vh);overflow:auto;background:var(--bg);border:1px solid var(--border);border-radius:12px;box-shadow:0 18px 46px rgba(9,20,40,.22);z-index:200;padding:8px}
+[data-theme="dark"] .gs-drop{box-shadow:0 18px 46px rgba(0,0,0,.55)}
+.gs-group{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text-mute);padding:9px 10px 4px}
+.gs-item{display:flex;align-items:flex-start;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12.5px}
+.gs-item:hover,.gs-item.sel{background:var(--primary-light)}
+.gs-item .gi{font-size:14px;line-height:1.4}
+.gs-item .gt{font-weight:700;color:var(--text)}
+.gs-item .gs{font-size:11px;color:var(--text-mute);margin-top:1px;word-break:break-word}
+.gs-empty{padding:16px;text-align:center;font-size:12.5px;color:var(--text-mute)}
+.gs-hint{display:flex;gap:10px;align-items:center;padding:8px 10px;font-size:11px;color:var(--text-mute);border-top:1px solid var(--border);margin-top:6px}
+@media (max-width:720px){.gs-input{width:120px}.gs-input:focus{width:150px}.gs-drop{width:calc(100vw - 40px);right:-84px}}
 .icon-btn{background:var(--primary-light);border:1px solid var(--border);color:var(--primary-dark);border-radius:9px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;line-height:1;display:inline-flex;align-items:center;gap:6px}
 [data-theme="dark"] .icon-btn{color:#7EB3F5}
 .menu-toggle{display:none;background:none;border:1px solid var(--border);border-radius:9px;width:38px;height:38px;font-size:16px;color:var(--text)}
@@ -290,6 +304,10 @@ td .c-sub{font-size:11.5px;color:var(--text-mute)}
         <button class="menu-toggle" onclick="toggleSidebar()" data-tip="Menu">☰</button>
         <div class="tb-title" id="tbTitle">Super Admin</div>
         <div class="tb-actions">
+          <div class="gs-wrap">
+            <input id="gsInput" class="gs-input" placeholder="🔍 Global search…  (Ctrl K)" oninput="gsSearch()" onfocus="gsOpen()" autocomplete="off">
+            <div class="gs-drop" id="gsDrop" style="display:none"></div>
+          </div>
           <button class="icon-btn side-toggle" id="sideToggle" onclick="toggleSideMini()" data-tip="Collapse sidebar" data-tip-pos="bottom">⫷</button>
           <button class="icon-btn" onclick="toggleTheme()" data-tip="Toggle theme" data-tip-pos="bottom">🌙</button>
           <a class="icon-btn" href="dashboard-v2.html" target="_blank" data-tip="Open subscriber dashboard" data-tip-pos="bottom">↗<span class="lbl"> Dashboard</span></a>
@@ -377,6 +395,76 @@ async function api(path,data){
   return res.json().catch(()=>({ok:false,error:'Parse error'}));
 }
 async function admin(data){return api('app-admin',data)}
+/* ── SA1-fullsite-v3: Global search (topbar, Ctrl+K) ── */
+let GS={q:'',groups:{},flat:[],sel:0,open:false,timer:null};
+const GS_VIEW_LABEL={subscribers:'Subscribers',users:'Users',packages:'Packages',providers:'Providers',tickets:'Support tickets',leads:'Leads',cms:'Web CMS',finance:'Finance',audit:'Audit log'};
+function gsOpen(){if(!GS.open){GS.open=true;const d=$('gsDrop');d.style.display='block';gsRender();}}
+function gsClose(){GS.open=false;const d=$('gsDrop');if(d)d.style.display='none';}
+function gsSearch(){
+  clearTimeout(GS.timer);
+  GS.q=$('gsInput').value.trim();
+  if(GS.q.length<2){GS.groups={};GS.flat=[];gsRender();return;}
+  GS.timer=setTimeout(async()=>{
+    const d=await admin({action:'global-search',q:GS.q,limit:6});
+    if(!d.ok){GS.groups={};GS.flat=[];gsRender();return;}
+    GS.groups=d.groups||{};GS.flat=[];
+    Object.keys(GS.groups).forEach(k=>GS.groups[k].forEach(r=>GS.flat.push({...r,__g:k})));
+    GS.sel=0;gsRender();
+  },220);
+}
+function gsRender(){
+  const d=$('gsDrop');if(!d)return;
+  const inp=$('gsInput');
+  if(!GS.open){d.style.display='none';return;}
+  d.style.display='block';
+  const q=GS.q;
+  if(q.length<2){d.innerHTML=`<div class="gs-empty">Type at least 2 characters to search across subscribers, users, packages, providers, tickets, leads, CMS blocks, finance and audit logs.</div>`;return;}
+  const total=GS.flat.length;
+  let html='';
+  let gi=0;
+  Object.keys(GS.groups).forEach(g=>{
+    const rows=GS.groups[g]||[];
+    html+=`<div class="gs-group">${GS_VIEW_LABEL[g]||g} · ${rows.length}</div>`+rows.map(r=>{
+      const idx=gi++;
+      return `<div class="gs-item ${idx===GS.sel?'sel':''}" onclick="gsGo(${idx})" onmouseenter="GS.sel=${idx};gsRender()">
+        <span class="gi">${r.ic||'🔍'}</span>
+        <span style="flex:1;min-width:0"><div class="gt">${esc(r.title)}</div><div class="gs">${esc(r.sub)}</div></span>
+        <span style="font-size:10px;color:var(--text-mute);white-space:nowrap">↵</span></div>`;
+    }).join('');
+  });
+  d.innerHTML=html||`<div class="gs-empty">No results for “${esc(q)}”.</div>`+
+    `<div class="gs-hint"><span>${total} results · ↑↓ navigate · ↵ open · Esc close</span></div>`;
+}
+function gsKey(e){
+  if((e.ctrlKey||e.metaKey)&&(e.key==='k'||e.key==='K')){e.preventDefault();const i=$('gsInput');i.focus();i.select();gsOpen();return;}
+  const t=e.target;
+  if(t&&t.id==='gsInput'){
+    if(e.key==='ArrowDown'){e.preventDefault();if(GS.flat.length){GS.sel=(GS.sel+1)%GS.flat.length;gsRender();}}
+    else if(e.key==='ArrowUp'){e.preventDefault();if(GS.flat.length){GS.sel=(GS.sel-1+GS.flat.length)%GS.flat.length;gsRender();}}
+    else if(e.key==='Enter'){e.preventDefault();if(GS.flat[GS.sel])gsGo(GS.sel);}
+    else if(e.key==='Escape'){gsClose();t.blur();}
+  }else if(e.key==='Escape'&&GS.open){gsClose();}
+}
+document.addEventListener('keydown',gsKey);
+document.addEventListener('click',e=>{if(!e.target.closest('.gs-wrap'))gsClose();});
+function gsGo(idx){
+  const r=GS.flat[idx];if(!r)return;
+  gsClose();const i=$('gsInput');if(i)i.value='';
+  GS_FOCUS=r;   // consumed by target view's renderer
+  nav(r.view);
+}
+let GS_FOCUS=null;
+function gsConsumeFocus(){
+  const f=GS_FOCUS;GS_FOCUS=null;return f;
+}
+function gsHighlight(sel){
+  const el=document.querySelector(sel);
+  if(!el)return;
+  el.style.transition='background .6s';
+  el.style.background='rgba(47,128,237,.16)';
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>{el.style.background='';},2200);
+}
 function renderTitle(){const t=NAV[STATE.view]||{};$('tbTitle').textContent=(t.ic||'')+' '+(t.l||'Super Admin')}
 function renderNav(){
   const groups=[
@@ -395,7 +483,7 @@ const NAV_DESC={
   packages:'Create packages with role×module matrices, limits and subscriber assignments',
   users:'Platform staff & system user management with roles and departments',
   providers:'Service providers across the platform',
-  cms:'Landing content — hero, features, pricing, SEO, bilingual and custom fields',
+  cms:'Landing content — every section of every page, bilingual, publish/draft, find & replace, media',
   onboarding:'Leads, subscriber onboarding applications and referrals',
   mis:'MIS reports — plans, status, revenue and support trends',
   payments:'Payment gateway configuration (bKash / SSLCommerz / Nagad)',
@@ -408,7 +496,7 @@ const NAV_DESC={
   whitelabel:'Master settings with white-label branding',
   health:'System administration — runtime, database and security posture',
   audit:'Full audit trail across the platform',
-  api:'API Library — endpoint catalog, test console, web/mobile API keys and data stats'
+  api:'API Library — endpoint catalog, test console, usage analytics, web/mobile API keys and data stats'
 };
 const NAV={
   dashboard:{ic:'📊',l:'Dashboard'},
@@ -523,7 +611,9 @@ async function renderSubscribers(){
   const d=await admin({action:'subscribers'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   SUBS={list:d.subscribers||[],plans:d.plans||[]};
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subscriber</th><th>Plan</th><th>Role</th><th>Status</th><th>Trial end</th><th>Created</th><th></th></tr></thead><tbody>${SUBS.list.map(s=>`<tr><td>#${s.id}</td><td><div class="c-name">${esc(s.name)}</div><div class="c-sub">${esc(s.email)}${s.phone?' · '+esc(s.phone):''}</div></td><td>${s.plan?badge(s.plan):'—'}</td><td>${esc(s.role||'owner')}</td><td>${badge(s.status)}</td><td class="c-sub">${esc(s.trial_end||'—')}</td><td class="c-sub">${esc((s.created_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="subscriberForm(${s.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="subscriberDelete(${s.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No subscribers.</div></td></tr>'}</tbody></table></div></div>`);
+  const foc=gsConsumeFocus();
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subscriber</th><th>Plan</th><th>Role</th><th>Status</th><th>Trial end</th><th>Created</th><th></th></tr></thead><tbody>${SUBS.list.map(s=>`<tr data-gsid="subscribers-${s.id}"><td>#${s.id}</td><td><div class="c-name">${esc(s.name)}</div><div class="c-sub">${esc(s.email)}${s.phone?' · '+esc(s.phone):''}</div></td><td>${s.plan?badge(s.plan):'—'}</td><td>${esc(s.role||'owner')}</td><td>${badge(s.status)}</td><td class="c-sub">${esc(s.trial_end||'—')}</td><td class="c-sub">${esc((s.created_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="subscriberForm(${s.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="subscriberDelete(${s.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No subscribers.</div></td></tr>'}</tbody></table></div></div>`);
+  if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="subscribers-'+foc.payload.id+'"]');
 }
 function subscriberForm(id){
   const s=id?SUBS.list.find(x=>x.id===id):{id:0,name:'',org:'',email:'',phone:'',plan:'',role:'owner',status:'pending',trial_end:''};
@@ -551,8 +641,10 @@ async function renderPackages(){
   const d=await api('app-packages',{action:'list'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   PKG={list:d.packages||[],registry:d.registry||[],roles:d.roles||[]};
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Package</th><th>Price</th><th>Seats</th><th>Modules</th><th>Subscribers</th><th></th></tr></thead><tbody>${PKG.list.map(p=>`<tr><td>${esc(p.code)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.tag||'')}</div></td><td class="c-sub">${money(p.price)}/mo</td><td>${p.seats||1}</td><td class="c-sub">${(p.modules||{}).owner?Object.keys(p.modules).length+' roles · '+(p.modules.owner||[]).length+' owner mods':Object.keys(p.modules||{}).length+' roles'}</td><td>${p.subscribers||0}</td><td><div class="row-actions"><button class="btn-ghost" onclick="packageForm('${esc(p.code)}')">✎</button><button class="btn-ghost" onclick="packageMatrix('${esc(p.code)}')">🧩</button><button class="btn-ghost" onclick="packageLimits('${esc(p.code)}')">📏</button><button class="btn-ghost" onclick="packageAssign('${esc(p.code)}')">👥</button><button class="btn-ghost" style="color:var(--danger)" onclick="packageDelete('${esc(p.code)}')">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No packages yet.</div></td></tr>'}</tbody></table></div></div>
+  const foc=gsConsumeFocus();
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Package</th><th>Price</th><th>Seats</th><th>Modules</th><th>Subscribers</th><th></th></tr></thead><tbody>${PKG.list.map(p=>`<tr data-gsid="packages-${esc(p.code)}"><td>${esc(p.code)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.tag||'')}</div></td><td class="c-sub">${money(p.price)}/mo</td><td>${p.seats||1}</td><td class="c-sub">${(p.modules||{}).owner?Object.keys(p.modules).length+' roles · '+(p.modules.owner||[]).length+' owner mods':Object.keys(p.modules||{}).length+' roles'}</td><td>${p.subscribers||0}</td><td><div class="row-actions"><button class="btn-ghost" onclick="packageForm('${esc(p.code)}')">✎</button><button class="btn-ghost" onclick="packageMatrix('${esc(p.code)}')">🧩</button><button class="btn-ghost" onclick="packageLimits('${esc(p.code)}')">📏</button><button class="btn-ghost" onclick="packageAssign('${esc(p.code)}')">👥</button><button class="btn-ghost" style="color:var(--danger)" onclick="packageDelete('${esc(p.code)}')">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No packages yet.</div></td></tr>'}</tbody></table></div></div>
    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧩</span>Module registry</span></div><div class="panel-b"><div style="display:flex;flex-wrap:wrap;gap:6px">${PKG.registry.map(m=>`<span class="chip ${m.built?'on':''}">${esc(m.id)}${m.built?'':' 🔜'}</span>`).join('')}</div></div></div>`);
+  if(foc&&foc.payload&&foc.payload.code)gsHighlight('[data-gsid="packages-'+esc(foc.payload.code)+'"]');
 }
 function packageForm(code){
   const p=code?PKG.list.find(x=>x.code===code):{code:'',name:'',price:0,seats:1,tag:'',features:[]};
@@ -628,7 +720,9 @@ async function renderUsers(){
   const d=await admin({action:'users'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   USRS=d.users||[];
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>User</th><th>Role</th><th>Dept</th><th>Active</th><th>Last login</th><th></th></tr></thead><tbody>${USRS.map(u=>`<tr><td>#${u.id}</td><td><div class="c-name">${esc(u.name)}</div><div class="c-sub">${esc(u.email)}</div></td><td>${badge(u.role)}</td><td class="c-sub">${esc(u.dept||'—')}</td><td>${u.active?badge('Active'):badge('Suspended')}</td><td class="c-sub">${esc(u.last_login||'—')}</td><td><div class="row-actions"><button class="btn-ghost" onclick="userForm(${u.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="userDelete(${u.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>'}</tbody></table></div></div>`);
+  const foc=gsConsumeFocus();
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>User</th><th>Role</th><th>Dept</th><th>Active</th><th>Last login</th><th></th></tr></thead><tbody>${USRS.map(u=>`<tr data-gsid="users-${u.id}"><td>#${u.id}</td><td><div class="c-name">${esc(u.name)}</div><div class="c-sub">${esc(u.email)}</div></td><td>${badge(u.role)}</td><td class="c-sub">${esc(u.dept||'—')}</td><td>${u.active?badge('Active'):badge('Suspended')}</td><td class="c-sub">${esc(u.last_login||'—')}</td><td><div class="row-actions"><button class="btn-ghost" onclick="userForm(${u.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="userDelete(${u.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>'}</tbody></table></div></div>`);
+  if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="users-'+foc.payload.id+'"]');
 }
 function userForm(id){
   const u=id?USRS.find(x=>x.id===id):{id:0,name:'',email:'',role:'staff',dept:'',active:1};
@@ -655,7 +749,9 @@ async function renderProviders(){
   const d=await admin({action:'providers'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   PROVS=d.providers||[];
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Provider</th><th>Trade</th><th>Rating</th><th>Jobs</th><th>Status</th><th></th></tr></thead><tbody>${PROVS.map(p=>`<tr><td>${esc(p.id)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.sub_email||'')}</div></td><td>${esc(p.trade||'—')}</td><td>${p.rating||0}</td><td>${p.jobs||0}</td><td>${badge(p.status)}</td><td><div class="row-actions"><button class="btn-ghost" onclick="providerForm('${esc(p.id)}')">✎</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No providers.</div></td></tr>'}</tbody></table></div></div>`);
+  const foc=gsConsumeFocus();
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Provider</th><th>Trade</th><th>Rating</th><th>Jobs</th><th>Status</th><th></th></tr></thead><tbody>${PROVS.map(p=>`<tr data-gsid="providers-${esc(p.id)}"><td>${esc(p.id)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.sub_email||'')}</div></td><td>${esc(p.trade||'—')}</td><td>${p.rating||0}</td><td>${p.jobs||0}</td><td>${badge(p.status)}</td><td><div class="row-actions"><button class="btn-ghost" onclick="providerForm('${esc(p.id)}')">✎</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No providers.</div></td></tr>'}</tbody></table></div></div>`);
+  if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="providers-'+esc(foc.payload.id)+'"]');
 }
 function providerForm(id){
   const p=id?PROVS.find(x=>x.id===id):{id:'',name:'',trade:'',status:'Active',sub_email:''};
@@ -668,11 +764,12 @@ async function providerSave(id){
   const d=await admin({action:'provider-save',id,name:$('pv_name').value.trim(),trade:$('pv_trade').value.trim(),status:$('pv_status').value,sub_email:$('pv_email').value.trim()});
   if(d.ok){toast('Provider saved','ok');closeDrawer();renderProviders();}else toast(d.error||'Failed','error');
 }
-/* ── Web CMS ── */
-let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en'};
+/* ── Web CMS (SA1-fullsite-v3 redesign: collapsible sections, dirty tracking, publish/draft,
+      global find & replace, clone page, field-type inputs, all-page search, generic preview) ── */
+let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en',dirty:new Set(),openSecs:{},pub:{}};
 const CMS_PAGES={home:{l:'Home',ic:'🏠',f:'index.html'},features:{l:'Features',ic:'✨',f:'features.html'},pricing:{l:'Pricing',ic:'💎',f:'pricing.html'},about:{l:'About',ic:'ℹ️',f:'about.html'},contact:{l:'Contact',ic:'📮',f:'contact.html'},howitworks:{l:'How it works',ic:'🗺️',f:'how-it-works.html'},ai:{l:'AI Caretaker',ic:'🤖',f:'ai-caretaker.html'},owners:{l:'For Owners',ic:'🏠',f:'for-owners.html'},tenants:{l:'For Tenants',ic:'👤',f:'for-tenants.html'},partners:{l:'For Partners',ic:'🛠️',f:'for-partners.html'},nrb:{l:'For NRB',ic:'🌍',f:'for-nrb.html'},legal:{l:'Legal & Compliance',ic:'⚖️',f:'legal-compliance.html'},faq:{l:'FAQ',ic:'❓',f:'faq.html'},tools:{l:'Calculators',ic:'🧮',f:'tools.html'},blog:{l:'Blog',ic:'📰',f:'blog.html'},cases:{l:'Case Studies',ic:'📈',f:'case-studies.html'},login:{l:'Login',ic:'🔐',f:'login.html'},register:{l:'Register',ic:'📝',f:'register.html'},site:{l:'Site',ic:'⚙️',f:'index.html'},footer:{l:'Footer',ic:'🔗',f:'index.html'},seo:{l:'SEO',ic:'🔍',f:'index.html'}};
-const CMS_SEC_LABEL={hero:'Hero',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',stats:'Stats bar',trust:'Trust strip',steps:'How it works steps',roles:'Roles',featcards:'Feature cards',gallery:'Product gallery',legal:'Legal strip',testi:'Testimonials',ctaband:'CTA band',partners:'Partners',sticky:'Sticky CTA',modules:'Feature modules',visual:'Visual band',note:'Pricing note',compare:'Compare table',callout:'Callout',why:'Why we exist',principles:'Principles',team:'Team',milestones:'Milestones',join:'Join CTA',talk:'Talk to the team',rows:'Contact rows',form:'Contact form',items:'Items',sections:'Sections',cols:'Footer columns',contact:'Contact',news:'Newsletter',pay:'Payment chips',bottom:'Footer bottom',home:'Home',features:'Features',pricing:'Pricing',about:'About',contact:'Contact',footer:'Footer'};
-const CMS_LONG=['subtitle','desc','meta_description','tagline','address'];
+const CMS_SEC_LABEL={hero:'Hero',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',stats:'Stats bar',trust:'Trust strip',steps:'How it works steps',roles:'Roles',featcards:'Feature cards',gallery:'Product gallery',legal:'Legal strip',testi:'Testimonials',ctaband:'CTA band',partners:'Partners',sticky:'Sticky CTA',modules:'Feature modules',visual:'Visual band',note:'Pricing note',compare:'Compare table',callout:'Callout',why:'Why we exist',principles:'Principles',team:'Team',milestones:'Milestones',join:'Join CTA',talk:'Talk to the team',rows:'Contact rows',form:'Contact form',items:'Items',sections:'Sections',cols:'Footer columns',contact:'Contact',news:'Newsletter',pay:'Payment chips',bottom:'Footer bottom',home:'Home',features:'Features',pricing:'Pricing',about:'About',footer:'Footer'};
+const CMS_LONG=['subtitle','desc','meta_description','tagline','address','body','_text','content','story'];
 function cmsIsLong(k){return CMS_LONG.some(s=>k.includes(s));}
 const CMS_HINTS={
   title:'Main heading shown on the page',
@@ -701,46 +798,86 @@ function cmsHint(b){
   if(b.k.endsWith('_bn'))return 'বাংলা translation of this field';
   return '';
 }
+function cmsFieldType(k){
+  if(/image|og_image|logo|favicon|banner/.test(k))return 'img';
+  if(/color/.test(k))return 'color';
+  if(/url|link|href|facebook|linkedin|youtube|website/.test(k))return 'url';
+  if(/price|count|seats|year|sqft|rating|limit|amount|_num/.test(k))return 'num';
+  return 'text';
+}
+function cmsSecOpen(p,sec){return CMS.openSecs[p+'|'+sec]!==false;}
+function cmsSecToggle(p,sec){CMS.openSecs[p+'|'+sec]=!cmsSecOpen(p,sec);cmsRenderPanels();}
+function cmsSecJump(p,sec){
+  CMS.openSecs[p+'|'+sec]=true;
+  CMS.tab=p;
+  if(STATE.view!=='cms'){nav('cms');return;}
+  cmsRenderPanels();
+  setTimeout(()=>{const el=document.getElementById('cmsSec-'+esc(sec));if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},60);
+}
 async function renderCms(){
-  pageHead('Web CMS — landing content, SEO and section management',
-    `<button class="btn-outline" onclick="cmsPreview()" data-tip="Preview how the landing page will look" data-tip-pos="top">👁 Preview</button><button class="btn-outline" onclick="cmsHistoryDrawer()" data-tip="View change history and restore values" data-tip-pos="top">🗒 History</button><button class="btn-outline" onclick="cmsExport()" data-tip="Download all CMS content as JSON" data-tip-pos="top">⬇ Export</button><button class="btn-outline" onclick="cmsImport()" data-tip="Import CMS content from JSON" data-tip-pos="top">⬆ Import</button><button class="btn-outline" onclick="cmsMediaDrawer()" data-tip="Upload and browse images for the site" data-tip-pos="top">🖼 Media</button><a class="btn-outline" href="https://krtaker.com" target="_blank" data-tip="Open the live landing page" data-tip-pos="top">↗ Landing</a><button class="btn-primary" onclick="cmsSaveAll()" data-tip="Save all unsaved changes" data-tip-pos="top">💾 Save all</button>`);
+  pageHead('Web CMS — every section of every page, publish/draft, find & replace, media',
+    `<button class="btn-outline" onclick="cmsPreview()" data-tip="Preview how the current page will look" data-tip-pos="top">👁 Preview</button><button class="btn-outline" onclick="cmsHistoryDrawer()" data-tip="View change history and restore values" data-tip-pos="top">🗒 History</button><button class="btn-outline" onclick="cmsExport()" data-tip="Download all CMS content as JSON" data-tip-pos="top">⬇ Export</button><button class="btn-outline" onclick="cmsImport()" data-tip="Import CMS content from JSON" data-tip-pos="top">⬆ Import</button><button class="btn-outline" onclick="cmsReplaceDrawer()" data-tip="Find and replace text across all pages" data-tip-pos="top">🔁 Find & replace</button><button class="btn-outline" onclick="cmsCloneDrawer()" data-tip="Duplicate a page as a starting point" data-tip-pos="top">📄 Clone page</button><button class="btn-outline" onclick="cmsMediaDrawer()" data-tip="Upload and browse images for the site" data-tip-pos="top">🖼 Media</button><a class="btn-outline" href="https://krtaker.com" target="_blank" data-tip="Open the live landing page" data-tip-pos="top">↗ Landing</a><button class="btn-primary" id="cmsSaveBtn" onclick="cmsSaveAll()" data-tip="Ctrl+S to save" data-tip-pos="top">💾 Save all</button>`);
   load('pageBody','<div class="empty">Loading…</div>');
   const d=await admin({action:'cms-get'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   CMS.blocks=d.blocks||[];
   CMS.vis=d.vis||{};
+  CMS.pub=d.pub||{};
   CMS.defKeys=new Set(CMS.blocks.filter(b=>b.is_default).map(b=>b.page+'|'+b.section+'|'+b.k));
+  const foc=gsConsumeFocus();
+  if(foc&&foc.view==='cms'&&foc.payload&&foc.payload.page)CMS.tab=foc.payload.page;
   const cur=CMS_PAGES[CMS.tab]?CMS.tab:'home';
+  const pubOn=(CMS.pub[cur]?CMS.pub[cur].published!==0:true);
   load('pageBody',
-    `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:16px">`+
-    Object.keys(CMS_PAGES).map(p=>`<button class="chip ${cur===p?'on':''}" onclick="cmsTab('${p}')" data-tip="${esc(CMS_PAGES[p].l)} page" data-tip-pos="top">${CMS_PAGES[p].ic} ${CMS_PAGES[p].l}</button>`).join('')+
+    `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">`+
+    Object.keys(CMS_PAGES).map(p=>`<button class="chip ${cur===p?'on':''}" onclick="cmsTab('${p}')" data-tip="${esc(CMS_PAGES[p].l)} page · ${CMS.pub[p]&&CMS.pub[p].published===0?'DRAFT':''}" data-tip-pos="top">${CMS_PAGES[p].ic} ${CMS_PAGES[p].l}${CMS.pub[p]&&CMS.pub[p].published===0?' <span style="color:#E67E22">●</span>':''}</button>`).join('')+
     `<span style="width:1px;height:22px;background:var(--border);margin:0 4px"></span>`+
     `<button class="chip ${CMS.lang==='en'?'on':''}" onclick="cmsLang('en')" data-tip="Show English fields" data-tip-pos="top">EN</button>`+
     `<button class="chip ${CMS.lang==='bn'?'on':''}" onclick="cmsLang('bn')" data-tip="Show বাংলা fields" data-tip-pos="top">বাংলা</button>`+
     `<a class="chip" href="https://krtaker.com/${CMS_PAGES[cur].f||'index.html'}" target="_blank" data-tip="Open the live page in a new tab" data-tip-pos="top">↗ Open</a>`+
-    `<input id="cmsSearch" placeholder="🔍 Search blocks…" style="max-width:200px;margin-left:auto" oninput="cmsFilter()"></div>`+
-    `<div id="cmsPanels">${cmsPageHtml(cur)}</div>`);
+    `<span class="chip ${pubOn?'':'on'}" style="${pubOn?'':'background:#FDEBD0;color:#B9770E'}" onclick="cmsPubToggle('${cur}')" data-tip="${pubOn?'Live — click to set this page to DRAFT (hidden from the site)':'Draft — changes hidden from the site until you publish'}" data-tip-pos="top">${pubOn?'🟢 Live':'🔴 Draft'}</span>`+
+    `<input id="cmsSearch" placeholder="🔍 Search all pages…" style="max-width:220px;margin-left:auto" oninput="cmsFilter()"></div>`+
+    `<div id="cmsJump" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>`+
+    `<div id="cmsPanels"></div>`);
+  cmsRenderJump(cur);
+  cmsRenderPanels();
+  cmsRenderDirty();
+  if(foc&&foc.view==='cms'&&foc.payload&&foc.payload.section){
+    setTimeout(()=>{cmsSecJump(foc.payload.page,foc.payload.section);setTimeout(()=>{const k=foc.payload.k;if(k)gsHighlight('[data-cms="'+esc(foc.payload.page)+'|'+esc(foc.payload.section)+'|'+esc(k)+'"]');},150);},80);
+  }
 }
-function cmsTab(p){CMS.tab=p;renderCms();}
-function cmsLang(l){CMS.lang=l;renderCms();}
-function cmsFilter(){
-  const q=$('cmsSearch').value.trim().toLowerCase();
-  document.querySelectorAll('#cmsPanels [data-cms]').forEach(el=>{
-    const hay=(el.getAttribute('data-cms')+' '+(el.value||'')).toLowerCase();
-    const field=el.closest('.cms-field');if(field)field.style.display=(!q||hay.includes(q))?'':'none';
-  });
+function cmsRenderJump(p){
+  const blocks=CMS.blocks.filter(b=>b.page===p);
+  const secs=[];const seen={};
+  blocks.forEach(b=>{if(!seen[b.section]){seen[b.section]=true;secs.push(b.section);}});
+  const el=$('cmsJump');if(!el)return;
+  el.innerHTML=`<span style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:var(--text-mute);text-transform:uppercase;padding-top:4px">Sections</span>`+
+    secs.map(s=>{const n=blocks.filter(b=>b.section===s).length;const hid=CMS.vis[p+'.'+s]===0;
+      return `<button class="chip" style="${hid?'opacity:.55':''}" onclick="cmsSecJump('${p}','${esc(s)}')" data-tip="${hid?'Section hidden on the site':CMS_SEC_LABEL[s]||s}" data-tip-pos="top">${esc(CMS_SEC_LABEL[s]||s)} · ${n}${hid?' 🙈':''}</button>`;}).join('');
 }
-function cmsPageHtml(p){
+function cmsRenderPanels(){
+  const p=CMS.tab;
   const blocks=CMS.blocks.filter(b=>b.page===p&&(CMS.lang==='bn'?b.k.endsWith('_bn'):!b.k.endsWith('_bn')));
   const bySec={};blocks.forEach(b=>{(bySec[b.section]=bySec[b.section]||[]).push(b)});
   const secs=Object.keys(bySec);
-  return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+  const el=$('cmsPanels');if(!el)return;
+  el.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
       <button class="btn-outline" onclick="cmsAddBlock('${p}','')" data-tip="Add a custom field to this page" data-tip-pos="top">＋ Add field</button>
       <button class="btn-outline" style="color:var(--danger)" onclick="cmsResetPage('${p}')" data-tip="Reset this page to default values (kept in history)" data-tip-pos="top">↺ Reset page</button>
       <button class="btn-outline" onclick="cmsHistoryDrawer('${p}')" data-tip="Change history for this page" data-tip-pos="top">🗒 Page history</button>
+      <span class="c-sub" style="margin-left:auto;padding-top:6px">${blocks.length} fields · ${secs.length} sections · ${CMS.dirty.size} unsaved</span>
     </div>`+
-    (secs.length?secs.map(sec=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${CMS_PAGES[p].ic}</span>${esc(CMS_SEC_LABEL[sec]||sec)}</span><span class="c-sub" style="font-size:11px">${bySec[sec].length} fields</span><span style="display:flex;gap:6px"><button class="btn-ghost" style="font-size:11px;${CMS.vis[p+'.'+sec]===0?'color:var(--danger)':''}" onclick="cmsVisToggle('${p}','${esc(sec)}')" data-tip="${CMS.vis[p+'.'+sec]===0?'Section hidden on the site — click to show':'Show/hide this section on the site'}" data-tip-pos="left">${CMS.vis[p+'.'+sec]===0?'🙈 Hidden':'👁 Visible'}</button><button class="btn-ghost" style="font-size:11px;color:var(--danger)" onclick="cmsResetSection('${p}','${esc(sec)}')" data-tip="Reset only this section to defaults" data-tip-pos="left">↺</button></span></div>
-      <div class="panel-b"><div class="frm">${bySec[sec].map(b=>cmsFieldHtml(b)).join('')}</div></div></div>`).join(''):'<div class="empty">No fields in this language yet.</div>');
+    (secs.length?secs.map(sec=>{const open=cmsSecOpen(p,sec);
+      return `<div class="panel" id="cmsSec-${esc(sec)}" style="${open?'':'margin-bottom:10px'}">
+      <div class="panel-h" style="cursor:pointer" onclick="cmsSecToggle('${p}','${esc(sec)}')">
+        <span class="t"><span class="pi">${CMS_PAGES[p].ic}</span>${esc(CMS_SEC_LABEL[sec]||sec)}<span class="c-sub" style="font-size:11px;margin-left:8px">${bySec[sec].length} fields</span></span>
+        <span style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;color:var(--text-mute)">${open?'▾':'▸'}</span>
+          <button class="btn-ghost" style="font-size:11px;${CMS.vis[p+'.'+sec]===0?'color:var(--danger)':''}" onclick="event.stopPropagation();cmsVisToggle('${p}','${esc(sec)}')" data-tip="${CMS.vis[p+'.'+sec]===0?'Section hidden on the site — click to show':'Show/hide this section on the site'}" data-tip-pos="left">${CMS.vis[p+'.'+sec]===0?'🙈 Hidden':'👁 Visible'}</button>
+          <button class="btn-ghost" style="font-size:11px;color:var(--danger)" onclick="event.stopPropagation();cmsResetSection('${p}','${esc(sec)}')" data-tip="Reset only this section to defaults" data-tip-pos="left">↺</button>
+        </span></div>
+      <div class="panel-b" style="${open?'':'display:none'}"><div class="frm">${bySec[sec].map(b=>cmsFieldHtml(b)).join('')}</div></div>
+    </div>`;}).join(''):'<div class="empty">No fields in this language yet.</div>');
 }
 function cmsFieldHtml(b){
   const tag=b.page+'|'+b.section+'|'+b.k;
@@ -748,24 +885,122 @@ function cmsFieldHtml(b){
   const long=cmsIsLong(b.k);
   const hint=cmsHint(b);
   const lbl=b.k.replace(/_bn$/,'').replace(/_/g,' ')+(CMS.lang==='bn'?' (বাংলা)':'');
-  const isImg=/image|og_image|logo|favicon|banner/.test(b.k);
-  const inp=long
-    ? `<textarea data-cms="${esc(tag)}" oninput="cmsCount(this)">${esc(b.v)}</textarea>`
-    : `<div style="display:flex;gap:6px"><input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this)" style="flex:1">${isImg?`<button class="btn-ghost" onclick="cmsMediaDrawer('${esc(tag)}')" data-tip="Pick or upload an image" data-tip-pos="left" title="Media">🖼</button>`:''}</div>`;
-  return `<div class="cms-field">
+  const isBn=b.k.endsWith('_bn');
+  const ft=cmsFieldType(b.k);
+  const isImg=ft==='img';
+  const dirty=CMS.dirty.has(tag);
+  let inp;
+  if(long){
+    inp=`<textarea data-cms="${esc(tag)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="${dirty?'border-color:#E67E22':''}">${esc(b.v)}</textarea>`;
+  }else if(ft==='color'){
+    const hex=/^#[0-9a-fA-F]{3,8}$/.test(String(b.v))?String(b.v):'#2F80ED';
+    inp=`<div style="display:flex;gap:6px"><input type="color" value="${hex}" oninput="cmsColorSync('${esc(tag)}',this.value)" style="width:44px;height:34px;padding:2px;flex-shrink:0"><input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="flex:1"></div>`;
+  }else if(ft==='url'){
+    inp=`<div style="display:flex;gap:6px"><input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="flex:1">${/^https?:\/\//.test(String(b.v))?`<button class="btn-ghost" onclick="window.open('${esc(b.v)}','_blank')" data-tip="Open link" data-tip-pos="left" title="Open">🔗</button>`:''}${isImg?`<button class="btn-ghost" onclick="cmsMediaDrawer('${esc(tag)}')" data-tip="Pick or upload an image" data-tip-pos="left" title="Media">🖼</button>`:''}</div>`;
+  }else if(ft==='num'){
+    inp=`<div style="display:flex;gap:6px"><input data-cms="${esc(tag)}" type="number" value="${esc(b.v)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="flex:1">${isImg?`<button class="btn-ghost" onclick="cmsMediaDrawer('${esc(tag)}')" data-tip="Pick or upload an image" data-tip-pos="left" title="Media">🖼</button>`:''}</div>`;
+  }else{
+    inp=`<div style="display:flex;gap:6px"><input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="flex:1">${isImg?`<button class="btn-ghost" onclick="cmsMediaDrawer('${esc(tag)}')" data-tip="Pick or upload an image" data-tip-pos="left" title="Media">🖼</button>`:''}</div>`;
+  }
+  return `<div class="cms-field" ${dirty?'style="border:1px solid rgba(230,126,34,.5);border-radius:10px;padding:8px"':''}>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
-      <label class="lb" style="margin:0;text-transform:capitalize" ${hint?`data-tip="${esc(hint)}" data-tip-pos="right"`:''}>${esc(lbl)}${def?'':'<span class="badge b-purple" style="margin-left:6px">custom</span>'}</label>
+      <label class="lb" style="margin:0;text-transform:capitalize" ${hint?`data-tip="${esc(hint)}" data-tip-pos="right"`:''}>${dirty?'<span style="color:#E67E22;margin-right:4px">●</span>':''}${esc(lbl)}${isBn?'<span class="badge b-purple" style="margin-left:6px">বাংলা</span>':''}${def?'':'<span class="badge b-purple" style="margin-left:6px">custom</span>'}</label>
       ${def?'':`<button class="btn-ghost" style="color:var(--danger);padding:2px 6px;font-size:11px" onclick="cmsDelBlock('${esc(b.page)}','${esc(b.section)}','${esc(b.k)}')" data-tip="Remove this custom field" data-tip-pos="left" title="Remove block">✕</button>`}
     </div>
     ${inp}
     <div class="c-sub" style="font-size:10.5px;text-align:right;margin-top:3px"><span class="cms-cnt">${esc(b.v).length}</span> chars</div>
   </div>`;
 }
-function cmsCount(el){const c=el.parentElement.querySelector('.cms-cnt');if(c)c.textContent=el.value.length;}
+function cmsColorSync(tag,v){const el=document.querySelector('[data-cms="'+tag+'"]');if(el)el.value=v;cmsMarkDirty(tag);}
+function cmsMarkDirty(tag){
+  CMS.dirty.add(tag);cmsRenderDirty();
+}
+function cmsRenderDirty(){
+  const n=CMS.dirty.size;
+  const btn=$('cmsSaveBtn');
+  if(btn)btn.textContent=n?'💾 Save all ('+n+')':'💾 Save all';
+  const cnt=document.querySelector('#cmsPanels .c-sub');
+}
+function cmsCount(el){const c=el.closest('.cms-field')?el.closest('.cms-field').querySelector('.cms-cnt'):null;if(c)c.textContent=el.value.length;}
+function cmsSyncDom(){
+  /* write any on-screen values back into CMS.blocks so tab switches don't lose edits */
+  document.querySelectorAll('#cmsPanels [data-cms]').forEach(el=>{
+    const tag=el.getAttribute('data-cms').split('|');
+    if(tag.length!==3)return;
+    const b=CMS.blocks.find(x=>x.page===tag[0]&&x.section===tag[1]&&x.k===tag[2]);
+    if(b)b.v=el.value;
+  });
+}
+function cmsTab(p){cmsSyncDom();CMS.tab=p;cmsRenderJump(p);cmsRenderPanels();cmsRenderDirty();}
+function cmsLang(l){cmsSyncDom();CMS.lang=l;cmsRenderPanels();}
+function cmsFilter(){
+  const q=($('cmsSearch')||{}).value||'';
+  const query=q.trim().toLowerCase();
+  if(!query){renderCms();return;}
+  /* all-page search: show matches grouped by page, jump on click */
+  const matches=CMS.blocks.filter(b=>{
+    const hay=(b.page+' '+b.section+' '+b.k+' '+(b.v||'')).toLowerCase();
+    return hay.includes(query);
+  });
+  const byPage={};matches.forEach(b=>{(byPage[b.page]=byPage[b.page]||[]).push(b)});
+  const cur=$('cmsPanels');
+  if(!cur)return;
+  let html=`<div class="c-sub" style="margin-bottom:10px">${matches.length} match${matches.length===1?'':'es'} across ${Object.keys(byPage).length} page${Object.keys(byPage).length===1?'':'s'} — click to jump</div>`;
+  Object.keys(byPage).forEach(p=>{
+    html+=`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${CMS_PAGES[p]?CMS_PAGES[p].ic:'📄'}</span>${esc(CMS_PAGES[p]?CMS_PAGES[p].l:p)}<span class="c-sub" style="font-size:11px;margin-left:8px">${byPage[p].length}</span></span></div><div class="panel-b">`+
+      byPage[p].slice(0,12).map(b=>`<button class="btn-outline" style="justify-content:flex-start;text-align:left;font-size:12px;width:100%;margin-bottom:6px" onclick="cmsJumpTo('${esc(b.page)}','${esc(b.section)}','${esc(b.k)}')">${esc(b.section)} / <b>${esc(b.k)}</b><span class="c-sub" style="margin-left:auto;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((b.v||'').slice(0,60))}</span></button>`).join('')+`</div></div>`;
+  });
+  cur.innerHTML=html||'<div class="empty">No matches.</div>';
+}
+function cmsJumpTo(p,s,k){
+  CMS.tab=p;renderCms();
+  setTimeout(()=>{cmsSecJump(p,s);setTimeout(()=>{const el=document.querySelector('[data-cms="'+esc(p)+'|'+esc(s)+'|'+esc(k)+'"]');if(el){el.focus();gsHighlight('[data-cms="'+esc(p)+'|'+esc(s)+'|'+esc(k)+'"]');}},120);},80);
+}
 async function cmsSaveAll(){
   const blocks=CMS.blocks.map(b=>{const el=document.querySelector(`[data-cms="${b.page}|${b.section}|${b.k}"]`);return {...b,v:el?el.value:b.v}});
   const d=await admin({action:'cms-save',blocks});
-  if(d.ok){toast(d.changed?`Saved — ${d.changed} field${d.changed>1?'s':''} changed`:'Saved — no changes','ok');renderCms();}else toast(d.error||'Failed','error');
+  if(d.ok){toast(d.changed?`Saved — ${d.changed} field${d.changed>1?'s':''} changed`:'Saved — no changes','ok');CMS.dirty.clear();renderCms();}else toast(d.error||'Failed','error');
+}
+async function cmsPubToggle(p){
+  const cur=CMS.pub[p]?CMS.pub[p].published:1;
+  const next=cur?0:1;
+  const d=await admin({action:'cms-pub-save',page:p,published:next});
+  if(d.ok){CMS.pub[p]={published:next};toast(next?'Page published — live now':'Page set to draft — changes hidden from the site','ok');renderCms();}else toast(d.error||'Failed','error');
+}
+function cmsReplaceDrawer(){
+  openDrawer('🔁 Global find & replace',
+    `<div class="frm">
+      <div class="c-sub" style="font-size:11.5px;color:var(--text-mute)">Replace text across every CMS block (optionally one page or section). Old values are kept in history, so you can restore later.</div>
+      <div><label class="lb">Find</label><input id="cr_find" placeholder="e.g. krtaker.com"></div>
+      <div><label class="lb">Replace with</label><input id="cr_rep" placeholder="e.g. www.krtaker.com"></div>
+      <div class="grid-2"><div><label class="lb">Page (optional)</label><input id="cr_page" placeholder="all pages" list="cr_pages"><datalist id="cr_pages">${Object.keys(CMS_PAGES).map(p=>`<option value="${p}">`).join('')}</datalist></div>
+      <div><label class="lb">Section (optional)</label><input id="cr_sec" placeholder="all sections"></div></div>
+      <div id="cr_out" class="c-sub" style="font-size:12px;color:var(--text-mute)"></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="cmsReplaceDry()">🔍 Preview</button><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="cmsReplaceApply()">🔁 Replace</button></div>`);
+}
+async function cmsReplaceDry(){
+  const d=await admin({action:'cms-replace',find:$('cr_find').value,replace:$('cr_rep').value,page:$('cr_page').value.trim(),section:$('cr_sec').value.trim(),dry_run:1});
+  if(!d.ok){$('cr_out').textContent=d.error||'Failed';return}
+  $('cr_out').innerHTML=d.matched?`<b style="color:var(--primary)">${d.matched} block${d.matched===1?'':'s'}</b> would change. ${(d.samples||[]).slice(0,5).map(s=>`<div style="margin-top:4px">${esc(s.page)} / ${esc(s.section)} / ${esc(s.k)}: <code>${esc(String(s.v).slice(0,50))}</code></div>`).join('')}`:'Nothing matches that text.';
+}
+async function cmsReplaceApply(){
+  const d=await admin({action:'cms-replace',find:$('cr_find').value,replace:$('cr_rep').value,page:$('cr_page').value.trim(),section:$('cr_sec').value.trim()});
+  if(d.ok){toast(`Replaced in ${d.changed} block${d.changed===1?'':'s'} (${d.matched} matched)`,'ok');closeDrawer();renderCms();}else toast(d.error||'Failed','error');
+}
+function cmsCloneDrawer(){
+  openDrawer('📄 Clone a page',
+    `<div class="frm">
+      <div class="c-sub" style="font-size:11.5px;color:var(--text-mute)">Copy every block from one page to a new page key — a fast way to start a new landing page with the same design.</div>
+      <div><label class="lb">Source page</label><select id="cl_src">${Object.keys(CMS_PAGES).map(p=>`<option value="${p}" ${p===CMS.tab?'selected':''}>${CMS_PAGES[p].l} (${p})</option>`).join('')}</select></div>
+      <div><label class="lb">New page key (lowercase, a-z 0-9 _ -)</label><input id="cl_dst" placeholder="e.g. franchises"></div>
+      <div class="c-sub" style="font-size:11.5px;color:var(--text-mute)">The new page starts as <b>Draft</b> and gets its own CMS tab after you add it to the page map (or it can be edited via Import).</div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="cmsCloneApply()">📄 Clone</button></div>`);
+}
+async function cmsCloneApply(){
+  const d=await admin({action:'cms-clone',src:$('cl_src').value,dst:$('cl_dst').value.trim()});
+  if(d.ok){toast(`Cloned ${d.copied} blocks → ${d.dst}`,'ok');closeDrawer();renderCms();}else toast(d.error||'Failed','error');
 }
 async function cmsHistoryDrawer(p){
   const page=p||(CMS_PAGES[CMS.tab]?CMS.tab:'home');
@@ -850,34 +1085,40 @@ function cmsVal(p,s,k){
   return b?b.v:'';
 }
 function cmsPreview(){
-  const homeBadge=cmsVal('home','hero','badge'),homeTitle=cmsVal('home','hero','title'),homeSub=cmsVal('home','hero','subtitle'),
-    heroImg=cmsVal('home','hero','image'),
-    cta1=cmsVal('home','cta','primary'),cta2=cmsVal('home','cta','secondary'),
-    fBadge=cmsVal('features','section','badge'),fTitle=cmsVal('features','section','title'),fSub=cmsVal('features','section','subtitle'),
-    pBadge=cmsVal('pricing','section','badge'),pTitle=cmsVal('pricing','section','title'),pSub=cmsVal('pricing','section','subtitle'),
-    email=cmsVal('contact','section','email'),phone=cmsVal('contact','section','phone'),addr=cmsVal('contact','section','address'),
-    tagline=cmsVal('footer','section','tagline'),copy=cmsVal('footer','section','copyright'),
-    fb=cmsVal('footer','social','facebook'),li=cmsVal('footer','social','linkedin'),yt=cmsVal('footer','social','youtube');
-  const cards=[1,2,3,4].map(i=>[cmsVal('features','cards',i+'_title'),cmsVal('features','cards',i+'_desc')]).filter(c=>c[0]);
-  openDrawer('👁 Landing preview',
+  const p=CMS.tab;
+  const get=(s,k)=>cmsVal(p,s,k);
+  /* build a generic preview from whatever blocks the current page has */
+  const heroTitle=get('hero','title')||get('section','title')||CMS_PAGES[p].l;
+  const heroBadge=get('hero','badge')||'';
+  const heroSub=get('hero','subtitle')||get('section','subtitle')||'';
+  const heroImg=get('hero','image')||get('hero','banner')||'';
+  const cta1=get('cta','primary')||get('hero','primary')||'';
+  const cta2=get('cta','secondary')||get('hero','secondary')||'';
+  const sections=CMS.blocks.filter(b=>b.page===p&&!b.k.endsWith('_bn')).reduce((m,b)=>{if(!m[b.section])m[b.section]=[];m[b.section].push(b);return m;},{});
+  const cards=['cards','featcards','items','steps','modules','roles','cols'].map(sec=>Object.keys(sections).includes(sec)?sections[sec].filter(b=>/_title$|_desc$|_bn$/.test(b.k)).slice(0,8):[]).flat().filter(b=>b.v);
+  openDrawer('👁 Preview — '+CMS_PAGES[p].l,
     `<div style="border:1px solid var(--border);border-radius:14px;overflow:hidden">
       <div style="background:linear-gradient(135deg,#0F1B2D,#1E5EB8);color:#fff;padding:34px 26px;text-align:center">
-        ${homeBadge?`<div style="display:inline-block;background:rgba(47,128,237,.25);border:1px solid rgba(47,128,237,.5);color:#9CC4FF;font-size:11px;font-weight:700;border-radius:99px;padding:4px 14px;margin-bottom:14px">${esc(homeBadge)}</div>`:''}
-        <h2 style="font-size:26px;font-weight:800;margin-bottom:8px">${esc(homeTitle)}</h2>
-        <p style="opacity:.85;font-size:14px;max-width:480px;margin:0 auto 18px">${esc(homeSub)}</p>
+        ${heroBadge?`<div style="display:inline-block;background:rgba(47,128,237,.25);border:1px solid rgba(47,128,237,.5);color:#9CC4FF;font-size:11px;font-weight:700;border-radius:99px;padding:4px 14px;margin-bottom:14px">${esc(heroBadge)}</div>`:''}
+        <h2 style="font-size:26px;font-weight:800;margin-bottom:8px">${esc(heroTitle)}</h2>
+        <p style="opacity:.85;font-size:14px;max-width:480px;margin:0 auto 18px">${esc(heroSub)}</p>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">${cta1?`<span style="background:var(--grad);color:#fff;font-size:13px;font-weight:700;border-radius:10px;padding:9px 18px">${esc(cta1)}</span>`:''}${cta2?`<span style="border:1px solid rgba(255,255,255,.4);color:#fff;font-size:13px;font-weight:600;border-radius:10px;padding:9px 18px">${esc(cta2)}</span>`:''}</div>
         ${heroImg?`<img src="${esc(heroImg)}" alt="" style="max-width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin-top:16px">`:''}
       </div>
       <div style="padding:24px 26px">
-        <div style="text-align:center;margin-bottom:18px">${fBadge?`<div style="color:var(--primary);font-size:10.5px;font-weight:800;letter-spacing:1.5px">${esc(fBadge)}</div>`:''}<h3 style="font-size:19px;font-weight:800">${esc(fTitle)}</h3><p style="font-size:12.5px;color:var(--text-mute)">${esc(fSub)}</p></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">${cards.map(c=>`<div style="border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:13px;font-weight:700;margin-bottom:4px">${esc(c[0])}</div><div style="font-size:11.5px;color:var(--text-mute)">${esc(c[1])}</div></div>`).join('')||'<div class="empty" style="grid-column:1/-1">No feature cards.</div>'}</div>
-        <div style="text-align:center;margin-top:20px">${pBadge?`<div style="color:var(--primary);font-size:10.5px;font-weight:800;letter-spacing:1.5px">${esc(pBadge)}</div>`:''}<h3 style="font-size:19px;font-weight:800">${esc(pTitle)}</h3><p style="font-size:12.5px;color:var(--text-mute)">${esc(pSub)}</p></div>
-        <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text-soft);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center">${email?`<span>📧 ${esc(email)}</span>`:''}${phone?`<span>📞 ${esc(phone)}</span>`:''}${addr?`<span>📍 ${esc(addr)}</span>`:''}</div>
-        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);text-align:center;font-size:11.5px;color:var(--text-mute)">${esc(tagline)}${copy?'<br>'+esc(copy):''}${(fb||li||yt)?`<br><span style="display:inline-flex;gap:8px;margin-top:6px">${fb?`<a href="${esc(fb)}" target="_blank">Facebook</a>`:''}${li?`<a href="${esc(li)}" target="_blank">LinkedIn</a>`:''}${yt?`<a href="${esc(yt)}" target="_blank">YouTube</a>`:''}</span>`:''}</div>
+        ${cards.length?`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">${cards.map(c=>`<div style="border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:13px;font-weight:700;margin-bottom:4px">${esc(String(c.v).slice(0,60))}</div></div>`).join('')}</div>`:`<div class="empty">No card content for this page.</div>`}
+        <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text-soft);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center">
+          ${get('contact','email')?`<span>📧 ${esc(get('contact','email'))}</span>`:''}${get('contact','phone')?`<span>📞 ${esc(get('contact','phone'))}</span>`:''}${get('contact','address')?`<span>📍 ${esc(get('contact','address'))}</span>`:''}
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);text-align:center;font-size:11.5px;color:var(--text-mute)">${esc(get('footer','tagline')||get('section','tagline')||'')}</div>
       </div>
     </div>`,
-    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button><button class="btn-primary" onclick="cmsSaveAll()">💾 Save & refresh</button></div>`);
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button><a class="btn-outline" href="https://krtaker.com/${CMS_PAGES[p].f||'index.html'}" target="_blank">↗ Live page</a><button class="btn-primary" onclick="cmsSaveAll()">💾 Save & refresh</button></div>`);
 }
+/* Ctrl+S saves CMS (and any drawer) */
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(STATE.view==='cms'&&$('cmsSaveBtn'))cmsSaveAll();}
+});
 /* ── Onboarding & CRM ── */
 let ONB={leads:[],onboarding:[],referrals:[]};
 async function renderOnboarding(){
@@ -886,12 +1127,14 @@ async function renderOnboarding(){
   const d=await admin({action:'onboarding'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   ONB=d;
+  const foc=gsConsumeFocus();
   const l=(d.leads||[]).slice(0,40), o=(d.onboarding||[]).slice(0,40), r=(d.referrals||[]).slice(0,30);
   load('pageBody',
     `<div class="stats">${[['🧲','Leads',l.length,'recent'],['📋','Onboarding apps',o.length,'pending review'],['🤝','Referrals',r.length,'program'],['👥','Subscribers',(d.subs||0),'total']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>`+
-    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧲</span>Leads</span></div><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Source</th><th>Status</th><th>Created</th></tr></thead><tbody>${l.map(x=>`<tr><td>${esc(x.id)}</td><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.prop||'')}</div></td><td class="c-sub">${esc(x.phone||'')}${x.email?' · '+esc(x.email):''}</td><td>${esc(x.source||'—')}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="6"><div class="empty">No leads.</div></td></tr>'}</tbody></table></div></div>`+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧲</span>Leads</span></div><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Source</th><th>Status</th><th>Created</th></tr></thead><tbody>${l.map(x=>`<tr data-gsid="leads-${esc(x.id)}"><td>${esc(x.id)}</td><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.prop||'')}</div></td><td class="c-sub">${esc(x.phone||'')}${x.email?' · '+esc(x.email):''}</td><td>${esc(x.source||'—')}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="6"><div class="empty">No leads.</div></td></tr>'}</tbody></table></div></div>`+
     `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">📋</span>Onboarding applications</span></div><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Applicant</th><th>Details</th><th>Status</th><th>Created</th></tr></thead><tbody>${o.map(x=>`<tr><td>${esc(x.id)}</td><td class="c-name">${esc(x.name||x.applicant||'—')}</td><td class="c-sub">${esc((x.details||x.note||'').slice(0,60))}</td><td>${badge(x.status||'Pending')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="5"><div class="empty">No onboarding applications.</div></td></tr>'}</tbody></table></div></div>`+
     `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🤝</span>Referrals</span></div><div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Referrer</th><th>Status</th><th>Created</th></tr></thead><tbody>${r.map(x=>`<tr><td>${esc(x.code||x.id)}</td><td class="c-name">${esc(x.referrer||'—')}</td><td>${badge(x.status||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="4"><div class="empty">No referrals.</div></td></tr>'}</tbody></table></div></div>`);
+  if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="leads-'+esc(foc.payload.id)+'"]');
 }
 /* ── MIS Reports ── */
 async function renderMis(){
@@ -975,9 +1218,11 @@ async function renderFinance(){
   const d=await admin({action:'finance'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   const f=d.finance||{};LED=d.ledger||[];
+  const foc=gsConsumeFocus();
   load('pageBody',
     `<div class="stats">${[['💰','Total income',moneyC(f.income),'all ledger income'],['📤','Total expense',moneyC(f.expense),'all ledger expense'],['⚖️','Balance',moneyC(f.balance),f.balance>=0?'positive':'negative'],['🧾','Entries',LED.length,'company ledger']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value ${c[3]==='negative'?'':''}">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>
-     <div class="grid-2" style="gap:18px"><div class="panel"><div class="panel-h"><span class="t"><span class="pi">🏷️</span>By category</span></div><div class="panel-b">${(d.cats||[]).map(c=>`<div class="kv"><span class="k">${esc(c.kind)} / ${esc(c.cat)}</span><span class="v">${money(c.total)} <span class="c-sub">(${c.n})</span></span></div>`).join('')||'<div class="empty">No entries.</div>'}</div></div><div class="panel"><div class="panel-h"><span class="t"><span class="pi">📜</span>Ledger</span></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Kind</th><th>Label</th><th>Amount</th><th>Method</th><th>When</th><th></th></tr></thead><tbody>${LED.map(x=>`<tr><td>${x.id}</td><td>${badge(x.kind)}</td><td class="c-name">${esc(x.label)}<div class="c-sub">${esc(x.cat)}${x.ref?' · '+esc(x.ref):''}</div></td><td style="font-weight:700">${money(x.amount)}</td><td class="c-sub">${esc(x.method||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,16))}</td><td><button class="btn-ghost" style="color:var(--danger)" onclick="ledgerDelete(${x.id})">🗑</button></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No ledger entries.</div></td></tr>'}</tbody></table></div></div></div>`);
+     <div class="grid-2" style="gap:18px"><div class="panel"><div class="panel-h"><span class="t"><span class="pi">🏷️</span>By category</span></div><div class="panel-b">${(d.cats||[]).map(c=>`<div class="kv"><span class="k">${esc(c.kind)} / ${esc(c.cat)}</span><span class="v">${money(c.total)} <span class="c-sub">(${c.n})</span></span></div>`).join('')||'<div class="empty">No entries.</div>'}</div></div><div class="panel"><div class="panel-h"><span class="t"><span class="pi">📜</span>Ledger</span></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Kind</th><th>Label</th><th>Amount</th><th>Method</th><th>When</th><th></th></tr></thead><tbody>${LED.map(x=>`<tr data-gsid="finance-${x.id}"><td>${x.id}</td><td>${badge(x.kind)}</td><td class="c-name">${esc(x.label)}<div class="c-sub">${esc(x.cat)}${x.ref?' · '+esc(x.ref):''}</div></td><td style="font-weight:700">${money(x.amount)}</td><td class="c-sub">${esc(x.method||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,16))}</td><td><button class="btn-ghost" style="color:var(--danger)" onclick="ledgerDelete(${x.id})">🗑</button></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No ledger entries.</div></td></tr>'}</tbody></table></div></div></div>`);
+  if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="finance-'+foc.payload.id+'"]');
 }
 function ledgerForm(){
   openDrawer('Add ledger entry',
@@ -1043,7 +1288,9 @@ async function renderTickets(){
   const d=await admin({action:'tickets'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   TKTS=d.tickets||[];
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subject</th><th>From</th><th>Prio</th><th>Status</th><th>Assignee</th><th>Updated</th><th></th></tr></thead><tbody>${TKTS.map(t=>`<tr><td>${esc(t.id)}</td><td><div class="c-name">${esc(t.subject)}</div><div class="c-sub">${esc((t.body||'').slice(0,50))}</div></td><td class="c-sub">${esc(t.from_name||'—')}<br>${esc(t.from_email||'')}</td><td>${badge(t.prio)}</td><td>${badge(t.status)}</td><td class="c-sub">${esc(t.assignee||'—')}</td><td class="c-sub">${esc((t.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="ticketReply('${esc(t.id)}')">✉</button><button class="btn-ghost" onclick="ticketStatus('${esc(t.id)}')">🔧</button><button class="btn-ghost" style="color:var(--danger)" onclick="ticketDelete('${esc(t.id)}')">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No platform tickets.</div></td></tr>'}</tbody></table></div></div>`);
+  const foc=gsConsumeFocus();
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subject</th><th>From</th><th>Prio</th><th>Status</th><th>Assignee</th><th>Updated</th><th></th></tr></thead><tbody>${TKTS.map(t=>`<tr data-gsid="tickets-${esc(t.id)}"><td>${esc(t.id)}</td><td><div class="c-name">${esc(t.subject)}</div><div class="c-sub">${esc((t.body||'').slice(0,50))}</div></td><td class="c-sub">${esc(t.from_name||'—')}<br>${esc(t.from_email||'')}</td><td>${badge(t.prio)}</td><td>${badge(t.status)}</td><td class="c-sub">${esc(t.assignee||'—')}</td><td class="c-sub">${esc((t.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="ticketReply('${esc(t.id)}')">✉</button><button class="btn-ghost" onclick="ticketStatus('${esc(t.id)}')">🔧</button><button class="btn-ghost" style="color:var(--danger)" onclick="ticketDelete('${esc(t.id)}')">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No platform tickets.</div></td></tr>'}</tbody></table></div></div>`);
+  if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="tickets-'+esc(foc.payload.id)+'"]');
 }
 function ticketForm(){
   openDrawer('New platform ticket',
@@ -1172,7 +1419,9 @@ async function renderAudit(){
   load('pageBody','<div class="empty">Loading…</div>');
   const d=await admin({action:'audit'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>#</th><th>When</th><th>User</th><th>Action</th><th>Module</th><th>Entity</th><th>Details</th></tr></thead><tbody>${(d.audit||[]).map(a=>`<tr><td>${a.id}</td><td class="c-sub">${esc(a.ts||'')}</td><td>${esc(a.user||'')}</td><td class="c-name">${esc(a.action||'')}</td><td>${badge(a.module||'—')}</td><td class="c-sub">${esc(a.entity||'')}</td><td class="c-sub">${esc((a.details||'').slice(0,70))}</td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No audit rows.</div></td></tr>'}</tbody></table></div></div>`);
+  const foc=gsConsumeFocus();
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>#</th><th>When</th><th>User</th><th>Action</th><th>Module</th><th>Entity</th><th>Details</th></tr></thead><tbody>${(d.audit||[]).map(a=>`<tr data-gsid="audit-${a.id}"><td>${a.id}</td><td class="c-sub">${esc(a.ts||'')}</td><td>${esc(a.user||'')}</td><td class="c-name">${esc(a.action||'')}</td><td>${badge(a.module||'—')}</td><td class="c-sub">${esc(a.entity||'')}</td><td class="c-sub">${esc((a.details||'').slice(0,70))}</td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No audit rows.</div></td></tr>'}</tbody></table></div></div>`);
+  if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="audit-'+foc.payload.id+'"]');
 }
 /* ── Auth ── */
 async function doLogin(){
@@ -1301,11 +1550,17 @@ const API_CATALOG = [
   ['app-moveout','POST','session','Leases','Move-out workflow.'],
   ['app-invoice-print','GET','session','Finance','Printable invoice.'],
   ['app-packages','POST','admin','Admin','Package catalog CRUD (admin).'],
-  ['app-admin','POST','admin','Admin','Super-admin panel API — 20+ sub-actions (overview, cms, keys…).'],
-  ['app-admin api-keys-get','POST','admin','Admin','API Library — get web/mobile API keys (masked).'],
-  ['app-admin api-keys-save','POST','admin','Admin','API Library — rotate web/mobile API keys.'],
+  ['app-admin','POST','admin','Admin','Super-admin panel API — 30+ sub-actions (overview, cms, keys, global-search, usage…).'],
+  ['app-admin global-search','POST','admin','Admin','Global search across subscribers, users, packages, providers, tickets, leads, CMS, finance and audit.'],
+  ['app-admin api-usage','POST','admin','Admin','API Library — request analytics: top endpoints, errors, latency, auth mix, recent calls.'],
+  ['app-admin api-keys-get','POST','admin','Admin','API Library — get web/mobile API keys (masked) + last-used + enforcement policy.'],
+  ['app-admin api-keys-save','POST','admin','Admin','API Library — rotate web/mobile API keys; set enforcement + rate limit.'],
   ['app-admin api-stats','POST','admin','Admin','API Library — row counts for web and mobile tables.'],
   ['app-admin api-table','POST','admin','Admin','API Library — recent rows from a whitelisted table.'],
+  ['app-admin cms-pub-get','POST','admin','Admin','CMS — publish/draft flags for every page.'],
+  ['app-admin cms-pub-save','POST','admin','Admin','CMS — set a page live or draft (draft pages hide edits from the site).'],
+  ['app-admin cms-replace','POST','admin','Admin','CMS — global find & replace across blocks (dry-run preview supported).'],
+  ['app-admin cms-clone','POST','admin','Admin','CMS — duplicate a page as a starting point for a new page.'],
 ];
 
 function apiTab(t){API_TAB=t;renderApi();}
@@ -1317,12 +1572,12 @@ function apiCatSearch(){
   let html='';
   Object.keys(g).sort().forEach(grp=>{
     html+=`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">📚</span>${esc(grp)}</span><span class="c-sub" style="font-size:11px">${g[grp].length} endpoints</span></div><div class="panel-b">`+
-      g[grp].map(e=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
+      g[grp].map(e=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;cursor:pointer" onclick="apiEndpointDetail(${API_CAT.indexOf(e)})">
         <span class="badge" style="background:${apiMethodColor(e[1])};color:#fff;font-size:10px">${e[1]}</span>
         <code style="font-size:12px;color:var(--primary);font-weight:700">/api/${esc(e[0])}</code>
         <span class="badge ${e[2]==='public'?'b-green':e[2]==='session'?'b-blue':'b-purple'}">${e[2]}</span>
         <span style="flex:1;min-width:180px;font-size:12px;color:var(--text-soft)">${esc(e[4])}</span>
-        <button class="btn-ghost" style="font-size:11px" onclick="apiTestFill('${esc(e[0])}','${e[1]}')">🧪 Test</button>
+        <button class="btn-ghost" style="font-size:11px" onclick="event.stopPropagation();apiTestFill('${esc(e[0])}','${e[1]}')">🧪 Test</button>
       </div>`).join('')+`</div></div>`;
   });
   $('apiCatBody').innerHTML=html||'<div class="empty">No endpoints match.</div>';
@@ -1371,28 +1626,86 @@ async function renderApiKeys(){
   const d=await admin({action:'api-keys-get'});
   if(!d.ok){load('apiKeysBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   const k=d.keys||{};
-  const row=(ico,label,key,ph,fn)=>`<div class="cms-field" style="margin-bottom:14px">
+  const row=(ico,label,key,ph,fn,lastUsed,lastIp)=>`<div class="cms-field" style="margin-bottom:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><label class="lb" style="margin:0">${ico} ${label}</label><span class="c-sub" style="font-size:10.5px">${key?'last 4: '+esc(key.slice(-4)):''}</span></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="${fn}_in" placeholder="${ph}" style="flex:1;min-width:200px" value=""><button class="btn-primary" onclick="apiKeySave('${fn}')">🔄 Rotate</button></div>
-    <div class="c-sub" style="font-size:10.5px;margin-top:4px">Leave empty to keep the current value. Masked value: <code>${esc(key||'—')}</code></div>
+    <div class="c-sub" style="font-size:10.5px;margin-top:4px">Leave empty to keep the current value. Masked value: <code>${esc(key||'—')}</code>${lastUsed?` · last used <b>${esc(lastUsed)}</b>${lastIp?' from '+esc(lastIp):''}`:' · never used yet'}</div>
   </div>`;
   load('apiKeysBody',
     `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🔑</span>Web and mobile API keys</span></div><div class="panel-b">
-      ${row('🌐','Web API key',k.web_api_key,'krweb-…','web_api_key')}
-      ${row('📱','Mobile API key',k.mobile_api_key,'krmob-…','mobile_api_key')}
-      <div class="c-sub" style="font-size:11.5px;margin-top:6px">Keys authenticate server-to-server calls from the website and mobile app. Rotating a key immediately invalidates the old one — update the client first. Last rotation: <b>${esc(k.updated_at||'never')}</b></div>
+      ${row('🌐','Web API key',k.web_api_key,'krweb-…','web_api_key',k.web_last_used,k.web_last_ip)}
+      ${row('📱','Mobile API key',k.mobile_api_key,'krmob-…','mobile_api_key',k.mobile_last_used,k.mobile_last_ip)}
+      <div class="c-sub" style="font-size:11.5px;margin-top:6px">Keys authenticate server-to-server calls from the website and mobile app (header <code>X-API-Key</code>). Rotating a key immediately invalidates the old one — update the client first. Last rotation: <b>${esc(k.updated_at||'never')}</b></div>
     </div></div>
+    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🛡️</span>Key enforcement</span></div><div class="panel-b"><div class="frm grid-2">
+      <div><label class="lb">Require a valid key on upload endpoints</label><select id="ak_enforce" onchange="apiKeyPolicySave()"><option value="1" ${k.enforce?'selected':''}>Enforced — reject without X-API-Key</option><option value="0" ${!k.enforce?'selected':''}>Off (log only)</option></select></div>
+      <div><label class="lb">Rate limit (requests / minute / key)</label><input id="ak_rate" type="number" value="${k.rate_limit||120}" onchange="apiKeyPolicySave()" style="min-width:0"></div>
+      <div class="c-sub" style="font-size:11.5px;grid-column:1/-1">Enforcement applies to <code>app-photo</code> and <code>app-job-media</code>. When OFF, valid keys are still detected and last-used is recorded. Turning it ON blocks uploads that don't carry a valid web/mobile key.</div>
+    </div></div></div>
     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💡</span>How web and mobile use the API</span></div><div class="panel-b"><div style="font-size:12.5px;color:var(--text-soft);line-height:1.7">
       <div>1. <b>Public endpoints</b> (<code>cms-read</code>, <code>plans</code>, <code>health</code>) need no key — they power the marketing site.</div>
       <div>2. <b>Session endpoints</b> use a Bearer token from <code>app-login</code>.</div>
       <div>3. <b>Server-to-server</b> (collections digest, notifications) uses the <code>X-Service-Key</code> header.</div>
-      <div style="margin-top:6px">The web and mobile keys above are reserved for your native apps — rotate them here and use them in client headers.</div>
+      <div style="margin-top:6px">The web and mobile keys above are reserved for your native apps — send them in the <code>X-API-Key</code> header and they are recorded (and can be enforced) here.</div>
     </div></div></div>`);
+}
+async function apiKeyPolicySave(){
+  const d=await admin({action:'api-keys-save',enforce:$('ak_enforce').value==='1',rate_limit:+$('ak_rate').value||120});
+  if(d.ok){toast('Key policy saved','ok');}else toast(d.error||'Failed','error');
 }
 async function apiKeySave(which){
   const v=$(which+'_in').value.trim();
   const d=await admin({action:'api-keys-save',keys:{[which]:v}});
   if(d.ok){toast((which==='web_api_key'?'Web':'Mobile')+' API key rotated','ok');renderApiKeys();}else toast(d.error||'Failed','error');
+}
+async function renderApiUsage(){
+  load('apiUsageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'api-usage'});
+  if(!d.ok){load('apiUsageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  const u=d.usage||{};
+  const h24=u.h24||[];
+  const top=h24.slice(0,10);
+  const max=Math.max(1,...top.map(r=>+(r.n||0)));
+  const errRate=u.d24_total?Math.round((u.d24_errors||0)/u.d24_total*100):0;
+  const recent=u.recent||[];
+  load('apiUsageBody',
+    `<div class="stats">${[['📈','Calls (24h)',u.d24_total??0,'tracked via api_usage'],['🗓️','Calls (7d)',u.d7_total??0,'rolling window'],['⚠️','Errors (24h)',u.d24_errors??0,errRate+'% error rate'],['⚡','Avg top-10 latency',(top.length?Math.round(top.reduce((s,r)=>s+(+(r.avg_ms||0)),0)/top.length):0)+' ms','fastest endpoints first']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>
+    <div class="grid-2" style="gap:18px">
+      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🔥</span>Top endpoints (24h)</span></div><div class="panel-b">${top.length?top.map(r=>{const pct=Math.max(3,Math.round((+(r.n||0))/max*100));
+        return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;margin-bottom:4px"><code style="color:var(--primary);font-weight:700">${esc(r.action)}</code><span style="font-size:11px;color:var(--text-mute)">${r.n} calls${r.errs?' · '+r.errs+' errs':''} · ${r.avg_ms}ms</span></div><div style="height:8px;background:var(--bg-alt);border:1px solid var(--border);border-radius:99px;overflow:hidden"><div style="width:${pct}%;height:100%;border-radius:99px;background:${(r.errs||0)>0?'#E74C3C':'var(--primary)'}"></div></div></div>`;}).join(''):'<div class="empty">No API calls in the last 24h yet.</div>'}</div></div>
+      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🔐</span>Auth mix (24h)</span></div><div class="panel-b">${(u.by_auth||[]).length?(u.by_auth||[]).map(a=>`<div class="kv"><span class="k">${esc(a.auth)}</span><span class="v">${a.n}</span></div>`).join(''):'<div class="empty">No data yet.</div>'}</div></div>
+    </div>
+    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🕒</span>Recent requests</span><button class="btn-outline" style="margin-left:auto" onclick="renderApiUsage()">🔄 Refresh</button></div><div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>When</th><th>Action</th><th>Method</th><th>Auth</th><th>Status</th><th>ms</th></tr></thead><tbody>${recent.map(r=>`<tr><td class="c-sub">${esc((r.ts||'').slice(11,19))}</td><td><code style="font-size:12px;color:var(--primary)">${esc(r.action)}</code></td><td>${r.method==='GET'?badge('GET'):badge('POST')}</td><td>${badge(r.auth)}</td><td>${r.status<400?badge('OK'):badge(r.status)}</td><td class="c-sub">${r.ms}ms</td></tr>`).join('')||'<tr><td colspan="6"><div class="empty">No requests yet.</div></td></tr>'}</tbody></table></div></div>`);
+}
+function apiSchemaExport(){
+  const schema={openapi:'3.0.3',info:{title:'KRTaker API',version:'v1',description:'KRTaker platform API — web & mobile data management'},paths:{}};
+  API_CATALOG.forEach(e=>{
+    const p='/api/'+e[0].replace(/ /g,'?action=');
+    schema.paths[p]=schema.paths[p]||{};
+    schema.paths[p][e[1].toLowerCase()]={summary:e[4],tags:[e[3]],security:e[2]==='public'?[]:[{bearerAuth:[]}],responses:{200:{description:'OK'}}};
+  });
+  schema.components={securitySchemes:{bearerAuth:{type:'http',scheme:'bearer'}}};
+  const blob=new Blob([JSON.stringify(schema,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=u;a.download='krtaker-api-schema.json';a.click();
+  URL.revokeObjectURL(u);
+  toast('API schema (OpenAPI) downloaded','ok');
+}
+function apiEndpointDetail(i){
+  const e=API_CATALOG[i];
+  if(!e)return;
+  openDrawer('📚 '+esc(e[0]),
+    `<div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="badge" style="background:${apiMethodColor(e[1])};color:#fff">${e[1]}</span><code style="font-size:13px;color:var(--primary);font-weight:800">/api/${esc(e[0])}</code><span class="badge ${e[2]==='public'?'b-green':e[2]==='session'?'b-blue':'b-purple'}">${e[2]}</span></div>
+      <div style="font-size:13px;color:var(--text-soft);line-height:1.6">${esc(e[4])}</div>
+      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📝</span>How to call it</span></div><div class="panel-b" style="font-size:12px;line-height:1.8">
+        <div><b>URL:</b> <code>POST https://krtaker.com/api/app-admin</code> (or GET <code>/api/${esc(e[0])}</code> for public reads)</div>
+        <div><b>Auth:</b> ${e[2]==='public'?'none — public endpoint':e[2]==='session'?'<code>Authorization: Bearer &lt;token&gt;</code> from app-login':'<code>Authorization: Bearer &lt;super-admin token&gt;</code>'}</div>
+        ${e[0].includes('app-admin')?`<div><b>Body:</b> <code>{"action":"${esc(e[0].split(' ')[1]||'overview')}"}</code> + sub-action params</div>`:''}
+      </div></div>
+      <button class="btn-primary" onclick="apiTestFill('${esc(e[0])}','${e[1]}');closeDrawer()">🧪 Try in console</button>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button></div>`);
 }
 async function renderApiData(){
   load('apiDataBody','<div class="empty">Loading…</div>');
@@ -1421,11 +1734,12 @@ async function apiTableDrawer(tb){
   }</tbody></table></div>`;
 }
 function renderApi(){
-  pageHead('API Library — manage how the web and mobile apps use the platform API',``);
+  pageHead('API Library — manage how the web and mobile apps use the platform API',`<button class="btn-outline" onclick="apiSchemaExport()" data-tip="Download the endpoint catalog as OpenAPI JSON for client developers" data-tip-pos="left">📦 Export schema</button>`);
   load('pageBody',
     `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:16px">
       <button class="chip ${API_TAB==='endpoints'?'on':''}" onclick="apiTab('endpoints')">📚 Endpoints</button>
       <button class="chip ${API_TAB==='console'?'on':''}" onclick="apiTab('console')">🧪 Console</button>
+      <button class="chip ${API_TAB==='usage'?'on':''}" onclick="apiTab('usage')">📈 Usage</button>
       <button class="chip ${API_TAB==='keys'?'on':''}" onclick="apiTab('keys')">🔑 Web and Mobile Keys</button>
       <button class="chip ${API_TAB==='data'?'on':''}" onclick="apiTab('data')">🗄️ Data</button>
     </div>
@@ -1452,6 +1766,8 @@ function renderApi(){
       </div></div>`);
   }else if(API_TAB==='keys'){
     load('apiBody','<div id="apiKeysBody"></div>');renderApiKeys();
+  }else if(API_TAB==='usage'){
+    load('apiBody','<div id="apiUsageBody"></div>');renderApiUsage();
   }else{
     load('apiBody','<div id="apiDataBody"></div>');renderApiData();
   }
