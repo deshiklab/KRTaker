@@ -34,6 +34,17 @@
 .sidebar{scrollbar-color:rgba(255,255,255,.22) transparent}
 .sidebar ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border:2px solid transparent;background-clip:padding-box}
 .sidebar ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.32);border:2px solid transparent;background-clip:padding-box}
+:root{--tip-bg:#1A2433;--tip-fg:#F2F5FA}
+[data-theme="dark"]{--tip-bg:#E8EEF9;--tip-fg:#16203A}
+.tip{position:fixed;z-index:500;background:var(--tip-bg);color:var(--tip-fg);font-size:11.5px;font-weight:600;line-height:1.4;padding:7px 11px;border-radius:8px;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;box-shadow:0 10px 30px rgba(10,25,50,.3);max-width:280px}
+.tip.show{opacity:1;transform:none}
+.sb-flyout{position:fixed;z-index:80;min-width:230px;max-width:290px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 18px 50px rgba(10,25,50,.3);padding:14px 16px;opacity:0;pointer-events:none;transform:translateX(-6px);transition:opacity .15s,transform .15s}
+.sb-flyout.show{opacity:1;pointer-events:auto;transform:none}
+.sb-flyout .arrow{position:absolute;left:-5px;top:18px;width:10px;height:10px;background:var(--card);border-left:1px solid var(--border);border-bottom:1px solid var(--border);transform:rotate(45deg)}
+.sb-flyout .fg{font-size:9.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-mute);margin-bottom:6px}
+.sb-flyout .ft{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;color:var(--text)}
+.sb-flyout .fd{font-size:11.5px;color:var(--text-soft);margin-top:5px;line-height:1.5}
+.sb-flyout .fa{margin-top:9px;font-size:10.5px;font-weight:700;color:var(--primary)}
 body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
 a{color:var(--primary);text-decoration:none}
 button{font-family:inherit;cursor:pointer}
@@ -272,15 +283,16 @@ td .c-sub{font-size:11.5px;color:var(--text-mute)}
       </div>
     </div>
   </aside>
+  <div class="sb-flyout" id="sbFlyout"></div>
   <div class="main">
     <header class="topbar">
       <div class="topbar-in">
-        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <button class="menu-toggle" onclick="toggleSidebar()" data-tip="Menu">☰</button>
         <div class="tb-title" id="tbTitle">Super Admin</div>
         <div class="tb-actions">
-          <button class="icon-btn side-toggle" id="sideToggle" onclick="toggleSideMini()" title="Toggle sidebar">⫷</button>
-          <button class="icon-btn" onclick="toggleTheme()">🌙</button>
-          <a class="icon-btn" href="dashboard-v2.html" target="_blank">↗<span class="lbl"> Dashboard</span></a>
+          <button class="icon-btn side-toggle" id="sideToggle" onclick="toggleSideMini()" data-tip="Collapse sidebar" data-tip-pos="bottom">⫷</button>
+          <button class="icon-btn" onclick="toggleTheme()" data-tip="Toggle theme" data-tip-pos="bottom">🌙</button>
+          <a class="icon-btn" href="dashboard-v2.html" target="_blank" data-tip="Open subscriber dashboard" data-tip-pos="bottom">↗<span class="lbl"> Dashboard</span></a>
         </div>
       </div>
     </header>
@@ -296,6 +308,7 @@ td .c-sub{font-size:11.5px;color:var(--text-mute)}
   </div>
 </div>
 <div class="toast-wrap" id="toastWrap"></div>
+<div class="tip" id="tipEl"></div>
 
 <script>
 const API='../api/';
@@ -314,8 +327,46 @@ function closeSidebar(){$('sidebar').classList.remove('open');$('sbBackdrop').cl
 function toggleSidebar(){$('sidebar').classList.toggle('open');$('sbBackdrop').classList.toggle('show');}
 let SIDE_MINI=false;try{SIDE_MINI=localStorage.getItem('krtaker_admin_side')==='mini'}catch(e){}
 function applySideMini(){if(SIDE_MINI)$('app').classList.add('side-mini');const t=$('sideToggle');if(t)t.textContent=SIDE_MINI?'⫸':'⫷';}
-function toggleSideMini(){SIDE_MINI=!SIDE_MINI;$('app').classList.toggle('side-mini',SIDE_MINI);const t=$('sideToggle');if(t)t.textContent=SIDE_MINI?'⫸':'⫷';try{localStorage.setItem('krtaker_admin_side',SIDE_MINI?'mini':'full')}catch(e){}}
+function toggleSideMini(){SIDE_MINI=!SIDE_MINI;$('app').classList.toggle('side-mini',SIDE_MINI);const t=$('sideToggle');if(t){t.textContent=SIDE_MINI?'⫸':'⫷';t.setAttribute('data-tip',SIDE_MINI?'Expand sidebar':'Collapse sidebar');}$('sbFlyout').classList.remove('show');try{localStorage.setItem('krtaker_admin_side',SIDE_MINI?'mini':'full')}catch(e){}}
 applySideMini();
+/* ── Sidebar hover flyout (mini mode) ── */
+let FLY_T=null;
+function sbFlyout(e){
+  const it=e.target.closest('.sb-item');if(!it||!SIDE_MINI)return;
+  clearTimeout(FLY_T);
+  const f=$('sbFlyout');
+  const r=it.getBoundingClientRect();
+  f.innerHTML=`<div class="arrow"></div><div class="fg">${esc(it.dataset.group||'')}</div><div class="ft"><span>${(it.querySelector('.ic')||{}).textContent||''}</span>${esc(NAV[it.dataset.nav]?NAV[it.dataset.nav].l:'')}</div><div class="fd">${esc(it.dataset.desc||'')}</div><div class="fa">Click to open →</div>`;
+  f.style.top=Math.max(10,Math.min(r.top,window.innerHeight-150))+'px';
+  f.style.left=(r.right+6)+'px';
+  f.classList.add('show');
+}
+function sbFlyoutHide(){const f=$('sbFlyout');if(f)f.classList.remove('show');}
+function sbFlyoutDelayHide(){clearTimeout(FLY_T);FLY_T=setTimeout(sbFlyoutHide,220);}
+document.addEventListener('mouseover',e=>{if(e.target.closest('.sb-item'))sbFlyout(e)});
+document.addEventListener('mouseout',e=>{if(e.target.closest('.sb-item')&&!e.relatedTarget)sbFlyoutDelayHide()});
+document.addEventListener('mouseover',e=>{if(e.target.closest('#sbFlyout'))clearTimeout(FLY_T)});
+document.addEventListener('mouseout',e=>{if(e.target.closest('#sbFlyout'))sbFlyoutDelayHide()});
+/* ── Global tooltip ── */
+let TIP_T=null;
+function tipShow(e){
+  const t=e.target.closest('[data-tip]');if(!t)return;
+  const el=$('tipEl');if(!el)return;
+  el.textContent=t.getAttribute('data-tip');
+  const r=t.getBoundingClientRect();
+  let x,y;
+  if(t.getAttribute('data-tip-pos')==='right'){x=r.right+10;y=r.top+r.height/2-el.offsetHeight/2;}
+  else if(t.getAttribute('data-tip-pos')==='top'){x=r.left;y=r.top-el.offsetHeight-8;}
+  else{x=r.left+r.width/2-el.offsetWidth/2;y=r.bottom+8;}
+  x=Math.max(8,Math.min(x,window.innerWidth-el.offsetWidth-8));
+  y=Math.max(8,Math.min(y,window.innerHeight-el.offsetHeight-8));
+  el.style.left=Math.round(x)+'px';el.style.top=Math.round(y)+'px';
+  el.classList.add('show');
+  clearTimeout(TIP_T);
+}
+function tipHide(){clearTimeout(TIP_T);TIP_T=setTimeout(()=>{const el=$('tipEl');if(el)el.classList.remove('show')},70);}
+document.addEventListener('mouseover',e=>{if(e.target.closest('[data-tip]'))tipShow(e)});
+document.addEventListener('mouseout',e=>{if(e.target.closest('[data-tip]'))tipHide()});
 function toggleTheme(){STATE.theme=STATE.theme==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',STATE.theme);localStorage.setItem('krtaker_admin_theme',STATE.theme);$('tbTitle').textContent='';renderTitle();toast(STATE.theme==='dark'?'Dark mode on':'Light mode on')}
 async function api(path,data){
   const opts={method:data?'POST':'GET',headers:{}};
@@ -335,8 +386,28 @@ function renderNav(){
     ['Commerce',['payments','finance']],
     ['System',['settings','integrations','tickets','backup','modules','whitelabel','health','audit']]
   ];
-  $('sbNav').innerHTML=groups.map(g=>`<div class="sb-group">${g[0]}</div>`+g[1].map(k=>{const n=NAV[k];return `<div class="sb-item ${STATE.view===k?'active':''}" onclick="nav('${k}')" title="${esc(n.l)}"><span class="ic">${n.ic}</span><span class="txt">${n.l}</span>${n.chip?`<span class="chip">${n.chip}</span>`:''}</div>`}).join('')).join('');
+  $('sbNav').innerHTML=groups.map(g=>`<div class="sb-group">${g[0]}</div>`+g[1].map(k=>{const n=NAV[k];return `<div class="sb-item ${STATE.view===k?'active':''}" onclick="nav('${k}')" data-nav="${k}" data-group="${esc(g[0])}" data-desc="${esc(NAV_DESC[k]||'')}"><span class="ic">${n.ic}</span><span class="txt">${n.l}</span>${n.chip?`<span class="chip">${n.chip}</span>`:''}</div>`}).join('')).join('');
 }
+const NAV_DESC={
+  dashboard:'Platform overview — KPIs, signups, revenue, tickets and recent activity',
+  subscribers:'Manage platform subscribers — plans, status and trial windows',
+  packages:'Create packages with role×module matrices, limits and subscriber assignments',
+  users:'Platform staff & system user management with roles and departments',
+  providers:'Service providers across the platform',
+  cms:'Landing content — hero, features, pricing, SEO, bilingual and custom fields',
+  onboarding:'Leads, subscriber onboarding applications and referrals',
+  mis:'MIS reports — plans, status, revenue and support trends',
+  payments:'Payment gateway configuration (bKash / SSLCommerz / Nagad)',
+  finance:'Company accounts — subscription revenue, expenses and balance',
+  settings:'Application-wide settings — signups, trials, branding defaults',
+  integrations:'Third-party integrations across the platform',
+  tickets:'Platform-wide support & ticketing for all system users',
+  backup:'Database snapshots, download and full JSON export',
+  modules:'Module & service management linked to package formulation',
+  whitelabel:'Master settings with white-label branding',
+  health:'System administration — runtime, database and security posture',
+  audit:'Full audit trail across the platform'
+};
 const NAV={
   dashboard:{ic:'📊',l:'Dashboard'},
   subscribers:{ic:'👥',l:'Subscribers'},
@@ -595,14 +666,41 @@ async function providerSave(id){
   if(d.ok){toast('Provider saved','ok');closeDrawer();renderProviders();}else toast(d.error||'Failed','error');
 }
 /* ── Web CMS ── */
-let CMS={blocks:[],defKeys:new Set(),tab:'home'};
+let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en'};
 const CMS_PAGES={home:{l:'Home',ic:'🏠'},features:{l:'Features',ic:'✨'},pricing:{l:'Pricing',ic:'💎'},about:{l:'About',ic:'ℹ️'},contact:{l:'Contact',ic:'📮'},footer:{l:'Footer',ic:'🔗'},seo:{l:'SEO',ic:'🔍'}};
 const CMS_SEC_LABEL={hero:'Hero',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',home:'Home',features:'Features',pricing:'Pricing',about:'About',contact:'Contact',footer:'Footer'};
 const CMS_LONG=['subtitle','desc','meta_description','tagline','address'];
 function cmsIsLong(k){return CMS_LONG.some(s=>k.includes(s));}
+const CMS_HINTS={
+  title:'Main heading shown on the page',
+  subtitle:'Supporting text below the heading',
+  badge:'Small pill label above the heading',
+  primary:'Primary call-to-action button text',
+  secondary:'Secondary call-to-action button text',
+  email:'Contact email address',
+  phone:'Contact phone number',
+  address:'Physical address',
+  tagline:'Short brand tagline',
+  copyright:'Copyright line in the footer',
+  facebook:'Facebook page URL',
+  linkedin:'LinkedIn page URL',
+  youtube:'YouTube channel URL',
+  image:'Hero image URL (optional)',
+  image_alt:'Accessible description of the hero image',
+  meta_title:'Browser tab title — aim for 50–60 characters',
+  meta_description:'Search-engine description — aim for 150–160 characters',
+  og_image:'Social-share image URL (Open Graph)'
+};
+function cmsHint(b){
+  if(CMS_HINTS[b.k])return CMS_HINTS[b.k];
+  if(b.k.endsWith('_title'))return 'Card heading shown on the landing page';
+  if(b.k.endsWith('_desc'))return 'Card description shown on the landing page';
+  if(b.k.endsWith('_bn'))return 'বাংলা translation of this field';
+  return '';
+}
 async function renderCms(){
   pageHead('Web CMS — landing content, SEO and section management',
-    `<button class="btn-outline" onclick="cmsPreview()">👁 Preview</button><a class="btn-outline" href="https://krtaker.com" target="_blank">↗ Landing</a><button class="btn-primary" onclick="cmsSaveAll()">💾 Save all</button>`);
+    `<button class="btn-outline" onclick="cmsPreview()" data-tip="Preview how the landing page will look" data-tip-pos="top">👁 Preview</button><button class="btn-outline" onclick="cmsHistoryDrawer()" data-tip="View change history and restore values" data-tip-pos="top">🗒 History</button><button class="btn-outline" onclick="cmsExport()" data-tip="Download all CMS content as JSON" data-tip-pos="top">⬇ Export</button><button class="btn-outline" onclick="cmsImport()" data-tip="Import CMS content from JSON" data-tip-pos="top">⬆ Import</button><a class="btn-outline" href="https://krtaker.com" target="_blank" data-tip="Open the live landing page" data-tip-pos="top">↗ Landing</a><button class="btn-primary" onclick="cmsSaveAll()" data-tip="Save all unsaved changes" data-tip-pos="top">💾 Save all</button>`);
   load('pageBody','<div class="empty">Loading…</div>');
   const d=await admin({action:'cms-get'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
@@ -611,11 +709,15 @@ async function renderCms(){
   const cur=CMS_PAGES[CMS.tab]?CMS.tab:'home';
   load('pageBody',
     `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:16px">`+
-    Object.keys(CMS_PAGES).map(p=>`<button class="chip ${cur===p?'on':''}" onclick="cmsTab('${p}')">${CMS_PAGES[p].ic} ${CMS_PAGES[p].l}</button>`).join('')+
+    Object.keys(CMS_PAGES).map(p=>`<button class="chip ${cur===p?'on':''}" onclick="cmsTab('${p}')" data-tip="${esc(CMS_PAGES[p].l)} page" data-tip-pos="top">${CMS_PAGES[p].ic} ${CMS_PAGES[p].l}</button>`).join('')+
+    `<span style="width:1px;height:22px;background:var(--border);margin:0 4px"></span>`+
+    `<button class="chip ${CMS.lang==='en'?'on':''}" onclick="cmsLang('en')" data-tip="Show English fields" data-tip-pos="top">EN</button>`+
+    `<button class="chip ${CMS.lang==='bn'?'on':''}" onclick="cmsLang('bn')" data-tip="Show বাংলা fields" data-tip-pos="top">বাংলা</button>`+
     `<input id="cmsSearch" placeholder="🔍 Search blocks…" style="max-width:200px;margin-left:auto" oninput="cmsFilter()"></div>`+
     `<div id="cmsPanels">${cmsPageHtml(cur)}</div>`);
 }
 function cmsTab(p){CMS.tab=p;renderCms();}
+function cmsLang(l){CMS.lang=l;renderCms();}
 function cmsFilter(){
   const q=$('cmsSearch').value.trim().toLowerCase();
   document.querySelectorAll('#cmsPanels [data-cms]').forEach(el=>{
@@ -624,27 +726,30 @@ function cmsFilter(){
   });
 }
 function cmsPageHtml(p){
-  const blocks=CMS.blocks.filter(b=>b.page===p);
+  const blocks=CMS.blocks.filter(b=>b.page===p&&(CMS.lang==='bn'?b.k.endsWith('_bn'):!b.k.endsWith('_bn')));
   const bySec={};blocks.forEach(b=>{(bySec[b.section]=bySec[b.section]||[]).push(b)});
   const secs=Object.keys(bySec);
   return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-      <button class="btn-outline" onclick="cmsAddBlock('${p}','')">＋ Add field</button>
-      <button class="btn-outline" style="color:var(--danger)" onclick="cmsResetPage('${p}')">↺ Reset page</button>
+      <button class="btn-outline" onclick="cmsAddBlock('${p}','')" data-tip="Add a custom field to this page" data-tip-pos="top">＋ Add field</button>
+      <button class="btn-outline" style="color:var(--danger)" onclick="cmsResetPage('${p}')" data-tip="Reset this page to default values (kept in history)" data-tip-pos="top">↺ Reset page</button>
+      <button class="btn-outline" onclick="cmsHistoryDrawer('${p}')" data-tip="Change history for this page" data-tip-pos="top">🗒 Page history</button>
     </div>`+
-    secs.map(sec=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${CMS_PAGES[p].ic}</span>${esc(CMS_SEC_LABEL[sec]||sec)}</span><span class="c-sub" style="font-size:11px">${bySec[sec].length} fields</span></div>
-      <div class="panel-b"><div class="frm">${bySec[sec].map(b=>cmsFieldHtml(b)).join('')}</div></div></div>`).join('');
+    (secs.length?secs.map(sec=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${CMS_PAGES[p].ic}</span>${esc(CMS_SEC_LABEL[sec]||sec)}</span><span class="c-sub" style="font-size:11px">${bySec[sec].length} fields</span></div>
+      <div class="panel-b"><div class="frm">${bySec[sec].map(b=>cmsFieldHtml(b)).join('')}</div></div></div>`).join(''):'<div class="empty">No fields in this language yet.</div>');
 }
 function cmsFieldHtml(b){
   const tag=b.page+'|'+b.section+'|'+b.k;
   const def=CMS.defKeys.has(tag);
   const long=cmsIsLong(b.k);
+  const hint=cmsHint(b);
+  const lbl=b.k.replace(/_bn$/,'').replace(/_/g,' ')+(CMS.lang==='bn'?' (বাংলা)':'');
   const inp=long
     ? `<textarea data-cms="${esc(tag)}" oninput="cmsCount(this)">${esc(b.v)}</textarea>`
     : `<input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this)">`;
   return `<div class="cms-field">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
-      <label class="lb" style="margin:0;text-transform:capitalize">${esc(b.k.replace(/_/g,' '))}${def?'':'<span class="badge b-purple" style="margin-left:6px">custom</span>'}</label>
-      ${def?'':`<button class="btn-ghost" style="color:var(--danger);padding:2px 6px;font-size:11px" onclick="cmsDelBlock('${esc(b.page)}','${esc(b.section)}','${esc(b.k)}')" title="Remove block">✕</button>`}
+      <label class="lb" style="margin:0;text-transform:capitalize" ${hint?`data-tip="${esc(hint)}" data-tip-pos="right"`:''}>${esc(lbl)}${def?'':'<span class="badge b-purple" style="margin-left:6px">custom</span>'}</label>
+      ${def?'':`<button class="btn-ghost" style="color:var(--danger);padding:2px 6px;font-size:11px" onclick="cmsDelBlock('${esc(b.page)}','${esc(b.section)}','${esc(b.k)}')" data-tip="Remove this custom field" data-tip-pos="left" title="Remove block">✕</button>`}
     </div>
     ${inp}
     <div class="c-sub" style="font-size:10.5px;text-align:right;margin-top:3px"><span class="cms-cnt">${esc(b.v).length}</span> chars</div>
@@ -654,7 +759,55 @@ function cmsCount(el){const c=el.parentElement.querySelector('.cms-cnt');if(c)c.
 async function cmsSaveAll(){
   const blocks=CMS.blocks.map(b=>{const el=document.querySelector(`[data-cms="${b.page}|${b.section}|${b.k}"]`);return {...b,v:el?el.value:b.v}});
   const d=await admin({action:'cms-save',blocks});
-  if(d.ok){toast('CMS content saved','ok');renderCms();}else toast(d.error||'Failed','error');
+  if(d.ok){toast(d.changed?`Saved — ${d.changed} field${d.changed>1?'s':''} changed`:'Saved — no changes','ok');renderCms();}else toast(d.error||'Failed','error');
+}
+async function cmsHistoryDrawer(p){
+  const page=p||(CMS_PAGES[CMS.tab]?CMS.tab:'home');
+  openDrawer('🗒 CMS history — '+esc(page),
+    '<div class="empty">Loading history…</div>',
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button></div>`);
+  const d=await admin({action:'cms-history',page});
+  if(!d.ok){$('drawerBody').innerHTML=`<div class="empty">${esc(d.error||'Failed')}</div>`;return}
+  const rows=d.history||[];
+  $('drawerBody').innerHTML=rows.length?`<div style="display:flex;flex-direction:column;gap:8px">${rows.map(h=>`<div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;flex-wrap:wrap"><span class="c-name" style="font-size:12px">${esc(h.section)} / ${esc(h.k)}</span><span class="badge b-gray">${esc(h.by||'—')}</span><span class="c-sub" style="margin-left:auto">${esc(h.ts)}</span></div>
+      <div style="font-size:11.5px;color:var(--text-mute);margin-top:5px;word-break:break-word">${esc((h.v||'').slice(0,120))||'<i>empty</i>'}</div>
+      <button class="btn-ghost" style="margin-top:6px;color:var(--primary)" onclick="cmsRestore('${esc(h.page)}','${esc(h.section)}','${esc(h.k)}')">↺ Restore this value</button>
+    </div>`).join('')}</div>`:'<div class="empty">No history yet — changes are recorded here automatically.</div>';
+}
+async function cmsRestore(p,sec,k){
+  const d=await admin({action:'cms-history',page:p});
+  if(!d.ok)return;
+  const row=(d.history||[]).find(h=>h.section===sec&&h.k===k);
+  if(!row){toast('No previous value found','error');return}
+  const r=await admin({action:'cms-restore',page:p,section:sec,k,v:row.v});
+  if(r.ok){toast('Value restored','ok');closeDrawer();renderCms();}else toast(r.error||'Failed','error');
+}
+function cmsExport(){
+  const data={exported_at:new Date().toISOString(),blocks:CMS.blocks.map(b=>({page:b.page,section:b.section,k:b.k,v:b.v}))};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=u;a.download='krtaker-cms-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  URL.revokeObjectURL(u);
+  toast('CMS export downloaded','ok');
+}
+function cmsImport(){
+  openDrawer('⬆ Import CMS from JSON',
+    `<div class="frm">
+      <div class="c-sub" style="font-size:11.5px;color:var(--text-mute)">Paste an export file or an array of blocks: <code>[{"page":"home","section":"hero","k":"title","v":"…"}]</code>. Existing keys are overwritten, new keys are added.</div>
+      <textarea id="imp_json" style="min-height:180px;font-family:monospace;font-size:12px" placeholder='[{"page":"home","section":"hero","k":"title","v":"Your title"}]'></textarea>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="cmsImportSave()">⬆ Import</button></div>`);
+}
+async function cmsImportSave(){
+  let parsed;
+  try{parsed=JSON.parse($('imp_json').value||'[]')}catch(e){toast('Invalid JSON','error');return}
+  const arr=Array.isArray(parsed)?parsed:(parsed.blocks||[]);
+  if(!arr.length||!Array.isArray(arr)){toast('Expected an array of blocks','error');return}
+  const blocks=arr.filter(b=>b&&b.page&&b.section&&b.k).map(b=>({page:String(b.page).trim(),section:String(b.section).trim(),k:String(b.k).trim(),v:String(b.v??'')}));
+  if(!blocks.length){toast('No valid blocks found in JSON','error');return}
+  const d=await admin({action:'cms-save',blocks});
+  if(d.ok){toast(`Imported ${blocks.length} blocks (${d.changed} changed)`,'ok');closeDrawer();renderCms();}else toast(d.error||'Failed','error');
 }
 function cmsAddBlock(p,sec){
   openDrawer('Add custom field',
@@ -692,6 +845,7 @@ function cmsVal(p,s,k){
 }
 function cmsPreview(){
   const homeBadge=cmsVal('home','hero','badge'),homeTitle=cmsVal('home','hero','title'),homeSub=cmsVal('home','hero','subtitle'),
+    heroImg=cmsVal('home','hero','image'),
     cta1=cmsVal('home','cta','primary'),cta2=cmsVal('home','cta','secondary'),
     fBadge=cmsVal('features','section','badge'),fTitle=cmsVal('features','section','title'),fSub=cmsVal('features','section','subtitle'),
     pBadge=cmsVal('pricing','section','badge'),pTitle=cmsVal('pricing','section','title'),pSub=cmsVal('pricing','section','subtitle'),
@@ -706,6 +860,7 @@ function cmsPreview(){
         <h2 style="font-size:26px;font-weight:800;margin-bottom:8px">${esc(homeTitle)}</h2>
         <p style="opacity:.85;font-size:14px;max-width:480px;margin:0 auto 18px">${esc(homeSub)}</p>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">${cta1?`<span style="background:var(--grad);color:#fff;font-size:13px;font-weight:700;border-radius:10px;padding:9px 18px">${esc(cta1)}</span>`:''}${cta2?`<span style="border:1px solid rgba(255,255,255,.4);color:#fff;font-size:13px;font-weight:600;border-radius:10px;padding:9px 18px">${esc(cta2)}</span>`:''}</div>
+        ${heroImg?`<img src="${esc(heroImg)}" alt="" style="max-width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin-top:16px">`:''}
       </div>
       <div style="padding:24px 26px">
         <div style="text-align:center;margin-bottom:18px">${fBadge?`<div style="color:var(--primary);font-size:10.5px;font-weight:800;letter-spacing:1.5px">${esc(fBadge)}</div>`:''}<h3 style="font-size:19px;font-weight:800">${esc(fTitle)}</h3><p style="font-size:12.5px;color:var(--text-mute)">${esc(fSub)}</p></div>
