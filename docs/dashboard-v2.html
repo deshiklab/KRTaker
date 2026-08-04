@@ -8345,7 +8345,7 @@ function propertyTabsHtml(propId){
 }
 /* ── P56: tenant tab profile view ── */
 function tenantTabsHtml(tenId){
-  return krTabBar([{id:'profile',l:'📋 '+t('Profile','প্রোফাইল')},{id:'lease',l:'📄 '+t('Lease','লিজ')},{id:'billing',l:'💳 '+t('Billing','বিলিং')},{id:'tickets',l:'🔧 '+t('Tickets','টিকিট')}], 'ten', 'profile')
+  return `${'__HDR__'}`+krTabBar([{id:'profile',l:'📋 '+t('Profile','প্রোফাইল')},{id:'lease',l:'📄 '+t('Lease','লিজ')},{id:'billing',l:'💳 '+t('Billing','বিলিং')},{id:'tickets',l:'🔧 '+t('Tickets','টিকিট')}], 'ten', 'profile')
     +`<div class="kr-tab-panel active" data-p="ten" data-tab="profile"><div class="dr-kv">${'__KV__'}</div>${'__REL__'}</div>`
     +`<div class="kr-tab-panel" data-p="ten" data-tab="lease">${tenantLeaseTab(tenId)}</div>`
     +`<div class="kr-tab-panel" data-p="ten" data-tab="billing">${tenantBillingTab(tenId)}</div>`
@@ -8512,7 +8512,7 @@ function openDetail(collection, id){
   if(collection==='tickets'){ extra=ticketThreadHtml(row.id); }
   let body=`<div class="dr-kv">${kvRows}</div>${related}${extra}`;
   if(collection==='properties'){ body=propertyTabsHtml(row.id).replace('__KV__',kvRows).replace('__REL__',related); }
-  if(collection==='tenants'){ body=tenantTabsHtml(row.id).replace('__KV__',tenantProfileHeaderHtml(row.id)+kvRows).replace('__REL__',related); }
+  if(collection==='tenants'){ body=tenantTabsHtml(row.id).replace('__HDR__',tenantProfileHeaderHtml(row.id)).replace('__KV__',kvRows).replace('__REL__',related); }
   openDrawer(`${s.icon} ${s.label} — ${row.id}`, body, foot);
   if(collection==='tenants') attachPhoto(document.getElementById('tenPhoto'),'tenant',row.id);
 }
