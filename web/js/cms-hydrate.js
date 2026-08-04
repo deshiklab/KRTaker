@@ -51,11 +51,12 @@
       const v = val(m.getAttribute('data-cms-content'));
       if (v !== undefined) m.setAttribute('content', v);
     });
+    let appliedTitle = null;
     document.querySelectorAll('[data-cms-title]').forEach(el => {
       const v = val(el.getAttribute('data-cms-title'));
-      if (v !== undefined) el.textContent = v;
+      if (v !== undefined) { el.textContent = v; appliedTitle = v; }
     });
-    document.title = val('seo.home.meta_title') || document.title;
+    if (!appliedTitle) document.title = val('seo.home.meta_title') || document.title;
     document.dispatchEvent(new CustomEvent('krcms', { detail: { map, lang } }));
   }
 
