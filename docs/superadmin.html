@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KRTaker — Super Admin Panel</title>
+<style>
+:root{
+  --primary:#2F80ED; --primary-dark:#1E5EB8; --primary-light:#E8F1FD;
+  --accent:#27AE60; --warn:#E67E22; --danger:#E74C3C;
+  --bg:#F2F5FA; --bg-alt:#F6F9FE; --bg-dark:#0F1B2D;
+  --text:#1A2433; --text-soft:#5B6B83; --text-mute:#8A97AB;
+  --border:#E4EAF3; --card:#FFFFFF;
+  --grad:linear-gradient(135deg,#2F80ED 0%,#1E5EB8 100%);
+  --shadow:0 10px 30px rgba(47,128,237,.10);
+  --radius:14px;
+  --font:'Inter','Hind Siliguri',system-ui,-apple-system,sans-serif;
+  --sidebar-w:252px;
+}
+[data-theme="dark"]{
+  --bg:#0E1626; --bg-alt:#121C30; --card:#16203A;
+  --text:#E8EEF9; --text-soft:#A8B6CF; --text-mute:#7483A0;
+  --border:#243350; --primary-light:rgba(47,128,237,.16);
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
+a{color:var(--primary);text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:13px;color:var(--text);background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;padding:9px 12px;outline:none;transition:border .15s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+textarea{min-height:74px;resize:vertical}
+label.lb{display:block;font-size:11.5px;font-weight:600;color:var(--text-soft);margin-bottom:5px;letter-spacing:.1px}
+.btn-primary{display:inline-flex;align-items:center;gap:7px;background:var(--grad);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;box-shadow:0 8px 22px rgba(47,128,237,.30);transition:all .15s}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-outline{display:inline-flex;align-items:center;gap:7px;border:1px solid #C9D8EE;color:var(--primary);background:var(--card);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;transition:all .15s}
+.btn-outline:hover{background:var(--primary-light);border-color:var(--primary)}
+[data-theme="dark"] .btn-outline{background:transparent;border-color:var(--border)}
+.btn-ghost{display:inline-flex;align-items:center;gap:7px;background:none;border:none;color:var(--text-soft);border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:600}
+.btn-ghost:hover{color:var(--primary);background:var(--primary-light)}
+.btn-danger{display:inline-flex;align-items:center;gap:6px;background:rgba(231,76,60,.1);color:var(--danger);border:1px solid rgba(231,76,60,.25);border-radius:9px;padding:7px 12px;font-size:12px;font-weight:700}
+.btn-danger:hover{background:var(--danger);color:#fff}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 10px;letter-spacing:.2px;white-space:nowrap}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.b-green{background:rgba(39,174,96,.12);color:#1E8A4C}
+.b-blue{background:var(--primary-light);color:var(--primary-dark)}
+.b-orange{background:rgba(230,126,34,.13);color:#C05F12}
+.b-red{background:rgba(231,76,60,.12);color:#C0392B}
+.b-gray{background:rgba(138,151,171,.14);color:var(--text-soft)}
+.b-purple{background:rgba(155,89,182,.12);color:#8E44AD}
+[data-theme="dark"] .b-green{color:#4CD68A}
+[data-theme="dark"] .b-blue{color:#7EB3F5}
+[data-theme="dark"] .b-orange{color:#F5A25D}
+[data-theme="dark"] .b-red{color:#F07B6E}
+[data-theme="dark"] .b-purple{color:#C39BD3}
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--bg-dark);color:#CBD5E6;display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:60;transition:transform .22s}
+.sb-brand{display:flex;align-items:center;gap:11px;padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo{width:38px;height:38px;border-radius:11px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
+.sb-brand .bn{color:#fff;font-size:14px;font-weight:800;line-height:1.15}
+.sb-brand .bs{font-size:10.5px;opacity:.7}
+.sb-scroll{flex:1;overflow-y:auto;padding:12px 10px 18px}
+.sb-group{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#6B7C96;padding:16px 10px 6px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:8.5px 11px;border-radius:9px;color:#B9C6DA;font-size:13px;font-weight:500;cursor:pointer;transition:all .13s;position:relative;border:1px solid transparent}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-item.active{background:var(--primary-light);color:var(--primary);font-weight:600}
+[data-theme="dark"] .sb-item.active{color:#7EB3F5}
+.sb-item.active::before{content:'';position:absolute;left:-10px;top:7px;bottom:7px;width:3.5px;border-radius:0 4px 4px 0;background:var(--grad)}
+.sb-item .ic{width:24px;text-align:center;font-size:14px}
+.sb-item .chip{margin-left:auto;font-size:10px;font-weight:700;background:var(--danger);color:#fff;border-radius:999px;padding:1px 7px}
+.sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-user{display:flex;align-items:center;gap:10px;padding:8px 6px}
+.sb-ava{width:34px;height:34px;border-radius:10px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.sb-user .un{color:#fff;font-size:12.5px;font-weight:700;line-height:1.2}
+.sb-user .ur{font-size:10.5px;opacity:.7}
+.main{flex:1;margin-left:var(--sidebar-w);display:flex;flex-direction:column;min-width:0}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 28px}
+[data-theme="dark"] .topbar{background:rgba(14,22,38,.92)}
+.topbar-in{display:flex;align-items:center;gap:14px;height:62px;max-width:1240px;margin:0 auto}
+.tb-title{font-size:15px;font-weight:800;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.icon-btn{background:var(--primary-light);border:1px solid var(--border);color:var(--primary-dark);border-radius:9px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;line-height:1;display:inline-flex;align-items:center;gap:6px}
+[data-theme="dark"] .icon-btn{color:#7EB3F5}
+.menu-toggle{display:none;background:none;border:1px solid var(--border);border-radius:9px;width:38px;height:38px;font-size:16px;color:var(--text)}
+.content{padding:26px 28px 60px;max-width:1240px;width:100%;margin:0 auto}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.page-head h1{font-size:23px;font-weight:800;letter-spacing:-.4px;line-height:1.2}
+.page-head .sub{font-size:13px;color:var(--text-mute);margin-top:3px}
+.head-actions{display:flex;gap:9px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:22px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 17px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .18s ease}
+.stat:hover{transform:translateY(-3px)}
+.stat::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);opacity:0;transition:opacity .18s}
+.stat:hover::after{opacity:1}
+.stat .s-label{font-size:11px;font-weight:600;color:var(--text-mute);letter-spacing:.2px;display:flex;align-items:center;gap:7px}
+.stat .s-ico{width:26px;height:26px;border-radius:8px;background:var(--primary-light);display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.stat .s-value{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-top:7px;line-height:1.15}
+.stat .s-trend{font-size:11px;font-weight:600;margin-top:5px;color:var(--text-mute)}
+.stat .s-trend.up{color:var(--accent)}
+.stat .s-trend.down{color:var(--danger)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.panel-h .t{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+.panel-h .t .pi{width:26px;height:26px;border-radius:8px;background:var(--primary-light);display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.panel-b{padding:16px 18px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+thead th{text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-mute);padding:11px 16px;border-bottom:1px solid var(--border);background:var(--bg-alt);white-space:nowrap}
+tbody td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--text-soft);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .12s}
+tbody tr:hover{background:var(--bg-alt)}
+td .c-name{font-weight:600;color:var(--text);font-size:13px}
+td .c-sub{font-size:11.5px;color:var(--text-mute)}
+.row-actions{display:flex;gap:6px;justify-content:flex-end}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.frm{display:flex;flex-direction:column;gap:12px}
+.frm .full{grid-column:1/-1}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--text-soft)}
+.kv .v{font-weight:700}
+.kv .v.pos{color:var(--accent)}
+.kv .v.neg{color:var(--danger)}
+.mix-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.mix-row:last-child{border-bottom:none}
+.mix-row b{font-weight:800}
+.mix-total{background:var(--primary-light);border-radius:10px;margin-top:6px;padding:8px 12px;font-weight:800}
+.empty{padding:26px;text-align:center;color:var(--text-mute);font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:var(--bg-alt);border:1px solid var(--border);font-size:11.5px;font-weight:600;margin:0 6px 6px 0}
+.chip.on{background:var(--primary-light);border-color:rgba(47,128,237,.3);color:var(--primary)}
+.chip .del{cursor:pointer;color:var(--text-mute);font-weight:800;padding:0 2px}
+.chip .del:hover{color:var(--danger)}
+.toast-wrap{position:fixed;top:18px;right:18px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:12px;padding:11px 16px;font-size:13px;font-weight:600;box-shadow:0 14px 40px rgba(10,25,50,.18);transition:opacity .3s;min-width:230px;max-width:360px}
+.toast.ok{border-left-color:var(--accent)}
+.toast.error{border-left-color:var(--danger)}
+.drawer-overlay{position:fixed;inset:0;background:rgba(10,20,40,.45);backdrop-filter:blur(3px);z-index:120;display:flex;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity .22s}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{width:min(560px,100vw);height:100%;background:var(--card);border-left:1px solid var(--border);box-shadow:-18px 0 60px rgba(10,25,50,.28);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .24s ease}
+.drawer.open{transform:none}
+.drawer-h{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid var(--border)}
+.drawer-h .dh-t{font-size:14.5px;font-weight:800;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drawer-h .close{background:none;border:none;font-size:16px;color:var(--text-mute);cursor:pointer;width:30px;height:30px;border-radius:9px}
+.drawer-h .close:hover{background:var(--primary-light);color:var(--primary)}
+.drawer-b{flex:1;overflow-y:auto;padding:18px 20px 26px}
+.drawer-f{padding:14px 20px;border-top:1px solid var(--border);background:var(--bg-alt)}
+.dr-actions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}
+.overlay{position:fixed;inset:0;background:rgba(10,20,40,.5);backdrop-filter:blur(4px);z-index:90;display:none;align-items:flex-start;justify-content:center;padding:6vh 18px;overflow-y:auto}
+.overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:18px;width:100%;max-width:640px;box-shadow:0 30px 80px rgba(10,25,50,.3);animation:pop .2s ease}
+@keyframes pop{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.modal-h{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.modal-h .t{font-size:16px;font-weight:800}
+.modal-h .close{margin-left:auto;background:none;border:none;font-size:17px;color:var(--text-mute)}
+.modal-b{padding:20px 22px 24px;max-height:70vh;overflow-y:auto}
+.auth{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-card{width:100%;max-width:400px;background:var(--card);border:1px solid var(--border);border-radius:20px;box-shadow:0 30px 80px rgba(10,25,50,.25);padding:34px 32px}
+.auth-logo{width:52px;height:52px;border-radius:15px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;margin-bottom:16px}
+.auth h2{font-size:20px;font-weight:800;letter-spacing:-.4px}
+.auth .as{font-size:12.5px;color:var(--text-mute);margin:4px 0 20px}
+.auth label.lb{margin-top:12px}
+.auth .err{color:var(--danger);font-size:12px;font-weight:600;margin-top:10px;display:none}
+.auth .err.show{display:block}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:none;box-shadow:20px 0 60px rgba(0,0,0,.35)}
+  .main{margin-left:0}
+  .menu-toggle{display:block}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .content{padding:20px 16px 60px}
+}
+</style>
+</head>
+<body>
+
+<div id="authScreen" class="auth">
+  <div class="auth-card">
+    <div class="auth-logo">KR</div>
+    <h2>Super Admin Panel</h2>
+    <div class="as">KRTaker platform administration · authorised operators only</div>
+    <label class="lb" for="authEmail">Email</label>
+    <input id="authEmail" type="email" placeholder="kabir@krtaker.com" autocomplete="off">
+    <label class="lb" for="authPass">Password</label>
+    <input id="authPass" type="password" placeholder="••••••••">
+    <div class="err" id="authErr"></div>
+    <div style="margin-top:18px"><button class="btn-primary" id="authBtn" style="width:100%;justify-content:center" onclick="doLogin()">Log in</button></div>
+  </div>
+</div>
+
+<div id="app" class="app" style="display:none">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">KR</div>
+      <div><div class="bn" id="sbBrand">KRTaker</div><div class="bs">Super Admin</div></div>
+    </div>
+    <div class="sb-scroll" id="sbNav"></div>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-ava" id="sbAva">SA</div>
+        <div style="flex:1;min-width:0"><div class="un" id="sbName">—</div><div class="ur" id="sbRole">Super Admin</div></div>
+        <button class="btn-ghost" style="color:#8FA2BE" onclick="doLogout()" title="Log out">⎋</button>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-in">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="tb-title" id="tbTitle">Super Admin</div>
+        <div class="tb-actions">
+          <button class="icon-btn" onclick="toggleTheme()">🌙</button>
+          <a class="icon-btn" href="dashboard-v2.html" target="_blank">↗ Dashboard</a>
+        </div>
+      </div>
+    </header>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="if(event.target===this)closeDrawer()">
+  <div class="drawer" id="drawer">
+    <div class="drawer-h"><span class="dh-t" id="drawerTitle"></span><button class="close" onclick="closeDrawer()">✕</button></div>
+    <div class="drawer-b" id="drawerBody"></div>
+    <div class="drawer-f" id="drawerFoot"></div>
+  </div>
+</div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const API='../api/';
+let TOKEN=''; try{TOKEN=localStorage.getItem('krtaker_admin_token')||'';}catch(e){}
+let LIVE={user:null};
+let STATE={view:'dashboard',theme:localStorage.getItem('krtaker_admin_theme')||'light'};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'৳'+Math.round(n).toLocaleString('en-IN');
+const moneyC=n=>{const a=Math.abs(n);let s=a>=10000000?(a/10000000).toFixed(2)+'Cr':a>=100000?(a/100000).toFixed(1)+'L':Math.round(a).toLocaleString('en-IN');return(n<0?'−':'')+'৳'+s;};
+function toast(msg,type){const d=document.createElement('div');const t=type==='ok'||type==='success'?'ok':(type==='error'?'error':'info');d.className='toast '+t;d.textContent=msg;$('toastWrap').appendChild(d);setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),300)},2800)}
+function badge(st){const map={'active':'b-green','Active':'b-green','Paid':'b-green','Success':'b-green','Resolved':'b-green','Closed':'b-green','OK':'b-green','ready':'b-green','trial':'b-purple','Trial':'b-purple','pending':'b-orange','Pending':'b-orange','suspended':'b-orange','Suspended':'b-orange','Open':'b-red','cancelled':'b-gray','Cancelled':'b-gray','In Progress':'b-blue','Answered':'b-blue','High':'b-red','Urgent':'b-red','Normal':'b-blue','Low':'b-gray','disabled':'b-gray','unconfigured':'b-orange','active':'b-green'};return`<span class="badge ${map[st]||'b-gray'}">${esc(st)}</span>`}
+function openDrawer(title,body,foot){$('drawerTitle').textContent=title;$('drawerBody').innerHTML=body;$('drawerFoot').innerHTML=foot||'';$('drawerOverlay').classList.add('open');$('drawer').classList.add('open');}
+function closeDrawer(){$('drawerOverlay').classList.remove('open');$('drawer').classList.remove('open');}
+function toggleSidebar(){$('sidebar').classList.toggle('open')}
+function toggleTheme(){STATE.theme=STATE.theme==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',STATE.theme);localStorage.setItem('krtaker_admin_theme',STATE.theme);$('tbTitle').textContent='';renderTitle();toast(STATE.theme==='dark'?'Dark mode on':'Light mode on')}
+async function api(path,data){
+  const opts={method:data?'POST':'GET',headers:{}};
+  if(data)opts.headers['Content-Type']='application/json';
+  if(TOKEN)opts.headers['Authorization']='Bearer '+TOKEN;
+  if(data)opts.body=JSON.stringify(data);
+  const res=await fetch(API+path,opts);
+  return res.json().catch(()=>({ok:false,error:'Parse error'}));
+}
+async function admin(data){return api('app-admin',data)}
+function renderTitle(){const t=NAV[STATE.view]||{};$('tbTitle').textContent=(t.ic||'')+' '+(t.l||'Super Admin')}
+function renderNav(){
+  const groups=[
+    ['Overview',['dashboard']],
+    ['Platform',['subscribers','packages','users','providers']],
+    ['Content & CRM',['cms','onboarding','mis']],
+    ['Commerce',['payments','finance']],
+    ['System',['settings','integrations','tickets','backup','modules','whitelabel','health','audit']]
+  ];
+  $('sbNav').innerHTML=groups.map(g=>`<div class="sb-group">${g[0]}</div>`+g[1].map(k=>{const n=NAV[k];return `<div class="sb-item ${STATE.view===k?'active':''}" onclick="nav('${k}')"><span class="ic">${n.ic}</span>${n.l}${n.chip?`<span class="chip">${n.chip}</span>`:''}</div>`}).join('')).join('');
+}
+const NAV={
+  dashboard:{ic:'📊',l:'Dashboard'},
+  subscribers:{ic:'👥',l:'Subscribers'},
+  packages:{ic:'📦',l:'Packages'},
+  users:{ic:'👤',l:'User Management'},
+  providers:{ic:'🛠️',l:'Service Providers'},
+  cms:{ic:'🌐',l:'Web CMS'},
+  onboarding:{ic:'🎧',l:'Onboarding & CRM'},
+  mis:{ic:'📈',l:'MIS Reports'},
+  payments:{ic:'💳',l:'Payment Integrations'},
+  finance:{ic:'💰',l:'Company Finance'},
+  settings:{ic:'⚙️',l:'App Settings'},
+  integrations:{ic:'🔌',l:'3rd-party Integrations'},
+  tickets:{ic:'🎫',l:'Support & Ticketing'},
+  backup:{ic:'💾',l:'Data Backup'},
+  modules:{ic:'🧩',l:'Module Management'},
+  whitelabel:{ic:'🏷️',l:'White Label'},
+  health:{ic:'🩺',l:'System Health'},
+  audit:{ic:'📜',l:'Audit Logs'}
+};
+function nav(v){STATE.view=v;renderNav();renderTitle();render();window.scrollTo(0,0)}
+function render(){
+  const el=$('content');
+  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit}[STATE.view];
+  el.innerHTML=`<div class="page-head"><div><h1>${NAV[STATE.view].l}</h1><div class="sub" id="pageSub"></div></div><div class="head-actions" id="pageActions"></div></div><div id="pageBody"></div>`;
+  r();
+}
+function pageHead(sub,actions){if(sub)$('pageSub').textContent=sub;if(actions)$('pageActions').innerHTML=actions;}
+function load(el,html){const e=$(el);if(e)e.innerHTML=html;}
+
+/* ── Dashboard ── */
+async function renderDashboard(){
+  load('pageBody','<div class="c-sub" style="color:var(--text-mute);padding:20px">Loading…</div>');
+  const d=await admin({action:'overview'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  const s=d.stats;
+  pageHead(`Platform at a glance · ${s.subscribers} subscribers · MRR ${moneyC(s.mrr)}`);
+  const cards=[['👥','Subscribers',s.subscribers,'total · '+s.active+' active'],['🟣','Trial',s.trial,'awaiting conversion'],['💰','MRR',moneyC(s.mrr),'ARR '+moneyC(s.arr)],['📦','Packages',s.packages,'catalog'],['👤','Staff users',s.users,'app_users'],['🎫','Open tickets',s.tickets_open,s.tickets_open?'needs attention':'all clear'],['🧲','Leads (30d)',s.leads,'platform CRM'],['🧊','DB size',(s.db_size/1048576).toFixed(1)+' MB',s.tables+' tables · '+s.files+' files']];
+  load('pageBody',
+    `<div class="stats">${cards.map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>`+
+    `<div class="grid-2" style="display:grid;grid-template-columns:1.5fr 1fr;gap:18px"><div><div class="panel"><div class="panel-h"><span class="t"><span class="pi">🕒</span>Recent activity</span></div><div class="panel-b">${(s.audit||[]).map(a=>`<div class="kv"><span class="k">${esc(a.user)} · ${esc(a.action)} <span style="color:var(--text-mute);font-size:11px">${esc(a.module)}</span></span><span class="v" style="font-size:11.5px;color:var(--text-mute)">${esc(a.ts||'').slice(0,16)}</span></div>`).join('')||'<div class="empty">No activity yet.</div>'}</div></div></div><div><div class="panel"><div class="panel-h"><span class="t"><span class="pi">🚀</span>Quick actions</span></div><div class="panel-b" style="display:flex;flex-direction:column;gap:8px">${[['👥 Add subscriber','subscribers'],['📦 Create package','packages'],['🎫 New support ticket','tickets'],['💾 Run backup','backup'],['🌐 Edit web CMS','cms']].map(q=>`<button class="btn-outline" style="justify-content:flex-start" onclick="nav('${q[1]}')">${q[0]}</button>`).join('')}</div></div></div></div>`);
+}
+/* ── Subscribers ── */
+let SUBS={list:[],plans:[]};
+async function renderSubscribers(){
+  pageHead('Manage platform subscribers — plans, status, trial windows',`<button class="btn-primary" onclick="subscriberForm()">＋ Add subscriber</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'subscribers'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  SUBS={list:d.subscribers||[],plans:d.plans||[]};
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subscriber</th><th>Plan</th><th>Role</th><th>Status</th><th>Trial end</th><th>Created</th><th></th></tr></thead><tbody>${SUBS.list.map(s=>`<tr><td>#${s.id}</td><td><div class="c-name">${esc(s.name)}</div><div class="c-sub">${esc(s.email)}${s.phone?' · '+esc(s.phone):''}</div></td><td>${s.plan?badge(s.plan):'—'}</td><td>${esc(s.role||'owner')}</td><td>${badge(s.status)}</td><td class="c-sub">${esc(s.trial_end||'—')}</td><td class="c-sub">${esc((s.created_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="subscriberForm(${s.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="subscriberDelete(${s.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No subscribers.</div></td></tr>'}</tbody></table></div></div>`);
+}
+function subscriberForm(id){
+  const s=id?SUBS.list.find(x=>x.id===id):{id:0,name:'',org:'',email:'',phone:'',plan:'',role:'owner',status:'pending',trial_end:''};
+  openDrawer(id?'Edit subscriber #'+id:'New subscriber',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">Name</label><input id="sf_name" value="${esc(s.name)}"></div><div><label class="lb">Org</label><input id="sf_org" value="${esc(s.org)}"></div></div>
+     <div class="grid-2"><div><label class="lb">Email</label><input id="sf_email" value="${esc(s.email)}"></div><div><label class="lb">Phone</label><input id="sf_phone" value="${esc(s.phone)}"></div></div>
+     <div class="grid-2"><div><label class="lb">Plan</label><select id="sf_plan"><option value="">— none —</option>${SUBS.plans.map(p=>`<option value="${esc(p.code)}" ${s.plan===p.code?'selected':''}>${esc(p.name)} (${esc(p.code)})</option>`).join('')}</select></div><div><label class="lb">Role</label><select id="sf_role">${['owner','manager','tenant','accountant','crm','hr','legal','svc_mgr','partner'].map(r=>`<option ${s.role===r?'selected':''}>${r}</option>`).join('')}</select></div></div>
+     <div class="grid-2"><div><label class="lb">Status</label><select id="sf_status">${['pending','trial','active','suspended','cancelled'].map(st=>`<option ${s.status===st?'selected':''}>${st}</option>`).join('')}</select></div><div><label class="lb">Trial end (YYYY-MM-DD)</label><input id="sf_trial" value="${esc(s.trial_end||'')}" placeholder="2026-08-31"></div></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="subscriberSave(${id})">💾 Save</button></div>`);
+}
+async function subscriberSave(id){
+  const d=await admin({action:'subscriber-save',id,name:$('sf_name').value.trim(),org:$('sf_org').value.trim(),email:$('sf_email').value.trim(),phone:$('sf_phone').value.trim(),plan:$('sf_plan').value,role:$('sf_role').value,status:$('sf_status').value,trial_end:$('sf_trial').value.trim()});
+  if(d.ok){toast('Subscriber saved','ok');closeDrawer();renderSubscribers();}else toast(d.error||'Failed','error');
+}
+async function subscriberDelete(id){
+  if(!confirm('Delete subscriber #'+id+'?'))return;
+  const d=await admin({action:'subscriber-delete',id});
+  if(d.ok){toast('Subscriber deleted','ok');renderSubscribers();}else toast(d.error||'Failed','error');
+}
+/* ── Packages (reuse app-packages) ── */
+let PKG={list:[],registry:[],roles:[]};
+async function renderPackages(){
+  pageHead('Create and manage packages — module matrix and limits per plan',`<button class="btn-primary" onclick="packageForm()">＋ New package</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await api('app-packages',{action:'list'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  PKG={list:d.packages||[],registry:d.registry||[],roles:d.roles||[]};
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Package</th><th>Price</th><th>Seats</th><th>Modules</th><th>Subscribers</th><th></th></tr></thead><tbody>${PKG.list.map(p=>`<tr><td>${esc(p.code)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.tag||'')}</div></td><td class="c-sub">${money(p.price)}/mo</td><td>${p.seats||1}</td><td class="c-sub">${(p.modules||{}).owner?Object.keys(p.modules).length+' roles · '+(p.modules.owner||[]).length+' owner mods':Object.keys(p.modules||{}).length+' roles'}</td><td>${p.subscribers||0}</td><td><div class="row-actions"><button class="btn-ghost" onclick="packageForm('${esc(p.code)}')">✎</button><button class="btn-ghost" onclick="packageMatrix('${esc(p.code)}')">🧩</button><button class="btn-ghost" onclick="packageLimits('${esc(p.code)}')">📏</button><button class="btn-ghost" onclick="packageAssign('${esc(p.code)}')">👥</button><button class="btn-ghost" style="color:var(--danger)" onclick="packageDelete('${esc(p.code)}')">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No packages yet.</div></td></tr>'}</tbody></table></div></div>
+   <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧩</span>Module registry</span></div><div class="panel-b"><div style="display:flex;flex-wrap:wrap;gap:6px">${PKG.registry.map(m=>`<span class="chip ${m.built?'on':''}">${esc(m.id)}${m.built?'':' 🔜'}</span>`).join('')}</div></div></div>`);
+}
+function packageForm(code){
+  const p=code?PKG.list.find(x=>x.code===code):{code:'',name:'',price:0,seats:1,tag:'',features:[]};
+  openDrawer(code?'Edit package — '+code:'New package',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">Code (a-z, 0-9, _)</label><input id="pk_code" value="${esc(p.code)}" ${code?'disabled':''}></div><div><label class="lb">Name</label><input id="pk_name" value="${esc(p.name)}"></div></div>
+     <div class="grid-2"><div><label class="lb">Price (৳/month)</label><input id="pk_price" type="number" value="${p.price}"></div><div><label class="lb">Seats</label><input id="pk_seats" type="number" value="${p.seats||1}"></div></div>
+     <div><label class="lb">Tagline</label><input id="pk_tag" value="${esc(p.tag||'')}"></div>
+     <div><label class="lb">Features (one per line)</label><textarea id="pk_features">${esc((p.features||[]).join('\n'))}</textarea></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="packageSave('${esc(code||'')}')">💾 Save</button></div>`);
+}
+async function packageSave(code){
+  const features=$('pk_features').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const d=await api('app-packages',{action:'save',code:code||$('pk_code').value.trim().toLowerCase(),name:$('pk_name').value.trim(),price:+$('pk_price').value||0,seats:+$('pk_seats').value||1,tag:$('pk_tag').value.trim(),features});
+  if(d.ok){toast('Package saved','ok');closeDrawer();renderPackages();}else toast(d.error||'Failed','error');
+}
+async function packageDelete(code){
+  if(!confirm('Delete package '+code+'?'))return;
+  const d=await api('app-packages',{action:'delete',code});
+  if(d.ok){toast('Package deleted','ok');renderPackages();}else toast(d.error||'Failed','error');
+}
+let PKG_CUR=null;
+function packageMatrix(code){
+  const p=PKG.list.find(x=>x.code===code);if(!p)return;PKG_CUR=code;
+  const mods=p.modules||{};
+  openDrawer('Module matrix — '+code+' (role × module access)',
+    `<div class="frm">${PKG.roles.map(r=>{const sel=mods[r]||[];return `<div><label class="lb">${esc(r)}</label><div style="display:flex;flex-wrap:wrap;gap:5px">${PKG.registry.map(m=>`<label style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:4px 9px;border:1px solid var(--border);border-radius:999px;cursor:pointer;background:${sel.includes(m.id)?'var(--primary-light)':'var(--bg-alt)'}" class="mx-${esc(r)}"><input type="checkbox" data-role="${esc(r)}" data-mod="${esc(m.id)}" ${sel.includes(m.id)?'checked':''} style="width:auto;accent-color:var(--primary)"> ${esc(m.id)}</label>`).join('')}</div></div>`}).join('')}</div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="packageMatrixSave()">💾 Save matrix</button></div>`);
+}
+async function packageMatrixSave(){
+  const mods={};
+  PKG.roles.forEach(r=>{mods[r]=[...document.querySelectorAll('input[data-role="'+r+'"]:checked')].map(c=>c.dataset.mod);});
+  const d=await api('app-packages',{action:'save',code:PKG_CUR,name:PKG.list.find(x=>x.code===PKG_CUR).name,price:PKG.list.find(x=>x.code===PKG_CUR).price,seats:PKG.list.find(x=>x.code===PKG_CUR).seats,tag:PKG.list.find(x=>x.code===PKG_CUR).tag||'',features:PKG.list.find(x=>x.code===PKG_CUR).features||[],modules:mods,limits:PKG.list.find(x=>x.code===PKG_CUR).limits||{}});
+  if(d.ok){toast('Module matrix saved','ok');closeDrawer();renderPackages();}else toast(d.error||'Failed','error');
+}
+function packageLimits(code){
+  const p=PKG.list.find(x=>x.code===code);if(!p)return;PKG_CUR=code;
+  const lim=p.limits||{};
+  openDrawer('Limits — '+code,
+    `<div class="frm grid-2"><div><label class="lb">Property limit</label><input id="lm_property" type="number" value="${lim.property_limit??9999}"></div><div><label class="lb">Unit limit</label><input id="lm_unit" type="number" value="${lim.unit_limit??99999}"></div>
+     <div><label class="lb">Seats</label><input id="lm_seats" type="number" value="${lim.seats??1}"></div><div><label class="lb">KR AI</label><select id="lm_ai"><option value="1" ${lim.kr_ai?'selected':''}>Enabled</option><option value="0" ${!lim.kr_ai?'selected':''}>Disabled</option></select></div>
+     <div><label class="lb">API access</label><select id="lm_api"><option value="1" ${lim.api_access?'selected':''}>Enabled</option><option value="0" ${!lim.api_access?'selected':''}>Disabled</option></select></div><div><label class="lb">Reports</label><select id="lm_reports"><option value="1" ${lim.reports?'selected':''}>Enabled</option><option value="0" ${!lim.reports?'selected':''}>Disabled</option></select></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="packageLimitsSave()">💾 Save limits</button></div>`);
+}
+async function packageLimitsSave(){
+  const p=PKG.list.find(x=>x.code===PKG_CUR);
+  const limits={property_limit:+$('lm_property').value||0,unit_limit:+$('lm_unit').value||0,seats:+$('lm_seats').value||1,kr_ai:$('lm_ai').value==='1',api_access:$('lm_api').value==='1',reports:$('lm_reports').value==='1'};
+  const d=await api('app-packages',{action:'save',code:PKG_CUR,name:p.name,price:p.price,seats:p.seats,tag:p.tag||'',features:p.features||[],modules:p.modules||{},limits});
+  if(d.ok){toast('Limits saved','ok');closeDrawer();renderPackages();}else toast(d.error||'Failed','error');
+}
+let PKG_SUBS=[];
+async function packageAssign(code){
+  const d=await api('app-packages',{action:'subscribers'});
+  if(!d.ok)return;
+  PKG_SUBS=d.subscribers||[];
+  PKG_CUR=code;
+  openDrawer('Assign subscribers → '+code,
+    `<div class="frm">${PKG_SUBS.map(s=>`<div style="display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:9px 12px"><input type="checkbox" id="asg_${s.id}" style="width:auto" ${s.plan===code?'checked':''}><div style="flex:1;min-width:0"><div class="c-name" style="font-size:13px">${esc(s.name)}</div><div class="c-sub">${esc(s.email)} · now: ${esc(s.plan||'—')}</div></div></div>`).join('')||'<div class="empty">No subscribers.</div>'}</div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="packageAssignSave()">💾 Assign</button></div>`);
+}
+async function packageAssignSave(){
+  let done=0;
+  for(const s of PKG_SUBS){
+    const on=document.getElementById('asg_'+s.id)&&document.getElementById('asg_'+s.id).checked;
+    if(on&&s.plan!==PKG_CUR){const d=await api('app-packages',{action:'assign',subscriber_id:s.id,plan:PKG_CUR});if(d.ok)done++;}
+  }
+  toast('Assigned '+done+' subscriber(s) to '+PKG_CUR,'ok');closeDrawer();renderPackages();
+}
+/* ── Users ── */
+let USRS=[];
+async function renderUsers(){
+  pageHead('Platform staff & system user management',`<button class="btn-primary" onclick="userForm()">＋ Add user</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'users'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  USRS=d.users||[];
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>User</th><th>Role</th><th>Dept</th><th>Active</th><th>Last login</th><th></th></tr></thead><tbody>${USRS.map(u=>`<tr><td>#${u.id}</td><td><div class="c-name">${esc(u.name)}</div><div class="c-sub">${esc(u.email)}</div></td><td>${badge(u.role)}</td><td class="c-sub">${esc(u.dept||'—')}</td><td>${u.active?badge('Active'):badge('Suspended')}</td><td class="c-sub">${esc(u.last_login||'—')}</td><td><div class="row-actions"><button class="btn-ghost" onclick="userForm(${u.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="userDelete(${u.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>'}</tbody></table></div></div>`);
+}
+function userForm(id){
+  const u=id?USRS.find(x=>x.id===id):{id:0,name:'',email:'',role:'staff',dept:'',active:1};
+  openDrawer(id?'Edit user #'+id:'New system user',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">Name</label><input id="us_name" value="${esc(u.name)}"></div><div><label class="lb">Email</label><input id="us_email" value="${esc(u.email)}"></div></div>
+     <div class="grid-2"><div><label class="lb">Role</label><select id="us_role">${['superadmin','owner','manager','svc_mgr','legal','crm','accountant','hr','tenant','partner'].map(r=>`<option ${u.role===r?'selected':''}>${r}</option>`).join('')}</select></div><div><label class="lb">Dept</label><input id="us_dept" value="${esc(u.dept||'')}"></div></div>
+     <div class="grid-2"><div><label class="lb">${id?'New password (blank = keep)':'Password'}</label><input id="us_pass" type="password" placeholder="••••••"></div><div><label class="lb">Active</label><select id="us_active"><option value="1" ${u.active?'selected':''}>Active</option><option value="0" ${!u.active?'selected':''}>Suspended</option></select></div></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="userSave(${id})">💾 Save</button></div>`);
+}
+async function userSave(id){
+  const d=await admin({action:'user-save',id,name:$('us_name').value.trim(),email:$('us_email').value.trim(),role:$('us_role').value,dept:$('us_dept').value.trim(),password:$('us_pass').value,active:+$('us_active').value});
+  if(d.ok){toast('User saved','ok');closeDrawer();renderUsers();}else toast(d.error||'Failed','error');
+}
+async function userDelete(id){
+  if(!confirm('Delete user #'+id+'?'))return;
+  const d=await admin({action:'user-delete',id});
+  if(d.ok){toast('User deleted','ok');renderUsers();}else toast(d.error||'Failed','error');
+}
+/* ── Providers ── */
+let PROVS=[];
+async function renderProviders(){
+  pageHead('Manage service providers across the platform',`<button class="btn-primary" onclick="providerForm()">＋ Add provider</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'providers'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  PROVS=d.providers||[];
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Provider</th><th>Trade</th><th>Rating</th><th>Jobs</th><th>Status</th><th></th></tr></thead><tbody>${PROVS.map(p=>`<tr><td>${esc(p.id)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.sub_email||'')}</div></td><td>${esc(p.trade||'—')}</td><td>${p.rating||0}</td><td>${p.jobs||0}</td><td>${badge(p.status)}</td><td><div class="row-actions"><button class="btn-ghost" onclick="providerForm('${esc(p.id)}')">✎</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No providers.</div></td></tr>'}</tbody></table></div></div>`);
+}
+function providerForm(id){
+  const p=id?PROVS.find(x=>x.id===id):{id:'',name:'',trade:'',status:'Active',sub_email:''};
+  openDrawer(id?'Edit provider — '+id:'New service provider',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">Name</label><input id="pv_name" value="${esc(p.name)}"></div><div><label class="lb">Trade</label><input id="pv_trade" value="${esc(p.trade||'')}"></div></div>
+     <div class="grid-2"><div><label class="lb">Status</label><select id="pv_status"><option ${p.status==='Active'?'selected':''}>Active</option><option ${p.status==='Inactive'?'selected':''}>Inactive</option></select></div><div><label class="lb">Subscriber email (portal)</label><input id="pv_email" value="${esc(p.sub_email||'')}"></div></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="providerSave('${esc(id||'')}')">💾 Save</button></div>`);
+}
+async function providerSave(id){
+  const d=await admin({action:'provider-save',id,name:$('pv_name').value.trim(),trade:$('pv_trade').value.trim(),status:$('pv_status').value,sub_email:$('pv_email').value.trim()});
+  if(d.ok){toast('Provider saved','ok');closeDrawer();renderProviders();}else toast(d.error||'Failed','error');
+}
+/* ── Web CMS ── */
+let CMS_BLOCKS=[];
+async function renderCms(){
+  pageHead('Edit landing-site content — hero, features, pricing, contact, footer',`<button class="btn-primary" onclick="cmsSaveAll()">💾 Save all changes</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'cms-get'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  CMS_BLOCKS=d.blocks||[];
+  const byPage={};
+  CMS_BLOCKS.forEach(b=>{(byPage[b.page]=byPage[b.page]||[]).push(b)});
+  load('pageBody',Object.keys(byPage).map(pg=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🌐</span>${esc(pg)}</span></div><div class="panel-b"><div class="frm">${byPage[pg].map(b=>`<div><label class="lb">${esc(b.section)} → ${esc(b.k)}</label><input data-cms="${esc(b.page)}|${esc(b.section)}|${esc(b.k)}" value="${esc(b.v)}"></div>`).join('')}</div></div></div>`).join(''));
+}
+async function cmsSaveAll(){
+  const blocks=CMS_BLOCKS.map(b=>{const el=document.querySelector(`input[data-cms="${b.page}|${b.section}|${b.k}"]`);return {...b,v:el?el.value:b.v}});
+  const d=await admin({action:'cms-save',blocks});
+  if(d.ok){toast('CMS content saved','ok');renderCms();}else toast(d.error||'Failed','error');
+}
+/* ── Onboarding & CRM ── */
+let ONB={leads:[],onboarding:[],referrals:[]};
+async function renderOnboarding(){
+  pageHead('Platform CRM — leads, subscriber onboarding applications and referrals');
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'onboarding'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  ONB=d;
+  const l=(d.leads||[]).slice(0,40), o=(d.onboarding||[]).slice(0,40), r=(d.referrals||[]).slice(0,30);
+  load('pageBody',
+    `<div class="stats">${[['🧲','Leads',l.length,'recent'],['📋','Onboarding apps',o.length,'pending review'],['🤝','Referrals',r.length,'program'],['👥','Subscribers',(d.subs||0),'total']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>`+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧲</span>Leads</span></div><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Source</th><th>Status</th><th>Created</th></tr></thead><tbody>${l.map(x=>`<tr><td>${esc(x.id)}</td><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.prop||'')}</div></td><td class="c-sub">${esc(x.phone||'')}${x.email?' · '+esc(x.email):''}</td><td>${esc(x.source||'—')}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="6"><div class="empty">No leads.</div></td></tr>'}</tbody></table></div></div>`+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">📋</span>Onboarding applications</span></div><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Applicant</th><th>Details</th><th>Status</th><th>Created</th></tr></thead><tbody>${o.map(x=>`<tr><td>${esc(x.id)}</td><td class="c-name">${esc(x.name||x.applicant||'—')}</td><td class="c-sub">${esc((x.details||x.note||'').slice(0,60))}</td><td>${badge(x.status||'Pending')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="5"><div class="empty">No onboarding applications.</div></td></tr>'}</tbody></table></div></div>`+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🤝</span>Referrals</span></div><div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Referrer</th><th>Status</th><th>Created</th></tr></thead><tbody>${r.map(x=>`<tr><td>${esc(x.code||x.id)}</td><td class="c-name">${esc(x.referrer||'—')}</td><td>${badge(x.status||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="4"><div class="empty">No referrals.</div></td></tr>'}</tbody></table></div></div>`);
+}
+/* ── MIS Reports ── */
+async function renderMis(){
+  pageHead('Management information system — subscriber, revenue and support trends');
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'mis'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  const m=d.mis||{};
+  const rows=(arr,cls)=>arr.map(x=>`<div class="kv"><span class="k">${esc(x.m||x.plan||x.status||x.role||'—')}</span><span class="v ${cls?cls(x):''}">${x.n??x.amt??x.total??''}</span></div>`).join('');
+  load('pageBody',
+    `<div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📦</span>Subscribers by plan</span></div><div class="panel-b">${rows(m.subscribers_by_plan||[])}</div></div>
+      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🟢</span>Subscribers by status</span></div><div class="panel-b">${rows(m.subscribers_by_status||[])}</div></div>
+      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">👤</span>Staff users by role</span></div><div class="panel-b">${rows(m.users_by_role||[])}</div></div>
+      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🎫</span>Tickets by status</span></div><div class="panel-b">${rows(m.tickets_by_status||[])}</div></div>
+      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📈</span>Signups by month</span></div><div class="panel-b">${rows(m.signups_by_month||[])}</div></div>
+      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💎</span>Premium revenue by month</span></div><div class="panel-b">${rows(m.premium_by_month||[],x=>'pos')}</div></div>
+    </div>
+    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💰</span>Company ledger by month</span></div><div class="tbl-wrap"><table><thead><tr><th>Month</th><th>Kind</th><th>Amount</th></tr></thead><tbody>${(m.ledger_by_month||[]).map(x=>`<tr><td>${esc(x.m)}</td><td>${badge(x.kind)}</td><td class="${x.kind==='expense'?'t-neg':'t-pos'}" style="font-weight:700">${money(x.amt)}</td></tr>`).join('')||'<tr><td colspan="3"><div class="empty">No ledger entries.</div></td></tr>'}</tbody></table></div></div>`);
+}
+/* ── Payment Integrations ── */
+let GW=[];
+async function renderPayments(){
+  pageHead('Configure payment gateways (bKash / SSLCommerz / Nagad) and platform payment integrations',`<button class="btn-primary" onclick="integrationForm()">＋ Integration</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'integrations'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  GW=d.gateways||[];
+  load('pageBody',
+    `<div class="grid-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px">${GW.map(g=>`<div class="panel"><div class="panel-b"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span class="s-ico" style="width:34px;height:34px;border-radius:10px;background:var(--primary-light);display:inline-flex;align-items:center;justify-content:center;font-size:15px">💳</span><div><div class="c-name" style="font-size:14px">${esc(g.name)}</div><div class="c-sub">${g.sandbox?'sandbox mode':'LIVE mode'} · ${g.ready?'ready':'placeholders set'}</div></div></div>${g.ready?badge('ready'):badge('unconfigured')}<div style="margin-top:12px"><button class="btn-outline" style="width:100%;justify-content:center" onclick="gatewayForm('${esc(g.code)}')">⚙ Configure</button></div></div></div>`).join('')}</div>`+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🔌</span>Other integrations</span></div><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Type</th><th>Name</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>${(d.integrations||[]).map(i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`).join('')||'<tr><td colspan="6"><div class="empty">No integrations configured.</div></td></tr>'}</tbody></table></div></div>`);
+}
+function gatewayForm(code){
+  const g=GW.find(x=>x.code===code);if(!g)return;
+  openDrawer('Configure '+g.name,
+    `<div class="frm">
+      <div class="mix-row"><span>Current mode</span><b>${g.sandbox?'🧪 Sandbox':'🚀 Live'}</b></div>
+      <div class="mix-row"><span>Status</span><b>${g.ready?'Ready for real payments':'Default placeholders — not ready'}</b></div>
+      ${g.merchant!==undefined?`<div><label class="lb">Merchant ID / wallet</label><input id="gw_merchant" value="${esc(g.merchant)}"></div>`:''}
+      ${g.store_id!==undefined?`<div><label class="lb">Store ID</label><input id="gw_store" value="${esc(g.store_id)}"></div>`:''}
+      ${g.app_secret!==undefined?`<div><label class="lb">App secret</label><input id="gw_secret" value="${esc(g.app_secret)}"></div>`:''}
+      ${g.store_pass!==undefined?`<div><label class="lb">Store password</label><input id="gw_pass" value="${esc(g.store_pass)}"></div>`:''}
+      <div><label class="lb">Sandbox mode</label><select id="gw_sandbox"><option value="1" ${g.sandbox?'selected':''}>Sandbox (test)</option><option value="0" ${!g.sandbox?'selected':''}>Live</option></select></div>
+      <div class="c-sub" style="font-size:11px;color:var(--text-mute)">Masked fields starting with ••• keep the stored value. Leave placeholders to stay in demo mode.</div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="gatewaySave('${esc(code)}')">💾 Save</button></div>`);
+}
+async function gatewaySave(code){
+  const cfg={sandbox:$('gw_sandbox').value==='1'};
+  const g=GW.find(x=>x.code===code);
+  if(g.merchant!==undefined)cfg.merchant=$('gw_merchant').value.trim();
+  if(g.store_id!==undefined)cfg.store_id=$('gw_store').value.trim();
+  if(g.app_secret!==undefined)cfg.app_secret=$('gw_secret').value.trim();
+  if(g.store_pass!==undefined)cfg.store_pass=$('gw_pass').value.trim();
+  const d=await admin({action:'gateway-save',code,config:cfg});
+  if(d.ok){toast('Gateway configuration saved','ok');closeDrawer();renderPayments();}else toast(d.error||'Failed','error');
+}
+let INTS=[];
+function integrationForm(id){
+  const i=id?INTS.find(x=>x.id===id):{id:'',type:'third_party',name:'',enabled:0,config:{}};
+  openDrawer(id?'Edit integration — '+id:'New integration',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">ID (slug)</label><input id="in_id" value="${esc(i.id)}" ${id?'disabled':''}></div><div><label class="lb">Name</label><input id="in_name" value="${esc(i.name)}"></div></div>
+     <div class="grid-2"><div><label class="lb">Type</label><select id="in_type">${['third_party','sms','email','ai','payment','analytics'].map(t=>`<option ${i.type===t?'selected':''}>${t}</option>`).join('')}</select></div><div><label class="lb">Enabled</label><select id="in_enabled"><option value="1" ${i.enabled?'selected':''}>Enabled</option><option value="0" ${!i.enabled?'selected':''}>Disabled</option></select></div></div>
+     <div><label class="lb">Config (JSON)</label><textarea id="in_config">${esc(JSON.stringify(i.config||{},null,1))}</textarea></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="integrationSave('${esc(id||'')}')">💾 Save</button></div>`);
+}
+async function integrationSave(id){
+  let cfg={};try{cfg=JSON.parse($('in_config').value||'{}')}catch(e){toast('Config JSON invalid','error');return}
+  const d=await admin({action:'integration-save',id:id||$('in_id').value.trim(),name:$('in_name').value.trim(),type:$('in_type').value,enabled:+$('in_enabled').value,config:cfg});
+  if(d.ok){toast('Integration saved','ok');closeDrawer();renderPayments();}else toast(d.error||'Failed','error');
+}
+async function integrationTest(id){
+  const d=await admin({action:'integration-test',id});
+  toast((d.result||'Test done')+(d.latency_ms?' · '+d.latency_ms+'ms':''),'ok');
+}
+/* ── Finance ── */
+let LED=[];
+async function renderFinance(){
+  pageHead('Company accounts — subscription revenue, expenses and balance',`<button class="btn-primary" onclick="ledgerForm()">＋ Add entry</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'finance'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  const f=d.finance||{};LED=d.ledger||[];
+  load('pageBody',
+    `<div class="stats">${[['💰','Total income',moneyC(f.income),'all ledger income'],['📤','Total expense',moneyC(f.expense),'all ledger expense'],['⚖️','Balance',moneyC(f.balance),f.balance>=0?'positive':'negative'],['🧾','Entries',LED.length,'company ledger']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value ${c[3]==='negative'?'':''}">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>
+     <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px"><div class="panel"><div class="panel-h"><span class="t"><span class="pi">🏷️</span>By category</span></div><div class="panel-b">${(d.cats||[]).map(c=>`<div class="kv"><span class="k">${esc(c.kind)} / ${esc(c.cat)}</span><span class="v">${money(c.total)} <span class="c-sub">(${c.n})</span></span></div>`).join('')||'<div class="empty">No entries.</div>'}</div></div><div class="panel"><div class="panel-h"><span class="t"><span class="pi">📜</span>Ledger</span></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Kind</th><th>Label</th><th>Amount</th><th>Method</th><th>When</th><th></th></tr></thead><tbody>${LED.map(x=>`<tr><td>${x.id}</td><td>${badge(x.kind)}</td><td class="c-name">${esc(x.label)}<div class="c-sub">${esc(x.cat)}${x.ref?' · '+esc(x.ref):''}</div></td><td style="font-weight:700">${money(x.amount)}</td><td class="c-sub">${esc(x.method||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,16))}</td><td><button class="btn-ghost" style="color:var(--danger)" onclick="ledgerDelete(${x.id})">🗑</button></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No ledger entries.</div></td></tr>'}</tbody></table></div></div></div>`);
+}
+function ledgerForm(){
+  openDrawer('Add ledger entry',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">Kind</label><select id="le_kind"><option value="income">Income</option><option value="expense">Expense</option></select></div><div><label class="lb">Category</label><input id="le_cat" value="subscription"></div></div>
+     <div><label class="lb">Label</label><input id="le_label" placeholder="e.g. Enterprise subscription — Rofiqul"></div>
+     <div class="grid-2"><div><label class="lb">Amount (৳)</label><input id="le_amount" type="number" value="0"></div><div><label class="lb">Method</label><input id="le_method" placeholder="bKash / Bank / Cash"></div></div>
+     <div><label class="lb">Ref</label><input id="le_ref" placeholder="optional reference"></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="ledgerSave()">💾 Add</button></div>`);
+}
+async function ledgerSave(){
+  const d=await admin({action:'ledger-add',kind:$('le_kind').value,cat:$('le_cat').value.trim()||'other',label:$('le_label').value.trim(),amount:+$('le_amount').value||0,method:$('le_method').value.trim(),ref:$('le_ref').value.trim()});
+  if(d.ok){toast('Ledger entry added','ok');closeDrawer();renderFinance();}else toast(d.error||'Failed','error');
+}
+async function ledgerDelete(id){
+  if(!confirm('Delete ledger entry #'+id+'?'))return;
+  const d=await admin({action:'ledger-delete',id});
+  if(d.ok){toast('Entry deleted','ok');renderFinance();}else toast(d.error||'Failed','error');
+}
+/* ── Settings ── */
+let SETS={};
+async function renderSettings(){
+  pageHead('Application-wide settings — signups, trials, branding defaults',`<button class="btn-primary" onclick="settingsSave()">💾 Save settings</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'settings-get'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  SETS=d.settings||{};
+  load('pageBody',`<div class="panel"><div class="panel-b"><div class="frm grid-2">
+    <div><label class="lb">Site name</label><input id="st_site_name" value="${esc(SETS.site_name||'')}"></div>
+    <div><label class="lb">Support email</label><input id="st_support_email" value="${esc(SETS.support_email||'')}"></div>
+    <div><label class="lb">Support phone</label><input id="st_support_phone" value="${esc(SETS.support_phone||'')}"></div>
+    <div><label class="lb">Admin email</label><input id="st_admin_email" value="${esc(SETS.admin_email||'')}"></div>
+    <div><label class="lb">Maintenance mode</label><select id="st_maintenance_mode"><option value="1" ${SETS.maintenance_mode==='1'?'selected':''}>On</option><option value="0" ${SETS.maintenance_mode!=='1'?'selected':''}>Off</option></select></div>
+    <div><label class="lb">Signups open</label><select id="st_signups_open"><option value="1" ${SETS.signups_open==='1'?'selected':''}>Open</option><option value="0" ${SETS.signups_open!=='1'?'selected':''}>Closed</option></select></div>
+    <div><label class="lb">Trial days</label><input id="st_trial_days" type="number" value="${esc(SETS.trial_days||'14')}"></div>
+    <div><label class="lb">Invoice prefix</label><input id="st_invoice_prefix" value="${esc(SETS.invoice_prefix||'INV-')}"></div>
+    <div><label class="lb">Currency</label><input id="st_currency" value="${esc(SETS.currency||'BDT')}"></div>
+    <div><label class="lb">Default plan</label><input id="st_default_plan" value="${esc(SETS.default_plan||'starter')}"></div>
+    <div><label class="lb">AI provider</label><input id="st_ai_provider" value="${esc(SETS.ai_provider||'deepseek')}"></div>
+    <div><label class="lb">AI model</label><input id="st_ai_model" value="${esc(SETS.ai_model||'deepseek-chat')}"></div>
+  </div></div></div>`);
+}
+async function settingsSave(){
+  const keys=Object.keys(SETS);
+  const settings={};
+  keys.forEach(k=>{const el=document.getElementById('st_'+k);if(el)settings[k]=el.value;});
+  const d=await admin({action:'settings-save',settings});
+  if(d.ok){toast('Application settings saved','ok');renderSettings();}else toast(d.error||'Failed','error');
+}
+/* ── Integrations ── */
+async function renderIntegrations(){
+  pageHead('Third-party integrations across the platform',`<button class="btn-primary" onclick="integrationForm()">＋ Integration</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'integrations'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  INTS=d.integrations||[];
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Type</th><th>Name</th><th>Status</th><th>Config</th><th>Updated</th><th></th></tr></thead><tbody>${INTS.map(i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc(JSON.stringify(i.config||{}).slice(0,60))}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No integrations configured.</div></td></tr>'}</tbody></table></div></div>`);
+}
+/* ── Tickets ── */
+let TKTS=[];
+async function renderTickets(){
+  pageHead('Platform-wide support & ticketing for all system users',`<button class="btn-primary" onclick="ticketForm()">＋ New ticket</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'tickets'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  TKTS=d.tickets||[];
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subject</th><th>From</th><th>Prio</th><th>Status</th><th>Assignee</th><th>Updated</th><th></th></tr></thead><tbody>${TKTS.map(t=>`<tr><td>${esc(t.id)}</td><td><div class="c-name">${esc(t.subject)}</div><div class="c-sub">${esc((t.body||'').slice(0,50))}</div></td><td class="c-sub">${esc(t.from_name||'—')}<br>${esc(t.from_email||'')}</td><td>${badge(t.prio)}</td><td>${badge(t.status)}</td><td class="c-sub">${esc(t.assignee||'—')}</td><td class="c-sub">${esc((t.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="ticketReply('${esc(t.id)}')">✉</button><button class="btn-ghost" onclick="ticketStatus('${esc(t.id)}')">🔧</button><button class="btn-ghost" style="color:var(--danger)" onclick="ticketDelete('${esc(t.id)}')">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No platform tickets.</div></td></tr>'}</tbody></table></div></div>`);
+}
+function ticketForm(){
+  openDrawer('New platform ticket',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">From name</label><input id="tk_from_name" value="${esc(LIVE.user?LIVE.user.name:'')}"></div><div><label class="lb">From email</label><input id="tk_from_email" value="${esc(LIVE.user?LIVE.user.email:'')}"></div></div>
+     <div><label class="lb">Subject</label><input id="tk_subject" placeholder="Issue summary"></div>
+     <div><label class="lb">Body</label><textarea id="tk_body"></textarea></div>
+     <div class="grid-2"><div><label class="lb">Priority</label><select id="tk_prio">${['Low','Normal','High','Urgent'].map(p=>`<option ${p==='Normal'?'selected':''}>${p}</option>`).join('')}</select></div><div><label class="lb">Assignee</label><input id="tk_assignee" placeholder="ops team"></div></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="ticketSave()">＋ Create</button></div>`);
+}
+async function ticketSave(){
+  const d=await admin({action:'ticket-save',from_name:$('tk_from_name').value.trim(),from_email:$('tk_from_email').value.trim(),subject:$('tk_subject').value.trim(),body:$('tk_body').value.trim(),prio:$('tk_prio').value,assignee:$('tk_assignee').value.trim()});
+  if(d.ok){toast('Ticket '+d.id+' created','ok');closeDrawer();renderTickets();}else toast(d.error||'Failed','error');
+}
+function ticketReply(id){
+  const t=TKTS.find(x=>x.id===id)||{};
+  openDrawer('Reply — '+id,
+    `<div class="frm"><div class="panel-b" style="padding:12px;background:var(--bg-alt);border-radius:10px;border:1px solid var(--border)"><div class="c-name" style="font-size:13px">${esc(t.subject)}</div><div class="c-sub" style="margin-top:4px">${esc(t.body||'')}</div>${t.reply?`<div class="c-sub" style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">REPLY: ${esc(t.reply)}</div>`:''}</div>
+     <div><label class="lb">Reply</label><textarea id="tk_reply" placeholder="Write your response…"></textarea></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="ticketReplySave('${esc(id)}')">📨 Send reply</button></div>`);
+}
+async function ticketReplySave(id){
+  const d=await admin({action:'ticket-reply',id,reply:$('tk_reply').value.trim()});
+  if(d.ok){toast('Reply sent — ticket Answered','ok');closeDrawer();renderTickets();}else toast(d.error||'Failed','error');
+}
+function ticketStatus(id){
+  const t=TKTS.find(x=>x.id===id)||{};
+  openDrawer('Update ticket — '+id,
+    `<div class="frm"><div><label class="lb">Status</label><select id="ts_status">${['Open','In Progress','Answered','Resolved','Closed'].map(s=>`<option ${t.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+     <div><label class="lb">Priority</label><select id="ts_prio">${['Low','Normal','High','Urgent'].map(p=>`<option ${t.prio===p?'selected':''}>${p}</option>`).join('')}</select></div>
+     <div><label class="lb">Assignee</label><input id="ts_assignee" value="${esc(t.assignee||'')}"></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="ticketStatusSave('${esc(id)}')">💾 Update</button></div>`);
+}
+async function ticketStatusSave(id){
+  const d=await admin({action:'ticket-status',id,status:$('ts_status').value,prio:$('ts_prio').value,assignee:$('ts_assignee').value.trim()});
+  if(d.ok){toast('Ticket updated','ok');closeDrawer();renderTickets();}else toast(d.error||'Failed','error');
+}
+async function ticketDelete(id){
+  if(!confirm('Delete ticket '+id+'?'))return;
+  const d=await admin({action:'ticket-delete',id});
+  if(d.ok){toast('Ticket deleted','ok');renderTickets();}else toast(d.error||'Failed','error');
+}
+/* ── Backup ── */
+async function renderBackup(){
+  pageHead('Database snapshots, download and full JSON export',`<button class="btn-primary" onclick="backupRun()">📸 Run snapshot</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'backup-list'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  load('pageBody',
+    `<div class="stats">${[['📸','Snapshots',(d.backups||[]).length,'backup_log'],['⬇️','Download DB','.db','full SQLite'],['📦','Export JSON','_tables','PG-ready']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>
+     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💾</span>Download / export</span></div><div class="panel-b" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn-outline" onclick="backupDownload()">⬇️ Download database (.db)</button><button class="btn-outline" onclick="backupExport()">📦 Export full JSON</button><button class="btn-outline" onclick="nav('health')">🩺 System health</button></div></div>
+     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📜</span>Snapshot history</span></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Kind</th><th>Size</th><th>When</th><th>Note</th></tr></thead><tbody>${(d.backups||[]).map(b=>`<tr><td>${b.id}</td><td>${badge(b.kind)}</td><td>${(b.size/1048576).toFixed(1)} MB</td><td class="c-sub">${esc(b.ts)}</td><td class="c-sub">${esc(b.note||'')}</td></tr>`).join('')||'<tr><td colspan="5"><div class="empty">No snapshots yet.</div></td></tr>'}</tbody></table></div></div>`);
+}
+async function backupRun(){
+  const d=await admin({action:'backup-run'});
+  if(d.ok){toast('Snapshot recorded ('+(d.size/1048576).toFixed(1)+' MB)','ok');renderBackup();}else toast(d.error||'Failed','error');
+}
+function backupDownload(){
+  const a=document.createElement('a');
+  a.href=API+'app-backup';
+  const opts={headers:{}};if(TOKEN)opts.headers['Authorization']='Bearer '+TOKEN;
+  fetch(a.href,opts).then(r=>r.blob()).then(b=>{const u=URL.createObjectURL(b);const d=document.createElement('a');d.href=u;d.download='krtaker_'+new Date().toISOString().slice(0,19).replace(/[:T]/g,'')+'.db';d.click();URL.revokeObjectURL(u);toast('Database download started','ok')}).catch(()=>toast('Download failed','error'));
+}
+function backupExport(){
+  const a=document.createElement('a');
+  a.href=API+'app-export';
+  const opts={headers:{}};if(TOKEN)opts.headers['Authorization']='Bearer '+TOKEN;
+  fetch(a.href,opts).then(r=>r.blob()).then(b=>{const u=URL.createObjectURL(b);const d=document.createElement('a');d.href=u;d.download='krtaker_export_'+new Date().toISOString().slice(0,10)+'.json';d.click();URL.revokeObjectURL(u);toast('JSON export started','ok')}).catch(()=>toast('Export failed','error'));
+}
+/* ── Modules ── */
+async function renderModules(){
+  pageHead('Module & service management — registry is linked to package formulation (Packages → 🧩 matrix)');
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'modules'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  const reg=d.registry||[],pkg=d.packages||[];
+  load('pageBody',
+    `<div class="stats">${[['🧩','Registry modules',reg.length,'built + roadmap'],['📦','Packages',pkg.length,'catalog'],['🔄','Matrix editable','Packages','role × module'],['🔜','Roadmap slots',reg.filter(m=>!m.built).length,'parking → insurance']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>
+     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧩</span>Module registry</span></div><div class="panel-b"><div style="display:flex;flex-wrap:wrap;gap:6px">${reg.map(m=>`<span class="chip ${m.built?'on':''}">${esc(m.id)}${m.built?'':' 🔜'}</span>`).join('')}</div><div class="c-sub" style="margin-top:10px">Built modules are live. Roadmap slots (🔜) appear in the package matrix but are not built yet.</div></div></div>
+     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📦</span>Package module coverage</span></div><div class="tbl-wrap"><table><thead><tr><th>Package</th><th>Roles configured</th><th>Owner modules</th><th>Manager modules</th><th>Tenant modules</th></tr></thead><tbody>${pkg.map(p=>{const m=p.modules||{};return `<tr><td class="c-name">${esc(p.name)} <span class="c-sub">(${esc(p.code)})</span></td><td>${Object.keys(m).length}</td><td class="c-sub">${(m.owner||[]).length} mods</td><td class="c-sub">${(m.manager||[]).length} mods</td><td class="c-sub">${(m.tenant||[]).length} mods</td></tr>`}).join('')||'<tr><td colspan="5"><div class="empty">No packages.</div></td></tr>'}</tbody></table></div></div>`);
+}
+/* ── White Label ── */
+let WL={};
+async function renderWhitelabel(){
+  pageHead('Master settings with white-label branding',`<button class="btn-primary" onclick="whitelabelSave()">💾 Save branding</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'whitelabel-get'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  WL=d.whitelabel||{};
+  load('pageBody',`<div class="panel"><div class="panel-b"><div class="frm grid-2">
+    <div><label class="lb">Site name</label><input id="wl_site_name" value="${esc(WL.wl_site_name||'')}"></div>
+    <div><label class="lb">Logo text (initials)</label><input id="wl_logo_text" value="${esc(WL.wl_logo_text||'')}"></div>
+    <div><label class="lb">Primary color</label><input id="wl_primary_color" value="${esc(WL.wl_primary_color||'')}" placeholder="#2F80ED"></div>
+    <div><label class="lb">Domain</label><input id="wl_domain" value="${esc(WL.wl_domain||'')}"></div>
+    <div><label class="lb">Favicon URL</label><input id="wl_favicon" value="${esc(WL.wl_favicon||'')}"></div>
+    <div><label class="lb">Login heading</label><input id="wl_login_heading" value="${esc(WL.wl_login_heading||'')}"></div>
+    <div><label class="lb">Footer text</label><input id="wl_footer_text" value="${esc(WL.wl_footer_text||'')}"></div>
+    <div><label class="lb">Support email</label><input id="wl_support_email" value="${esc(WL.wl_support_email||'')}"></div>
+    <div><label class="lb">Theme</label><select id="wl_theme"><option value="light" ${WL.wl_theme==='light'?'selected':''}>Light</option><option value="dark" ${WL.wl_theme==='dark'?'selected':''}>Dark</option></select></div>
+  </div><div class="c-sub" style="margin-top:14px;font-size:11.5px;color:var(--text-mute)">White-label values are stored per platform. A tenant-branded deploy would read these keys to render its own login + portal chrome.</div></div></div>`);
+}
+async function whitelabelSave(){
+  const keys=Object.keys(WL);
+  const whitelabel={};
+  keys.forEach(k=>{const el=document.getElementById(k);if(el)whitelabel[k]=el.value;});
+  const d=await admin({action:'whitelabel-save',whitelabel});
+  if(d.ok){toast('White-label branding saved','ok');$('sbBrand').textContent=whitelabel.wl_site_name||'KRTaker';renderWhitelabel();}else toast(d.error||'Failed','error');
+}
+/* ── Health ── */
+async function renderHealth(){
+  pageHead('System administration — runtime, database and security posture');
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'health'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  const h=d.health||{};
+  const kv=[['PHP version',h.php],['Database',h.db],['DB size',(h.db_size/1048576).toFixed(1)+' MB'],['Tables',h.tables],['Journal mode',h.journal],['Server time (UTC)',h.now_utc],['Audit rows',h.audit_rows],['Active tokens',h.tokens],['Auth attempts',h.auth_attempts]];
+  load('pageBody',`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🩺</span>Runtime</span></div><div class="panel-b">${kv.map(x=>`<div class="kv"><span class="k">${x[0]}</span><span class="v">${esc(String(x[1]))}</span></div>`).join('')}</div></div>
+     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🛡️</span>Security & hygiene</span></div><div class="panel-b">
+       <div class="kv"><span class="k">Password hashing</span><span class="v">${badge('OK')} bcrypt (PASSWORD_DEFAULT)</span></div>
+       <div class="kv"><span class="k">API auth</span><span class="v">${badge('OK')} Bearer tokens</span></div>
+       <div class="kv"><span class="k">Admin endpoint</span><span class="v">${badge('OK')} superadmin-only 403</span></div>
+     </div></div>`);
+}
+/* ── Audit ── */
+async function renderAudit(){
+  pageHead('Full audit trail — every significant action across the platform');
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'audit'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>#</th><th>When</th><th>User</th><th>Action</th><th>Module</th><th>Entity</th><th>Details</th></tr></thead><tbody>${(d.audit||[]).map(a=>`<tr><td>${a.id}</td><td class="c-sub">${esc(a.ts||'')}</td><td>${esc(a.user||'')}</td><td class="c-name">${esc(a.action||'')}</td><td>${badge(a.module||'—')}</td><td class="c-sub">${esc(a.entity||'')}</td><td class="c-sub">${esc((a.details||'').slice(0,70))}</td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No audit rows.</div></td></tr>'}</tbody></table></div></div>`);
+}
+/* ── Auth ── */
+async function doLogin(){
+  const email=$('authEmail').value.trim().toLowerCase(),pass=$('authPass').value;
+  const err=$('authErr');err.classList.remove('show');
+  if(!email||!pass){err.textContent='Enter email and password.';err.classList.add('show');return}
+  const btn=$('authBtn');btn.disabled=true;btn.textContent='Signing in…';
+  try{
+    const d=await api('app-login',{email,password:pass});
+    if(d.ok&&d.token){
+      if(d.user&&d.user.role!=='superadmin'){err.textContent='This account is not a Super Admin.';err.classList.add('show');btn.disabled=false;btn.textContent='Log in';return}
+      TOKEN=d.token;try{localStorage.setItem('krtaker_admin_token',TOKEN)}catch(e){}
+      LIVE.user=d.user;
+      $('sbName').textContent=d.user.name; $('sbAva').textContent=(d.user.name||'SA').slice(0,2).toUpperCase();
+      const wl=await admin({action:'whitelabel-get'});
+      if(wl.ok&&wl.whitelabel.wl_site_name)$('sbBrand').textContent=wl.whitelabel.wl_site_name;
+      $('authScreen').style.display='none';$('app').style.display='flex';
+      renderNav();renderTitle();render();toast('Signed in as '+d.user.name);
+    }else{err.textContent=d.error||'Login failed.';err.classList.add('show')}
+  }catch(e){err.textContent='Network error.';err.classList.add('show')}
+  btn.disabled=false;btn.textContent='Log in';
+}
+function doLogout(){
+  TOKEN='';try{localStorage.removeItem('krtaker_admin_token')}catch(e){}
+  $('app').style.display='none';$('authScreen').style.display='flex';
+  toast('Signed out');
+}
+/* ── Boot ── */
+document.documentElement.setAttribute('data-theme',STATE.theme);
+(async function init(){
+  if(!TOKEN){$('authScreen').style.display='flex';return}
+  const d=await api('app-bootstrap');
+  if(d.ok&&d.user){
+    if(d.user.role!=='superadmin'){TOKEN='';try{localStorage.removeItem('krtaker_admin_token')}catch(e){};$('authScreen').style.display='flex';return}
+    LIVE.user=d.user;
+    $('sbName').textContent=d.user.name;$('sbAva').textContent=(d.user.name||'SA').slice(0,2).toUpperCase();
+    const wl=await admin({action:'whitelabel-get'});
+    if(wl.ok&&wl.whitelabel.wl_site_name)$('sbBrand').textContent=wl.whitelabel.wl_site_name;
+    $('authScreen').style.display='none';$('app').style.display='flex';
+    renderNav();renderTitle();render();
+  }else{$('authScreen').style.display='flex'}
+})();
+$('authPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+</script>
+</body>
+</html>

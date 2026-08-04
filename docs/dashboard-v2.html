@@ -1199,7 +1199,6 @@ const SEED = {
 /* ═══ Roles & modules ═══ */
 const ALL = ['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','utilities','maintenance','vendors','onboarding','leads','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','staffwatch','samity','ai','analytics','notices','documents','referrals','recon','templates'];
 const ROLES = [
-  {id:'superadmin',name:'Kabir (Platform)',ava:'KB',role:'Super Admin',tag:'Platform',ico:'🏢',desc:'Subscriptions, packages, billing, partners, finance, HR',mods:[...ALL,'subscriptions','caretaker','packages']},
   {id:'owner',name:'Rofiqul Islam',ava:'RI',role:'Property Owner',tag:'My Portfolio',ico:'🏠',desc:'Portfolio-wide view across every building',mods:[...ALL,'subscriptions','caretaker']},
   {id:'manager',name:'Shakil Ahmed',ava:'SA',role:'Property Manager',tag:'Assigned',ico:'🗝️',desc:'Day-to-day ops on assigned properties',mods:[...ALL,'caretaker']},
   {id:'tenant',name:'Sultana Rahman',ava:'SR',role:'Tenant',tag:'Tenant Portal',ico:'🔑',desc:'Invoices, receipts, repairs — your side',mods:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics']},
@@ -1217,7 +1216,7 @@ const GROUPS = [
   {id:'community',label:'Community',items:[['samity','🏘️','Kalyan Samity'],['notices','📢','Notice Board'],['referrals','🤝','Referrals'],['trust','🪪','Trust Engine']]},
   {id:'ops',label:'Operations',items:[['maintenance','🔧','Maintenance'],['vendors','🧰','Vendors'],['utilities','🔌','Utilities'],['compliance','⚖️','Compliance'],['legal','📜','Legal Engine'],['concierge','🗂️','Legal Concierge']]},
   {id:'secure',label:'Safety & Security',items:[['smarthome','🔐','Smart Home'],['land','🛰️','Land Guard'],['build','🏗️','Build Watch'],['gate','🚪','Gate Watch'],['firesafety','🧯','Fire Safety'],['systems','⚙️','Systems Watch'],['staffwatch','👷','Staff Watch'],['health','🌦️','Health Check']]},
-  {id:'admin',label:'Admin',items:[['packages','📦','Packages'],['caretaker','👑','Caretaker']]}
+  {id:'admin',label:'Admin',items:[['caretaker','👑','Caretaker']]}
 ];
 const MOD_ICON = {'dashboard':'📊','properties':'🏢','units':'🚪','tenants':'👤','leases':'📄','renewals':'🔄','invoices':'🧾','receipts':'📎','payments':'💳','taxes':'🏛️','statements':'💰','remit':'🌍','utilities':'🔌','maintenance':'🔧','vendors':'🧰','onboarding':'📋','leads':'📥','compliance':'⚖️','legal':'📜','trust':'🪪','land':'🛰️','nrb':'🌐','concierge':'🗂️','smarthome':'🔐','health':'🌦️','build':'🏗️','gate':'🚪','firesafety':'🧯','systems':'⚙️','staffwatch':'👷','samity':'🏘️','subscriptions':'💠','ai':'🤖','analytics':'📈','notices':'📢','documents':'📁','templates':'🗂️','referrals':'🤝','recon':'🔄','caretaker':'👑','packages':'📦','parking':'🅿️','bookings':'📅','voting':'🗳️','forums':'💬','events':'🎉','insurance':'🛡️'};
 const MOD_TITLE = {'dashboard':'Overview','properties':'Properties','units':'Units','tenants':'Tenants','leases':'Leases','renewals':'Renewals','invoices':'Invoices','receipts':'Receipts','payments':'Payments','taxes':'Taxes','statements':'Statements','remit':'Remittances','utilities':'Utilities','maintenance':'Maintenance','vendors':'Vendors','onboarding':'Onboarding','leads':'Leads','compliance':'Compliance','legal':'Legal Engine','trust':'Trust Engine','land':'Land Guard','nrb':'NRB Hub','concierge':'Legal Concierge','smarthome':'Smart Home','health':'Health Check','build':'Build Watch','gate':'Gate Watch','firesafety':'Fire Safety','systems':'Systems Watch','staffwatch':'Staff Watch','samity':'Kalyan Samity','subscriptions':'Subscriptions','ai':'AI Caretaker','analytics':'Analytics','notices':'Notice Board','documents':'Documents','templates':'Templates','referrals':'Referrals','recon':'Reconciliation','caretaker':'Caretaker','packages':'Packages','parking':'Parking','bookings':'Bookings','voting':'Voting','forums':'Forums','events':'Events','insurance':'Insurance'};
@@ -1698,42 +1697,6 @@ function renderDashboard(){return (DASH[state.role]||DASH.owner)()}
 
 const DASH={
 
-/* ── Super Admin · Platform Command Center ── */
-superadmin(){
-  const pf=DB.platform;
-  const openT=DB.support.filter(x=>x.status==='Open').length;
-  const trials=pf.subscriptions.filter(s=>s.status==='Trial').length;
-  const net=pf.finance.reduce((s,f)=>s+f.amount,0);
-  let h=pageHead(t('Platform Command Center','প্ল্যাটফর্ম কমান্ড সেন্টার'),t('Super Admin — subscriptions, billing, partners, finance, HR across the whole platform','সুপার অ্যাডমিন — পুরো প্ল্যাটফর্মের সাবস্ক্রিপশন, বিলিং, পার্টনার, ফাইন্যান্স, এইচআর'),`<button class="btn-primary" onclick="openRoles()">🔀 ${t('Switch role','রোল পরিবর্তন')}</button><button class="btn-outline" onclick="quickAdd()">＋ ${t('Quick add','দ্রুত যোগ')}</button>`);
-  h+=statsRow([
-    stat(t('Subscribers','সাবস্ক্রাইবার'),pf.subscribers,pf.subsTrend,'up','🏢'),
-    stat(t('MRR / ARR','মাসিক/বার্ষিক আয়'),moneyC(pf.mrr)+' / '+moneyC(pf.arr),'SaaS revenue','','💳'),
-    stat(t('Service Partners','সার্ভিস পার্টনার'),pf.partners,'B2B orgs','','🛠️'),
-    stat(t('Open Tickets','খোলা টিকিট'),openT,openT?'SLA monitor':'All clear',openT?'down':'up','🎧'),
-    stat(t('Platform Net (Jun)','জুন মাসের নিট'),moneyC(net),'after fees & payouts','','💰')
-  ]);
-  const ops=[
-    ['💳','Subscriptions & Plans',pf.subscriptions.length+' active · '+trials+' trial'],
-    ['📦','Packages','Starter · Business · Enterprise'],
-    ['🔌','Integrations','bKash · SSLCommerz · e-Porcha'],
-    ['🌐','Web CMS','Marketing site & landing pages'],
-    ['🛠️','Service Partners',pf.partners+' orgs · '+DB.partners.filter(p=>p.status==='Onboarding').length+' onboarding'],
-    ['⚖️','Legal Team','Staff + B2B firms · cases docket'],
-    ['💰','Accounts & Finance','MRR · settlements · payouts'],
-    ['👥','HR & Admin',pf.staff+' staff · onboarding']
-  ];
-  h+=`<div class="grid grid-2" style="grid-template-columns:1fr 1.4fr">
-    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🛠️</span>${t('Platform Operations','প্ল্যাটফর্ম অপারেশন')}</div></div><div class="panel-b"><div class="tiles">${ops.map((o,i)=>`<div class="tile" onclick="opsTile(${i})"><div class="ti">${o[0]}</div><div class="tt">${o[1]}</div><div class="ts">${o[2]}</div></div>`).join('')}</div></div></div>
-    <div>
-      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📈</span>${t('Platform Revenue (2026)','প্ল্যাটফর্ম আয়')}</div><span class="tagline">MRR ${moneyC(pf.mrr)}</span></div><div class="panel-b">${barChart(RENT_SERIES.map(x=>x*100000),RENT_LABELS)}</div></div>
-      <div class="grid grid-2eq">
-        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">💳</span>${t('Subscriptions','সাবস্ক্রিপশন')}</div></div><div class="panel-b">${pf.subscriptions.map(s=>`<div class="row-item" style="padding:8px 0"><div class="ri-ic">🏢</div><div class="ri-body"><div class="ri-t">${esc(s.org)}</div><div class="ri-s">${s.plan} · ${s.seats} seat(s)</div></div><div class="ri-r"><div class="t-amount" style="font-size:12px">${money(s.mrr)}<span style="font-size:10px">/mo</span></div>${badge(s.status)}</div></div>`).join('')}</div></div>
-        <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Platform Finance','প্ল্যাটফর্ম ফাইন্যান্স')}</div></div><div class="panel-b">${pf.finance.map(f=>kv(esc(f.type),moneyC(f.amount),f.amount<0?'neg':'pos')).join('')}${kv('<b>Net</b>',moneyC(net),'')}</div></div>
-      </div>
-    </div>
-  </div>`;
-  return h;
-},
 
 /* ── Owner · My Portfolio ── */
 owner(){
@@ -7420,13 +7383,6 @@ const renderers={
     </div></div>`;
     return h;
   },
-  /* P55: Packages — superadmin plan catalog + access matrices */
-  packages(){
-    let h=pageHead(t('Packages','প্যাকেজ'),t('Plan catalog, per-role module access, limits and subscriber assignment — superadmin.','প্ল্যান ক্যাটালগ, রোলভিত্তিক মডিউল অ্যাক্সেস, লিমিট ও সাবস্ক্রাইবার অ্যাসাইনমেন্ট — সুপার অ্যাডমিন।'),`<button class="btn-outline" onclick="packageSubscribers()">👥 ${t('Subscribers','সাবস্ক্রাইবার')}</button><button class="btn-primary" onclick="packageForm()">＋ ${t('New package','নতুন প্যাকেজ')}</button>`);
-    h+=`<div id="pkgStats" class="stats" style="margin-bottom:16px"></div><div id="pkgHost"><div class="panel"><div class="panel-b c-sub">${t('Loading packages…','প্যাকেজ লোড হচ্ছে…')}</div></div></div>`;
-    setTimeout(()=>packagesLoad(),0);
-    return h;
-  },
   /* Phase 12: document + email templates (customizable, wireframe-linked) */
   templates(){
     let h=pageHead(t('Templates','টেমপ্লেট'),t('Lease agreements, service contracts, money receipts and email templates — customize, wireframe-preview and link to live records.','লিজ চুক্তি, সার্ভিস কন্ট্রাক্ট, টাকা রসিদ ও ইমেইল টেমপ্লেট — কাস্টমাইজ, ওয়্যারফ্রেম প্রিভিউ ও লাইভ রেকর্ডের সাথে লিংক।'),
@@ -7441,174 +7397,7 @@ const renderers={
   }
 };
 
-/* ═══ P55: Packages (superadmin — plan catalog, access matrices, limits, assignment) ═══ */
-const DEMO_PACKAGES = [
-  {code:'starter', name:'Starter', price:4999, seats:1, tag:'Most popular', subscribers:2, features:['1 property','1 seat','Smart invoicing & signed receipts','Tenant portal','Payment links (bKash / Nagad)'],
-   modules:{owner:['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','notices','documents','subscriptions','analytics'],tenant:['dashboard','invoices','receipts','payments','maintenance','notices','documents']},
-   limits:{property_limit:1,unit_limit:5,seats:1,kr_ai:false,api_access:false,reports:true}},
-  {code:'business', name:'Business', price:14999, seats:3, tag:'Best value', subscribers:2, features:['Up to 10 properties','3 seats','Everything in Starter','Holding tax & TDS engines','Maintenance + service partners','KR AI caretaker'],
-   modules:{owner:['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','maintenance','vendors','utilities','compliance','legal','trust','onboarding','leads','notices','documents','templates','referrals','subscriptions','analytics','ai'],manager:['dashboard','properties','units','tenants','leases','renewals','invoices','receipts','payments','taxes','statements','remit','maintenance','vendors','utilities','compliance','legal','trust','onboarding','leads','notices','documents','templates','analytics','ai'],tenant:['dashboard','invoices','receipts','payments','maintenance','notices','documents','ai']},
-   limits:{property_limit:10,unit_limit:50,seats:3,kr_ai:true,api_access:false,reports:true}},
-  {code:'enterprise', name:'Enterprise', price:39999, seats:10, tag:'For portfolios', subscribers:1, features:['Unlimited properties','10 seats','Everything in Business','Legal & compliance docket','Dedicated success manager','API access'],
-   modules:{owner:ALL,manager:ALL.filter(m=>m!=='subscriptions'),svc_mgr:['dashboard','maintenance','vendors','compliance','legal','trust','land','nrb','concierge','smarthome','health','build','gate','firesafety','systems','staffwatch','samity','ai','analytics','notices','documents'],tenant:['dashboard','invoices','receipts','payments','utilities','maintenance','legal','trust','ai','notices','documents','analytics'],partner:['dashboard','maintenance','vendors','invoices','payments','ai','notices','documents','referrals'],legal:['dashboard','compliance','leases','legal','trust','nrb','concierge','smarthome','health','ai','notices','documents','templates'],crm:['dashboard','maintenance','leads','onboarding','concierge','smarthome','health','ai','notices','documents','referrals'],accountant:['dashboard','invoices','receipts','payments','taxes','statements','remit','maintenance','vendors','legal','nrb','concierge','smarthome','health','ai','analytics','notices','documents','recon','templates'],hr:['dashboard','staffwatch','ai','notices','documents']},
-   limits:{property_limit:9999,unit_limit:99999,seats:10,kr_ai:true,api_access:true,reports:true}}
-];
-const DEMO_REGISTRY = Object.keys(MOD_ICON).map(k=>({id:k,built:true}));
-const DEMO_SUBS = [
-  {id:1,name:'Green View Residency',org:'Green View Residency',email:'owner@krtaker.com',role:'owner',plan:'business',status:'active',trial_end:''},
-  {id:2,name:'Banani Commercial Tower',org:'Banani Commercial Tower',email:'banani@krtaker.com',role:'owner',plan:'enterprise',status:'active',trial_end:''},
-  {id:3,name:'Dhanmondi Apartment',org:'Dhanmondi Apartment',email:'dhanmondi@krtaker.com',role:'owner',plan:'starter',status:'active',trial_end:''},
-  {id:4,name:'Gulshan Lakeside Plot',org:'Gulshan Lakeside Plot',email:'gulshan@krtaker.com',role:'owner',plan:'starter',status:'trial',trial_end:'2026-08-20'}
-];
-let PKG = { list: [], registry: [], roles: [], editing: null, matrix: {}, limits: {} };
-function packagesStaff(){ return LIVE.user ? LIVE.user.role==='superadmin' : role().id==='superadmin'; }
-function pkgRoleName(r){ const x=ROLES.find(x=>x.id===r); return x?x.role:r; }
-async function packagesLoad(){
-  if(DEMO_MODE || !TOKEN){ PKG.list=DEMO_PACKAGES; PKG.registry=DEMO_REGISTRY; PKG.roles=ROLES.map(r=>r.id); renderPackages(); return; }
-  const d = await apiCall('app-packages', {action:'list'});
-  if(d.ok){ PKG.list=d.packages; PKG.registry=d.registry; PKG.roles=d.roles; renderPackages(); }
-  else $('pkgHost').innerHTML = `<div class="panel"><div class="panel-b c-sub">${esc(d.error||'Failed')}</div></div>`;
-}
-function renderPackages(){
-  const total = PKG.list.reduce((s,p)=>s+(p.price||0),0);
-  const subs = PKG.list.reduce((s,p)=>s+(p.subscribers||0),0);
-  const stEl = $('pkgStats'); if(!stEl) return;
-  stEl.innerHTML = [
-    stat(t('Packages','প্যাকেজ'), PKG.list.length, '', 'up', '📦'),
-    stat(t('Subscribers','সাবস্ক্রাইবার'), subs, '', 'up', '👥'),
-    stat(t('Monthly MRR','মাসিক এমআরআর'), '৳'+total.toLocaleString(), '', 'up', '💠'),
-    stat(t('Roles mapped','রোল ম্যাপড'), PKG.roles.length, '', 'up', '🔐')
-  ].join('');
-  const hostEl = $('pkgHost'); if(!hostEl) return;
-  hostEl.innerHTML = `<div class="plan-grid">${PKG.list.map(p=>{
-    const feats = Array.isArray(p.features)?p.features:[];
-    const lm = p.limits||{};
-    const modCount = Object.keys(p.modules||{}).reduce((s,r)=>s+(p.modules[r]||[]).length,0);
-    return `<div class="plan-card" style="position:relative">
-      ${p.tag?`<span class="pc-tag">${esc(p.tag)}</span>`:''}
-      <div class="pc-name">${esc(p.name)} <span class="c-sub" style="font-weight:400">${esc(p.code)}</span></div>
-      <div class="pc-price">${money(p.price)}<small>/month</small></div>
-      <div class="pc-seats">${p.seats} ${t('seat(s)','সিট')} · ${p.subscribers||0} ${t('subscriber(s)','সাবস্ক্রাইবার')}</div>
-      <ul>${feats.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
-      <div style="font-size:11.5px;color:var(--text-mute);margin:10px 0 4px">${t('Limits','লিমিট')}: ${lm.property_limit>=9999?'∞':lm.property_limit} ${t('props','সম্পত্তি')} · ${lm.unit_limit>=99999?'∞':lm.unit_limit} ${t('units','ইউনিট')} · ${lm.seats} ${t('seats','সিট')} · KR AI ${lm.kr_ai?'✓':'✗'} · API ${lm.api_access?'✓':'✗'}</div>
-      <div style="font-size:11.5px;color:var(--text-mute);margin-bottom:10px">${t('Access','অ্যাক্সেস')}: ${modCount} ${t('module grants','মডিউল গ্রান্ট')}</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn-outline" style="flex:1;padding:8px;font-size:12px" onclick="packageMatrixDrawer('${p.code}')">🔐 ${t('Modules','মডিউল')}</button>
-        <button class="btn-outline" style="flex:1;padding:8px;font-size:12px" onclick="packageLimitsDrawer('${p.code}')">📏 ${t('Limits','লিমিট')}</button>
-        <button class="btn-outline" style="flex:1;padding:8px;font-size:12px" onclick="packagePreview('${p.code}')">👁 ${t('Preview','প্রিভিউ')}</button>
-        <button class="btn-ghost" style="flex:1;padding:8px;font-size:12px" onclick="packageForm('${p.code}')">✎ ${t('Edit','এডিট')}</button>
-        <button class="btn-ghost" style="flex:1;padding:8px;font-size:12px;color:var(--danger)" onclick="packageDelete('${p.code}')">🗑</button>
-      </div>
-    </div>`;}).join('')}</div>`;
-}
-function packageForm(code){
-  const p = code ? PKG.list.find(x=>x.code===code) : null;
-  const rows=[];
-  rows.push(rowItem('code',`<label class="lb">${t('Code','কোড')}</label><input id="pkgCode" class="inp" placeholder="e.g. growth" value="${p?esc(p.code):''}" ${p?'disabled':''}>`));
-  rows.push(rowItem('name',`<label class="lb">${t('Name','নাম')} *</label><input id="pkgName" class="inp" value="${p?esc(p.name):''}">`));
-  rows.push(rowItem('price',`<label class="lb">${t('Price (৳/month)','মূল্য (৳/মাস)')}</label><input id="pkgPrice" class="inp" type="number" min="0" value="${p?p.price:''}">`));
-  rows.push(rowItem('seats',`<label class="lb">${t('Seats','সিট')}</label><input id="pkgSeats" class="inp" type="number" min="1" max="999" value="${p?p.seats:1}">`));
-  rows.push(rowItem('tag',`<label class="lb">${t('Tag (badge)','ট্যাগ (ব্যাজ)')}</label><input id="pkgTag" class="inp" value="${p?esc(p.tag):''}">`));
-  rows.push(rowItem('feats',`<label class="lb">${t('Features (one per line)','ফিচার (প্রতি লাইনে একটি)')}</label><textarea id="pkgFeats" class="inp" rows="6">${p?(p.features||[]).join('\n'):''}</textarea>`));
-  openDrawer(p?t('Edit package','প্যাকেজ এডিট'):t('New package','নতুন প্যাকেজ'),rows.join(''),
-    `<button class="btn-outline" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="submitPackage(${p?'\''+p.code+'\'':'null'})">💾 ${t('Save','সেভ')}</button>`);
-}
-async function submitPackage(code){
-  const body = { action:'save', code: code||val('pkgCode').trim().toLowerCase(), name:val('pkgName').trim(), price:parseInt(val('pkgPrice')||'0',10), seats:parseInt(val('pkgSeats')||'1',10), tag:val('pkgTag').trim(), features:val('pkgFeats').split('\n').map(s=>s.trim()).filter(Boolean) };
-  if(!body.code || !body.name){ toast('Code and name required','error'); return; }
-  if(DEMO_MODE){ toast('Demo — package would be saved','success'); closeDrawer(); packagesLoad(); return; }
-  const d = await apiCall('app-packages', body);
-  if(d.ok){ toast('Package saved'); closeDrawer(); packagesLoad(); } else toast(d.error||'Failed','error');
-}
-function packageMatrixDrawer(code){
-  const p = PKG.list.find(x=>x.code===code); if(!p) return;
-  PKG.editing = code;
-  PKG.matrix = JSON.parse(JSON.stringify(p.modules||{}));
-  const rows = PKG.roles.map(r=>{
-    const set = new Set(PKG.matrix[r]||[]);
-    const mods = PKG.registry.filter(m=>m.built).map(m=>{
-      const checked = set.has(m.id)?'checked':'';
-      const lbl = MOD_TITLE[m.id]||m.id;
-      return `<label class="chk" style="margin:4px 10px 4px 0"><input type="checkbox" data-role="${r}" data-mod="${m.id}" ${checked}><span>${MOD_ICON[m.id]||''} ${t(lbl,BN[lbl]||'')}</span></label>`;
-    }).join('');
-    const locked = PKG.registry.filter(m=>!m.built).map(m=>`<span style="opacity:.45;font-size:11px;margin:3px 8px 3px 0;display:inline-block">${MOD_ICON[m.id]||'🔒'} ${MOD_TITLE[m.id]||m.id} 🔒</span>`).join('');
-    return `<div style="margin:10px 0;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg-alt)"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><b>${esc(pkgRoleName(r))}</b><span class="c-sub" id="cnt-${r}">${set.size} ${t('modules','মডিউল')}</span></div><div id="mods-${r}">${mods}${locked}</div></div>`;
-  }).join('');
-  openDrawer(t('Module access — ','মডিউল অ্যাক্সেস — ')+esc(p.name),
-    `<div style="font-size:12px;color:var(--text-mute);margin-bottom:10px">${t('Check which modules each role can use on this package. Locked modules are roadmap slots (built in later phases).','প্রতিটি রোল কোন মডিউল ব্যবহার করতে পারবে তা চেক করুন। লকড মডিউলগুলো ভবিষ্যৎ ফেজে আসবে।')}</div>${rows}`,
-    `<button class="btn-outline" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="savePackageMatrix()">💾 ${t('Save matrix','ম্যাট্রিক্স সেভ')}</button>`);
-  document.querySelectorAll('#drawer input[type=checkbox][data-role]').forEach(cb=>{
-    cb.addEventListener('change', ()=>{ const r=cb.dataset.role; const el=document.getElementById('cnt-'+r); const n=document.querySelectorAll('#drawer input[type=checkbox][data-role="'+r+'"]:checked').length; if(el) el.textContent=n+' '+t('modules','মডিউল'); });
-  });
-}
-async function savePackageMatrix(){
-  const rows = {};
-  PKG.roles.forEach(r=>{ rows[r] = Array.from(document.querySelectorAll('#drawer input[type=checkbox][data-role="'+r+'"]:checked')).map(cb=>cb.dataset.mod); });
-  if(DEMO_MODE){ toast('Demo — matrix saved for '+PKG.editing); closeDrawer(); packagesLoad(); return; }
-  const d = await apiCall('app-packages', {action:'save', code:PKG.editing, modules:rows});
-  if(d.ok){ toast('Matrix saved'); closeDrawer(); packagesLoad(); } else toast(d.error||'Failed','error');
-}
-function packageLimitsDrawer(code){
-  const p = PKG.list.find(x=>x.code===code); if(!p) return;
-  const lm = p.limits||{};
-  PKG.editing = code;
-  const rows=[];
-  rows.push(rowItem('props',`<label class="lb">${t('Property limit','সম্পত্তি লিমিট')}</label><input id="limProps" class="inp" type="number" min="1" value="${lm.property_limit??9999}">`));
-  rows.push(rowItem('units',`<label class="lb">${t('Unit limit','ইউনিট লিমিট')}</label><input id="limUnits" class="inp" type="number" min="1" value="${lm.unit_limit??99999}">`));
-  rows.push(rowItem('seats',`<label class="lb">${t('Seats','সিট')}</label><input id="limSeats" class="inp" type="number" min="1" max="999" value="${lm.seats??1}">`));
-  rows.push(rowItem('kr_ai',`<label class="chk"><input type="checkbox" id="limKrAi" ${lm.kr_ai?'checked':''}><span>KR AI ${t('included','অন্তর্ভুক্ত')}</span></label>`));
-  rows.push(rowItem('api',`<label class="chk"><input type="checkbox" id="limApi" ${lm.api_access?'checked':''}><span>API ${t('access','অ্যাক্সেস')}</span></label>`));
-  rows.push(rowItem('reports',`<label class="chk"><input type="checkbox" id="limReports" ${lm.reports?'checked':''}><span>${t('Bilingual reports','বাইলিঙ্গুয়াল রিপোর্ট')}</span></label>`));
-  openDrawer(t('Limits — ','লিমিট — ')+esc(p.name),rows.join(''),
-    `<button class="btn-outline" onclick="closeDrawer()">${t('Cancel','বাতিল')}</button><button class="btn-primary" onclick="savePackageLimits()">💾 ${t('Save limits','লিমিট সেভ')}</button>`);
-}
-async function savePackageLimits(){
-  const limits = { property_limit:Math.max(1,parseInt(val('limProps')||'1',10)), unit_limit:Math.max(1,parseInt(val('limUnits')||'1',10)), seats:Math.max(1,parseInt(val('limSeats')||'1',10)), kr_ai:!!document.getElementById('limKrAi').checked, api_access:!!document.getElementById('limApi').checked, reports:!!document.getElementById('limReports').checked };
-  if(DEMO_MODE){ toast('Demo — limits saved'); closeDrawer(); packagesLoad(); return; }
-  const d = await apiCall('app-packages', {action:'save', code:PKG.editing, limits});
-  if(d.ok){ toast('Limits saved'); closeDrawer(); packagesLoad(); } else toast(d.error||'Failed','error');
-}
-async function packageDelete(code){
-  const p = PKG.list.find(x=>x.code===code);
-  if(!confirm('Delete package '+code+'?')) return;
-  if(DEMO_MODE){ toast('Demo — package would be deleted'); packagesLoad(); return; }
-  const d = await apiCall('app-packages', {action:'delete', code});
-  if(d.ok){ toast('Package deleted'); packagesLoad(); } else toast(d.error||'Failed','error');
-}
-async function packageSubscribers(){
-  if(DEMO_MODE){ renderSubscribersTable(DEMO_SUBS, DEMO_PACKAGES.map(p=>({code:p.code,name:p.name,seats:p.seats}))); return; }
-  const d = await apiCall('app-packages', {action:'subscribers'});
-  if(d.ok) renderSubscribersTable(d.subscribers, d.plans); else toast(d.error||'Failed','error');
-}
-function renderSubscribersTable(subs, plans){
-  const rows = subs.map(s=>`<tr><td><span class="c-name">${esc(s.name)}</span><div class="c-sub">${esc(s.org||'')}</div></td><td>${esc(s.email)}</td><td>${esc(s.role)}</td><td>${badge(s.status==='active'?'Active':s.status==='trial'?'Trial':s.status)}</td><td><select class="inp" style="min-width:150px" onchange="packageAssign('${esc(s.email)}',this.value)">${plans.map(p=>`<option value="${p.code}" ${String(s.plan).toLowerCase()===p.code?'selected':''}>${esc(p.name)} — ৳${p.price}</option>`).join('')}</select></td></tr>`).join('');
-  openDrawer(t('Subscribers & packages','সাবস্ক্রাইবার ও প্যাকেজ'), `<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Org</th><th>Email</th><th>Role</th><th>Status</th><th>Package</th></tr></thead><tbody>${rows}</tbody></table></div></div>`, `<button class="btn-primary" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>`);
-}
-async function packageAssign(email, plan){
-  if(DEMO_MODE){ toast('Demo — '+email+' → '+plan); return; }
-  const d = await apiCall('app-packages', {action:'assign', email, plan});
-  if(d.ok) toast('Assigned '+email+' → '+plan); else toast(d.error||'Failed','error');
-}
-async function packagePreview(code){
-  const p = PKG.list.find(x=>x.code===code); if(!p) return;
-  const roleSel = `<select id="pvRole" class="inp" onchange="packagePreviewRun('${code}')">${PKG.roles.map(r=>`<option value="${r}" ${r==='owner'?'selected':''}>${esc(pkgRoleName(r))}</option>`).join('')}</select>`;
-  openDrawer(t('Preview — ','প্রিভিউ — ')+esc(p.name),
-    `<div style="margin-bottom:12px">${t('Role','রোল')}: ${roleSel}</div><div id="pvHost"><div class="panel"><div class="panel-b c-sub">${t('Pick a role…','একটি রোল বাছুন…')}</div></div></div>`,
-    `<button class="btn-primary" onclick="closeDrawer()">${t('Close','বন্ধ')}</button>`);
-  packagePreviewRun(code);
-}
-async function packagePreviewRun(code){
-  const role = val('pvRole')||'owner';
-  let mods = [], lims = {};
-  if(DEMO_MODE){ const p=PKG.list.find(x=>x.code===code); mods=(p.modules[role]||[]); lims=p.limits||{}; }
-  else { const d = await apiCall('app-packages', {action:'preview', plan:code, role}); if(d.ok){ mods=d.modules; lims=d.limits; } else { $('pvHost').innerHTML=esc(d.error||'Failed'); return; } }
-  const built = new Set(PKG.registry.filter(m=>m.built).map(m=>m.id));
-  const chips = mods.filter(m=>built.has(m)).map(m=>`<span class="badge b-blue" style="margin:3px">${MOD_ICON[m]||''} ${t(MOD_TITLE[m]||m,BN[MOD_TITLE[m]]||'')}</span>`).join('');
-  const locked = mods.filter(m=>!built.has(m)).map(m=>`<span class="badge b-gray" style="margin:3px">${MOD_TITLE[m]||m} 🔒</span>`).join('');
-  $('pvHost').innerHTML = `<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔐</span>${esc(pkgRoleName(role))} — ${mods.length} ${t('modules','মডিউল')}</div></div><div class="panel-b"><div style="font-size:11.5px;color:var(--text-mute);margin-bottom:8px">${t('Limits','লিমিট')}: ${lims.property_limit>=9999?'∞':lims.property_limit} ${t('props','সম্পত্তি')} · ${lims.unit_limit>=99999?'∞':lims.unit_limit} ${t('units','ইউনিট')} · ${lims.seats} ${t('seats','সিট')} · KR AI ${lims.kr_ai?'✓':'✗'} · API ${lims.api_access?'✓':'✗'}</div><div>${chips}${locked}</div></div></div>`;
-}
-
-function avatarMarkup(u, fallback){
+  function avatarMarkup(u, fallback){
   return (u&&u.avatar?u.avatar:(fallback||''));
 }
 let PHOTO_CACHE = {};
