@@ -7637,6 +7637,19 @@ async function submitTenantPhoto(id){
     }
   });
 }
+function tenantPhotoFormBlock(row){
+  return `<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg-alt)">
+    <div style="width:64px;height:64px;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0" id="fPhotoPrev">${row.photo?'':'👤'}</div>
+    <div style="flex:1">
+      <div style="font-size:12.5px;font-weight:700;margin-bottom:6px">${t('Tenant photo','ভাড়াটিয়ার ছবি')}</div>
+      <div class="c-sub" style="margin-bottom:6px">${t('JPG / PNG / WebP, max 2 MB','JPG / PNG / WebP, সর্বোচ্চ 2 MB')}</div>
+      <input type="file" id="f_photo_file" accept="image/*" class="inp" onchange="tenantFormPhotoPreview(this)">
+    </div>
+  </div>`;
+}
+function tenantFormPhotoPreview(inp){
+  if(inp.files&&inp.files[0]){ const u=URL.createObjectURL(inp.files[0]); const el=document.getElementById('fPhotoPrev'); if(el) el.innerHTML=`<img src="${u}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block">`; }
+}
 function samityStaff(){ return ['superadmin','owner','manager','svc_mgr'].includes(role().id); }
 function samityCap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
 function samityEnrich(b){
@@ -8330,6 +8343,60 @@ function propertyTabsHtml(propId){
     +`<div class="kr-tab-panel" data-p="prop" data-tab="rent">${rentConfigTab(propId)}</div>`
     +`<div class="kr-tab-panel" data-p="prop" data-tab="amenities">${amenitiesTab(propId)}</div>`;
 }
+/* ── P56: tenant tab profile view ── */
+function tenantTabsHtml(tenId){
+  return krTabBar([{id:'profile',l:'📋 '+t('Profile','প্রোফাইল')},{id:'lease',l:'📄 '+t('Lease','লিজ')},{id:'billing',l:'💳 '+t('Billing','বিলিং')},{id:'tickets',l:'🔧 '+t('Tickets','টিকিট')}], 'ten', 'profile')
+    +`<div class="kr-tab-panel active" data-p="ten" data-tab="profile"><div class="dr-kv">${'__KV__'}</div>${'__REL__'}</div>`
+    +`<div class="kr-tab-panel" data-p="ten" data-tab="lease">${tenantLeaseTab(tenId)}</div>`
+    +`<div class="kr-tab-panel" data-p="ten" data-tab="billing">${tenantBillingTab(tenId)}</div>`
+    +`<div class="kr-tab-panel" data-p="ten" data-tab="tickets">${tenantTicketsTab(tenId)}</div>`;
+}
+function tenantProfileHeaderHtml(tenId){
+  const te=tenantById(tenId); if(!te) return '';
+  return `<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--bg-alt)">
+    <div style="width:72px;height:72px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0" id="tenPhoto">${te.photo?'':'👤'}</div>
+    <div style="flex:1">
+      <div style="font-size:16px;font-weight:800">${esc(te.name)} ${te.nrb?'🇺🇸':'🇧🇩'}</div>
+      <div class="c-sub">${te.kind==='Corporate'?'🏢 Corporate':'👤 Individual'} · ${te.nrb?'NRB':'Local'}</div>
+      <div class="c-sub">${esc(te.phone||'')}${te.email?' · '+esc(te.email):''}</div>
+    </div>
+    ${['superadmin','owner','manager'].includes(role().id)?`<button class="btn-ghost" style="padding:6px 12px;font-size:12px" onclick="tenantPhotoDrawer('${te.id}')">📷 ${t('Change photo','ছবি বদলান')}</button>`:''}
+  </div>`;
+}
+function tenantLeaseTab(tenId){
+  const ls=(DB.leases||[]).filter(x=>String(x.t)===String(tenId));
+  if(!ls.length) return `<div class="tab-pad"><div class="c-sub">${t('No leases yet.','এখনো কোনো লিজ নেই।')}</div></div>`;
+  return `<div class="tab-pad">${ls.map(l=>{
+    const u=unitById(l.u);
+    return `<div class="panel" style="margin-bottom:10px;cursor:pointer" onclick="openDetail('leases','${l.id}')"><div class="panel-b">
+      <div style="display:flex;justify-content:space-between;align-items:center"><div><div class="c-name" style="font-size:14px;font-weight:700">${l.id}</div><div class="c-sub">${u?esc(u.name)+' · '+esc(propById(u.p)?.name||''):'—'}</div></div>${badge(l.status)}</div>
+      <div style="display:flex;gap:16px;margin-top:8px;font-size:12.5px;flex-wrap:wrap"><span>${l.start} → ${l.end||'…'}</span><span class="t-amount">${money(l.rent)}/mo</span><span class="c-sub">adv ${money(l.adv)}</span></div>
+    </div></div>`;
+  }).join('')}</div>`;
+}
+function tenantBillingTab(tenId){
+  const invs=(DB.invoices||[]).filter(i=>(DB.leases||[]).some(l=>l.id===i.l&&String(l.t)===String(tenId)));
+  if(!invs.length) return `<div class="tab-pad"><div class="c-sub">${t('No invoices yet.','এখনো কোনো ইনভয়েস নেই।')}</div></div>`;
+  const payFor=i=>(DB.payments||[]).filter(p=>p.inv===i.id).reduce((s,p)=>s+(p.amount||0),0);
+  const rows=invs.map(i=>({i:i, paid:payFor(i), due:Math.max(0,(i.net||0)-payFor(i))}));
+  const tot=rows.reduce((s,r)=>s+(r.i.net||0),0);
+  const paid=rows.reduce((s,r)=>s+r.paid,0);
+  const due=rows.reduce((s,r)=>s+r.due,0);
+  return `<div class="tab-pad">
+    <div class="panel" style="margin-bottom:12px"><div class="panel-b" style="padding:4px 12px">
+      <div class="mix-row"><span>${t('Total billed','মোট বিল')}</span><b>${money(tot)}</b></div>
+      <div class="mix-row"><span>${t('Total paid','মোট পরিশোধ')}</span><b class="t-pos">${money(paid)}</b></div>
+      <div class="mix-row mix-total"><span>${t('Outstanding','বকেয়া')}</span><b class="${due>0?'t-neg':'t-pos'}">${money(due)}</b></div>
+    </div></div>
+    ${rows.map(r=>{const i=r.i;return `<div class="panel" style="margin-bottom:10px;cursor:pointer" onclick="openDetail('invoices','${i.id}')"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="c-name" style="font-size:14px;font-weight:700">${i.id}</div><div class="c-sub">${i.m}</div></div>${badge(i.status)}</div><div style="display:flex;gap:16px;margin-top:8px;font-size:12.5px;flex-wrap:wrap"><span class="t-amount">${money(i.net)}</span><span class="c-sub">${t('paid','পরিশোধ')} ${money(r.paid)}</span><span class="${r.due>0?'t-neg':'t-pos'}">${money(r.due)} ${t('due','বাকি')}</span></div></div></div>`;}).join('')}
+  </div>`;
+}
+function tenantTicketsTab(tenId){
+  const unitIds=(DB.leases||[]).filter(x=>String(x.t)===String(tenId)).map(x=>x.u);
+  const tks=(DB.tickets||[]).filter(x=>unitIds.includes(x.u));
+  if(!tks.length) return `<div class="tab-pad"><div class="c-sub">${t('No tickets yet.','এখনো কোনো টিকিট নেই।')}</div></div>`;
+  return `<div class="tab-pad">${tks.map(x=>`<div class="panel" style="margin-bottom:10px;cursor:pointer" onclick="openDetail('tickets','${x.id}')"><div class="panel-b"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="c-name" style="font-size:14px;font-weight:700">${x.id}</div><div class="c-sub">${esc((x.desc||'').slice(0,60))}${(x.desc||'').length>60?'…':''}</div></div>${badge(x.status)}</div><div style="margin-top:8px;font-size:12px" class="c-sub">${x.reported||''}${x.liab?' · '+esc(x.liab):''}</div></div></div>`).join('')}</div>`;
+}
 /* ── Phase 27: move-out wizard ── */
 let MOVEOUT = null;
 async function moveOutWizard(leaseId){
@@ -8433,6 +8500,7 @@ function openDetail(collection, id){
   const canEdit=canCrud(collection);
   let foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button>`;
   if(collection==='tickets' && !(LIVE.user && LIVE.user.role==='tenant')){ foot+=`<button class="btn-outline" onclick="ticketStatusForm('${row.id}')">🔧 Update status</button>`; }
+  if(collection==='tenants' && ['superadmin','owner','manager'].includes(role().id)){ foot+=`<button class="btn-outline" onclick="tenantPhotoDrawer('${row.id}')">📷 ${t('Photo','ছবি')}</button>`; }
   if(collection==='invoices' && row.status!=='Paid'){ foot+=`<button class="btn-outline" onclick="gatewayPay('${row.id}')">🔐 ${t('Pay online','অনলাইনে পরিশোধ')}</button><button class="btn-primary" onclick="payForm('${row.id}')">💳 Record payment</button>`; }
   if(collection==='invoices'){ foot+=`<button class="btn-outline" onclick="printInvoice('${row.id}')">🖨 ${t('Print / PDF','প্রিন্ট / পিডিএফ')}</button>`; if(LIVE.user&&['superadmin','owner','manager','accountant','crm'].includes(LIVE.user.role)){ foot+=`<button class="btn-outline" onclick="waRemind('${row.id}')">🟢 WhatsApp</button>`; } }
   if(collection==='leases' && LIVE.user && ['superadmin','owner','manager'].includes(LIVE.user.role) && (row.status==='Active'||row.status==='Pending Registration')){
@@ -8444,7 +8512,9 @@ function openDetail(collection, id){
   if(collection==='tickets'){ extra=ticketThreadHtml(row.id); }
   let body=`<div class="dr-kv">${kvRows}</div>${related}${extra}`;
   if(collection==='properties'){ body=propertyTabsHtml(row.id).replace('__KV__',kvRows).replace('__REL__',related); }
+  if(collection==='tenants'){ body=tenantTabsHtml(row.id).replace('__KV__',tenantProfileHeaderHtml(row.id)+kvRows).replace('__REL__',related); }
   openDrawer(`${s.icon} ${s.label} — ${row.id}`, body, foot);
+  if(collection==='tenants') attachPhoto(document.getElementById('tenPhoto'),'tenant',row.id);
 }
 function ticketThreadHtml(ticketId){
   const rows=(DB.ticket_thread||[]).filter(x=>String(x.ticket)===String(ticketId));
@@ -8483,9 +8553,10 @@ function openForm(collection, id, isNew){
   const row=isNew?{}:((DB[collection]||[]).find(x=>String(x.id)===String(id))||{});
   if(isNew&&collection==='tickets'&&LIVE.user&&LIVE.user.role==='tenant'&&DB.units.length&&!row.u){row.u=DB.units[0].id;}
   if(isNew&&collection==='tickets'&&!row.reported){row.reported=new Date().toISOString().slice(0,10);}
-  const body=`<div class="form-grid">${s.fields.map(f=>fieldHtml(f,row)).join('')}</div>`;
+  const body=(collection==='tenants'?tenantPhotoFormBlock(row):'')+`<div class="form-grid">${s.fields.map(f=>fieldHtml(f,row)).join('')}</div>`;
   const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="${isNew?'closeDrawer()':'openDetail(\''+collection+'\',\''+id+'\')'}">Cancel</button>`+(isNew?'':`<button class="btn-danger" onclick="deleteRow('${collection}','${id}')">🗑 Delete</button>`)+`<button class="btn-primary" onclick="saveForm('${collection}','${id||''}',${isNew?'true':'false'})">${isNew?'＋ Create':'✓ Save changes'}</button></div>`;
   openDrawer(`${s.icon} ${isNew?'New '+s.label:'Edit '+s.label} ${isNew?'':'— '+id}`, body, foot);
+  if(collection==='tenants'&&row.photo) attachPhoto(document.getElementById('fPhotoPrev'),'tenant',row.id);
 }
 function openNew(collection){ openForm(collection, null, true); }
 async function saveForm(collection, id, isNew){
@@ -8499,7 +8570,21 @@ async function saveForm(collection, id, isNew){
   });
   if(!ok){toast('Please fill required fields');return}
   const d=await crud(isNew?'create':'update', collection, isNew?null:id, data);
-  if(d&&d.ok){ closeDrawer(); toast((isNew?'Created ':'Saved ')+(d.id||id)); }
+  if(d&&d.ok){
+    const pid=(d.id||id);
+    const fi=document.getElementById('f_photo_file');
+    if(collection==='tenants'&&fi&&fi.files&&fi.files[0]){
+      await uploadPhoto(API+'app-photo?action=tenant-upload','f_photo_file',{
+        append:fd=>fd.append('id',pid),
+        saved:async dd=>{
+          if(DEMO_MODE){ DB.tenants=DB.tenants.map(t=>String(t.id)===String(pid)?Object.assign({},t,{photo:'demo_'+pid+'.jpg'}):t); }
+          else { const r=await apiCall('app-bootstrap'); if(r.ok) LIVE.db=r.collections; DB=LIVE.db||DB; }
+          nav('tenants');
+        }
+      });
+    }
+    closeDrawer(); toast((isNew?'Created ':'Saved ')+(d.id||pid));
+  }
 }
 async function deleteRow(collection, id){
   if(!confirm('Delete this '+SCHEMAS[collection].label+' ('+id+')? This cannot be undone.'))return;
