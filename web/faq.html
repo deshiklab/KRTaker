@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.51">
+<link rel="stylesheet" href="css/style.css?v=3.53">
 <!-- KRTaker analytics: replace G-XXXXXXXXXX with your GA4 Measurement ID (or swap for Plausible) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
@@ -39,7 +39,7 @@ gtag('config', 'G-XXXXXXXXXX');
 </script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://krtaker.com/index.html"}, {"@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://krtaker.com/faq.html"}]}</script>
 </head>
-<body>
+<body data-page="faq">
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="container">
@@ -104,23 +104,23 @@ gtag('config', 'G-XXXXXXXXXX');
 </nav>
 <div class="page-hero">
   <div class="container">
-    <h1 data-i18n="faq.title">Frequently asked questions</h1>
+    <h1 data-i18n="faq.title" data-cms="faq.hero.title">Frequently asked questions</h1>
     <p data-i18n="faq.sub">Everything owners, tenants, partners and NRBs ask us.</p>
   </div>
 </div>
 <div class="page-body">
   <div class="container">
     <div class="faq-list">
-      <div class="faq-item"><button class="faq-q">What exactly is KRTaker?<span class="arrow">▾</span></button><div class="faq-a">KRTaker (Key Responsibility Taker) is a SaaS property-management platform for Bangladesh with an AI caretaker at its core. It handles tenants, leases, rent collection, taxes, maintenance and legal compliance for property owners — while tenants, partners and legal firms each get their own scoped workspace.</div></div>
-      <div class="faq-item"><button class="faq-q">Who can register?<span class="arrow">▾</span></button><div class="faq-a">Property owners (subscribers), service partners (B2B contractors), legal firms/consultants, and tenants (invited by their landlord). Platform staff accounts (Service Manager, CRM, Accountant, HR) are provisioned by the KRTaker operations team.</div></div>
-      <div class="faq-item"><button class="faq-q">How does the 14-day free trial work?<span class="arrow">▾</span></button><div class="faq-a">Register free — no plan needed. Use everything for 14 days, then pick a plan from your dashboard anytime (or export your data and leave). No credit card required.</div></div>
-      <div class="faq-item"><button class="faq-q">What payment methods can tenants use?<span class="arrow">▾</span></button><div class="faq-a">bKash (tokenized checkout), Nagad, and SSLCommerz (cards/internet banking) for commercial rents. Every payment issues a signed receipt per PRCA 1991 §13.</div></div>
-      <div class="faq-item"><button class="faq-q">Is my data private from other owners?<span class="arrow">▾</span></button><div class="faq-a">Completely. KRTaker is multi-tenant by architecture — database row-level isolation plus role-scoped access. No owner, partner or tenant can see another entity's data.</div></div>
-      <div class="faq-item"><button class="faq-q">Does KRTaker replace my lawyer or accountant?<span class="arrow">▾</span></button><div class="faq-a">No — it makes them more efficient. The compliance engine flags risks and generates compliant documents; your lawyer reviews and files. The financial engine computes taxes and exports ledgers; your accountant reconciles. Enterprise plans can add on platform legal counsel.</div></div>
-      <div class="faq-item"><button class="faq-q">What happens to a lease over 12 months?<span class="arrow">▾</span></button><div class="faq-a">It's automatically flagged <b>Pending Registration</b> (TPA 1882 §107 / Registration Act §17(1)(d)). Invoicing stays paused until you upload the sub-registry deed details — protecting you from running a legally invisible lease.</div></div>
-      <div class="faq-item"><button class="faq-q">I'm an NRB — can I use KRTaker from abroad?<span class="arrow">▾</span></button><div class="faq-a">Yes — it's built for you. English-first, 24/7 AI caretaker, and NRTA/NITA remittance dossiers (IT10B, Form TM, QA-22) to make repatriation compliant and fast.</div></div>
-      <div class="faq-item"><button class="faq-q">How do service partners get paid?<span class="arrow">▾</span></button><div class="faq-a">Per completed work order, net of the 10% platform fee, with TDS applied per the Income Tax Act 2023. Payouts release after Service Manager QC sign-off. Full ledger in your partner workspace.</div></div>
-      <div class="faq-item"><button class="faq-q">Can I try the product before registering?<span class="arrow">▾</span></button><div class="faq-a">Absolutely — the <a href="https://krtaker.com/dashboard-v2.html">live dashboard</a> is open. Explore all roles (click the avatar), test the AI caretaker, and play with the legal engines.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q1">What exactly is KRTaker?<span class="arrow">▾</span></button><div class="faq-a">KRTaker (Key Responsibility Taker) is a SaaS property-management platform for Bangladesh with an AI caretaker at its core. It handles tenants, leases, rent collection, taxes, maintenance and legal compliance for property owners — while tenants, partners and legal firms each get their own scoped workspace.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q2">Who can register?<span class="arrow">▾</span></button><div class="faq-a">Property owners (subscribers), service partners (B2B contractors), legal firms/consultants, and tenants (invited by their landlord). Platform staff accounts (Service Manager, CRM, Accountant, HR) are provisioned by the KRTaker operations team.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q3">How does the 14-day free trial work?<span class="arrow">▾</span></button><div class="faq-a">Register free — no plan needed. Use everything for 14 days, then pick a plan from your dashboard anytime (or export your data and leave). No credit card required.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q4">What payment methods can tenants use?<span class="arrow">▾</span></button><div class="faq-a">bKash (tokenized checkout), Nagad, and SSLCommerz (cards/internet banking) for commercial rents. Every payment issues a signed receipt per PRCA 1991 §13.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q5">Is my data private from other owners?<span class="arrow">▾</span></button><div class="faq-a">Completely. KRTaker is multi-tenant by architecture — database row-level isolation plus role-scoped access. No owner, partner or tenant can see another entity's data.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q6">Does KRTaker replace my lawyer or accountant?<span class="arrow">▾</span></button><div class="faq-a">No — it makes them more efficient. The compliance engine flags risks and generates compliant documents; your lawyer reviews and files. The financial engine computes taxes and exports ledgers; your accountant reconciles. Enterprise plans can add on platform legal counsel.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q7">What happens to a lease over 12 months?<span class="arrow">▾</span></button><div class="faq-a">It's automatically flagged <b>Pending Registration</b> (TPA 1882 §107 / Registration Act §17(1)(d)). Invoicing stays paused until you upload the sub-registry deed details — protecting you from running a legally invisible lease.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q8">I'm an NRB — can I use KRTaker from abroad?<span class="arrow">▾</span></button><div class="faq-a">Yes — it's built for you. English-first, 24/7 AI caretaker, and NRTA/NITA remittance dossiers (IT10B, Form TM, QA-22) to make repatriation compliant and fast.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q9">How do service partners get paid?<span class="arrow">▾</span></button><div class="faq-a">Per completed work order, net of the 10% platform fee, with TDS applied per the Income Tax Act 2023. Payouts release after Service Manager QC sign-off. Full ledger in your partner workspace.</div></div>
+      <div class="faq-item"><button class="faq-q" data-cms="faq.items.q10">Can I try the product before registering?<span class="arrow">▾</span></button><div class="faq-a">Absolutely — the <a href="https://krtaker.com/dashboard-v2.html">live dashboard</a> is open. Explore all roles (click the avatar), test the AI caretaker, and play with the legal engines.</div></div>
     </div>
   </div>
 </div>
@@ -128,39 +128,39 @@ gtag('config', 'G-XXXXXXXXXX');
 <!-- ===== CTA SECTION ===== -->
 <section class="cta-section">
   <div class="container">
-    <h2 data-i18n="cta.title">Ready to put your property on autopilot?</h2>
-    <p data-i18n="cta.sub">Join 128 subscribers managing ৳74.55 Cr in property with KRTaker.</p>
+    <h2 data-i18n="cta.title" data-cms="home.ctaband.title">Ready to put your property on autopilot?</h2>
+    <p data-i18n="cta.sub" data-cms="home.ctaband.sub">Join 128 subscribers managing ৳74.55 Cr in property with KRTaker.</p>
     <div class="cta-actions">
-      <a href="register.html" class="btn btn-white btn-lg" data-i18n="cta.btn">Start free trial</a>
-      <a href="contact.html" class="btn btn-outline btn-lg" data-i18n="shared.ctaBtn2">Talk to us</a>
+      <a href="register.html" class="btn btn-white btn-lg" data-i18n="cta.btn" data-cms="home.ctaband.btn1">Start free trial</a>
+      <a href="contact.html" class="btn btn-outline btn-lg" data-i18n="shared.ctaBtn2" data-cms="home.ctaband.btn2">Talk to us</a>
     </div>
   </div>
 </section>
 <!-- ===== SERVICE PARTNERS ===== -->
 <section class="section partners-section">
   <div class="container">
-    <h2 class="section-title reveal" data-i18n="partners.title">Our service partners</h2>
-    <p class="section-subtitle reveal" data-i18n="partners.sub">45+ vetted service partners across Dhaka — one pipeline for quotes, QC and payouts.</p>
+    <h2 class="section-title reveal" data-i18n="partners.title" data-cms="home.partners.title">Our service partners</h2>
+    <p class="section-subtitle reveal" data-i18n="partners.sub" data-cms="home.partners.sub">45+ vetted service partners across Dhaka — one pipeline for quotes, QC and payouts.</p>
     <div class="partner-grid reveal">
-      <div class="partner-chip"><span class="pc-ico">⚡</span><b data-i18n="partners.c1">Electro-Mechanical</b></div>
-      <div class="partner-chip"><span class="pc-ico">🚿</span><b data-i18n="partners.c2">Plumbing &amp; Sanitary</b></div>
-      <div class="partner-chip"><span class="pc-ico">🧱</span><b data-i18n="partners.c3">Civil &amp; Renovation</b></div>
-      <div class="partner-chip"><span class="pc-ico">📹</span><b data-i18n="partners.c4">Security Systems</b></div>
-      <div class="partner-chip"><span class="pc-ico">🛗</span><b data-i18n="partners.c5">Elevator Maintenance</b></div>
-      <div class="partner-chip"><span class="pc-ico">🧹</span><b data-i18n="partners.c6">Cleaning &amp; Facilities</b></div>
-      <div class="partner-chip"><span class="pc-ico">🐜</span><b data-i18n="partners.c7">Pest Control</b></div>
-      <div class="partner-chip"><span class="pc-ico">🎨</span><b data-i18n="partners.c8">Painting &amp; Finishing</b></div>
+      <div class="partner-chip"><span class="pc-ico">⚡</span><b data-i18n="partners.c1" data-cms="home.partners.c1">Electro-Mechanical</b></div>
+      <div class="partner-chip"><span class="pc-ico">🚿</span><b data-i18n="partners.c2" data-cms="home.partners.c2">Plumbing &amp; Sanitary</b></div>
+      <div class="partner-chip"><span class="pc-ico">🧱</span><b data-i18n="partners.c3" data-cms="home.partners.c3">Civil &amp; Renovation</b></div>
+      <div class="partner-chip"><span class="pc-ico">📹</span><b data-i18n="partners.c4" data-cms="home.partners.c4">Security Systems</b></div>
+      <div class="partner-chip"><span class="pc-ico">🛗</span><b data-i18n="partners.c5" data-cms="home.partners.c5">Elevator Maintenance</b></div>
+      <div class="partner-chip"><span class="pc-ico">🧹</span><b data-i18n="partners.c6" data-cms="home.partners.c6">Cleaning &amp; Facilities</b></div>
+      <div class="partner-chip"><span class="pc-ico">🐜</span><b data-i18n="partners.c7" data-cms="home.partners.c7">Pest Control</b></div>
+      <div class="partner-chip"><span class="pc-ico">🎨</span><b data-i18n="partners.c8" data-cms="home.partners.c8">Painting &amp; Finishing</b></div>
       <div class="partner-chip"><span class="pc-ico">⚙️</span><b data-i18n="partners.c9"></b></div>
       <div class="partner-chip"><span class="pc-ico">🧯</span><b data-i18n="partners.c10"></b></div>
       <div class="partner-chip"><span class="pc-ico">💻</span><b data-i18n="partners.c11"></b></div>
       <div class="partner-chip"><span class="pc-ico">💧</span><b data-i18n="partners.c12"></b></div>
       <div class="partner-chip"><span class="pc-ico">🌿</span><b data-i18n="partners.c13"></b></div>
       <div class="partner-chip"><span class="pc-ico">♻️</span><b data-i18n="partners.c14"></b></div>
-      <div class="partner-chip partner-cta"><span class="pc-ico">➕</span><b data-i18n="partners.become">Become a partner</b></div>
+      <div class="partner-chip partner-cta"><span class="pc-ico">➕</span><b data-i18n="partners.become" data-cms="home.partners.become">Become a partner</b></div>
     </div>
-    <p class="partner-note reveal" data-i18n="partners.note">Every partner is background-checked, rated by tenants, and paid only after QC passes.</p>
+    <p class="partner-note reveal" data-i18n="partners.note" data-cms="home.partners.note">Every partner is background-checked, rated by tenants, and paid only after QC passes.</p>
     <div class="partners-actions reveal">
-      <a href="for-partners.html" class="btn btn-outline" data-i18n="partners.cta">Partner portal →</a>
+      <a href="for-partners.html" class="btn btn-outline" data-i18n="partners.cta" data-cms="home.partners.cta">Partner portal →</a>
     </div>
   </div>
 </section>
@@ -170,7 +170,7 @@ gtag('config', 'G-XXXXXXXXXX');
     <div class="footer-top">
       <div class="footer-brand">
         <div class="nav-logo"><span class="logo-mark">KR</span> KRTaker</div>
-        <p data-i18n="footer.blurb">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
+        <p data-i18n="footer.blurb" data-cms="footer.section.tagline">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
         <div class="footer-socials">
           <a href="https://www.facebook.com/krtaker" class="soc" aria-label="Facebook" target="_blank" rel="noopener">f</a>
           <a href="https://www.linkedin.com/company/krtaker" class="soc" aria-label="LinkedIn" target="_blank" rel="noopener">in</a>
@@ -180,14 +180,14 @@ gtag('config', 'G-XXXXXXXXXX');
         </div>
       </div>
       <div class="footer-news">
-        <h4 data-i18n="footer.newsTitle">Property insights, in Bengali &amp; English</h4>
-        <p data-i18n="footer.newsSub">Holding tax, TDS, PRCA updates and product news — once a month, no spam.</p>
+        <h4 data-i18n="footer.newsTitle" data-cms="footer.news.title">Property insights, in Bengali &amp; English</h4>
+        <p data-i18n="footer.newsSub" data-cms="footer.news.sub">Holding tax, TDS, PRCA updates and product news — once a month, no spam.</p>
         <form class="news-form" id="newsletterForm" novalidate>
-          <input type="email" id="newsEmail" data-i18n-ph="footer.newsPh" placeholder="you@example.com" required>
-          <button type="submit" data-i18n="footer.newsBtn">Subscribe</button>
+          <input type="email" id="newsEmail" data-i18n-ph="footer.newsPh" placeholder="you@example.com" required data-cms-ph="footer.news.ph">
+          <button type="submit" data-i18n="footer.newsBtn" data-cms="footer.news.btn">Subscribe</button>
         </form>
         <div class="footer-pay">
-          <span>Pays with</span>
+          <span data-cms="footer.pay.label">Pays with</span>
           <span class="pay-chip">bKash</span>
           <span class="pay-chip">Nagad</span>
           <span class="pay-chip">SSLCommerz</span>
@@ -196,7 +196,7 @@ gtag('config', 'G-XXXXXXXXXX');
     </div>
     <div class="footer-grid">
       <div>
-        <h4 data-i18n="footer.p1">Platform</h4>
+        <h4 data-i18n="footer.p1" data-cms="footer.cols.c1">Platform</h4>
         <ul>
           <li><a href="features.html" data-i18n="footer.features">Features</a></li>
           <li><a href="how-it-works.html" data-i18n="footer.how">How it works</a></li>
@@ -206,7 +206,7 @@ gtag('config', 'G-XXXXXXXXXX');
         </ul>
       </div>
       <div>
-        <h4 data-i18n="footer.p2">For you</h4>
+        <h4 data-i18n="footer.p2" data-cms="footer.cols.c2">For you</h4>
         <ul>
           <li><a href="for-owners.html" data-i18n="footer.owners">Property Owners</a></li>
           <li><a href="for-tenants.html" data-i18n="footer.tenants">Tenants</a></li>
@@ -216,7 +216,7 @@ gtag('config', 'G-XXXXXXXXXX');
         </ul>
       </div>
       <div>
-        <h4 data-i18n="footer.p3">Company</h4>
+        <h4 data-i18n="footer.p3" data-cms="footer.cols.c3">Company</h4>
         <ul>
           <li><a href="about.html" data-i18n="footer.about">About us</a></li>
           <li><a href="blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
@@ -227,32 +227,33 @@ gtag('config', 'G-XXXXXXXXXX');
         </ul>
       </div>
       <div>
-        <h4 data-i18n="footer.p4">Get in touch</h4>
+        <h4 data-i18n="footer.p4" data-cms="footer.cols.c4">Get in touch</h4>
         <ul class="footer-contact">
-          <li data-i18n="footer.c1">📧 hello@krtaker.com</li>
-          <li data-i18n="footer.c2">📞 +880 1712-000000</li>
-          <li data-i18n="footer.c3">📍 Dhaka, Bangladesh</li>
-          <li data-i18n="footer.c4">🕐 24/7 AI caretaker online</li>
+          <li data-i18n="footer.c1" data-cms="footer.contact.c1">📧 hello@krtaker.com</li>
+          <li data-i18n="footer.c2" data-cms="footer.contact.c2">📞 +880 1712-000000</li>
+          <li data-i18n="footer.c3" data-cms="footer.contact.c3">📍 Dhaka, Bangladesh</li>
+          <li data-i18n="footer.c4" data-cms="footer.contact.c4">🕐 24/7 AI caretaker online</li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <span data-i18n="footer.rights">© 2026 KRTaker. All rights reserved.</span>
-      <span class="footer-made" data-i18n="footer.madeIn">Made in Bangladesh 🇧🇩</span>
+      <span class="footer-made" data-i18n="footer.madeIn" data-cms="footer.bottom.made">Made in Bangladesh 🇧🇩</span>
       <span><a href="terms.html" data-i18n="footer.terms">Terms</a> · <a href="privacy.html" data-i18n="footer.privacy">Privacy</a> · <a href="contact.html" data-i18n="footer.support">Support</a></span>
     </div>
   </div>
 </footer>
 <!-- Mobile sticky CTA -->
 <div class="sticky-cta">
-  <a href="register.html" data-i18n="shared.stickyCta">Start free trial — 14 days, no card</a>
+  <a href="register.html" data-i18n="shared.stickyCta" data-cms="home.sticky.cta">Start free trial — 14 days, no card</a>
 </div>
 <!-- Back to top -->
 <button class="btt-btn" aria-label="Back to top">↑</button>
-<script src="i18n/i18n-dict.js?v=3.51"></script>
-<script src="js/i18n.js?v=3.51"></script>
-<script src="js/main.js?v=3.51"></script>
-<script src="js/chat.js?v=3.51"></script>
+<script src="i18n/i18n-dict.js?v=3.53"></script>
+<script src="js/i18n.js?v=3.53"></script>
+<script src="js/cms-hydrate.js?v=3.53"></script>
+<script src="js/main.js?v=3.53"></script>
+<script src="js/chat.js?v=3.53"></script>
 <script>
 if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 </script>

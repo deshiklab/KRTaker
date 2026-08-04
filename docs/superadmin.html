@@ -383,6 +383,7 @@ function renderNav(){
     ['Overview',['dashboard']],
     ['Platform',['subscribers','packages','users','providers']],
     ['Content & CRM',['cms','onboarding','mis']],
+    ['Developers',['api']],
     ['Commerce',['payments','finance']],
     ['System',['settings','integrations','tickets','backup','modules','whitelabel','health','audit']]
   ];
@@ -406,7 +407,8 @@ const NAV_DESC={
   modules:'Module & service management linked to package formulation',
   whitelabel:'Master settings with white-label branding',
   health:'System administration — runtime, database and security posture',
-  audit:'Full audit trail across the platform'
+  audit:'Full audit trail across the platform',
+  api:'API Library — endpoint catalog, test console, web/mobile API keys and data stats'
 };
 const NAV={
   dashboard:{ic:'📊',l:'Dashboard'},
@@ -426,12 +428,13 @@ const NAV={
   modules:{ic:'🧩',l:'Module Management'},
   whitelabel:{ic:'🏷️',l:'White Label'},
   health:{ic:'🩺',l:'System Health'},
-  audit:{ic:'📜',l:'Audit Logs'}
+  audit:{ic:'📜',l:'Audit Logs'},
+  api:{ic:'🧬',l:'API Library'}
 };
 function nav(v){closeSidebar();STATE.view=v;renderNav();renderTitle();render();window.scrollTo(0,0)}
 function render(){
   const el=$('content');
-  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit}[STATE.view];
+  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi}[STATE.view];
   el.innerHTML=`<div class="page-head"><div><h1>${NAV[STATE.view].l}</h1><div class="sub" id="pageSub"></div></div><div class="head-actions" id="pageActions"></div></div><div id="pageBody"></div>`;
   r();
 }
@@ -667,8 +670,8 @@ async function providerSave(id){
 }
 /* ── Web CMS ── */
 let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en'};
-const CMS_PAGES={home:{l:'Home',ic:'🏠'},features:{l:'Features',ic:'✨'},pricing:{l:'Pricing',ic:'💎'},about:{l:'About',ic:'ℹ️'},contact:{l:'Contact',ic:'📮'},footer:{l:'Footer',ic:'🔗'},seo:{l:'SEO',ic:'🔍'}};
-const CMS_SEC_LABEL={hero:'Hero',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',home:'Home',features:'Features',pricing:'Pricing',about:'About',contact:'Contact',footer:'Footer'};
+const CMS_PAGES={home:{l:'Home',ic:'🏠'},features:{l:'Features',ic:'✨'},pricing:{l:'Pricing',ic:'💎'},about:{l:'About',ic:'ℹ️'},contact:{l:'Contact',ic:'📮'},howitworks:{l:'How it works',ic:'🗺️'},ai:{l:'AI Caretaker',ic:'🤖'},owners:{l:'For Owners',ic:'🏠'},tenants:{l:'For Tenants',ic:'👤'},partners:{l:'For Partners',ic:'🛠️'},nrb:{l:'For NRB',ic:'🌍'},legal:{l:'Legal & Compliance',ic:'⚖️'},faq:{l:'FAQ',ic:'❓'},tools:{l:'Calculators',ic:'🧮'},blog:{l:'Blog',ic:'📰'},cases:{l:'Case Studies',ic:'📈'},login:{l:'Login',ic:'🔐'},register:{l:'Register',ic:'📝'},footer:{l:'Footer',ic:'🔗'},seo:{l:'SEO',ic:'🔍'}};
+const CMS_SEC_LABEL={hero:'Hero',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',stats:'Stats bar',trust:'Trust strip',steps:'How it works steps',roles:'Roles',featcards:'Feature cards',gallery:'Product gallery',legal:'Legal strip',testi:'Testimonials',ctaband:'CTA band',partners:'Partners',sticky:'Sticky CTA',modules:'Feature modules',visual:'Visual band',note:'Pricing note',compare:'Compare table',callout:'Callout',why:'Why we exist',principles:'Principles',team:'Team',milestones:'Milestones',join:'Join CTA',talk:'Talk to the team',rows:'Contact rows',form:'Contact form',items:'Items',sections:'Sections',cols:'Footer columns',contact:'Contact',news:'Newsletter',pay:'Payment chips',bottom:'Footer bottom',home:'Home',features:'Features',pricing:'Pricing',about:'About',contact:'Contact',footer:'Footer'};
 const CMS_LONG=['subtitle','desc','meta_description','tagline','address'];
 function cmsIsLong(k){return CMS_LONG.some(s=>k.includes(s));}
 const CMS_HINTS={
@@ -1210,6 +1213,246 @@ document.documentElement.setAttribute('data-theme',STATE.theme);
   }else{$('authScreen').style.display='flex'}
 })();
 $('authPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+/* ── API Library (SA1-fullsite): endpoints catalog, test console, web/mobile keys, data stats ── */
+let API_TAB = 'endpoints';
+let API_CAT = [];
+const API_CATALOG = [
+  // [action, method, auth, group, description]
+  ['cms-read','GET','public','Web · Landing','Public CMS content for the website — merged defaults + stored blocks (no auth).'],
+  ['plans','GET','public','Web · Landing','Public pricing plans from plan_catalog for the pricing page (no auth).'],
+  ['health','GET','public','System','Liveness + db size + php version (no auth).'],
+  ['listings','GET','public','Web · Listings','Public property listings (no auth).'],
+  ['app-setup','POST','setup','Auth','Bootstrap a new organization with the app-setup key.'],
+  ['app-login','POST','session','Auth','Sign in — returns a Bearer token (demo123).'],
+  ['app-logout','POST','session','Auth','Invalidate the current token.'],
+  ['app-me','GET','session','Auth','Current user profile + settings.'],
+  ['app-bootstrap','GET','session','Auth','Everything the app needs on launch (roles, modules, org).'],
+  ['app-profile','GET','session','Auth','Profile incl. notification preferences.'],
+  ['app-settings-get','GET','session','Auth','User settings.'],
+  ['app-org-settings-get','GET','session','Auth','Organization settings.'],
+  ['app-gateways','GET','session','Payments','Configured payment gateways (masked secrets).'],
+  ['app-ai-meta','GET','session','AI','KR AI metadata / model info.'],
+  ['app-health','GET','session','System','Authenticated health snapshot.'],
+  ['app-export','GET','session','Data','Full JSON export of the user data (GDPR).'],
+  ['app-gdpr-export','GET','session','Data','GDPR-compliant data export.'],
+  ['app-audit','GET','session','System','Audit trail for the user.'],
+  ['app-backup','GET','session','System','Backup listing for the user scope.'],
+  ['app-doc-vault','GET','session','Documents','Documents list (vault).'],
+  ['app-doc-view','GET','session','Documents','View a document.'],
+  ['app-doc-download','GET','session','Documents','Download a document.'],
+  ['app-ticket-thread','GET','session','Support','Ticket thread for a ticket.'],
+  ['app-notice-list','GET','session','Community','Notice board.'],
+  ['app-referral-list','GET','session','CRM','Referrals.'],
+  ['app-collections-summary','GET','session','Finance','Rent collections summary.'],
+  ['app-payment-recon','GET','session','Finance','Payment reconciliation.'],
+  ['app-tpl-list','GET','session','Documents','Template list.'],
+  ['app-tpl-get','GET','session','Documents','Template detail.'],
+  ['app-email-tpl-list','GET','session','Email','Email templates list.'],
+  ['app-email-tpl-get','GET','session','Email','Email template detail.'],
+  ['app-email-preview','GET','session','Email','Email template preview.'],
+  ['app-hando-list','GET','session','Documents','Handover checklists.'],
+  ['app-hando-get','GET','session','Documents','Handover checklist detail.'],
+  ['app-portal','GET','session','Portal','Tenant/partner portal data.'],
+  ['app-portal-agreement','GET','session','Portal','Portal agreement document.'],
+  ['app-reminder-config','GET','session','System','Reminder configuration.'],
+  ['app-reminder-summary','GET','session','System','Reminder summary.'],
+  ['app-renewal-list','GET','session','Leases','Lease renewal requests.'],
+  ['app-meter-list','GET','session','Utilities','Meter readings.'],
+  ['app-score-list','GET','session','Compliance','Compliance scorecards.'],
+  ['app-score-detail','GET','session','Compliance','Compliance scorecard detail.'],
+  ['app-vetting-report','GET','session','Compliance','Vetting report.'],
+  ['app-settlement-report','GET','session','Finance','Settlement statement + no-dues certificate.'],
+  ['app-premium-plans','GET','session','Subscriptions','Premium (caretaker) plans.'],
+  ['app-premium-sub-list','GET','session','Subscriptions','Premium subscriptions.'],
+  ['app-premium-billing','POST','session','Subscriptions','Premium billing action.'],
+  ['app-insurance','GET','session','Insurance','Insurance policies.'],
+  ['app-maintenance','GET','session','Maintenance','Maintenance requests.'],
+  ['app-leads','GET','session','CRM','Leads.'],
+  ['app-statements','GET','session','Finance','Financial statements.'],
+  ['app-compliance','GET','session','Compliance','Compliance items.'],
+  ['app-utility-summary','GET','session','Utilities','Utility billing summary.'],
+  ['app-utility-tariff-get','GET','session','Utilities','Utility tariffs.'],
+  ['app-rent-config-get','GET','session','Leases','Rent configuration.'],
+  ['app-vendors','GET','session','Maintenance','Vendors list.'],
+  ['app-remit','GET','session','Finance','Remittances (NRB).'],
+  ['app-onboarding','GET','session','CRM','Onboarding applications.'],
+  ['app-job-media','GET','session','Maintenance','Job media.'],
+  ['app-sla','GET','session','Support','SLA configuration.'],
+  ['app-kr-alert','GET','session','AI','KR alerts.'],
+  ['app-kr-wa','GET','session','AI','KR WhatsApp link.'],
+  ['app-analytics','GET','session','MIS','Analytics.'],
+  ['app-legal','GET','session','Legal','Legal engine data.'],
+  ['app-trust','GET','session','Legal','Trust / escrow data.'],
+  ['app-land','GET','session','Land','Land parcels and visits.'],
+  ['app-nrb','GET','session','NRB','NRB dossiers and repatriations.'],
+  ['app-concierge','GET','session','Services','Concierge requests.'],
+  ['app-smarthome','GET','session','Smart Home','Smart locks and cameras.'],
+  ['app-healthcheck','GET','session','System','Deep health check.'],
+  ['app-build','GET','session','Projects','Building projects.'],
+  ['app-gate','GET','session','Security','Gate visits and watchlist.'],
+  ['app-firesafety','GET','session','Security','Fire assets and incidents.'],
+  ['app-systems','GET','session','Maintenance','Building systems (lift/AC/generator).'],
+  ['app-staffwatch','GET','session','HR','Staff attendance and payroll.'],
+  ['app-samity','GET','session','Community','Samity members and bills.'],
+  ['app-photo','POST','session','Files','Photo upload (multipart).'],
+  ['app-moveout','POST','session','Leases','Move-out workflow.'],
+  ['app-invoice-print','GET','session','Finance','Printable invoice.'],
+  ['app-packages','POST','admin','Admin','Package catalog CRUD (admin).'],
+  ['app-admin','POST','admin','Admin','Super-admin panel API — 20+ sub-actions (overview, cms, keys…).'],
+  ['app-admin api-keys-get','POST','admin','Admin','API Library — get web/mobile API keys (masked).'],
+  ['app-admin api-keys-save','POST','admin','Admin','API Library — rotate web/mobile API keys.'],
+  ['app-admin api-stats','POST','admin','Admin','API Library — row counts for web and mobile tables.'],
+  ['app-admin api-table','POST','admin','Admin','API Library — recent rows from a whitelisted table.'],
+];
+
+function apiTab(t){API_TAB=t;renderApi();}
+function apiMethodColor(m){return m==='GET'?'#27AE60':m==='POST'?'#2F80ED':'#E67E22';}
+function apiCatSearch(){
+  const q=(($('apiSearch')||{}).value||'').toLowerCase();
+  const g={};
+  API_CAT.forEach(e=>{const hay=(e[0]+' '+e[1]+' '+e[3]+' '+e[4]).toLowerCase();if(!q||hay.includes(q))(g[e[3]]=g[e[3]]||[]).push(e);});
+  let html='';
+  Object.keys(g).sort().forEach(grp=>{
+    html+=`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">📚</span>${esc(grp)}</span><span class="c-sub" style="font-size:11px">${g[grp].length} endpoints</span></div><div class="panel-b">`+
+      g[grp].map(e=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
+        <span class="badge" style="background:${apiMethodColor(e[1])};color:#fff;font-size:10px">${e[1]}</span>
+        <code style="font-size:12px;color:var(--primary);font-weight:700">/api/${esc(e[0])}</code>
+        <span class="badge ${e[2]==='public'?'b-green':e[2]==='session'?'b-blue':'b-purple'}">${e[2]}</span>
+        <span style="flex:1;min-width:180px;font-size:12px;color:var(--text-soft)">${esc(e[4])}</span>
+        <button class="btn-ghost" style="font-size:11px" onclick="apiTestFill('${esc(e[0])}','${e[1]}')">🧪 Test</button>
+      </div>`).join('')+`</div></div>`;
+  });
+  $('apiCatBody').innerHTML=html||'<div class="empty">No endpoints match.</div>';
+}
+function apiTestFill(action,method){
+  apiTab('console');
+  $('apc_action').value=action;$('apc_method').value=method||'POST';
+}
+async function apiConsoleRun(){
+  const action=$('apc_action').value.trim();if(!action){toast('Enter an endpoint action','error');return}
+  const method=$('apc_method').value;
+  const useAuth=$('apc_auth').value==='session';
+  let body=null;
+  try{body=JSON.parse($('apc_body').value||'{}')}catch(e){toast('Body is not valid JSON','error');return}
+  apiHistPush(action,method,$('apc_body').value);
+  const t0=performance.now();
+  const url=API+(method==='GET'?'':action);
+  const opts={method,headers:{}};
+  if(method!=='GET'&&method!=='DELETE')opts.headers['Content-Type']='application/json';
+  if(useAuth&&TOKEN)opts.headers['Authorization']='Bearer '+TOKEN;
+  if(method!=='GET')opts.body=JSON.stringify(body);
+  try{
+    const res=await fetch(url,opts);
+    const ms=Math.round(performance.now()-t0);
+    const txt=await res.text();
+    let pretty=txt;try{pretty=JSON.stringify(JSON.parse(txt),null,2)}catch(e){}
+    $('apc_out').innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <span class="badge ${res.ok?'b-green':'b-red'}">HTTP ${res.status}</span><span class="c-sub">${ms} ms</span>
+      <button class="btn-ghost" style="font-size:11px;margin-left:auto" onclick="apiCopyOut()">⧉ Copy</button></div>
+      <pre style="max-height:420px;overflow:auto;font-size:11.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word">${esc(pretty)}</pre>`;
+  }catch(e){
+    $('apc_out').innerHTML=`<div class="badge b-red">Network error: ${esc(e.message)}</div>`;
+  }
+}
+function apiCopyOut(){const p=$('apc_out').querySelector('pre');if(p){navigator.clipboard.writeText(p.textContent).then(()=>toast('Copied','ok')).catch(()=>{})}}
+function apiHistPush(action,method,body){try{const h=JSON.parse(localStorage.getItem('krtaker_api_hist')||'[]');h.unshift({a:action,m:method,b:body,t:Date.now()});localStorage.setItem('krtaker_api_hist',JSON.stringify(h.slice(0,10)));}catch(e){}}
+function apiHistDrawer(){
+  let h=[];try{h=JSON.parse(localStorage.getItem('krtaker_api_hist')||'[]')}catch(e){}
+  openDrawer('🧪 Recent console calls',
+    h.length?`<div style="display:flex;flex-direction:column;gap:6px">${h.map(x=>`<button class="btn-outline" style="text-align:left;font-size:12px;justify-content:flex-start" onclick="apiHistUse('${esc(x.a)}','${x.m}')">${x.m} /api/${esc(x.a)} <span class="c-sub">· ${new Date(x.t).toLocaleTimeString()}</span></button>`).join('')}</div>`:'<div class="empty">No recent calls yet.</div>',
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button></div>`);
+}
+function apiHistUse(a,m){closeDrawer();apiTab('console');$('apc_action').value=a;$('apc_method').value=m;}
+async function renderApiKeys(){
+  load('apiKeysBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'api-keys-get'});
+  if(!d.ok){load('apiKeysBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  const k=d.keys||{};
+  const row=(ico,label,key,ph,fn)=>`<div class="cms-field" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><label class="lb" style="margin:0">${ico} ${label}</label><span class="c-sub" style="font-size:10.5px">${key?'last 4: '+esc(key.slice(-4)):''}</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="${fn}_in" placeholder="${ph}" style="flex:1;min-width:200px" value=""><button class="btn-primary" onclick="apiKeySave('${fn}')">🔄 Rotate</button></div>
+    <div class="c-sub" style="font-size:10.5px;margin-top:4px">Leave empty to keep the current value. Masked value: <code>${esc(key||'—')}</code></div>
+  </div>`;
+  load('apiKeysBody',
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🔑</span>Web and mobile API keys</span></div><div class="panel-b">
+      ${row('🌐','Web API key',k.web_api_key,'krweb-…','web_api_key')}
+      ${row('📱','Mobile API key',k.mobile_api_key,'krmob-…','mobile_api_key')}
+      <div class="c-sub" style="font-size:11.5px;margin-top:6px">Keys authenticate server-to-server calls from the website and mobile app. Rotating a key immediately invalidates the old one — update the client first. Last rotation: <b>${esc(k.updated_at||'never')}</b></div>
+    </div></div>
+    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💡</span>How web and mobile use the API</span></div><div class="panel-b"><div style="font-size:12.5px;color:var(--text-soft);line-height:1.7">
+      <div>1. <b>Public endpoints</b> (<code>cms-read</code>, <code>plans</code>, <code>health</code>) need no key — they power the marketing site.</div>
+      <div>2. <b>Session endpoints</b> use a Bearer token from <code>app-login</code>.</div>
+      <div>3. <b>Server-to-server</b> (collections digest, notifications) uses the <code>X-Service-Key</code> header.</div>
+      <div style="margin-top:6px">The web and mobile keys above are reserved for your native apps — rotate them here and use them in client headers.</div>
+    </div></div></div>`);
+}
+async function apiKeySave(which){
+  const v=$(which+'_in').value.trim();
+  const d=await admin({action:'api-keys-save',keys:{[which]:v}});
+  if(d.ok){toast((which==='web_api_key'?'Web':'Mobile')+' API key rotated','ok');renderApiKeys();}else toast(d.error||'Failed','error');
+}
+async function renderApiData(){
+  load('apiDataBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'api-stats'});
+  if(!d.ok){load('apiDataBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  const t=d.tables||{};
+  const order=['subscribers','app_users','properties','units','tenants','leases','invoices','payments','receipts','tickets','platform_tickets','notices','partners','leads','plan_catalog','cms_content','cms_history','integrations','audit_log','auth_attempts','app_tokens','newsletter_emails','onboarding_apps','referrals'];
+  const cards=order.map(tb=>`<button class="stat" style="cursor:pointer;text-align:left" onclick="apiTableDrawer('${tb}')">
+    <div class="s-label"><span class="s-ico">🗄️</span>${esc(tb)}</div><div class="s-value">${(t[tb]??'-')}</div><div class="s-trend">rows · click to view</div></button>`).join('');
+  load('apiDataBody',
+    `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <span class="c-sub">Web and mobile data tables · <b>${(d.total_rows??0).toLocaleString()}</b> total rows</span>
+      <span class="badge b-blue">${d.meta_keys} config keys</span>
+      <span class="badge b-gray">db ${((d.db_size||0)/1048576).toFixed(1)} MB</span>
+      <button class="btn-outline" style="margin-left:auto" onclick="renderApiData()">🔄 Refresh</button></div>
+    <div class="stats" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">${cards}</div>`);
+}
+async function apiTableDrawer(tb){
+  openDrawer('🗄️ '+esc(tb)+' — recent rows','<div class="empty">Loading…</div>',`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button></div>`);
+  const d=await admin({action:'api-table',table:tb});
+  if(!d.ok){$('drawerBody').innerHTML=`<div class="empty">${esc(d.error||'Failed')}</div>`;return}
+  const cols=d.columns||[],rows=d.rows||[];
+  if(!rows.length){$('drawerBody').innerHTML='<div class="empty">No rows in this table.</div>';return}
+  $('drawerBody').innerHTML=`<div class="tbl-wrap"><table style="min-width:0"><thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${
+    rows.map(r=>`<tr>${cols.map(c=>{const v=r[c];return `<td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(typeof v==='string'&&v.length>60?v.slice(0,60)+'…':v)}</td>`}).join('')}</tr>`).join('')
+  }</tbody></table></div>`;
+}
+function renderApi(){
+  pageHead('API Library — manage how the web and mobile apps use the platform API',``);
+  load('pageBody',
+    `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:16px">
+      <button class="chip ${API_TAB==='endpoints'?'on':''}" onclick="apiTab('endpoints')">📚 Endpoints</button>
+      <button class="chip ${API_TAB==='console'?'on':''}" onclick="apiTab('console')">🧪 Console</button>
+      <button class="chip ${API_TAB==='keys'?'on':''}" onclick="apiTab('keys')">🔑 Web and Mobile Keys</button>
+      <button class="chip ${API_TAB==='data'?'on':''}" onclick="apiTab('data')">🗄️ Data</button>
+    </div>
+    <div id="apiBody"></div>`);
+  if(API_TAB==='endpoints'){
+    load('apiBody',
+      `<div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+        <input id="apiSearch" placeholder="🔍 Search endpoints…" style="max-width:260px" oninput="apiCatSearch()">
+        <span class="c-sub">${API_CATALOG.length} endpoints · public / session / admin</span>
+        <span style="margin-left:auto" class="c-sub">Try: <code>cms-read</code>, <code>plans</code>, <code>app-admin api-stats</code></span>
+      </div><div id="apiCatBody"></div>`);
+    API_CAT=API_CATALOG.slice();apiCatSearch();
+  }else if(API_TAB==='console'){
+    load('apiBody',
+      `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧪</span>Endpoint test console</span><button class="btn-outline" style="margin-left:auto" onclick="apiHistDrawer()">🕒 History</button></div><div class="panel-b">
+        <div class="frm">
+          <div class="grid-2"><div><label class="lb">Endpoint action</label><input id="apc_action" list="apc_list" placeholder="e.g. app-admin" onkeydown="if(event.key==='Enter')apiConsoleRun()"><datalist id="apc_list">${API_CATALOG.map(e=>`<option value="${esc(e[0])}">${e[3]}</option>`).join('')}</datalist></div>
+          <div><label class="lb">Method</label><select id="apc_method"><option>POST</option><option>GET</option></select></div></div>
+          <div class="grid-2"><div><label class="lb">Auth</label><select id="apc_auth"><option value="session">🔑 Session token (Bearer)</option><option value="none">🌐 None</option></select></div>
+          <div style="align-self:flex-end"><button class="btn-primary" onclick="apiConsoleRun()">▶ Send request</button></div></div>
+          <div><label class="lb">JSON body (POST)</label><textarea id="apc_body" style="min-height:110px;font-family:monospace;font-size:12px" placeholder='{"action":"overview"}'>{"action":"overview"}</textarea></div>
+        </div>
+        <div id="apc_out" style="margin-top:12px;border:1px solid var(--border);border-radius:10px;padding:12px"><div class="empty">Run a request to see the JSON response.</div></div>
+      </div></div>`);
+  }else if(API_TAB==='keys'){
+    load('apiBody','<div id="apiKeysBody"></div>');renderApiKeys();
+  }else{
+    load('apiBody','<div id="apiDataBody"></div>');renderApiData();
+  }
+}
 </script>
 </body>
 </html>
