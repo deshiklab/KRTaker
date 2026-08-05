@@ -497,7 +497,8 @@ const NAV_DESC={
   whitelabel:'Master settings with white-label branding',
   health:'System administration — runtime, database and security posture',
   audit:'Full audit trail across the platform',
-  api:'API Library — endpoint catalog, test console, usage analytics, web/mobile API keys and data stats'
+  api:'API Library — endpoint catalog, test console, usage analytics, web/mobile API keys and data stats',
+  ai:'KR AI caretaker — provider/model configuration, API key, connection test and chat telemetry'
 };
 const NAV={
   dashboard:{ic:'📊',l:'Dashboard'},
@@ -519,12 +520,13 @@ const NAV={
   whitelabel:{ic:'🏷️',l:'White Label'},
   health:{ic:'🩺',l:'System Health'},
   audit:{ic:'📜',l:'Audit Logs'},
-  api:{ic:'🧬',l:'API Library'}
+  api:{ic:'🧬',l:'API Library'},
+  ai:{ic:'🤖',l:'AI Caretaker'}
 };
 function nav(v){closeSidebar();STATE.view=v;renderNav();renderTitle();render();window.scrollTo(0,0)}
 function render(){
   const el=$('content');
-  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi}[STATE.view];
+  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi,ai:renderAi}[STATE.view];
   el.innerHTML=`<div class="page-head"><div><h1>${NAV[STATE.view].l}</h1><div class="sub" id="pageSub"></div></div><div class="head-actions" id="pageActions"></div></div><div id="pageBody"></div>`;
   r();
 }
@@ -1367,6 +1369,69 @@ async function settingsPruneAudit(){
   if(!confirm('Delete audit log entries older than the configured retention window?'))return;
   const d=await admin({action:'settings-prune-audit'});
   if(d.ok){toast((d.deleted||0)+' audit rows pruned ('+d.retention_days+'d retention)','ok');}else toast(d.error||'Failed','error');
+}
+/* ── AI Caretaker console (v3.60) ── */
+let AI={};
+async function renderAi(){
+  pageHead('KR AI caretaker — provider configuration, connection test and chat telemetry',
+    `<button class="btn-primary" onclick="aiSave()">💾 Save config</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'ai-config',sub:'get'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  AI=d;
+  const live=d.mode==='llm';
+  load('pageBody',
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🤖</span>Engine status</span></div>
+     <div class="panel-b"><div class="frm" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+       <span class="badge" style="background:${live?'#27AE60':'#F39C12'}">${live?'● LLM ACTIVE':'● OFFLINE (rule-based + legal KB)'}</span>
+       <span class="c-sub">Provider: <b>${esc(d.provider)}</b> · Model: <b>${esc(d.model)}</b></span>
+       <span class="c-sub">API key: ${d.key_set?'✓ set'+(d.env_key?' (via KRT_DS_KEY env)':' · masked')+' — leave blank to keep':'✗ none — KR runs offline'}</span>
+     </div></div></div>`+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🔧</span>Provider configuration<span class="c-sub" style="font-size:11px;margin-left:8px">provider/model also live in App Settings → Platform &amp; growth; the API key stays here</span></span></div>
+     <div class="panel-b"><div class="frm grid-2">
+       <div><label class="lb">Provider</label><select id="ai_provider" style="max-width:220px"><option value="deepseek" ${d.provider==='deepseek'?'selected':''}>DeepSeek</option><option value="openai" ${d.provider==='openai'?'selected':''}>OpenAI-compatible</option><option value="offline" ${d.provider==='offline'?'selected':''}>Offline (no API)</option></select></div>
+       <div><label class="lb">Model</label><input id="ai_model" value="${esc(d.model)}" placeholder="deepseek-chat"></div>
+       <div><label class="lb">Base URL <span class="c-sub">(optional override)</span></label><input id="ai_base_url" value="${esc(d.url)}" placeholder="https://api.deepseek.com/chat/completions"></div>
+       <div><label class="lb">API key <span class="c-sub">${d.key_set?'(set — leave blank to keep)':'(required for LLM mode)'}</span></label><input id="ai_key" type="password" placeholder="${d.key_set?'•••••••• (set)':'sk-…'}" autocomplete="off"></div>
+     </div>
+     <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn-primary" onclick="aiSave()">💾 Save config</button><button class="btn-outline" onclick="aiTest()">🔌 Test connection</button><span id="aiTestOut" class="c-sub" style="align-self:center"></span></div></div></div>`+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">📊</span>Chat telemetry<span class="c-sub" style="font-size:11px;margin-left:8px">from the KR caretaker chat log — every exchange in both LLM and offline modes</span></span></div>
+     <div class="panel-b" id="aiStats"></div></div>`);
+  aiStats();
+}
+async function aiSave(){
+  const prov=document.getElementById('ai_provider').value;
+  const model=document.getElementById('ai_model').value.trim();
+  const url=document.getElementById('ai_base_url').value.trim();
+  const key=document.getElementById('ai_key').value.trim();
+  const d=await admin({action:'ai-config',sub:'save',provider:prov,model,base_url:url,key});
+  if(d.ok){toast('AI caretaker config saved','ok');renderAi();}else toast(d.error||'Failed','error');
+}
+async function aiTest(){
+  const out=$('aiTestOut'); if(out)out.textContent='Testing connection…';
+  const d=await admin({action:'ai-config',sub:'test'});
+  if(!out)return;
+  if(d.ok)out.innerHTML=`<span style="color:#27AE60;font-weight:600">✅ Connected — ${esc(d.reply)} (${d.ms} ms · ${esc(d.provider)}/${esc(d.model)})</span>`;
+  else out.innerHTML=`<span style="color:#C0392B;font-weight:600">⚠️ ${esc(d.error||'Failed')}${d.ms?' ('+d.ms+' ms)':''}</span>`;
+}
+async function aiStats(){
+  const d=await admin({action:'ai-config',sub:'stats'});
+  const el=$('aiStats'); if(!el)return;
+  if(!d.ok){el.innerHTML=`<div class="empty">${esc(d.error||'Failed')}</div>`;return}
+  const cards=[['Total chats',d.total],['LLM mode',d.llm],['Offline mode',d.offline],['Last 24h',d.h24],['Avg latency',d.avg_ms+' ms']];
+  el.innerHTML=
+    `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px">`+
+    cards.map(c=>`<div style="background:var(--bg-soft,#f4f6fb);border:1px solid var(--line,#e8ecf4);border-radius:10px;padding:10px 12px"><div style="font-size:20px;font-weight:800">${c[1]}</div><div class="c-sub" style="font-size:11px">${c[0]}</div></div>`).join('')+`</div>`+
+    `<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><b>Recent conversations</b><button class="btn-outline" style="margin-left:auto" onclick="aiClearLog()">🧹 Clear log</button></div>`+
+    (d.recent&&d.recent.length?
+      `<table style="width:100%;border-collapse:collapse;font-size:12.5px"><tr style="text-align:left;color:var(--text-mute,#8a93a6)"><th style="padding:5px 6px">When</th><th style="padding:5px 6px">User</th><th style="padding:5px 6px">Mode</th><th style="padding:5px 6px">ms</th><th style="padding:5px 6px">Question</th><th style="padding:5px 6px">Reply</th></tr>`+
+      d.recent.map(r=>`<tr style="border-top:1px solid var(--line,#e8ecf4)"><td class="c-sub" style="padding:6px">${esc(r.ts)}</td><td style="padding:6px">${esc(r.user)}</td><td style="padding:6px">${r.mode==='llm'?'<span class="badge" style="background:#27AE60">LLM</span>':'<span class="badge" style="background:#F39C12">offline</span>'}</td><td style="padding:6px">${r.ms||'—'}</td><td style="padding:6px">${esc((r.query||'').slice(0,60))}</td><td class="c-sub" style="padding:6px">${esc((r.result||'').slice(0,70))}</td></tr>`).join('')+`</table>`
+      :`<div class="empty">No chats logged yet — ask KR something in the caretaker chat (🤖 module in the dashboard).</div>`);
+}
+async function aiClearLog(){
+  if(!confirm('Clear the entire KR chat log?'))return;
+  const d=await admin({action:'ai-config',sub:'clear-log'});
+  if(d.ok){toast((d.deleted||0)+' chat rows cleared','ok');aiStats();}else toast(d.error||'Failed','error');
 }
 /* ── Integrations ── */
 async function renderIntegrations(){
