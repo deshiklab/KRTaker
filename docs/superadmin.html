@@ -486,7 +486,7 @@ function renderNav(){
     ['Overview',['dashboard']],
     ['Platform',['subscribers','packages','users','providers']],
     ['Content & CRM',['cms','blog','onboarding','mis']],
-    ['Developers',['api','ai','webhooks']],
+    ['Developers',['api','ai','webhooks','domains']],
     ['Commerce',['payments','finance']],
     ['System',['settings','integrations','tickets','backup','modules','whitelabel','health','audit']]
   ];
@@ -514,7 +514,8 @@ const NAV_DESC={
   audit:'Full audit trail across the platform',
   api:'API Library — endpoint catalog, test console, usage analytics, web/mobile API keys and data stats',
   ai:'KR AI caretaker — provider/model configuration, API key, connection test and chat telemetry',
-  webhooks:'Outbound webhooks — deliver platform events to your endpoints with HMAC signing and a delivery log'
+  webhooks:'Outbound webhooks — deliver platform events to your endpoints with HMAC signing and a delivery log',
+  domains:'Tenant custom domains — CNAME/TXT verification and per-domain routing'
 };
 const NAV={
   dashboard:{ic:'📊',l:'Dashboard'},
@@ -538,12 +539,13 @@ const NAV={
   audit:{ic:'📜',l:'Audit Logs'},
   api:{ic:'🧬',l:'API Library'},
   ai:{ic:'🤖',l:'AI Caretaker'},
-  webhooks:{ic:'🔗',l:'Webhooks'}
+  webhooks:{ic:'🔗',l:'Webhooks'},
+  domains:{ic:'🌐',l:'Custom Domains'}
 };
 function nav(v){closeSidebar();STATE.view=v;renderNav();renderTitle();render();window.scrollTo(0,0)}
 function render(){
   const el=$('content');
-  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi,ai:renderAi,webhooks:renderWebhooks}[STATE.view];
+  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi,ai:renderAi,webhooks:renderWebhooks,domains:renderDomains}[STATE.view];
   el.innerHTML=`<div class="page-head"><div><h1>${NAV[STATE.view].l}</h1><div class="sub" id="pageSub"></div></div><div class="head-actions" id="pageActions"></div></div><div id="pageBody"></div>`;
   r();
 }
@@ -1887,6 +1889,83 @@ async function webhookLogClear(id){
   const d=await admin({action:'webhook-log-clear',id:id||0});
   if(d.ok){toast('Delivery log cleared','ok');if(id)webhookLogs(id);renderWebhooks();}else toast(d.error||'Failed','error');
 }
+/* ── Custom Domains (SA1-fullsite v11, v3.65): tenant CNAME/TXT verify + per-domain routing ── */
+let DOMS={list:[],subs:[]};
+async function renderDomains(){
+  pageHead('Tenant custom domains — verify ownership via a TXT record, then the tenant\'s domain routes to their branded workspace (host-tenant)',`<button class="btn-primary" onclick="domainForm()">＋ Add domain</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'cnames'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  DOMS.list=d.domains||[]; DOMS.subs=d.subscribers||[];
+  const verified=DOMS.list.filter(x=>x.verified).length;
+  const cfg={
+    data:DOMS.list, ph:'Search domain, tenant…',
+    search:['domain','tenant_name','tenant_email'],
+    filters:[['verified','Status',[{v:'1',l:'Verified'},{v:'0',l:'Pending'}]]],
+    sortable:['domain','tenant_name','verified_at','created_at'],
+    head:st=>`<tr>${tblTh('doms','Domain','domain',st)}${tblTh('doms','Tenant','tenant_name',st)}<th>Status</th><th>TXT token</th>${tblTh('doms','Verified at','verified_at',st)}<th></th></tr>`,
+    row:x=>`<tr data-gsid="domains-${x.id}"><td><code style="font-size:12px">${esc(x.domain)}</code></td>
+      <td><div class="c-name">${esc(x.tenant_name||('#'+x.tenant_id))}</div><div class="c-sub">${esc(x.tenant_email||'')} · ${esc(x.plan||'')}</div></td>
+      <td>${x.verified?`<span class="badge b-green">✓ verified</span>`:`<span class="badge b-orange">⏳ pending</span>`}</td>
+      <td class="c-sub">${esc(x.verify_token)}${x.last_check_note?`<div style="font-size:10.5px;max-width:200px" title="${esc(x.last_check_note)}">${esc((x.last_check_note||'').slice(0,46))}${(x.last_check_note||'').length>46?'…':''}</div>`:''}</td>
+      <td class="c-sub">${esc(x.verified_at||'—')}</td>
+      <td><div class="row-actions">
+        <button class="btn-ghost" onclick="domainVerify(${x.id})" title="Check DNS now" data-tip="Check DNS now" data-tip-pos="left">🔎</button>
+        <button class="btn-ghost" onclick="domainForm(${x.id})" title="Edit" data-tip="Edit" data-tip-pos="left">✎</button>
+        <button class="btn-ghost" style="color:var(--danger)" onclick="domainDelete(${x.id})" title="Delete" data-tip="Delete" data-tip-pos="left">🗑</button>
+      </div></td></tr>`,
+    empty:'<tr><td colspan="6"><div class="empty">No custom domains yet — add a subscriber\'s domain and verify it with a TXT record.</div></td></tr>'
+  };
+  tblReg('doms',cfg);
+  load('pageBody',
+    `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px">`+
+    [['Domains',DOMS.list.length],['Verified',verified],['Pending',DOMS.list.length-verified],['Routing','host-tenant']].map(c=>`<div style="background:var(--bg-soft,#f4f6fb);border:1px solid var(--line,#e8ecf4);border-radius:10px;padding:10px 12px"><div style="font-size:20px;font-weight:800">${c[1]}</div><div class="c-sub" style="font-size:11px">${c[0]}</div></div>`).join('')+`</div>`+
+    tblPanel('doms',cfg)+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">💡</span>How custom domains work</span></div><div class="panel-b"><div style="font-size:12.5px;color:var(--text-soft);line-height:1.7">
+      <div>1. Add the subscriber's domain — you get a unique token (<code>krt-verify-…</code>).</div>
+      <div>2. In the tenant's DNS, point <b>CNAME</b> <code>@</code> → <code>krtaker.com</code> and add a <b>TXT</b> record on <code>_krtaker.&lt;domain&gt;</code> with the token as its value.</div>
+      <div>3. Hit 🔎 <b>Check DNS</b> — once the TXT matches, the domain flips to ✓ verified.</div>
+      <div>4. Verified domains resolve via <code>host-tenant</code>: any request to that host returns the tenant's profile + white-label branding, so the tenant's portal can be served from their own domain.</div>
+    </div></div></div>`);
+  tblDraw('doms',cfg);
+}
+function domainForm(id){
+  const x=id?DOMS.list.find(y=>y.id===id):{id:0,tenant_id:0,domain:''};
+  const subOpts=DOMS.subs.map(s=>`<option value="${s.id}" ${x.tenant_id===s.id?'selected':''}>${esc(s.name||s.email)} — ${esc(s.email)} (${esc(s.plan)})</option>`).join('');
+  openDrawer(id?'Edit custom domain #'+id:'Add custom domain',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">Subscriber</label><select id="dm_tenant"><option value="0">— select subscriber —</option>${subOpts}</select></div>
+      <div><label class="lb">Domain</label><input id="dm_domain" value="${esc(x.domain)}" placeholder="portal.tenant.com"></div></div>
+      <div class="c-sub" style="font-size:11.5px">After saving you'll get a TXT token. Add <code>CNAME @ → krtaker.com</code> plus the TXT record, then verify from the list. Changing a domain resets it to pending.</div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="domainSave(${id})">💾 Save</button></div>`);
+}
+async function domainSave(id){
+  const d=await admin({action:'cname-save',id,tenant_id:+($('dm_tenant').value||0),domain:$('dm_domain').value.trim()});
+  if(!d.ok)return toast(d.error||'Failed','error');
+  closeDrawer();
+  if(!id){toast('Domain added — copy the TXT token','ok');domainShowToken(d.id,d.token,d.domain);}
+  else toast('Domain updated — reverify to confirm','ok');
+  renderDomains();
+}
+function domainShowToken(id,token,domain){
+  openDrawer('🔑 TXT verification token — copy it now',
+    `<p style="font-size:13px;margin:0 0 10px;color:var(--text-soft)">Add this TXT record in the tenant's DNS, then hit 🔎 <b>Check DNS</b> on the domain row.</p>
+     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><code style="flex:1;font-size:12px">_krtaker.${esc(domain)}</code></div>
+     <div style="display:flex;gap:8px;margin-top:8px"><input id="dm_token" value="${esc(token)}" readonly style="font-family:monospace;flex:1"><button class="btn-outline" onclick="dmCopy()">📋 Copy</button></div>`,
+    `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Done</button></div>`);
+}
+function dmCopy(){const el=$('dm_token');el.select();try{document.execCommand('copy')}catch(e){}toast('Token copied','ok');}
+async function domainVerify(id){
+  const d=await admin({action:'cname-verify',id});
+  if(!d.ok)return toast(d.error||'Failed','error');
+  if(d.verified)toast('✓ Domain verified — '+d.host,'ok');
+  else toast((d.note||'TXT record not found yet').slice(0,90),'error');
+  renderDomains();
+}
+async function domainDelete(id){
+  if(!confirm('Delete this custom domain? Routing for it stops immediately.'))return;
+  const d=await admin({action:'cname-delete',id});
+  if(d.ok){toast('Domain deleted','ok');renderDomains();}else toast(d.error||'Failed','error');
+}
 /* ── Integrations ── */
 async function renderIntegrations(){
   pageHead('Third-party integrations across the platform',`<button class="btn-primary" onclick="integrationForm()">＋ Integration</button>`);
@@ -2221,6 +2300,7 @@ const API_CATALOG = [
   ['app-samity','GET','session','Community','Samity members and bills.'],
   ['app-photo','POST','session','Files','Photo upload (multipart).'],
   ['app-tenant-me','GET','key','Tenant','Tenant identity — X-API-Key tenant key → subscriber profile + usage.'],
+  ['host-tenant','GET','public','Tenant','Per-domain routing — Host header → verified tenant profile + white-label branding.'],
   ['app-moveout','POST','session','Leases','Move-out workflow.'],
   ['app-invoice-print','GET','session','Finance','Printable invoice.'],
   ['app-packages','POST','admin','Admin','Package catalog CRUD (admin).'],
