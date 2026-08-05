@@ -470,7 +470,7 @@ function renderNav(){
   const groups=[
     ['Overview',['dashboard']],
     ['Platform',['subscribers','packages','users','providers']],
-    ['Content & CRM',['cms','onboarding','mis']],
+    ['Content & CRM',['cms','blog','onboarding','mis']],
     ['Developers',['api']],
     ['Commerce',['payments','finance']],
     ['System',['settings','integrations','tickets','backup','modules','whitelabel','health','audit']]
@@ -484,6 +484,7 @@ const NAV_DESC={
   users:'Platform staff & system user management with roles and departments',
   providers:'Service providers across the platform',
   cms:'Landing content — every section of every page, bilingual, publish/draft, find & replace, media',
+  blog:'Blog manager — write, edit and publish articles served at /blog/<slug>',
   onboarding:'Leads, subscriber onboarding applications and referrals',
   mis:'MIS reports — plans, status, revenue and support trends',
   payments:'Payment gateway configuration (bKash / SSLCommerz / Nagad)',
@@ -505,6 +506,7 @@ const NAV={
   users:{ic:'👤',l:'User Management'},
   providers:{ic:'🛠️',l:'Service Providers'},
   cms:{ic:'🌐',l:'Web CMS'},
+  blog:{ic:'📝',l:'Blog'},
   onboarding:{ic:'🎧',l:'Onboarding & CRM'},
   mis:{ic:'📈',l:'MIS Reports'},
   payments:{ic:'💳',l:'Payment Integrations'},
@@ -522,7 +524,7 @@ const NAV={
 function nav(v){closeSidebar();STATE.view=v;renderNav();renderTitle();render();window.scrollTo(0,0)}
 function render(){
   const el=$('content');
-  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi}[STATE.view];
+  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi}[STATE.view];
   el.innerHTML=`<div class="page-head"><div><h1>${NAV[STATE.view].l}</h1><div class="sub" id="pageSub"></div></div><div class="head-actions" id="pageActions"></div></div><div id="pageBody"></div>`;
   r();
 }
@@ -632,6 +634,38 @@ async function subscriberDelete(id){
   if(!confirm('Delete subscriber #'+id+'?'))return;
   const d=await admin({action:'subscriber-delete',id});
   if(d.ok){toast('Subscriber deleted','ok');renderSubscribers();}else toast(d.error||'Failed','error');
+}
+/* ── Blog manager (SA1-fullsite-v4.3): articles served at /blog/<slug> ── */
+let BLOG={list:[]};
+async function renderBlog(){
+  pageHead('Write, edit and publish articles — each published post is a live page at /blog/<slug> with SEO meta + JSON-LD',`<button class="btn-primary" onclick="blogForm()">＋ New post</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'blog-posts'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  BLOG.list=d.posts||[];
+  const foc=gsConsumeFocus();
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Slug</th><th>Tag</th><th>Read</th><th>Status</th><th>Created</th><th>Updated</th><th></th></tr></thead><tbody>${BLOG.list.map(p=>`<tr data-gsid="blog-${p.id}"><td><div class="c-name">${esc(p.title)}</div></td><td class="c-sub">/${esc(p.slug)}</td><td>${p.tag?badge(p.tag):'—'}</td><td class="c-sub">${p.read_min||5} min</td><td>${p.status==='published'?`<span class="badge b-green">🟢 published</span>`:`<span class="badge b-orange">🔴 draft</span>`}</td><td class="c-sub">${esc((p.created_at||'').slice(0,10))}</td><td class="c-sub">${esc((p.updated_at||'').slice(0,10))}</td><td><div class="row-actions">${p.status==='published'?`<a class="btn-ghost" href="https://krtaker.com/blog/${esc(p.slug)}" target="_blank" title="Open live" data-tip="Open live" data-tip-pos="left">↗</a>`:''}<button class="btn-ghost" onclick="blogForm(${p.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="blogDelete(${p.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No posts yet — create your first article.</div></td></tr>'}</tbody></table></div></div>`);
+  if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="blog-'+foc.payload.id+'"]');
+}
+function blogForm(id){
+  const p=id?BLOG.list.find(x=>x.id===id):{id:0,slug:'',title:'',tag:'',excerpt:'',body:'',cover_emoji:'📰',read_min:5,status:'draft'};
+  openDrawer(id?'Edit post':'New post',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">Title *</label><input id="bg_title" value="${esc(p.title)}" placeholder="Why your 2-year lease is legally invisible"></div><div><label class="lb">Slug * (a-z 0-9 -)</label><input id="bg_slug" value="${esc(p.slug)}" placeholder="lease-registration-guide"></div></div>
+     <div class="grid-2"><div><label class="lb">Tag</label><input id="bg_tag" value="${esc(p.tag)}" placeholder="Legal"></div><div><label class="lb">Cover emoji</label><input id="bg_cover" value="${esc(p.cover_emoji)}" placeholder="📰"></div></div>
+     <div class="grid-2"><div><label class="lb">Read time (min)</label><input id="bg_read" type="number" min="1" max="120" value="${p.read_min||5}"></div><div><label class="lb">Status</label><select id="bg_status"><option value="draft" ${p.status==='draft'?'selected':''}>🔴 draft</option><option value="published" ${p.status==='published'?'selected':''}>🟢 published</option></select></div></div>
+     <div><label class="lb">Excerpt (card + SEO description)</label><textarea id="bg_excerpt" rows="2">${esc(p.excerpt)}</textarea></div>
+     <div><label class="lb">Body (HTML — h2 / p / ul / ol / b allowed)</label><textarea id="bg_body" rows="12" placeholder="<p>Start writing…</p>">${esc(p.body)}</textarea></div>
+     <div class="c-sub" style="font-size:10.5px">Published posts appear on the blog index automatically and are served at https://krtaker.com/blog/&lt;slug&gt; with full SEO meta + JSON-LD. Drafts stay hidden.</div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="blogSave(${id})">💾 Save</button></div>`);
+}
+async function blogSave(id){
+  const d=await admin({action:'blog-save',id,slug:$('bg_slug').value.trim(),title:$('bg_title').value.trim(),tag:$('bg_tag').value.trim(),cover_emoji:$('bg_cover').value.trim(),read_min:$('bg_read').value,status:$('bg_status').value,excerpt:$('bg_excerpt').value,body:$('bg_body').value});
+  if(d.ok){toast((d.status==='published'?'Published':'Saved')+' — /blog/'+d.slug,'ok');closeDrawer();renderBlog();}else toast(d.error||'Failed','error');
+}
+async function blogDelete(id){
+  if(!confirm('Delete this post?'))return;
+  const d=await admin({action:'blog-delete',id});
+  if(d.ok){toast('Post deleted','ok');renderBlog();}else toast(d.error||'Failed','error');
 }
 /* ── Packages (reuse app-packages) ── */
 let PKG={list:[],registry:[],roles:[]};
