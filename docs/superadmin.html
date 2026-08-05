@@ -1314,33 +1314,59 @@ async function ledgerDelete(id){
 }
 /* ── Settings ── */
 let SETS={};
+const SET_GROUPS=[
+  {ic:'🏢',t:'Branding & contact',sub:'Site identity, contact channels, currency',f:[
+    ['site_name','Site name','text'],['admin_email','Admin email','text'],['support_email','Support email','text'],['support_phone','Support phone','text'],['currency','Currency code','text'],['invoice_prefix','Invoice prefix','text']]},
+  {ic:'📝',t:'Signups & trials',sub:'How new subscribers join the platform',f:[
+    ['signups_open','Signups open','sel1'],['plat_auto_approve','Auto-approve new signups','sel1'],['trial_days','Trial days','num'],['default_plan','Default plan on signup','text']]},
+  {ic:'🔐',t:'Security & access',sub:'Password policy and login lockout — enforced across register, profile change and staff creation',f:[
+    ['sec_password_min_len','Minimum password length','num'],['sec_password_complex','Require letters + numbers','sel1'],['sec_login_attempts','Failed logins before lockout','num'],['sec_lockout_minutes','Lockout window (minutes)','num'],['sec_session_ttl_days','Session lifetime (days)','num']]},
+  {ic:'✉️',t:'Email & notifications',sub:'Master switches — individual user opt-outs still apply on top',f:[
+    ['mail_from_name','Sender display name','text'],['mail_welcome','Welcome emails','sel1'],['mail_rent_reminders','Rent reminders','sel1'],['mail_collections','Collections digest','sel1'],['mail_docs','Invoice & receipt emails','sel1'],['mail_renewal','Renewal emails','sel1'],['mail_digest','Digest emails','sel1']]},
+  {ic:'🚀',t:'Platform & growth',sub:'AI defaults, referrals and feature toggles',f:[
+    ['ai_provider','AI provider','text'],['ai_model','AI model','text'],['plat_referral_bonus','Referral bonus (৳ per referral)','num'],['plat_newsletter','Newsletter section','sel1'],['plat_wa_links','WhatsApp deep links','sel1'],['plat_demo_mode','Demo mode','sel1']]},
+  {ic:'🗄️',t:'Retention & limits',sub:'Housekeeping and platform limits',f:[
+    ['sys_audit_retention_days','Audit log retention (days)','num'],['sys_api_rate_limit','API rate limit (requests/min)','num'],['sys_backup_keep','Backups to keep','num']]}
+];
+function settingsFieldHtml(k,l,t){
+  const v=SETS[k]==null?'':String(SETS[k]);
+  if(t==='sel1'){
+    const on=v==='1';
+    return `<div><label class="lb">${esc(l)}</label><select id="st_${k}"><option value="1" ${on?'selected':''}>On</option><option value="0" ${!on?'selected':''}>Off</option></select></div>`;
+  }
+  if(t==='num')return `<div><label class="lb">${esc(l)}</label><input id="st_${k}" type="number" value="${esc(v)}"></div>`;
+  return `<div><label class="lb">${esc(l)}</label><input id="st_${k}" value="${esc(v)}"></div>`;
+}
 async function renderSettings(){
-  pageHead('Application-wide settings — signups, trials, branding defaults',`<button class="btn-primary" onclick="settingsSave()">💾 Save settings</button>`);
+  pageHead('Application-wide settings — branding, signups, security, email, growth and retention',
+    `<button class="btn-primary" onclick="settingsSave()">💾 Save settings</button><button class="btn-outline" onclick="settingsReset()" data-tip="Restore every setting to its default value" data-tip-pos="bottom">↺ Reset</button><button class="btn-outline" onclick="settingsPruneAudit()" data-tip="Delete audit log entries older than the retention window" data-tip-pos="bottom">🧹 Prune audit</button>`);
   load('pageBody','<div class="empty">Loading…</div>');
   const d=await admin({action:'settings-get'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   SETS=d.settings||{};
-  load('pageBody',`<div class="panel"><div class="panel-b"><div class="frm grid-2">
-    <div><label class="lb">Site name</label><input id="st_site_name" value="${esc(SETS.site_name||'')}"></div>
-    <div><label class="lb">Support email</label><input id="st_support_email" value="${esc(SETS.support_email||'')}"></div>
-    <div><label class="lb">Support phone</label><input id="st_support_phone" value="${esc(SETS.support_phone||'')}"></div>
-    <div><label class="lb">Admin email</label><input id="st_admin_email" value="${esc(SETS.admin_email||'')}"></div>
-    <div><label class="lb">Maintenance mode</label><select id="st_maintenance_mode"><option value="1" ${SETS.maintenance_mode==='1'?'selected':''}>On</option><option value="0" ${SETS.maintenance_mode!=='1'?'selected':''}>Off</option></select></div>
-    <div><label class="lb">Signups open</label><select id="st_signups_open"><option value="1" ${SETS.signups_open==='1'?'selected':''}>Open</option><option value="0" ${SETS.signups_open!=='1'?'selected':''}>Closed</option></select></div>
-    <div><label class="lb">Trial days</label><input id="st_trial_days" type="number" value="${esc(SETS.trial_days||'14')}"></div>
-    <div><label class="lb">Invoice prefix</label><input id="st_invoice_prefix" value="${esc(SETS.invoice_prefix||'INV-')}"></div>
-    <div><label class="lb">Currency</label><input id="st_currency" value="${esc(SETS.currency||'BDT')}"></div>
-    <div><label class="lb">Default plan</label><input id="st_default_plan" value="${esc(SETS.default_plan||'starter')}"></div>
-    <div><label class="lb">AI provider</label><input id="st_ai_provider" value="${esc(SETS.ai_provider||'deepseek')}"></div>
-    <div><label class="lb">AI model</label><input id="st_ai_model" value="${esc(SETS.ai_model||'deepseek-chat')}"></div>
-  </div></div></div>`);
+  const maint=SETS.maintenance_mode==='1';
+  load('pageBody',
+    `<div class="panel" style="${maint?'border-color:#E67E22':''}"><div class="panel-h"><span class="t"><span class="pi">🛑</span>Maintenance mode<span class="c-sub" style="font-size:11px;margin-left:8px">when on, the login screen shows a maintenance notice and signups are blocked</span></span></div>
+     <div class="panel-b"><div class="frm"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><select id="st_maintenance_mode" style="max-width:140px"><option value="1" ${maint?'selected':''}>🛑 On</option><option value="0" ${!maint?'selected':''}>🟢 Off</option></select><span class="c-sub">${maint?'The platform is currently in maintenance mode.':'The platform is live.'}</span></div></div></div></div>`+
+    SET_GROUPS.map(g=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${g.ic}</span>${esc(g.t)}<span class="c-sub" style="font-size:11px;margin-left:8px">${esc(g.sub)}</span></span></div>
+      <div class="panel-b"><div class="frm grid-2">${g.f.map(f=>settingsFieldHtml(f[0],f[1],f[2])).join('')}</div></div></div>`).join('')+
+    `<div class="c-sub" style="padding:2px 4px 14px;text-align:right">${Object.keys(SETS).length} settings · changes apply immediately after Save</div>`);
 }
 async function settingsSave(){
-  const keys=Object.keys(SETS);
   const settings={};
-  keys.forEach(k=>{const el=document.getElementById('st_'+k);if(el)settings[k]=el.value;});
+  Object.keys(SETS).forEach(k=>{const el=document.getElementById('st_'+k);if(el)settings[k]=el.value;});
   const d=await admin({action:'settings-save',settings});
   if(d.ok){toast('Application settings saved','ok');renderSettings();}else toast(d.error||'Failed','error');
+}
+async function settingsReset(){
+  if(!confirm('Reset ALL application settings to defaults? (white-label branding is kept)'))return;
+  const d=await admin({action:'settings-reset'});
+  if(d.ok){toast((d.cleared||0)+' settings restored to defaults','ok');renderSettings();}else toast(d.error||'Failed','error');
+}
+async function settingsPruneAudit(){
+  if(!confirm('Delete audit log entries older than the configured retention window?'))return;
+  const d=await admin({action:'settings-prune-audit'});
+  if(d.ok){toast((d.deleted||0)+' audit rows pruned ('+d.retention_days+'d retention)','ok');}else toast(d.error||'Failed','error');
 }
 /* ── Integrations ── */
 async function renderIntegrations(){
