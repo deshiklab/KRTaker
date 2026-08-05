@@ -2119,17 +2119,37 @@ async function renderWhitelabel(){
   const d=await admin({action:'whitelabel-get'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   WL=d.whitelabel||{};
-  load('pageBody',`<div class="panel"><div class="panel-b"><div class="frm grid-2">
+  load('pageBody',`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🎨</span>Brand colors<span class="c-sub" style="font-size:11px;margin-left:8px">applied live to the dashboard, login screen and tenant portals via CSS variables (app-theme)</span></span></div><div class="panel-b">
+    <div class="frm grid-2">
+      <div><label class="lb">Primary color</label><div style="display:flex;gap:8px;align-items:center"><input type="color" id="wl_primary_color" value="${esc(WL.wl_primary_color||'#2F80ED')}" style="width:52px;height:40px;padding:2px;flex:none"><input id="wl_primary_color_txt" value="${esc(WL.wl_primary_color||'#2F80ED')}" placeholder="#2F80ED" oninput="themeColorSync('wl_primary_color')"></div></div>
+      <div><label class="lb">Secondary color <span class="c-sub">(gradient end)</span></label><div style="display:flex;gap:8px;align-items:center"><input type="color" id="wl_secondary_color" value="${esc(WL.wl_secondary_color||'#1E5EB8')}" style="width:52px;height:40px;padding:2px;flex:none"><input id="wl_secondary_color_txt" value="${esc(WL.wl_secondary_color||'#1E5EB8')}" placeholder="#1E5EB8" oninput="themeColorSync('wl_secondary_color')"></div></div>
+      <div><label class="lb">Accent color <span class="c-sub">(success / positive)</span></label><div style="display:flex;gap:8px;align-items:center"><input type="color" id="wl_accent_color" value="${esc(WL.wl_accent_color||'#27AE60')}" style="width:52px;height:40px;padding:2px;flex:none"><input id="wl_accent_color_txt" value="${esc(WL.wl_accent_color||'#27AE60')}" placeholder="#27AE60" oninput="themeColorSync('wl_accent_color')"></div></div>
+      <div><label class="lb">Logo URL <span class="c-sub">(png/svg, square — shown in sidebar + login)</span></label><input id="wl_logo_url" value="${esc(WL.wl_logo_url||'')}" placeholder="https://…/logo.png"></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap"><span class="c-sub">Live preview</span>
+      <span style="width:26px;height:26px;border-radius:8px;background:${esc(WL.wl_primary_color||'#2F80ED')};border:1px solid rgba(0,0,0,.08)" title="Primary"></span>
+      <span style="width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,${esc(WL.wl_primary_color||'#2F80ED')} 0%,${esc(WL.wl_secondary_color||'#1E5EB8')} 100%)" title="Gradient"></span>
+      <span style="width:26px;height:26px;border-radius:8px;background:${esc(WL.wl_accent_color||'#27AE60')};border:1px solid rgba(0,0,0,.08)" title="Accent"></span>
+      <button class="btn-ghost" onclick="whitelabelSave()">💾 Save branding</button>
+    </div>
+  </div></div>
+  <div class="panel"><div class="panel-b"><div class="frm grid-2">
     <div><label class="lb">Site name</label><input id="wl_site_name" value="${esc(WL.wl_site_name||'')}"></div>
     <div><label class="lb">Logo text (initials)</label><input id="wl_logo_text" value="${esc(WL.wl_logo_text||'')}"></div>
-    <div><label class="lb">Primary color</label><input id="wl_primary_color" value="${esc(WL.wl_primary_color||'')}" placeholder="#2F80ED"></div>
     <div><label class="lb">Domain</label><input id="wl_domain" value="${esc(WL.wl_domain||'')}"></div>
     <div><label class="lb">Favicon URL</label><input id="wl_favicon" value="${esc(WL.wl_favicon||'')}"></div>
     <div><label class="lb">Login heading</label><input id="wl_login_heading" value="${esc(WL.wl_login_heading||'')}"></div>
     <div><label class="lb">Footer text</label><input id="wl_footer_text" value="${esc(WL.wl_footer_text||'')}"></div>
     <div><label class="lb">Support email</label><input id="wl_support_email" value="${esc(WL.wl_support_email||'')}"></div>
     <div><label class="lb">Theme</label><select id="wl_theme"><option value="light" ${WL.wl_theme==='light'?'selected':''}>Light</option><option value="dark" ${WL.wl_theme==='dark'?'selected':''}>Dark</option></select></div>
-  </div><div class="c-sub" style="margin-top:14px;font-size:11.5px;color:var(--text-mute)">White-label values are stored per platform. A tenant-branded deploy would read these keys to render its own login + portal chrome.</div></div></div>`);
+  </div><div class="c-sub" style="margin-top:14px;font-size:11.5px;color:var(--text-mute)">Brand colors are served publicly by <code>app-theme</code> and applied as CSS variables (<code>--primary</code>, <code>--secondary</code>, <code>--accent</code>, <code>--grad</code>) on the dashboard, login screen and tenant portals. A logo URL replaces the initials mark everywhere.</div></div></div>`);
+  themeColorSync('wl_primary_color');themeColorSync('wl_secondary_color');themeColorSync('wl_accent_color');
+}
+function themeColorSync(k){
+  const pick=$('#'+k), txt=$('#'+k+'_txt');
+  if(!pick||!txt)return;
+  const v=/^#?[0-9a-f]{6}$/i.test(txt.value.trim())?(txt.value.startsWith('#')?txt.value:'#'+txt.value):pick.value;
+  txt.value=v;pick.value=v;
 }
 async function whitelabelSave(){
   const keys=Object.keys(WL);
@@ -2192,6 +2212,7 @@ async function doLogin(){
       if(wl.ok&&wl.whitelabel.wl_site_name)$('sbBrand').textContent=wl.whitelabel.wl_site_name;
       $('authScreen').style.display='none';$('app').style.display='flex';
       renderNav();renderTitle();render();toast('Signed in as '+d.user.name);
+      applyAdminTheme();
     }else{err.textContent=d.error||'Login failed.';err.classList.add('show')}
   }catch(e){err.textContent='Network error.';err.classList.add('show')}
   btn.disabled=false;btn.textContent='Log in';
@@ -2200,6 +2221,38 @@ function doLogout(){
   TOKEN='';try{localStorage.removeItem('krtaker_admin_token')}catch(e){}
   $('app').style.display='none';$('authScreen').style.display='flex';
   toast('Signed out');
+}
+/* ── Theming v2 (SA1-fullsite v12, v3.66): brand colors → panel CSS vars ── */
+async function applyAdminTheme(){
+  try{
+    const d=await fetch(API+'app-theme').then(r=>r.json());
+    if(!d.ok||!d.theme)return;
+    const t=d.theme, primary=t.primary||'#2F80ED', secondary=t.secondary||'#1E5EB8', accent=t.accent||'#27AE60';
+    const r=document.documentElement.style;
+    r.setProperty('--primary',primary);
+    r.setProperty('--primary-dark',darkenHex(primary,.35));
+    r.setProperty('--primary-light',lightenHex(primary,.87));
+    r.setProperty('--secondary',secondary);
+    r.setProperty('--accent',accent);
+    r.setProperty('--grad',`linear-gradient(135deg,${primary} 0%,${secondary} 100%)`);
+    const sh=rgbaHex(primary,.30);
+    if(sh)r.setProperty('--shadow',`0 8px 22px ${sh}`);
+  }catch(e){}
+}
+function rgbaHex(hex,a){
+  const m=/^#?([0-9a-f]{6})$/i.exec((hex||'').trim());if(!m)return null;
+  const n=parseInt(m[1],16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+}
+function darkenHex(hex,amt){
+  const m=/^#?([0-9a-f]{6})$/i.exec((hex||'').trim());if(!m)return hex;
+  const n=parseInt(m[1],16),f=v=>Math.max(0,Math.min(255,Math.round(v*(1-amt))));
+  return '#'+[f((n>>16)&255),f((n>>8)&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+function lightenHex(hex,amt){
+  const m=/^#?([0-9a-f]{6})$/i.exec((hex||'').trim());if(!m)return hex;
+  const n=parseInt(m[1],16),f=v=>Math.max(0,Math.min(255,Math.round(v+(255-v)*amt)));
+  return '#'+[f((n>>16)&255),f((n>>8)&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('');
 }
 /* ── Boot ── */
 document.documentElement.setAttribute('data-theme',STATE.theme);
@@ -2214,6 +2267,7 @@ document.documentElement.setAttribute('data-theme',STATE.theme);
     if(wl.ok&&wl.whitelabel.wl_site_name)$('sbBrand').textContent=wl.whitelabel.wl_site_name;
     $('authScreen').style.display='none';$('app').style.display='flex';
     renderNav();renderTitle();render();
+    applyAdminTheme();
   }else{$('authScreen').style.display='flex'}
 })();
 $('authPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
@@ -2301,6 +2355,7 @@ const API_CATALOG = [
   ['app-photo','POST','session','Files','Photo upload (multipart).'],
   ['app-tenant-me','GET','key','Tenant','Tenant identity — X-API-Key tenant key → subscriber profile + usage.'],
   ['host-tenant','GET','public','Tenant','Per-domain routing — Host header → verified tenant profile + white-label branding.'],
+  ['app-theme','GET','public','System','Brand theme — primary/secondary/accent colors + logo URL as CSS-var-ready values.'],
   ['app-moveout','POST','session','Leases','Move-out workflow.'],
   ['app-invoice-print','GET','session','Finance','Printable invoice.'],
   ['app-packages','POST','admin','Admin','Package catalog CRUD (admin).'],
