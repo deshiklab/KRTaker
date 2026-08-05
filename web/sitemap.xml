@@ -3,7 +3,7 @@
   <url>
     <loc>https://krtaker.com/index.html</loc>
     <lastmod>2026-08-01</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
@@ -82,43 +82,43 @@
     <loc>https://krtaker.com/blog.html</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://krtaker.com/blog-lease-registration.html</loc>
     <lastmod>2026-06-28</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://krtaker.com/blog-holding-tax.html</loc>
     <lastmod>2026-06-20</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://krtaker.com/blog-nrb-remittance.html</loc>
     <lastmod>2026-06-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://krtaker.com/blog-tds-commercial.html</loc>
     <lastmod>2026-07-02</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://krtaker.com/blog-nrb-buying.html</loc>
     <lastmod>2026-07-08</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://krtaker.com/blog-eviction.html</loc>
     <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://krtaker.com/case-studies.html</loc>
@@ -147,13 +147,19 @@
   <url>
     <loc>https://krtaker.com/terms.html</loc>
     <lastmod>2026-08-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://krtaker.com/privacy.html</loc>
     <lastmod>2026-08-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://krtaker.com/listings.html</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

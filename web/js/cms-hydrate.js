@@ -122,6 +122,21 @@
         }
       });
     }
+    // search engine verification (Google Search Console / Bing Webmaster) — injected only when set
+    const vg = (map['site.seo.verify_google'] || '').trim();
+    const vb = (map['site.seo.verify_bing'] || '').trim();
+    if (vg && !document.querySelector('meta[name="google-site-verification"]')) {
+      const m = document.createElement('meta');
+      m.name = 'google-site-verification';
+      m.content = vg;
+      document.head.appendChild(m);
+    }
+    if (vb && !document.querySelector('meta[name="msvalidate.01"]')) {
+      const m = document.createElement('meta');
+      m.name = 'msvalidate.01';
+      m.content = vb;
+      document.head.appendChild(m);
+    }
     // custom head code
     const head = (map['site.code.head'] || '').trim();
     if (head && !document.getElementById('krcms-head')) {
