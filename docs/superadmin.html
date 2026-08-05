@@ -1912,6 +1912,7 @@ const API_CATALOG = [
   ['app-staffwatch','GET','session','HR','Staff attendance and payroll.'],
   ['app-samity','GET','session','Community','Samity members and bills.'],
   ['app-photo','POST','session','Files','Photo upload (multipart).'],
+  ['app-tenant-me','GET','key','Tenant','Tenant identity — X-API-Key tenant key → subscriber profile + usage.'],
   ['app-moveout','POST','session','Leases','Move-out workflow.'],
   ['app-invoice-print','GET','session','Finance','Printable invoice.'],
   ['app-packages','POST','admin','Admin','Package catalog CRUD (admin).'],
@@ -2023,6 +2024,83 @@ async function apiKeySave(which){
   const d=await admin({action:'api-keys-save',keys:{[which]:v}});
   if(d.ok){toast((which==='web_api_key'?'Web':'Mobile')+' API key rotated','ok');renderApiKeys();}else toast(d.error||'Failed','error');
 }
+/* ── Per-tenant API keys (v3.63): subscribers authenticate with their own X-API-Key ── */
+let TK={keys:[],subs:[]};
+async function renderApiTenantKeys(){
+  load('apiBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'tenant-keys'});
+  if(!d.ok){load('apiBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  TK.keys=d.keys||[]; TK.subs=d.subscribers||[];
+  const active=TK.keys.filter(k=>k.active).length;
+  const calls=TK.keys.reduce((a,k)=>a+(k.calls||0),0);
+  load('apiBody',
+    `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="btn-primary" onclick="tenantKeyForm()">＋ Tenant key</button>
+      <span class="c-sub">${TK.keys.length} keys · ${active} active · ${calls} total calls — each subscriber gets its own <code>X-API-Key</code> for server-to-server integrations</span>
+    </div>
+    <div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Subscriber</th><th>Label</th><th>Key</th><th>Status</th><th>Last used</th><th>Calls</th><th></th></tr></thead><tbody>`+
+    TK.keys.map(k=>`<tr data-gsid="tkeys-${k.id}"><td><div class="c-name">${esc(k.tenant_name||('#'+k.tenant_id))}</div><div class="c-sub">${esc(k.tenant_email||'')} · ${esc(k.plan||'')}</div></td>
+      <td class="c-sub">${esc(k.label||'—')}</td>
+      <td><code style="font-size:11px">${esc(k.key)}</code></td>
+      <td><span class="badge ${k.active?'b-green':'b-gray'}" style="cursor:pointer" onclick="tenantKeyToggle(${k.id})" title="Click to ${k.active?'disable':'enable'}">${k.active?'● active':'○ disabled'}</span></td>
+      <td class="c-sub">${k.last_used_at?esc(k.last_used_at)+' · '+esc(k.last_ip||''):'— never'}</td>
+      <td>${k.calls}</td>
+      <td><div class="row-actions">
+        <button class="btn-ghost" onclick="tenantKeyRotate(${k.id})" title="Rotate key" data-tip="Rotate key" data-tip-pos="left">🔄</button>
+        <button class="btn-ghost" onclick="tenantKeyForm(${k.id})" title="Edit" data-tip="Edit" data-tip-pos="left">✎</button>
+        <button class="btn-ghost" style="color:var(--danger)" onclick="tenantKeyDelete(${k.id})" title="Revoke" data-tip="Revoke" data-tip-pos="left">🗑</button>
+      </div></td></tr>`).join('')||`<tr><td colspan="7"><div class="empty">No tenant API keys yet — create one for a subscriber so their backend can call KRTaker with its own key (see <code>app-tenant-me</code> in the endpoint catalog).</div></td></tr>`+
+    `</tbody></table></div></div>
+    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💡</span>How tenant keys work</span></div><div class="panel-b"><div style="font-size:12.5px;color:var(--text-soft);line-height:1.7">
+      <div>1. Create a key for a subscriber — the full key is shown <b>once</b> (send it to their backend securely).</div>
+      <div>2. The tenant's server calls <code>app-tenant-me</code> with <code>X-API-Key: &lt;their key&gt;</code> to verify identity and fetch its subscriber profile.</div>
+      <div>3. Tenant keys are accepted anywhere the web/mobile keys are enforced (<code>app-photo</code>, <code>app-job-media</code>), with per-tenant rate limiting + usage telemetry.</div>
+      <div style="margin-top:6px">🔄 <b>Rotate</b> issues a new key and immediately invalidates the old one. 🗑 <b>Revoke</b> deletes the key — the tenant gets 401 on every call.</div>
+    </div></div></div>`);
+}
+function tenantKeyForm(id){
+  const k=id?TK.keys.find(x=>x.id===id):{id:0,tenant_id:0,label:'',active:1};
+  const subOpts=TK.subs.map(s=>`<option value="${s.id}" ${k.tenant_id===s.id?'selected':''}>${esc(s.name||s.email)} — ${esc(s.email)} (${esc(s.plan)})</option>`).join('');
+  openDrawer(id?'Edit tenant API key #'+id:'New tenant API key',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">Subscriber</label><select id="tk_tenant"><option value="0">— select subscriber —</option>${subOpts}</select></div>
+      <div><label class="lb">Label <span class="c-sub">(optional)</span></label><input id="tk_label" value="${esc(k.label)}" placeholder="e.g. Billing server" maxlength="80"></div></div>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:10px;cursor:pointer"><input type="checkbox" id="tk_active" ${k.active?'checked':''}> Enabled</label>
+      <div class="c-sub" style="margin-top:8px">The full key is shown only once after creation — copy it immediately.</div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="tenantKeySave(${id})">💾 Save</button></div>`);
+}
+async function tenantKeySave(id){
+  const d=await admin({action:'tenant-key-save',id,tenant_id:+($('tk_tenant').value||0),label:$('tk_label').value.trim(),active:$('tk_active')&&$('tk_active').checked?1:0});
+  if(!d.ok)return toast(d.error||'Failed','error');
+  closeDrawer();
+  if(!id){toast('Tenant API key created','ok');tenantKeyShow(d.key,'key');}
+  else toast('Tenant API key updated','ok');
+  renderApiTenantKeys();
+}
+function tenantKeyShow(full,kind){
+  openDrawer('🔑 Tenant API key — copy it now',
+    `<p style="font-size:13px;margin:0 0 10px;color:var(--text-soft)">${kind==='key'?'This key is shown only once. Send it to the subscriber\'s backend and store it securely — it authenticates them via the <code>X-API-Key</code> header.':'The previous key was immediately invalidated. Store the new one securely.'}</p>
+     <div style="display:flex;gap:8px"><input id="tk_full" value="${esc(full)}" readonly style="font-family:monospace;flex:1"><button class="btn-outline" onclick="tkCopy()">📋 Copy</button></div>`,
+    `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Done</button></div>`);
+}
+function tkCopy(){const el=$('tk_full');el.select();try{document.execCommand('copy')}catch(e){}toast('Key copied','ok');}
+async function tenantKeyRotate(id){
+  if(!confirm('Rotate this tenant API key? The current key stops working immediately.'))return;
+  const d=await admin({action:'tenant-key-rotate',id});
+  if(!d.ok)return toast(d.error||'Failed','error');
+  closeDrawer();
+  toast('Tenant API key rotated','ok');
+  tenantKeyShow(d.key,'rotated');
+  renderApiTenantKeys();
+}
+async function tenantKeyToggle(id){
+  const d=await admin({action:'tenant-key-toggle',id});
+  if(d.ok){toast(d.active?'Tenant key enabled':'Tenant key disabled','ok');renderApiTenantKeys();}else toast(d.error||'Failed','error');
+}
+async function tenantKeyDelete(id){
+  if(!confirm('Revoke this tenant API key? The subscriber immediately loses API access (401).'))return;
+  const d=await admin({action:'tenant-key-delete',id});
+  if(d.ok){toast('Tenant API key revoked','ok');renderApiTenantKeys();}else toast(d.error||'Failed','error');
+}
 async function renderApiUsage(){
   load('apiUsageBody','<div class="empty">Loading…</div>');
   const d=await admin({action:'api-usage'});
@@ -2106,6 +2184,7 @@ function renderApi(){
       <button class="chip ${API_TAB==='console'?'on':''}" onclick="apiTab('console')">🧪 Console</button>
       <button class="chip ${API_TAB==='usage'?'on':''}" onclick="apiTab('usage')">📈 Usage</button>
       <button class="chip ${API_TAB==='keys'?'on':''}" onclick="apiTab('keys')">🔑 Web and Mobile Keys</button>
+      <button class="chip ${API_TAB==='tkeys'?'on':''}" onclick="apiTab('tkeys')">🏢 Tenant Keys</button>
       <button class="chip ${API_TAB==='data'?'on':''}" onclick="apiTab('data')">🗄️ Data</button>
     </div>
     <div id="apiBody"></div>`);
@@ -2131,6 +2210,8 @@ function renderApi(){
       </div></div>`);
   }else if(API_TAB==='keys'){
     load('apiBody','<div id="apiKeysBody"></div>');renderApiKeys();
+  }else if(API_TAB==='tkeys'){
+    renderApiTenantKeys();
   }else if(API_TAB==='usage'){
     load('apiBody','<div id="apiUsageBody"></div>');renderApiUsage();
   }else{
