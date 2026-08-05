@@ -378,3 +378,10 @@ User: "Add pagination and advanced filter options in each table view of Super Ad
 - **Applied to 18 tables / 16 views**: Dashboard recent subs, Subscribers, Users, Providers, Packages, Blog, Onboarding (3), MIS ledger, Payments integrations, Finance ledger, Integrations, Tickets, Backup, Modules, Webhooks, Audit, Tenant Keys, API usage recent, AI chat telemetry, API Data drawer.
 - **Verify**: test_superadmin **397/397** (373+24) · full **2561/2561** (48 suites) · live browser E2E (dashboard filters → subscribers search/sort/page 2 → audit 20 pages → users/tenant-keys/webhooks filters) **0 JS errors** · live DB untouched. Note: replaced stale `/tmp/krtest/index.php` (old API copy shadowing bare `/sitemap`).
 - **Versions**: ?v=3.63→3.64 (28 pages), sw krtaker-site-v70→v71. Commit dd0c69f → 3 remotes. Skill ref `sa1-fullsite-v10.md`.
+
+## SA1-fullsite-v11 (2026-08-12): Custom Domains — CNAME/TXT verify (v3.65 / SW v72)
+User: "…continue to next tasks (CNAME verify → Theming v2)." Second half batch, first item shipped as **v3.65 / SW v72**.
+- **Backend**: `tenant_domains` table; app-admin `cnames`/`cname-save` (token `krt-verify-`+24hex returned once, domain validation, krtaker.com + dupes rejected, update resets verified)/`cname-verify` (real `dns_get_record` TXT on `_krtaker.<domain>`, audited)/`cname-delete`. **`host-tenant`** public GET: Host (or body host) → verified tenant profile + wl_ branding; port/www normalized.
+- **Frontend**: 🌐 Custom Domains view (Developers group) — stats, toolkit table (domain/tenant/status/masked token+note/verified-at/🔎✎🗑), add-form → TXT token drawer with `_krtaker.<domain>` + copy, Check DNS → ✓ or note, delete confirm; `host-tenant` in API catalog.
+- **Verify**: rig smoke **19/19** · test_superadmin **428/428** (397+31) · full **2592/2592** (48 suites) · live API probe **11/11** · live browser E2E (add → token drawer → real DNS check fails with note → delete → 0 rows) **0 JS errors** · live DB clean.
+- **Versions**: ?v=3.64→3.65 (28 pages), sw v71→v72. Commit c1f408a → 3 remotes. Skill ref `sa1-fullsite-v11.md`.
