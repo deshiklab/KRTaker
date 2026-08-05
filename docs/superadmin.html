@@ -736,7 +736,7 @@ async function renderSubscribers(){
     filters:[['plan','Plan'],['status','Status'],['role','Role']],
     sortable:['id','name','plan','role','status','trial_end','created_at'],
     head:st=>`<tr>${tblTh('subs','ID','id',st)}${tblTh('subs','Subscriber','name',st)}${tblTh('subs','Plan','plan',st)}${tblTh('subs','Role','role',st)}${tblTh('subs','Status','status',st)}${tblTh('subs','Trial end','trial_end',st)}${tblTh('subs','Created','created_at',st)}<th></th></tr>`,
-    row:s=>`<tr data-gsid="subscribers-${s.id}"><td>#${s.id}</td><td><div class="c-name">${esc(s.name)}</div><div class="c-sub">${esc(s.email)}${s.phone?' · '+esc(s.phone):''}</div></td><td>${s.plan?badge(s.plan):'—'}</td><td>${esc(s.role||'owner')}</td><td>${badge(s.status)}</td><td class="c-sub">${esc(s.trial_end||'—')}</td><td class="c-sub">${esc((s.created_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="impersonateUser('${esc(s.email)}','${esc(s.name)}')" data-tip="Impersonate — view the platform as this subscriber (30 min)" data-tip-pos="left" title="Impersonate">🔀</button><button class="btn-ghost" onclick="subscriberForm(${s.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="subscriberDelete(${s.id})">🗑</button></div></td></tr>`,
+    row:s=>`<tr data-gsid="subscribers-${s.id}"><td>#${s.id}</td><td><div class="c-name">${esc(s.name)}</div><div class="c-sub">${esc(s.email)}${s.phone?' · '+esc(s.phone):''}</div></td><td>${s.plan?badge(s.plan):'—'}</td><td>${esc(s.role||'owner')}</td><td>${badge(s.status)}</td><td class="c-sub">${esc(s.trial_end||'—')}</td><td class="c-sub">${esc((s.created_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="subscriberDetail(${s.id})" data-tip="View details" data-tip-pos="left" title="View">👁</button><button class="btn-ghost" onclick="impersonateUser('${esc(s.email)}','${esc(s.name)}')" data-tip="Impersonate — view the platform as this subscriber (30 min)" data-tip-pos="left" title="Impersonate">🔀</button><button class="btn-ghost" onclick="subscriberForm(${s.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="subscriberDelete(${s.id})">🗑</button></div></td></tr>`,
     empty:'<tr><td colspan="8"><div class="empty">No subscribers.</div></td></tr>'
   };
   tblReg('subs',cfg);
@@ -770,6 +770,69 @@ async function impersonateUser(email,name){
   try{localStorage.setItem('krtaker_dash_token',d.token);}catch(e){}
   toast('Impersonating '+name+' — redirecting to their workspace…','ok');
   setTimeout(()=>{location.href='/dashboard-v2.html';},450);
+}
+/* ── Detail drawers (👁 View): formatted read-only view of any row ── */
+function detVal(v, k, o){
+  if(v===undefined||v===null||v==='')return '';
+  if(k==='status'||k==='role'||k==='plan')return badge(v);
+  if(k==='active')return o[k]?badge('Active'):badge('Suspended');
+  if(k==='rating')return '⭐ '+v;
+  if(k==='is_staff')return v?badge('staff'):badge('subscriber');
+  if(k==='verified')return v?badge('verified'):badge('unverified');
+  if(k==='jobs')return v+' jobs';
+  if(k==='reward'||k==='rent'||k==='adv')return money(v);
+  return esc(v);
+}
+function detDrawer(icon,title,o,spec){
+  const rows=Object.entries(spec).map(([k,label])=>{
+    const v=detVal(o[k],k,o);
+    return v?`<div class="mix-row"><span>${label}</span><b>${v}</b></div>`:'';
+  }).join('');
+  openDrawer(icon+' '+title,
+    `<div class="frm">${rows||'<div class="empty">No details.</div>'}</div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button></div>`);
+}
+function subscriberDetail(id){
+  const s=SUBS.list.find(x=>x.id===id);if(!s)return;
+  detDrawer('👥','Subscriber #'+id,s,{
+    name:'Name',org:'Organisation',email:'Email',phone:'Phone',
+    role:'Role',plan:'Plan',status:'Status',trial_end:'Trial ends',
+    verified_at:'Verified',last_login:'Last login',created_at:'Created'});
+}
+function userDetail(id){
+  const u=USRS.find(x=>x.id===id);if(!u)return;
+  detDrawer('👤','User #'+id,u,{
+    name:'Name',email:'Email',role:'Role',dept:'Department',
+    active:'Status',is_staff:'Kind',last_login:'Last login'});
+}
+function providerDetail(id){
+  const p=PROVS.find(x=>x.id===id);if(!p)return;
+  detDrawer('🛠️','Provider '+id,p,{
+    name:'Name',trade:'Trade',sub_email:'Subscriber email',
+    rating:'Rating',jobs:'Jobs',status:'Status'});
+}
+function leadDetail(id){
+  const x=ONB.leads.find(y=>String(y.id)===String(id));if(!x)return;
+  detDrawer('🧲','Lead #'+id,x,{
+    name:'Name',phone:'Phone',email:'Email',prop:'Property',
+    source:'Source',status:'Status',assigned_to:'Assigned to',
+    message:'Message',notes:'Notes',ts:'Created',updated_at:'Updated'});
+}
+function onbDetail(id){
+  const x=ONB.onboarding.find(y=>String(y.id)===String(id));if(!x)return;
+  detDrawer('📋','Onboarding app #'+id,x,{
+    name:'Applicant',email:'Email',phone:'Phone',nid:'NID',
+    unit:'Unit',prop:'Property',rent:'Rent',adv:'Advance',months:'Months',
+    start:'Start',status:'Status',notes:'Notes',verified_by:'Verified by',
+    verified_at:'Verified at',tenant_id:'Tenant',lease_id:'Lease',invoice_id:'Invoice',
+    ts:'Created',updated_at:'Updated'});
+}
+function refDetail(id){
+  const x=ONB.referrals.find(y=>String(y.id)===String(id));if(!x)return;
+  detDrawer('🤝','Referral '+id,x,{
+    code:'Code',user_email:'Referred by',role:'Role',
+    referred_name:'Referred name',referred_email:'Referred email',
+    reward:'Reward',status:'Status',ts:'Created'});
 }
 /* ── Blog manager (SA1-fullsite-v4.3): articles served at /blog/<slug> ── */
 let BLOG={list:[]};
@@ -919,7 +982,7 @@ async function renderUsers(){
     filters:[['role','Role'],['active','Status',[{v:'1',l:'Active'},{v:'0',l:'Suspended'}]]],
     sortable:['id','name','role','active','last_login'],
     head:st=>`<tr>${tblTh('usrs','ID','id',st)}${tblTh('usrs','User','name',st)}${tblTh('usrs','Role','role',st)}${tblTh('usrs','Dept','dept',st)}${tblTh('usrs','Active','active',st)}${tblTh('usrs','Last login','last_login',st)}<th></th></tr>`,
-    row:u=>`<tr data-gsid="users-${u.id}"><td>#${u.id}</td><td><div class="c-name">${esc(u.name)}</div><div class="c-sub">${esc(u.email)}</div></td><td>${badge(u.role)}</td><td class="c-sub">${esc(u.dept||'—')}</td><td>${u.active?badge('Active'):badge('Suspended')}</td><td class="c-sub">${esc(u.last_login||'—')}</td><td><div class="row-actions">${u.role==='superadmin'?'':`<button class="btn-ghost" onclick="impersonateUser('${esc(u.email)}','${esc(u.name)}')" data-tip="Impersonate this staff member (30 min)" data-tip-pos="left" title="Impersonate">🔀</button>`}<button class="btn-ghost" onclick="userForm(${u.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="userDelete(${u.id})">🗑</button></div></td></tr>`,
+    row:u=>`<tr data-gsid="users-${u.id}"><td>#${u.id}</td><td><div class="c-name">${esc(u.name)}</div><div class="c-sub">${esc(u.email)}</div></td><td>${badge(u.role)}</td><td class="c-sub">${esc(u.dept||'—')}</td><td>${u.active?badge('Active'):badge('Suspended')}</td><td class="c-sub">${esc(u.last_login||'—')}</td><td><div class="row-actions"><button class="btn-ghost" onclick="userDetail(${u.id})" data-tip="View details" data-tip-pos="left" title="View">👁</button>${u.role==='superadmin'?'':`<button class="btn-ghost" onclick="impersonateUser('${esc(u.email)}','${esc(u.name)}')" data-tip="Impersonate this staff member (30 min)" data-tip-pos="left" title="Impersonate">🔀</button>`}<button class="btn-ghost" onclick="userForm(${u.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="userDelete(${u.id})">🗑</button></div></td></tr>`,
     empty:'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>'
   };
   tblReg('usrs',cfg);
@@ -959,7 +1022,7 @@ async function renderProviders(){
     filters:[['trade','Trade'],['status','Status']],
     sortable:['id','name','trade','rating','jobs','status'],
     head:st=>`<tr>${tblTh('provs','ID','id',st)}${tblTh('provs','Provider','name',st)}${tblTh('provs','Trade','trade',st)}${tblTh('provs','Rating','rating',st)}${tblTh('provs','Jobs','jobs',st)}${tblTh('provs','Status','status',st)}<th></th></tr>`,
-    row:p=>`<tr data-gsid="providers-${esc(p.id)}"><td>${esc(p.id)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.sub_email||'')}</div></td><td>${esc(p.trade||'—')}</td><td>${p.rating||0}</td><td>${p.jobs||0}</td><td>${badge(p.status)}</td><td><div class="row-actions"><button class="btn-ghost" onclick="providerForm('${esc(p.id)}')">✎</button></div></td></tr>`,
+    row:p=>`<tr data-gsid="providers-${esc(p.id)}"><td>${esc(p.id)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.sub_email||'')}</div></td><td>${esc(p.trade||'—')}</td><td>${p.rating||0}</td><td>${p.jobs||0}</td><td>${badge(p.status)}</td><td><div class="row-actions"><button class="btn-ghost" onclick="providerDetail('${esc(p.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button><button class="btn-ghost" onclick="providerForm('${esc(p.id)}')">✎</button></div></td></tr>`,
     empty:'<tr><td colspan="7"><div class="empty">No providers.</div></td></tr>'
   };
   tblReg('provs',cfg);
@@ -1537,27 +1600,27 @@ async function renderOnboarding(){
     search:['name','phone','email','prop'],
     filters:[['source','Source'],['status','Status']],
     sortable:['id','name','source','status'],
-    head:st=>`<tr>${tblTh('onb-l','ID','id',st)}${tblTh('onb-l','Name','name',st)}<th>Contact</th>${tblTh('onb-l','Source','source',st)}${tblTh('onb-l','Status','status',st)}${tblTh('onb-l','Created','ts',st)}</tr>`,
-    row:x=>`<tr data-gsid="leads-${esc(x.id)}"><td>${esc(x.id)}</td><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.prop||'')}</div></td><td class="c-sub">${esc(x.phone||'')}${x.email?' · '+esc(x.email):''}</td><td>${esc(x.source||'—')}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`,
-    empty:'<tr><td colspan="6"><div class="empty">No leads.</div></td></tr>'
+    head:st=>`<tr>${tblTh('onb-l','ID','id',st)}${tblTh('onb-l','Name','name',st)}<th>Contact</th>${tblTh('onb-l','Source','source',st)}${tblTh('onb-l','Status','status',st)}${tblTh('onb-l','Created','ts',st)}<th></th></tr>`,
+    row:x=>`<tr data-gsid="leads-${esc(x.id)}"><td>${esc(x.id)}</td><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.prop||'')}</div></td><td class="c-sub">${esc(x.phone||'')}${x.email?' · '+esc(x.email):''}</td><td>${esc(x.source||'—')}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="leadDetail('${esc(x.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button></div></td></tr>`,
+    empty:'<tr><td colspan="7"><div class="empty">No leads.</div></td></tr>'
   };
   const cfgO={
     data:o, ph:'Search applicant, details…',
     search:['name','applicant','details','note'],
     filters:[['status','Status']],
     sortable:['id','name','status','ts'],
-    head:st=>`<tr>${tblTh('onb-o','ID','id',st)}${tblTh('onb-o','Applicant','name',st)}<th>Details</th>${tblTh('onb-o','Status','status',st)}${tblTh('onb-o','Created','ts',st)}</tr>`,
-    row:x=>`<tr><td>${esc(x.id)}</td><td class="c-name">${esc(x.name||x.applicant||'—')}</td><td class="c-sub">${esc((x.details||x.note||'').slice(0,60))}</td><td>${badge(x.status||'Pending')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`,
-    empty:'<tr><td colspan="5"><div class="empty">No onboarding applications.</div></td></tr>'
+    head:st=>`<tr>${tblTh('onb-o','ID','id',st)}${tblTh('onb-o','Applicant','name',st)}<th>Details</th>${tblTh('onb-o','Status','status',st)}${tblTh('onb-o','Created','ts',st)}<th></th></tr>`,
+    row:x=>`<tr><td>${esc(x.id)}</td><td class="c-name">${esc(x.name||x.applicant||'—')}</td><td class="c-sub">${esc((x.details||x.note||'').slice(0,60))}</td><td>${badge(x.status||'Pending')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="onbDetail('${esc(x.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button></div></td></tr>`,
+    empty:'<tr><td colspan="6"><div class="empty">No onboarding applications.</div></td></tr>'
   };
   const cfgR={
     data:r, ph:'Search referrer, code…',
     search:['code','referrer'],
     filters:[['status','Status']],
     sortable:['code','referrer','status','ts'],
-    head:st=>`<tr>${tblTh('onb-r','Code','code',st)}${tblTh('onb-r','Referrer','referrer',st)}${tblTh('onb-r','Status','status',st)}${tblTh('onb-r','Created','ts',st)}</tr>`,
-    row:x=>`<tr><td>${esc(x.code||x.id)}</td><td class="c-name">${esc(x.referrer||'—')}</td><td>${badge(x.status||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`,
-    empty:'<tr><td colspan="4"><div class="empty">No referrals.</div></td></tr>'
+    head:st=>`<tr>${tblTh('onb-r','Code','code',st)}${tblTh('onb-r','Referrer','referrer',st)}${tblTh('onb-r','Status','status',st)}${tblTh('onb-r','Created','ts',st)}<th></th></tr>`,
+    row:x=>`<tr><td>${esc(x.code||x.id)}</td><td class="c-name">${esc(x.referrer||'—')}</td><td>${badge(x.status||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="refDetail('${esc(x.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button></div></td></tr>`,
+    empty:'<tr><td colspan="5"><div class="empty">No referrals.</div></td></tr>'
   };
   tblReg('onb-l',cfgL); tblReg('onb-o',cfgO); tblReg('onb-r',cfgR);
   load('pageBody',
