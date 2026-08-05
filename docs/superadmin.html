@@ -802,7 +802,7 @@ async function providerSave(id){
 }
 /* ── Web CMS (SA1-fullsite-v3 redesign: collapsible sections, dirty tracking, publish/draft,
       global find & replace, clone page, field-type inputs, all-page search, generic preview) ── */
-let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en',dirty:new Set(),openSecs:{},pub:{}};
+let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en',dirty:new Set(),openSecs:{},pub:{},flt:{q:'',page:'',sec:'',type:'',status:'',lang:''},fltOpen:false,fltN:0};
 const CMS_PAGES={home:{l:'Home',ic:'🏠',f:'index.html'},features:{l:'Features',ic:'✨',f:'features.html'},pricing:{l:'Pricing',ic:'💎',f:'pricing.html'},about:{l:'About',ic:'ℹ️',f:'about.html'},contact:{l:'Contact',ic:'📮',f:'contact.html'},howitworks:{l:'How it works',ic:'🗺️',f:'how-it-works.html'},ai:{l:'AI Caretaker',ic:'🤖',f:'ai-caretaker.html'},owners:{l:'For Owners',ic:'🏠',f:'for-owners.html'},tenants:{l:'For Tenants',ic:'👤',f:'for-tenants.html'},partners:{l:'For Partners',ic:'🛠️',f:'for-partners.html'},nrb:{l:'For NRB',ic:'🌍',f:'for-nrb.html'},legal:{l:'Legal & Compliance',ic:'⚖️',f:'legal-compliance.html'},faq:{l:'FAQ',ic:'❓',f:'faq.html'},tools:{l:'Calculators',ic:'🧮',f:'tools.html'},blog:{l:'Blog',ic:'📰',f:'blog.html'},'blog-eviction':{l:'Eviction guide',ic:'📄',f:'blog-eviction.html'},'blog-holding-tax':{l:'Holding tax',ic:'📄',f:'blog-holding-tax.html'},'blog-lease-registration':{l:'Lease registration',ic:'📄',f:'blog-lease-registration.html'},'blog-nrb-buying':{l:'NRB buying',ic:'📄',f:'blog-nrb-buying.html'},'blog-nrb-remittance':{l:'NRB remittance',ic:'📄',f:'blog-nrb-remittance.html'},'blog-tds-commercial':{l:'TDS commercial',ic:'📄',f:'blog-tds-commercial.html'},terms:{l:'Terms',ic:'📜',f:'terms.html'},privacy:{l:'Privacy',ic:'🔒',f:'privacy.html'},listings:{l:'Listings',ic:'🏘️',f:'listings.html'},cases:{l:'Case Studies',ic:'📈',f:'case-studies.html'},login:{l:'Login',ic:'🔐',f:'login.html'},register:{l:'Register',ic:'📝',f:'register.html'},site:{l:'Site',ic:'⚙️',f:'index.html'},footer:{l:'Footer',ic:'🔗',f:'index.html'},seo:{l:'SEO',ic:'🔍',f:'index.html'}};
 const CMS_SEC_LABEL={hero:'Hero',article:'Article body',usp:'Why rent with us',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',stats:'Stats bar',trust:'Trust strip',steps:'How it works steps',roles:'Roles',featcards:'Feature cards',gallery:'Product gallery',legal:'Legal strip',testi:'Testimonials',ctaband:'CTA band',partners:'Partners',sticky:'Sticky CTA',modules:'Feature modules',visual:'Visual band',note:'Pricing note',compare:'Compare table',callout:'Callout',why:'Why we exist',principles:'Principles',team:'Team',milestones:'Milestones',join:'Join CTA',talk:'Talk to the team',rows:'Contact rows',form:'Contact form',items:'Items',sections:'Sections',cols:'Footer columns',contact:'Contact',news:'Newsletter',pay:'Payment chips',bottom:'Footer bottom',home:'Home',features:'Features',pricing:'Pricing',about:'About',footer:'Footer',seo:'Search engine verification'};
 const CMS_LONG=['subtitle','desc','meta_description','tagline','address','body','_text','content','story'];
@@ -864,9 +864,10 @@ async function renderCms(){
   if(foc&&foc.view==='cms'&&foc.payload&&foc.payload.page)CMS.tab=foc.payload.page;
   const cur=CMS_PAGES[CMS.tab]?CMS.tab:'home';
   const pubOn=(CMS.pub[cur]?CMS.pub[cur].published!==0:true);
+  const fltOn=cmsFilterActive();
   load('pageBody',
     `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">`+
-    Object.keys(CMS_PAGES).map(p=>`<button class="chip ${cur===p?'on':''}" onclick="cmsTab('${p}')" data-tip="${esc(CMS_PAGES[p].l)} page · ${CMS.pub[p]&&CMS.pub[p].published===0?'DRAFT':''}" data-tip-pos="top">${CMS_PAGES[p].ic} ${CMS_PAGES[p].l}${CMS.pub[p]&&CMS.pub[p].published===0?' <span style="color:#E67E22">●</span>':''}</button>`).join('')+
+    `<select id="cmsPageSel" onchange="cmsPageSelChange(this.value)" style="max-width:250px;font-size:13px;height:32px;padding:0 8px;border-radius:8px;border:1px solid var(--border,#e3e8f0);background:var(--bg,#fff);color:var(--text,#1a2233);cursor:pointer" data-tip="Pick a page to edit — ${Object.keys(CMS_PAGES).length} pages; 🔴 = draft, count = fields" data-tip-pos="bottom">${cmsPageOptions(cur)}</select>`+
     `<span style="width:1px;height:22px;background:var(--border);margin:0 4px"></span>`+
     `<button class="chip ${CMS.lang==='en'?'on':''}" onclick="cmsLang('en')" data-tip="Show English fields" data-tip-pos="top">EN</button>`+
     `<button class="chip ${CMS.lang==='bn'?'on':''}" onclick="cmsLang('bn')" data-tip="Show বাংলা fields" data-tip-pos="top">বাংলা</button>`+
@@ -875,11 +876,15 @@ async function renderCms(){
     `${CMS.pub[cur]&&CMS.pub[cur].publish_at?`<span class="chip" style="background:#E8F0FE;color:#1A56DB" data-tip="Auto-publishes at this time" data-tip-pos="top">⏳ Scheduled ${esc(fmtPubAt(CMS.pub[cur].publish_at))} <span style="cursor:pointer;font-weight:900" onclick="cmsPubCancelSchedule('${cur}')" data-tip="Cancel schedule" data-tip-pos="top">✕</span></span>`:''}`+
     `<input id="cmsPubAt" type="datetime-local" style="max-width:172px;font-size:13px;height:30px" data-tip="Pick a future time to auto-publish this page" data-tip-pos="top">`+
     `<button class="chip" onclick="cmsPubSchedule('${cur}')" data-tip="Schedule auto-publish — page stays draft until the time arrives" data-tip-pos="top">📅 Schedule</button>`+
-    `<input id="cmsSearch" placeholder="🔍 Search all pages…" style="max-width:220px;margin-left:auto" oninput="cmsFilter()"></div>`+
-    `<div id="cmsJump" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>`+
+    `<input id="cmsSearch" placeholder="🔍 Search all fields…" style="max-width:190px" oninput="cmsFilter()" data-tip="Type to search every page/section/key/value — results are editable inline" data-tip-pos="bottom">`+
+    `<button class="chip ${fltOn?'on':''}" id="cmsFltBtn" onclick="cmsFilterToggle()" data-tip="Advanced filter — page, section, field type, status, language" data-tip-pos="bottom">⚙️ Filter</button>`+
+    `<span id="cmsFltChip" style="margin-left:auto"></span>`+
+    `</div>`+
+    `<div id="cmsFilterBar" style="display:${cmsFilterOpen()?'flex':'none'};background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:12px;gap:8px;flex-wrap:wrap;align-items:end">${cmsFilterControls()}</div>`+
+    `<div id="cmsJump" style="display:${fltOn?'none':'flex'};gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>`+
     `<div id="cmsPanels"></div>`);
-  cmsRenderJump(cur);
-  cmsRenderPanels();
+  if(fltOn){cmsFilterSecs();cmsFilterApply();}
+  else {cmsRenderJump(cur);cmsRenderPanels();}
   cmsRenderDirty();
   if(foc&&foc.view==='cms'&&foc.payload&&foc.payload.section){
     setTimeout(()=>{cmsSecJump(foc.payload.page,foc.payload.section);setTimeout(()=>{const k=foc.payload.k;if(k)gsHighlight('[data-cms="'+esc(foc.payload.page)+'|'+esc(foc.payload.section)+'|'+esc(k)+'"]');},150);},80);
@@ -992,25 +997,114 @@ function cmsSyncDom(){
   });
 }
 function cmsTab(p){cmsSyncDom();CMS.tab=p;cmsRenderJump(p);cmsRenderPanels();cmsRenderDirty();}
-function cmsLang(l){cmsSyncDom();CMS.lang=l;cmsRenderPanels();}
+function cmsLang(l){cmsSyncDom();CMS.lang=l;if(cmsFilterActive())cmsFilterApply();else cmsRenderPanels();}
+/* ── Web CMS v2 (v6): page dropdown + advanced filter with inline editing ── */
+function cmsPageOptions(cur){
+  return Object.keys(CMS_PAGES).map(p=>{
+    const draft=CMS.pub[p]&&CMS.pub[p].published===0;
+    const n=CMS.blocks.filter(b=>b.page===p).length;
+    return `<option value="${p}" ${cur===p?'selected':''}>${CMS_PAGES[p].ic} ${CMS_PAGES[p].l}${draft?' 🔴':''} · ${n}</option>`;
+  }).join('');
+}
+function cmsPageSelChange(p){cmsClearFilter();cmsTab(p);}
+function cmsFilterOpen(){return CMS.fltOpen===true;}
+function cmsFilterActive(){return !!(CMS.flt.q||CMS.flt.page||CMS.flt.sec||CMS.flt.type||CMS.flt.status||CMS.flt.lang);}
+function cmsFilterTypeOf(k){const ft=cmsFieldType(k);return ft==='text'?(cmsIsLong(k)?'long':'text'):ft;}
+function cmsFilterToggle(){
+  CMS.fltOpen=!cmsFilterOpen();
+  const b=$('cmsFilterBar');if(b){b.style.display=CMS.fltOpen?'flex':'none';if(CMS.fltOpen)cmsFilterSecs();}
+  const btn=$('cmsFltBtn');if(btn)btn.classList.toggle('on',cmsFilterOpen());
+  if(!CMS.fltOpen&&!cmsFilterActive()){if($('cmsPanels')){cmsRenderJump(CMS.tab);cmsRenderPanels();}}
+}
+function cmsFilterControls(){
+  return `<div style="min-width:150px"><label class="lb" style="font-size:10.5px">Page</label><select id="cmsFpage" onchange="cmsFilterSecs();cmsFilterApply()"><option value="">All pages</option>`+
+    Object.keys(CMS_PAGES).map(p=>`<option value="${p}" ${CMS.flt.page===p?'selected':''}>${CMS_PAGES[p].ic} ${CMS_PAGES[p].l}</option>`).join('')+`</select></div>`+
+    `<div style="min-width:150px"><label class="lb" style="font-size:10.5px">Section</label><select id="cmsFsec" onchange="cmsFilterApply()"><option value="">All sections</option></select></div>`+
+    `<div style="min-width:120px"><label class="lb" style="font-size:10.5px">Field type</label><select id="cmsFtype" onchange="cmsFilterApply()"><option value="">All</option><option value="text" ${CMS.flt.type==='text'?'selected':''}>text</option><option value="long" ${CMS.flt.type==='long'?'selected':''}>long text</option><option value="color" ${CMS.flt.type==='color'?'selected':''}>color</option><option value="url" ${CMS.flt.type==='url'?'selected':''}>url</option><option value="img" ${CMS.flt.type==='img'?'selected':''}>image</option><option value="num" ${CMS.flt.type==='num'?'selected':''}>number</option></select></div>`+
+    `<div style="min-width:110px"><label class="lb" style="font-size:10.5px">Status</label><select id="cmsFstatus" onchange="cmsFilterApply()"><option value="">All</option><option value="custom" ${CMS.flt.status==='custom'?'selected':''}>custom fields</option><option value="default" ${CMS.flt.status==='default'?'selected':''}>default fields</option></select></div>`+
+    `<div style="min-width:110px"><label class="lb" style="font-size:10.5px">Language</label><select id="cmsFlang" onchange="cmsFilterApply()"><option value="">All</option><option value="en" ${CMS.flt.lang==='en'?'selected':''}>English</option><option value="bn" ${CMS.flt.lang==='bn'?'selected':''}>বাংলা</option></select></div>`+
+    `<button class="btn-outline" onclick="cmsClearFilter()">✕ Clear</button>`;
+}
+function cmsFilterSecs(){
+  const el=$('cmsFsec');if(!el)return;
+  const pg=($('cmsFpage')||{}).value||'';
+  const set={};
+  CMS.blocks.forEach(b=>{if(!pg||b.page===pg)set[b.section]=true;});
+  const secs=Object.keys(set).sort((a,b)=>(CMS_SEC_LABEL[a]||a).localeCompare(CMS_SEC_LABEL[b]||b));
+  el.innerHTML=`<option value="">All sections</option>`+secs.map(s=>`<option value="${esc(s)}" ${CMS.flt.sec===s?'selected':''}>${esc(CMS_SEC_LABEL[s]||s)}</option>`).join('');
+}
 function cmsFilter(){
-  const q=($('cmsSearch')||{}).value||'';
-  const query=q.trim().toLowerCase();
-  if(!query){renderCms();return;}
-  /* all-page search: show matches grouped by page, jump on click */
-  const matches=CMS.blocks.filter(b=>{
-    const hay=(b.page+' '+b.section+' '+b.k+' '+(b.v||'')).toLowerCase();
-    return hay.includes(query);
+  CMS.flt.q=($('cmsSearch')||{}).value||'';
+  cmsFilterApply();
+}
+function cmsFilterApply(){
+  CMS.flt.q=($('cmsSearch')||{}).value||'';
+  const pgel=$('cmsFpage');if(pgel)CMS.flt.page=pgel.value;
+  const sel=$('cmsFsec');if(sel)CMS.flt.sec=sel.value;
+  const tel=$('cmsFtype');if(tel)CMS.flt.type=tel.value;
+  const stel=$('cmsFstatus');if(stel)CMS.flt.status=stel.value;
+  const lel=$('cmsFlang');if(lel)CMS.flt.lang=lel.value;
+  const q=CMS.flt.q.trim().toLowerCase();
+  const active=cmsFilterActive();
+  const jump=$('cmsJump');if(jump)jump.style.display=active?'none':'flex';
+  const chip=$('cmsFltChip');
+  if(chip)chip.innerHTML=active?`<span class="chip on" style="cursor:pointer" onclick="cmsClearFilter()">⚙️ ${CMS.fltN} matched — ✕</span>`:'';
+  const btn=$('cmsFltBtn');if(btn)btn.classList.toggle('on',active);
+  if(!active){cmsRenderJump(CMS.tab);cmsRenderPanels();cmsRenderDirty();return;}
+  let matches=CMS.blocks.filter(b=>{
+    if(CMS.flt.page&&b.page!==CMS.flt.page)return false;
+    if(CMS.flt.sec&&b.section!==CMS.flt.sec)return false;
+    if(CMS.flt.lang==='en'&&b.k.endsWith('_bn'))return false;
+    if(CMS.flt.lang==='bn'&&!b.k.endsWith('_bn'))return false;
+    if(CMS.flt.type&&cmsFilterTypeOf(b.k)!==CMS.flt.type)return false;
+    if(CMS.flt.status==='custom'&&CMS.defKeys.has(b.page+'|'+b.section+'|'+b.k))return false;
+    if(CMS.flt.status==='default'&&!CMS.defKeys.has(b.page+'|'+b.section+'|'+b.k))return false;
+    if(q){const hay=(b.page+' '+(CMS_PAGES[b.page]?CMS_PAGES[b.page].l:'')+' '+b.section+' '+b.k+' '+(b.v||'')).toLowerCase();if(!hay.includes(q))return false;}
+    return true;
   });
+  CMS.fltN=matches.length;
+  if(chip)chip.innerHTML=`<span class="chip on" style="cursor:pointer" onclick="cmsClearFilter()">⚙️ ${CMS.fltN} matched — ✕</span>`;
   const byPage={};matches.forEach(b=>{(byPage[b.page]=byPage[b.page]||[]).push(b)});
-  const cur=$('cmsPanels');
-  if(!cur)return;
-  let html=`<div class="c-sub" style="margin-bottom:10px">${matches.length} match${matches.length===1?'':'es'} across ${Object.keys(byPage).length} page${Object.keys(byPage).length===1?'':'s'} — click to jump</div>`;
-  Object.keys(byPage).forEach(p=>{
-    html+=`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${CMS_PAGES[p]?CMS_PAGES[p].ic:'📄'}</span>${esc(CMS_PAGES[p]?CMS_PAGES[p].l:p)}<span class="c-sub" style="font-size:11px;margin-left:8px">${byPage[p].length}</span></span></div><div class="panel-b">`+
-      byPage[p].slice(0,12).map(b=>`<button class="btn-outline" style="justify-content:flex-start;text-align:left;font-size:12px;width:100%;margin-bottom:6px" onclick="cmsJumpTo('${esc(b.page)}','${esc(b.section)}','${esc(b.k)}')">${esc(b.section)} / <b>${esc(b.k)}</b><span class="c-sub" style="margin-left:auto;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((b.v||'').slice(0,60))}</span></button>`).join('')+`</div></div>`;
+  const order=Object.keys(CMS_PAGES);
+  const pages=Object.keys(byPage).sort((a,b)=>(order.indexOf(a)<0?99:order.indexOf(a))-(order.indexOf(b)<0?99:order.indexOf(b)));
+  const el=$('cmsPanels');if(!el)return;
+  if(!pages.length){el.innerHTML=`<div class="empty">No fields match your filters — try widening them.</div>`;cmsRenderDirty();return;}
+  let html=`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <span class="c-sub">${matches.length} match${matches.length===1?'':'es'} across ${pages.length} page${pages.length===1?'':'s'} — edit inline, then hit 💾 Save all</span>
+    <button class="btn-outline" onclick="cmsClearFilter()">✕ Clear filters</button></div>`;
+  pages.forEach(p=>{
+    const bySec={};byPage[p].forEach(b=>{(bySec[b.section]=bySec[b.section]||[]).push(b)});
+    const secs=Object.keys(bySec);
+    html+=`<div class="panel" style="margin-bottom:10px"><div class="panel-h"><span class="t"><span class="pi">${CMS_PAGES[p]?CMS_PAGES[p].ic:'📄'}</span>${esc(CMS_PAGES[p]?CMS_PAGES[p].l:p)}<span class="c-sub" style="font-size:11px;margin-left:8px">${byPage[p].length} field${byPage[p].length===1?'':'s'}</span></span>
+      <button class="btn-ghost" onclick="cmsFilterJump('${p}')" data-tip="Open this page in the editor" data-tip-pos="left">↗ page</button></div>
+      <div class="panel-b">`+secs.map(s=>{
+        const open=cmsSecOpen(p,s);
+        return `<div style="margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:4px 0 6px" onclick="cmsSecToggle('${p}','${esc(s)}')">
+          <span style="font-size:12px;font-weight:700">${esc(CMS_SEC_LABEL[s]||s)}</span><span class="c-sub" style="font-size:11px">${bySec[s].length}</span><span class="c-sub" style="font-size:10px">${open?'▾':'▸'}</span>
+          <button class="btn-ghost" style="font-size:10.5px;margin-left:auto" onclick="event.stopPropagation();cmsFilterJump('${p}','${esc(s)}')" data-tip="Jump to this section in the page view">↗ section</button></div>
+          <div class="frm" style="${open?'':'display:none'}">${bySec[s].map(b=>cmsFieldHtml(b)).join('')}</div></div>`;
+      }).join('')+`</div></div>`;
   });
-  cur.innerHTML=html||'<div class="empty">No matches.</div>';
+  el.innerHTML=html;
+  cmsRenderDirty();
+}
+function cmsClearFilter(){
+  CMS.flt={q:'',page:'',sec:'',type:'',status:'',lang:''};
+  const s=$('cmsSearch');if(s)s.value='';
+  ['cmsFpage','cmsFsec','cmsFtype','cmsFstatus','cmsFlang'].forEach(id=>{const e=$(id);if(e)e.value='';});
+  cmsFilterSecs();
+  cmsFilterApply();
+}
+function cmsFilterJump(p,sec){
+  CMS.flt={q:'',page:'',sec:'',type:'',status:'',lang:''};
+  const s=$('cmsSearch');if(s)s.value='';
+  ['cmsFpage','cmsFsec','cmsFtype','cmsFstatus','cmsFlang'].forEach(id=>{const e=$(id);if(e)e.value='';});
+  const jump=$('cmsJump');if(jump)jump.style.display='flex';
+  const chip=$('cmsFltChip');if(chip)chip.innerHTML='';
+  const btn=$('cmsFltBtn');if(btn)btn.classList.remove('on');
+  CMS.tab=p;
+  cmsRenderJump(p);cmsRenderPanels();cmsRenderDirty();
+  if(sec)setTimeout(()=>{cmsSecJump(p,sec);},60);
 }
 function cmsJumpTo(p,s,k){
   CMS.tab=p;renderCms();
