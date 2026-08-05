@@ -980,7 +980,7 @@ async function providerSave(id){
 }
 /* ── Web CMS (SA1-fullsite-v3 redesign: collapsible sections, dirty tracking, publish/draft,
       global find & replace, clone page, field-type inputs, all-page search, generic preview) ── */
-let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en',dirty:new Set(),openSecs:{},pub:{},flt:{q:'',page:'',sec:'',type:'',status:'',lang:''},fltOpen:false,fltN:0};
+let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en',dirty:new Set(),openSecs:{},pub:{},flt:{q:'',page:'',sec:'',type:'',status:'',lang:''},fltOpen:false,fltN:0,sel:new Set(),fltM:[]};
 const CMS_PAGES={home:{l:'Home',ic:'🏠',f:'index.html'},features:{l:'Features',ic:'✨',f:'features.html'},pricing:{l:'Pricing',ic:'💎',f:'pricing.html'},about:{l:'About',ic:'ℹ️',f:'about.html'},contact:{l:'Contact',ic:'📮',f:'contact.html'},howitworks:{l:'How it works',ic:'🗺️',f:'how-it-works.html'},ai:{l:'AI Caretaker',ic:'🤖',f:'ai-caretaker.html'},owners:{l:'For Owners',ic:'🏠',f:'for-owners.html'},tenants:{l:'For Tenants',ic:'👤',f:'for-tenants.html'},partners:{l:'For Partners',ic:'🛠️',f:'for-partners.html'},nrb:{l:'For NRB',ic:'🌍',f:'for-nrb.html'},legal:{l:'Legal & Compliance',ic:'⚖️',f:'legal-compliance.html'},faq:{l:'FAQ',ic:'❓',f:'faq.html'},tools:{l:'Calculators',ic:'🧮',f:'tools.html'},blog:{l:'Blog',ic:'📰',f:'blog.html'},'blog-eviction':{l:'Eviction guide',ic:'📄',f:'blog-eviction.html'},'blog-holding-tax':{l:'Holding tax',ic:'📄',f:'blog-holding-tax.html'},'blog-lease-registration':{l:'Lease registration',ic:'📄',f:'blog-lease-registration.html'},'blog-nrb-buying':{l:'NRB buying',ic:'📄',f:'blog-nrb-buying.html'},'blog-nrb-remittance':{l:'NRB remittance',ic:'📄',f:'blog-nrb-remittance.html'},'blog-tds-commercial':{l:'TDS commercial',ic:'📄',f:'blog-tds-commercial.html'},terms:{l:'Terms',ic:'📜',f:'terms.html'},privacy:{l:'Privacy',ic:'🔒',f:'privacy.html'},listings:{l:'Listings',ic:'🏘️',f:'listings.html'},cases:{l:'Case Studies',ic:'📈',f:'case-studies.html'},login:{l:'Login',ic:'🔐',f:'login.html'},register:{l:'Register',ic:'📝',f:'register.html'},site:{l:'Site',ic:'⚙️',f:'index.html'},footer:{l:'Footer',ic:'🔗',f:'index.html'},seo:{l:'SEO',ic:'🔍',f:'index.html'}};
 const CMS_SEC_LABEL={hero:'Hero',article:'Article body',usp:'Why rent with us',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',stats:'Stats bar',trust:'Trust strip',steps:'How it works steps',roles:'Roles',featcards:'Feature cards',gallery:'Product gallery',legal:'Legal strip',testi:'Testimonials',ctaband:'CTA band',partners:'Partners',sticky:'Sticky CTA',modules:'Feature modules',visual:'Visual band',note:'Pricing note',compare:'Compare table',callout:'Callout',why:'Why we exist',principles:'Principles',team:'Team',milestones:'Milestones',join:'Join CTA',talk:'Talk to the team',rows:'Contact rows',form:'Contact form',items:'Items',sections:'Sections',cols:'Footer columns',contact:'Contact',news:'Newsletter',pay:'Payment chips',bottom:'Footer bottom',home:'Home',features:'Features',pricing:'Pricing',about:'About',footer:'Footer',seo:'Search engine verification'};
 const CMS_LONG=['subtitle','desc','meta_description','tagline','address','body','_text','content','story'];
@@ -1122,7 +1122,7 @@ async function cmsPingSitemap(){
   else if(d.ok)toast('Bing pinged (HTTP '+d.code+')'+(d.note?' · '+d.note:''),'ok');
   else toast('Ping failed (HTTP '+(d.code||'?')+')'+(d.error?' — '+d.error:''),'err');
 }
-function cmsFieldHtml(b){
+function cmsFieldHtml(b,sel){
   const tag=b.page+'|'+b.section+'|'+b.k;
   const def=CMS.defKeys.has(tag);
   const long=cmsIsLong(b.k);
@@ -1132,6 +1132,7 @@ function cmsFieldHtml(b){
   const ft=cmsFieldType(b.k);
   const isImg=ft==='img';
   const dirty=CMS.dirty.has(tag);
+  const chk=sel?`<input type="checkbox" class="cms-sel" id="cms-sel-${esc(tag.replace(/\|/g,'_'))}" onchange="cmsSelToggle('${esc(tag)}',this.checked)" ${CMS.sel.has(tag)?'checked':''} data-tip="Select for bulk edit" data-tip-pos="left" title="Bulk edit" style="margin-right:6px;width:15px;height:15px;accent-color:var(--primary);flex-shrink:0">`:'';
   let inp;
   if(long){
     inp=`<textarea data-cms="${esc(tag)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="${dirty?'border-color:#E67E22':''}">${esc(b.v)}</textarea>`;
@@ -1147,7 +1148,7 @@ function cmsFieldHtml(b){
   }
   return `<div class="cms-field" ${dirty?'style="border:1px solid rgba(230,126,34,.5);border-radius:10px;padding:8px"':''}>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
-      <label class="lb" style="margin:0;text-transform:capitalize" ${hint?`data-tip="${esc(hint)}" data-tip-pos="right"`:''}>${dirty?'<span style="color:#E67E22;margin-right:4px">●</span>':''}${esc(lbl)}${isBn?'<span class="badge b-purple" style="margin-left:6px">বাংলা</span>':''}${def?'':'<span class="badge b-purple" style="margin-left:6px">custom</span>'}</label>
+      <div style="display:flex;align-items:center;gap:6px">${chk}<label class="lb" style="margin:0;text-transform:capitalize" ${hint?`data-tip="${esc(hint)}" data-tip-pos="right"`:''}>${dirty?'<span style="color:#E67E22;margin-right:4px">●</span>':''}${esc(lbl)}${isBn?'<span class="badge b-purple" style="margin-left:6px">বাংলা</span>':''}${def?'':'<span class="badge b-purple" style="margin-left:6px">custom</span>'}</label></div>
       ${def?'':`<button class="btn-ghost" style="color:var(--danger);padding:2px 6px;font-size:11px" onclick="cmsDelBlock('${esc(b.page)}','${esc(b.section)}','${esc(b.k)}')" data-tip="Remove this custom field" data-tip-pos="left" title="Remove block">✕</button>`}
     </div>
     ${inp}
@@ -1241,6 +1242,7 @@ function cmsFilterApply(){
     return true;
   });
   CMS.fltN=matches.length;
+  CMS.fltM=matches.map(b=>b.page+'|'+b.section+'|'+b.k);
   if(chip)chip.innerHTML=`<span class="chip on" style="cursor:pointer" onclick="cmsClearFilter()">⚙️ ${CMS.fltN} matched — ✕</span>`;
   const byPage={};matches.forEach(b=>{(byPage[b.page]=byPage[b.page]||[]).push(b)});
   const order=Object.keys(CMS_PAGES);
@@ -1249,7 +1251,15 @@ function cmsFilterApply(){
   if(!pages.length){el.innerHTML=`<div class="empty">No fields match your filters — try widening them.</div>`;cmsRenderDirty();return;}
   let html=`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
     <span class="c-sub">${matches.length} match${matches.length===1?'':'es'} across ${pages.length} page${pages.length===1?'':'s'} — edit inline, then hit 💾 Save all</span>
-    <button class="btn-outline" onclick="cmsClearFilter()">✕ Clear filters</button></div>`;
+    <button class="btn-outline" onclick="cmsClearFilter()">✕ Clear filters</button></div>
+    <div id="cmsBulkBar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--bg-alt);border:1px dashed var(--border);border-radius:10px;padding:8px 12px;margin-bottom:12px">
+      <span class="c-sub" style="font-weight:700">☑ Bulk edit</span>
+      <button class="btn-ghost" onclick="cmsSelAll()" style="font-size:12px">Select all</button>
+      <button class="btn-ghost" onclick="cmsSelNone()" style="font-size:12px">None</button>
+      <span class="c-sub" id="cmsSelN" style="font-size:12px">0 selected</span>
+      <span style="flex:1"></span>
+      <button class="btn-primary" id="cmsBulkApplyBtn" onclick="cmsBulkDrawer()" style="font-size:12px;padding:6px 12px" disabled>✏️ Apply to selected…</button>
+    </div>`;
   pages.forEach(p=>{
     const bySec={};byPage[p].forEach(b=>{(bySec[b.section]=bySec[b.section]||[]).push(b)});
     const secs=Object.keys(bySec);
@@ -1260,7 +1270,7 @@ function cmsFilterApply(){
         return `<div style="margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:4px 0 6px" onclick="cmsSecToggle('${p}','${esc(s)}')">
           <span style="font-size:12px;font-weight:700">${esc(CMS_SEC_LABEL[s]||s)}</span><span class="c-sub" style="font-size:11px">${bySec[s].length}</span><span class="c-sub" style="font-size:10px">${open?'▾':'▸'}</span>
           <button class="btn-ghost" style="font-size:10.5px;margin-left:auto" onclick="event.stopPropagation();cmsFilterJump('${p}','${esc(s)}')" data-tip="Jump to this section in the page view">↗ section</button></div>
-          <div class="frm" style="${open?'':'display:none'}">${bySec[s].map(b=>cmsFieldHtml(b)).join('')}</div></div>`;
+          <div class="frm" style="${open?'':'display:none'}">${bySec[s].map(b=>cmsFieldHtml(b,true)).join('')}</div></div>`;
       }).join('')+`</div></div>`;
   });
   el.innerHTML=html;
@@ -1268,6 +1278,7 @@ function cmsFilterApply(){
 }
 function cmsClearFilter(){
   CMS.flt={q:'',page:'',sec:'',type:'',status:'',lang:''};
+  CMS.sel.clear();CMS.fltM=[];
   const s=$('cmsSearch');if(s)s.value='';
   ['cmsFpage','cmsFsec','cmsFtype','cmsFstatus','cmsFlang'].forEach(id=>{const e=$(id);if(e)e.value='';});
   cmsFilterSecs();
@@ -1275,6 +1286,7 @@ function cmsClearFilter(){
 }
 function cmsFilterJump(p,sec){
   CMS.flt={q:'',page:'',sec:'',type:'',status:'',lang:''};
+  CMS.sel.clear();CMS.fltM=[];
   const s=$('cmsSearch');if(s)s.value='';
   ['cmsFpage','cmsFsec','cmsFtype','cmsFstatus','cmsFlang'].forEach(id=>{const e=$(id);if(e)e.value='';});
   const jump=$('cmsJump');if(jump)jump.style.display='flex';
@@ -1283,6 +1295,52 @@ function cmsFilterJump(p,sec){
   CMS.tab=p;
   cmsRenderJump(p);cmsRenderPanels();cmsRenderDirty();
   if(sec)setTimeout(()=>{cmsSecJump(p,sec);},60);
+}
+/* ── Web CMS bulk edit (v6 follow-up): select fields in filter results, apply one value to all ── */
+function cmsSelToggle(tag,on){
+  if(on)CMS.sel.add(tag);else CMS.sel.delete(tag);
+  cmsBulkBar();
+}
+function cmsSelAll(){CMS.fltM.forEach(t=>CMS.sel.add(t));document.querySelectorAll('.cms-sel').forEach(c=>c.checked=true);cmsBulkBar();}
+function cmsSelNone(){CMS.sel.clear();document.querySelectorAll('.cms-sel').forEach(c=>c.checked=false);cmsBulkBar();}
+function cmsBulkBar(){
+  const n=CMS.sel.size;
+  const lbl=$('cmsSelN');if(lbl)lbl.textContent=n+' selected';
+  const btn=$('cmsBulkApplyBtn');if(btn){btn.disabled=!n;btn.textContent=n?'✏️ Apply to '+n+' selected…':'✏️ Apply to selected…';}
+}
+function cmsBulkDrawer(){
+  const n=CMS.sel.size;
+  if(!n)return;
+  const tags=[...CMS.sel];
+  const b0=CMS.blocks.find(x=>tags[0]===x.page+'|'+x.section+'|'+x.k);
+  const ft=b0?cmsFilterTypeOf(b0.k):'text';
+  const types={};tags.forEach(t=>{const b=CMS.blocks.find(x=>t===x.page+'|'+x.section+'|'+x.k);if(b)types[cmsFilterTypeOf(b.k)]=true;});
+  const mixed=Object.keys(types).length>1;
+  const color=ft==='color';
+  const num=ft==='num';
+  const input=color
+    ?`<div style="display:flex;gap:6px"><input type="color" id="cmsBulkVal" value="#2F80ED" oninput="cmsBulkColor(this.value)" style="width:52px;height:38px;padding:2px;flex-shrink:0"><input id="cmsBulkHex" value="#2F80ED" oninput="cmsBulkHexTxt(this.value)" style="flex:1"></div>`
+    :(num?`<input id="cmsBulkVal" type="number" placeholder="e.g. 25">`:`<input id="cmsBulkVal" placeholder="New value for all ${n} selected fields">`);
+  openDrawer('✏️ Bulk edit — '+n+' field'+(n===1?'':'s'),
+    `<div class="frm">
+      <div class="c-sub" style="font-size:11.5px;color:var(--text-mute)">Set one value on ${n} selected field${n===1?'':'s'}${mixed?' (mixed field types — value applied as-is)':''}. The change marks them dirty — then hit 💾 Save all to persist.</div>
+      <div><label class="lb">New value</label>${input}</div>
+      <div class="c-sub" style="font-size:11px;color:var(--text-mute);margin-top:6px">Selected: ${tags.slice(0,8).map(t=>{const b=CMS.blocks.find(x=>t===x.page+'|'+x.section+'|'+x.k);return b?(CMS_PAGES[b.page]?CMS_PAGES[b.page].ic:'📄')+' '+esc(b.k):t;}).join(' · ')}${tags.length>8?' · +'+(tags.length-8)+' more':''}</div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="cmsBulkApply()">✏️ Apply value</button></div>`);
+}
+function cmsBulkColor(v){const h=$('cmsBulkHex');if(h)h.value=v;}
+function cmsBulkHexTxt(v){if(/^#[0-9a-fA-F]{3,8}$/.test(v)){const c=$('cmsBulkVal');if(c)c.value=v;}}
+function cmsBulkApply(){
+  const el=$('cmsBulkVal');if(!el)return;
+  const val=el.value;
+  const tags=[...CMS.sel];
+  if(!tags.length)return;
+  tags.forEach(t=>{const b=CMS.blocks.find(x=>t===x.page+'|'+x.section+'|'+x.k);if(b){b.v=val;CMS.dirty.add(t);}});
+  CMS.sel.clear();CMS.fltM=[];
+  toast('Applied value to '+tags.length+' field'+(tags.length===1?'':'s')+' — hit 💾 Save all to persist','ok');
+  closeDrawer();
+  cmsFilterApply();
 }
 function cmsJumpTo(p,s,k){
   CMS.tab=p;renderCms();
