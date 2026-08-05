@@ -471,7 +471,7 @@ function renderNav(){
     ['Overview',['dashboard']],
     ['Platform',['subscribers','packages','users','providers']],
     ['Content & CRM',['cms','blog','onboarding','mis']],
-    ['Developers',['api','ai']],
+    ['Developers',['api','ai','webhooks']],
     ['Commerce',['payments','finance']],
     ['System',['settings','integrations','tickets','backup','modules','whitelabel','health','audit']]
   ];
@@ -498,7 +498,8 @@ const NAV_DESC={
   health:'System administration — runtime, database and security posture',
   audit:'Full audit trail across the platform',
   api:'API Library — endpoint catalog, test console, usage analytics, web/mobile API keys and data stats',
-  ai:'KR AI caretaker — provider/model configuration, API key, connection test and chat telemetry'
+  ai:'KR AI caretaker — provider/model configuration, API key, connection test and chat telemetry',
+  webhooks:'Outbound webhooks — deliver platform events to your endpoints with HMAC signing and a delivery log'
 };
 const NAV={
   dashboard:{ic:'📊',l:'Dashboard'},
@@ -521,12 +522,13 @@ const NAV={
   health:{ic:'🩺',l:'System Health'},
   audit:{ic:'📜',l:'Audit Logs'},
   api:{ic:'🧬',l:'API Library'},
-  ai:{ic:'🤖',l:'AI Caretaker'}
+  ai:{ic:'🤖',l:'AI Caretaker'},
+  webhooks:{ic:'🔗',l:'Webhooks'}
 };
 function nav(v){closeSidebar();STATE.view=v;renderNav();renderTitle();render();window.scrollTo(0,0)}
 function render(){
   const el=$('content');
-  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi,ai:renderAi}[STATE.view];
+  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi,ai:renderAi,webhooks:renderWebhooks}[STATE.view];
   el.innerHTML=`<div class="page-head"><div><h1>${NAV[STATE.view].l}</h1><div class="sub" id="pageSub"></div></div><div class="head-actions" id="pageActions"></div></div><div id="pageBody"></div>`;
   r();
 }
@@ -1535,6 +1537,104 @@ async function aiClearLog(){
   if(!confirm('Clear the entire KR chat log?'))return;
   const d=await admin({action:'ai-config',sub:'clear-log'});
   if(d.ok){toast((d.deleted||0)+' chat rows cleared','ok');aiStats();}else toast(d.error||'Failed','error');
+}
+/* ── Webhooks (v3.62): outbound event delivery with HMAC signing + delivery log ── */
+let WH={hooks:[],events:[],subs:[]};
+async function renderWebhooks(){
+  pageHead('Deliver KRTaker events to your endpoints — HMAC-signed POSTs with a full delivery log',`<button class="btn-primary" onclick="webhookForm()">＋ Webhook</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'webhook-list'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  WH.hooks=d.webhooks||[]; WH.events=d.events||[]; WH.subs=d.subscribers||[];
+  const active=WH.hooks.filter(h=>h.active).length;
+  const tot=WH.hooks.reduce((a,h)=>a+h.stats.n,0), okc=WH.hooks.reduce((a,h)=>a+h.stats.ok,0), fail=WH.hooks.reduce((a,h)=>a+h.stats.fail,0);
+  load('pageBody',
+    `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px">`+
+    [['Endpoints',WH.hooks.length],['Active',active],['Deliveries',tot],['OK',okc],['Failed',fail]].map(c=>`<div style="background:var(--bg-soft,#f4f6fb);border:1px solid var(--line,#e8ecf4);border-radius:10px;padding:10px 12px"><div style="font-size:20px;font-weight:800">${c[1]}</div><div class="c-sub" style="font-size:11px">${c[0]}</div></div>`).join('')+`</div>`+
+    `<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Endpoint</th><th>Subscriber</th><th>Events</th><th>Status</th><th>Last delivery</th><th></th></tr></thead><tbody>`+
+    WH.hooks.map(h=>{
+      const evs=(()=>{try{return JSON.parse(h.events||'[]')}catch(e){return[]}})();
+      const lastOk=h.last_status>=200&&h.last_status<300&&h.last_status>0;
+      return `<tr data-gsid="webhooks-${h.id}"><td><div class="c-name">${esc(h.label)}</div><div class="c-sub">${esc(h.url.slice(0,52))}${h.url.length>52?'…':''}</div></td>
+      <td class="c-sub">${h.tenant_id?esc(h.tenant_name||('#'+h.tenant_id)):'<span class="badge b-gray">🌐 platform</span>'}</td>
+      <td style="max-width:260px">${evs.map(e=>{const m=WH.events.find(x=>x.id===e);return `<span class="badge b-blue" title="${m?esc(m.label):''}">${m?m.ic:''} ${esc(e)}</span>`}).join(' ')||'—'}</td>
+      <td><span class="badge ${h.active?'b-green':'b-gray'}" style="cursor:pointer" onclick="webhookToggle(${h.id})" title="Click to ${h.active?'pause':'enable'}">${h.active?'● active':'○ paused'}</span></td>
+      <td class="c-sub">${h.last_at?`${lastOk?'✅':'❌'} HTTP ${h.last_status} · ${esc((h.last_at||'').slice(11,16))} UTC<br><span style="font-size:11px">${h.ok_count} ok / ${h.fail_count} fail</span>`:'— never'}</td>
+      <td><div class="row-actions">
+        <button class="btn-ghost" onclick="webhookTest(${h.id})" title="Send test ping" data-tip="Send test ping" data-tip-pos="left">🧪</button>
+        <button class="btn-ghost" onclick="webhookLogs(${h.id})" title="Delivery log" data-tip="Delivery log" data-tip-pos="left">📜</button>
+        <button class="btn-ghost" onclick="webhookForm(${h.id})" title="Edit" data-tip="Edit" data-tip-pos="left">✎</button>
+        <button class="btn-ghost" style="color:var(--danger)" onclick="webhookDelete(${h.id})" title="Delete" data-tip="Delete" data-tip-pos="left">🗑</button>
+      </div></td></tr>`}).join('')||`<tr><td colspan="6"><div class="empty">No webhooks yet — create one to deliver KRTaker events (payments, tickets, leases, signups) to your server.</div></td></tr>`+
+    `</tbody></table></div></div>`);
+}
+function webhookForm(id){
+  const h=id?WH.hooks.find(x=>x.id===id):{id:0,label:'',tenant_id:0,url:'',events:[],active:1};
+  const evs=(()=>{try{return JSON.parse(h.events||'[]')}catch(e){return[]}})();
+  const subOpts=WH.subs.map(s=>`<option value="${s.id}" ${h.tenant_id===s.id?'selected':''}>${esc(s.name||s.email)} — ${esc(s.email)} (${esc(s.plan)})</option>`).join('');
+  openDrawer(id?'Edit webhook #'+id:'New webhook',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">Label <span class="c-sub">(optional)</span></label><input id="wh_label" value="${esc(h.label)}" placeholder="My backend receiver"></div>
+      <div><label class="lb">Subscriber <span class="c-sub">(optional)</span></label><select id="wh_tenant"><option value="0">🌐 Platform-wide</option>${subOpts}</select></div></div>
+     <div><label class="lb">Endpoint URL</label><input id="wh_url" value="${esc(h.url)}" placeholder="https://your-server.com/krtaker-hook"></div>
+     <div><label class="lb">Events</label><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:6px">${WH.events.map(e=>`<label style="display:flex;gap:8px;align-items:center;background:var(--bg-soft,#f4f6fb);border:1px solid var(--line,#e8ecf4);border-radius:8px;padding:8px 10px;cursor:pointer"><input type="checkbox" value="${esc(e.id)}" ${evs.includes(e.id)?'checked':''} onchange="whEvChk()">${e.ic} <span style="font-size:12.5px">${esc(e.label)}</span></label>`).join('')}</div></div>
+     <div style="display:flex;gap:18px;align-items:center;margin-top:14px"><label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="wh_active" ${h.active?'checked':''}> Enabled</label>
+       ${id?`<label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="wh_rotate"> 🔑 Rotate signing secret</label>`:''}
+       <span class="c-sub">Every POST is signed <code>X-KRTaker-Signature: sha256=…</code> (HMAC-SHA256 of the body)</span></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="webhookSave(${id})">💾 Save</button></div>`);
+  setTimeout(whEvChk,0);
+}
+let WH_EVS=[];
+function whEvChk(){WH_EVS=[...document.querySelectorAll('#drawerBody input[type=checkbox][value]')].filter(c=>c.checked).map(c=>c.value)}
+async function webhookSave(id){
+  whEvChk();
+  const d=await admin({action:'webhook-save',id,label:$('wh_label').value.trim(),tenant_id:+($('wh_tenant').value||0),url:$('wh_url').value.trim(),events:WH_EVS,active:$('wh_active')&&$('wh_active').checked?1:0,regenerate:($('wh_rotate')&&$('wh_rotate').checked)?1:0});
+  if(!d.ok)return toast(d.error||'Failed','error');
+  closeDrawer();
+  toast(id?'Webhook updated':'Webhook created','ok');
+  if(!id)webhookShowSecret(d.id,d.secret);
+  renderWebhooks();
+}
+function webhookShowSecret(id,secret){
+  openDrawer('🔑 Signing secret — copy it now',
+    `<p style="font-size:13px;margin:0 0 10px;color:var(--text-soft)">Every delivery carries <code>X-KRTaker-Signature: sha256=…</code> — an HMAC-SHA256 of the request body signed with this secret. Recompute it on your side to verify the request truly came from KRTaker. Shown only once.</p>
+     <div style="display:flex;gap:8px"><input id="wh_secret" value="${esc(secret)}" readonly style="font-family:monospace;flex:1"><button class="btn-outline" onclick="whCopySecret()">📋 Copy</button></div>`,
+    `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Done</button></div>`);
+}
+function whCopySecret(){const el=$('wh_secret');el.select();try{document.execCommand('copy')}catch(e){}toast('Secret copied','ok');}
+async function webhookDelete(id){
+  if(!confirm('Delete webhook #'+id+' and its delivery log?'))return;
+  const d=await admin({action:'webhook-delete',id});
+  if(d.ok){toast('Webhook deleted','ok');renderWebhooks();}else toast(d.error||'Failed','error');
+}
+async function webhookToggle(id){
+  const d=await admin({action:'webhook-toggle',id});
+  if(d.ok){toast(d.active?'Webhook enabled':'Webhook paused','ok');renderWebhooks();}else toast(d.error||'Failed','error');
+}
+async function webhookTest(id){
+  const d=await admin({action:'webhook-test',id});
+  if(!d.ok)return toast(d.error||'Failed','error');
+  const l=d.delivery;
+  if(l&&l.ok)toast('Test ping delivered — HTTP '+l.status+' in '+l.ms+' ms','ok');
+  else if(l)toast('Delivery failed — '+(l.response||'').slice(0,80),'error');
+  else toast('No delivery recorded','info');
+  webhookLogs(id);
+}
+async function webhookLogs(id){
+  const d=await admin({action:'webhook-logs',id});
+  if(!d.ok)return toast(d.error||'Failed','error');
+  const logs=d.logs||[];
+  openDrawer('📜 Delivery log'+(d.label?' — '+d.label:''),
+    `<div style="display:flex;gap:8px;margin-bottom:10px;align-items:center"><span class="c-sub">${logs.length} deliveries</span><button class="btn-ghost" style="margin-left:auto" onclick="webhookLogClear(${id})">🧹 Clear</button></div>`+
+    (logs.length?
+      `<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px"><tr style="text-align:left;color:var(--text-mute,#8a93a6)"><th style="padding:5px 6px">When</th><th style="padding:5px 6px">Event</th><th style="padding:5px 6px">HTTP</th><th style="padding:5px 6px">ms</th><th style="padding:5px 6px">Response</th></tr>`+
+      logs.map(l=>`<tr style="border-top:1px solid var(--line,#e8ecf4)"><td class="c-sub" style="padding:6px">${esc((l.ts||'').slice(5,16))}</td><td style="padding:6px"><span class="badge ${l.ok?'b-green':'b-red'}">${esc(l.event)}</span></td><td style="padding:6px">${l.status?l.status:'—'}</td><td class="c-sub" style="padding:6px">${l.ms}</td><td class="c-sub" style="padding:6px;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(l.response)}">${esc(l.response.slice(0,60))}</td></tr>`).join('')+`</table></div>`
+      :`<div class="empty">No deliveries yet — hit 🧪 Test ping or wait for a subscribed event.</div>`),
+    `<div class="dr-actions"><button class="btn-primary" onclick="closeDrawer()">Close</button></div>`);
+}
+async function webhookLogClear(id){
+  if(!confirm('Clear the delivery log'+(id?' for this endpoint':'')+'?'))return;
+  const d=await admin({action:'webhook-log-clear',id:id||0});
+  if(d.ok){toast('Delivery log cleared','ok');if(id)webhookLogs(id);renderWebhooks();}else toast(d.error||'Failed','error');
 }
 /* ── Integrations ── */
 async function renderIntegrations(){
