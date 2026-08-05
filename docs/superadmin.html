@@ -176,6 +176,33 @@ td .c-sub{font-size:11.5px;color:var(--text-mute)}
 .tbl-s{cursor:pointer;user-select:none}
 .tbl-s:hover{color:var(--primary)}
 .tbl-s.on{color:var(--primary)}
+/* ── Onboarding & CRM kanban (SA1 v15): drag&drop pipeline board ── */
+.kb-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.kb-view-btn{background:var(--bg-alt);border:1px solid var(--border);color:var(--text-soft);border-radius:8px;padding:6px 12px;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .13s}
+.kb-view-btn.on{background:var(--primary-light);border-color:rgba(47,128,237,.35);color:var(--primary)}
+.kb-wrap{display:flex;gap:12px;overflow-x:auto;padding:14px;align-items:flex-start;scroll-snap-type:x proximity}
+.kb-col{flex:0 0 232px;min-width:232px;background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;max-height:600px;scroll-snap-align:start}
+.kb-col.kb-over{outline:2px dashed var(--primary);outline-offset:-2px;background:var(--primary-light)}
+.kb-h{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;font-weight:800;font-size:12px;letter-spacing:.3px;text-transform:uppercase;color:var(--text-soft);border-bottom:1px solid var(--border)}
+.kb-n{background:var(--primary-light);color:var(--primary);border-radius:20px;padding:1px 8px;font-size:10.5px;font-weight:800;text-transform:none}
+.kb-body{padding:8px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-height:70px;flex:1}
+.kb-empty{font-size:11px;color:var(--text-mute);text-align:center;padding:14px 0;border:1px dashed var(--border);border-radius:8px}
+.kb-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 10px;cursor:grab;box-shadow:0 1px 2px rgba(0,0,0,.05);transition:box-shadow .13s,transform .13s}
+.kb-card:hover{box-shadow:0 4px 12px rgba(9,20,40,.10);transform:translateY(-1px)}
+.kb-card.drag{opacity:.45}
+.kb-card-h{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12.5px}
+.kb-card-h b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.kb-age{background:#fff3e0;color:#b26a00;border-radius:8px;padding:0 6px;font-size:9.5px;font-weight:800;flex-shrink:0}
+[data-theme="dark"] .kb-age{background:rgba(255,180,60,.15);color:#ffc46b}
+.kb-card-s{font-size:11px;color:var(--text-mute);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kb-card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.kb-tag{font-size:10px;background:var(--primary-light);color:var(--primary);border-radius:6px;padding:1px 6px;font-weight:700}
+.kb-tag.kb-user{background:#eef2ff;color:#4f46e5}
+[data-theme="dark"] .kb-tag.kb-user{background:rgba(99,102,241,.18);color:#a5b4fc}
+.kb-tag.kb-ok{background:#e6f7ee;color:#0a7d42}
+[data-theme="dark"] .kb-tag.kb-ok{background:rgba(16,185,129,.16);color:#34d399}
+.kb-card-acts{display:flex;gap:4px;margin-top:8px;justify-content:flex-end}
+.kb-card-acts .btn-ghost{padding:4px 7px;font-size:12px;line-height:1}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
@@ -745,16 +772,20 @@ async function renderSubscribers(){
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="subscribers-'+foc.payload.id+'"]');
 }
 function subscriberForm(id){
-  const s=id?SUBS.list.find(x=>x.id===id):{id:0,name:'',org:'',email:'',phone:'',plan:'',role:'owner',status:'pending',trial_end:''};
+  const s=id?SUBS.list.find(x=>x.id===id):{id:0,name:'',org:'',email:'',phone:'',plan:'',role:'owner',status:'pending',trial_end:'',address:'',city:'',industry:'',company_size:'',website:'',notes:'',tags:''};
   openDrawer(id?'Edit subscriber #'+id:'New subscriber',
     `<div class="frm"><div class="grid-2"><div><label class="lb">Name</label><input id="sf_name" value="${esc(s.name)}"></div><div><label class="lb">Org</label><input id="sf_org" value="${esc(s.org)}"></div></div>
      <div class="grid-2"><div><label class="lb">Email</label><input id="sf_email" value="${esc(s.email)}"></div><div><label class="lb">Phone</label><input id="sf_phone" value="${esc(s.phone)}"></div></div>
      <div class="grid-2"><div><label class="lb">Plan</label><select id="sf_plan"><option value="">— none —</option>${SUBS.plans.map(p=>`<option value="${esc(p.code)}" ${s.plan===p.code?'selected':''}>${esc(p.name)} (${esc(p.code)})</option>`).join('')}</select></div><div><label class="lb">Role</label><select id="sf_role">${['owner','manager','tenant','accountant','crm','hr','legal','svc_mgr','partner'].map(r=>`<option ${s.role===r?'selected':''}>${r}</option>`).join('')}</select></div></div>
-     <div class="grid-2"><div><label class="lb">Status</label><select id="sf_status">${['pending','trial','active','suspended','cancelled'].map(st=>`<option ${s.status===st?'selected':''}>${st}</option>`).join('')}</select></div><div><label class="lb">Trial end (YYYY-MM-DD)</label><input id="sf_trial" value="${esc(s.trial_end||'')}" placeholder="2026-08-31"></div></div></div>`,
+     <div class="grid-2"><div><label class="lb">Status</label><select id="sf_status">${['pending','trial','active','suspended','cancelled'].map(st=>`<option ${s.status===st?'selected':''}>${st}</option>`).join('')}</select></div><div><label class="lb">Trial end (YYYY-MM-DD)</label><input id="sf_trial" value="${esc(s.trial_end||'')}" placeholder="2026-08-31"></div></div>
+     <div class="grid-2"><div><label class="lb">Address</label><input id="sf_address" value="${esc(s.address||'')}" placeholder="House, road, area"></div><div><label class="lb">City</label><input id="sf_city" value="${esc(s.city||'')}" placeholder="Dhaka"></div></div>
+     <div class="grid-2"><div><label class="lb">Industry</label><input id="sf_industry" value="${esc(s.industry||'')}" placeholder="Real estate, developer…"></div><div><label class="lb">Company size</label><select id="sf_csize"><option value="">— select —</option>${['1-10','11-50','51-200','201-500','500+'].map(c=>`<option ${s.company_size===c?'selected':''}>${c}</option>`).join('')}</select></div></div>
+     <div class="grid-2"><div><label class="lb">Website</label><input id="sf_website" value="${esc(s.website||'')}" placeholder="https://…"></div><div><label class="lb">Tags (comma separated)</label><input id="sf_tags" value="${esc(s.tags||'')}" placeholder="vip, pilot, enterprise"></div></div>
+     <div><label class="lb">Internal notes</label><textarea id="sf_notes">${esc(s.notes||'')}</textarea></div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="subscriberSave(${id})">💾 Save</button></div>`);
 }
 async function subscriberSave(id){
-  const d=await admin({action:'subscriber-save',id,name:$('sf_name').value.trim(),org:$('sf_org').value.trim(),email:$('sf_email').value.trim(),phone:$('sf_phone').value.trim(),plan:$('sf_plan').value,role:$('sf_role').value,status:$('sf_status').value,trial_end:$('sf_trial').value.trim()});
+  const d=await admin({action:'subscriber-save',id,name:$('sf_name').value.trim(),org:$('sf_org').value.trim(),email:$('sf_email').value.trim(),phone:$('sf_phone').value.trim(),plan:$('sf_plan').value,role:$('sf_role').value,status:$('sf_status').value,trial_end:$('sf_trial').value.trim(),address:$('sf_address').value.trim(),city:$('sf_city').value.trim(),industry:$('sf_industry').value.trim(),company_size:$('sf_csize').value,website:$('sf_website').value.trim(),notes:$('sf_notes').value.trim(),tags:$('sf_tags').value.trim()});
   if(d.ok){toast('Subscriber saved','ok');closeDrawer();renderSubscribers();}else toast(d.error||'Failed','error');
 }
 async function subscriberDelete(id){
@@ -783,21 +814,24 @@ function detVal(v, k, o){
   if(k==='reward'||k==='rent'||k==='adv')return money(v);
   return esc(v);
 }
-function detDrawer(icon,title,o,spec){
+function detDrawer(icon,title,o,spec,extra){
   const rows=Object.entries(spec).map(([k,label])=>{
     const v=detVal(o[k],k,o);
     return v?`<div class="mix-row"><span>${label}</span><b>${v}</b></div>`:'';
   }).join('');
   openDrawer(icon+' '+title,
-    `<div class="frm">${rows||'<div class="empty">No details.</div>'}</div>`,
+    `<div class="frm">${rows||'<div class="empty">No details.</div>'}${extra||''}</div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button></div>`);
 }
 function subscriberDetail(id){
   const s=SUBS.list.find(x=>x.id===id);if(!s)return;
+  const extra=(s.tenants!==undefined||s.partners!==undefined)?`<div class="mix-total" style="display:flex;justify-content:space-between"><span>🏠 Tenants <b>${s.tenants||0}</b></span><span>🛠️ Providers <b>${s.partners||0}</b></span></div>`:'';
   detDrawer('👥','Subscriber #'+id,s,{
     name:'Name',org:'Organisation',email:'Email',phone:'Phone',
     role:'Role',plan:'Plan',status:'Status',trial_end:'Trial ends',
-    verified_at:'Verified',last_login:'Last login',created_at:'Created'});
+    address:'Address',city:'City',industry:'Industry',company_size:'Company size',
+    website:'Website',tags:'Tags',notes:'Notes',
+    verified_at:'Verified',last_login:'Last login',created_at:'Created'},extra);
 }
 function userDetail(id){
   const u=USRS.find(x=>x.id===id);if(!u)return;
@@ -1585,10 +1619,14 @@ function cmsPreview(){
 document.addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(STATE.view==='cms'&&$('cmsSaveBtn'))cmsSaveAll();}
 });
-/* ── Onboarding & CRM ── */
+/* ── Onboarding & CRM (SA1 v15): table + kanban views, full CRUD, lead conversion ── */
 let ONB={leads:[],onboarding:[],referrals:[]};
+let ONB_V={l:'table',o:'table'};
+const LEAD_PIPE=['New','Contacted','Qualified','Viewing','Applied','Negotiation','Won','Lost'];
+const ONB_PIPE=['Started','Submitted','Verified','Approved','Rejected'];
+const REF_PIPE=['Pending','Signed up','Paid','Reward issued'];
 async function renderOnboarding(){
-  pageHead('Platform CRM — leads, subscriber onboarding applications and referrals');
+  pageHead('Platform CRM — leads, subscriber onboarding applications and referrals',`<button class="btn-primary" onclick="leadForm()">＋ Lead</button><button class="btn-primary" onclick="onbForm()">＋ Application</button><button class="btn-primary" onclick="refForm()">＋ Referral</button>`);
   load('pageBody','<div class="empty">Loading…</div>');
   const d=await admin({action:'onboarding'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
@@ -1601,7 +1639,7 @@ async function renderOnboarding(){
     filters:[['source','Source'],['status','Status']],
     sortable:['id','name','source','status'],
     head:st=>`<tr>${tblTh('onb-l','ID','id',st)}${tblTh('onb-l','Name','name',st)}<th>Contact</th>${tblTh('onb-l','Source','source',st)}${tblTh('onb-l','Status','status',st)}${tblTh('onb-l','Created','ts',st)}<th></th></tr>`,
-    row:x=>`<tr data-gsid="leads-${esc(x.id)}"><td>${esc(x.id)}</td><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.prop||'')}</div></td><td class="c-sub">${esc(x.phone||'')}${x.email?' · '+esc(x.email):''}</td><td>${esc(x.source||'—')}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="leadDetail('${esc(x.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button></div></td></tr>`,
+    row:x=>`<tr data-gsid="leads-${esc(x.id)}"><td>${esc(x.id)}</td><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.prop||'')}${x.assigned_to?' · 👤 '+esc(x.assigned_to):''}</div></td><td class="c-sub">${esc(x.phone||'')}${x.email?' · '+esc(x.email):''}</td><td>${esc(x.source||'—')}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="leadDetail('${esc(x.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button><button class="btn-ghost" onclick="leadForm('${esc(x.id)}')" title="Edit">✎</button><button class="btn-ghost" onclick="leadConvert('${esc(x.id)}')" title="Convert to onboarding application">🔄</button><button class="btn-ghost" onclick="leadAdvance('${esc(x.id)}')" title="Advance to next stage">➡️</button><button class="btn-ghost" style="color:var(--danger)" onclick="leadDelete('${esc(x.id)}')" title="Delete">🗑</button></div></td></tr>`,
     empty:'<tr><td colspan="7"><div class="empty">No leads.</div></td></tr>'
   };
   const cfgO={
@@ -1610,7 +1648,7 @@ async function renderOnboarding(){
     filters:[['status','Status']],
     sortable:['id','name','status','ts'],
     head:st=>`<tr>${tblTh('onb-o','ID','id',st)}${tblTh('onb-o','Applicant','name',st)}<th>Details</th>${tblTh('onb-o','Status','status',st)}${tblTh('onb-o','Created','ts',st)}<th></th></tr>`,
-    row:x=>`<tr><td>${esc(x.id)}</td><td class="c-name">${esc(x.name||x.applicant||'—')}</td><td class="c-sub">${esc((x.details||x.note||'').slice(0,60))}</td><td>${badge(x.status||'Pending')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="onbDetail('${esc(x.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button></div></td></tr>`,
+    row:x=>`<tr><td>${esc(x.id)}</td><td class="c-name">${esc(x.name||x.applicant||'—')}</td><td class="c-sub">${esc((x.details||x.note||'').slice(0,60))}</td><td>${badge(x.status||'Pending')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="onbDetail('${esc(x.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button><button class="btn-ghost" onclick="onbForm('${esc(x.id)}')" title="Edit">✎</button><button class="btn-ghost" onclick="onbAdvance('${esc(x.id)}')" title="Advance to next stage">➡️</button><button class="btn-ghost" style="color:var(--danger)" onclick="onbDelete('${esc(x.id)}')" title="Delete">🗑</button></div></td></tr>`,
     empty:'<tr><td colspan="6"><div class="empty">No onboarding applications.</div></td></tr>'
   };
   const cfgR={
@@ -1619,17 +1657,154 @@ async function renderOnboarding(){
     filters:[['status','Status']],
     sortable:['code','referrer','status','ts'],
     head:st=>`<tr>${tblTh('onb-r','Code','code',st)}${tblTh('onb-r','Referrer','referrer',st)}${tblTh('onb-r','Status','status',st)}${tblTh('onb-r','Created','ts',st)}<th></th></tr>`,
-    row:x=>`<tr><td>${esc(x.code||x.id)}</td><td class="c-name">${esc(x.referrer||'—')}</td><td>${badge(x.status||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="refDetail('${esc(x.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button></div></td></tr>`,
+    row:x=>`<tr><td>${esc(x.code||x.id)}</td><td class="c-name">${esc(x.referrer||'—')}</td><td>${badge(x.status||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="refDetail('${esc(x.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button><button class="btn-ghost" onclick="refForm('${esc(x.id)}')" title="Edit">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="refDelete('${esc(x.id)}')" title="Delete">🗑</button></div></td></tr>`,
     empty:'<tr><td colspan="5"><div class="empty">No referrals.</div></td></tr>'
   };
   tblReg('onb-l',cfgL); tblReg('onb-o',cfgO); tblReg('onb-r',cfgR);
   load('pageBody',
     `<div class="stats">${[['🧲','Leads',l.length,'recent'],['📋','Onboarding apps',o.length,'pending review'],['🤝','Referrals',r.length,'program'],['👥','Subscribers',(d.subs||0),'total']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>`+
-    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧲</span>Leads</span></div></div>`+tblPanel('onb-l',cfgL)+
-    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">📋</span>Onboarding applications</span></div></div>`+tblPanel('onb-o',cfgO)+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧲</span>Leads</span><div class="kb-tools">${onbToggleHtml('l')}</div></div></div>`+(ONB_V.l==='table'?tblPanel('onb-l',cfgL):kanbanHtml('l'))+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">📋</span>Onboarding applications</span><div class="kb-tools">${onbToggleHtml('o')}</div></div></div>`+(ONB_V.o==='table'?tblPanel('onb-o',cfgO):kanbanHtml('o'))+
     `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🤝</span>Referrals</span></div></div>`+tblPanel('onb-r',cfgR));
-  tblDraw('onb-l',cfgL); tblDraw('onb-o',cfgO); tblDraw('onb-r',cfgR);
+  if(ONB_V.l==='table')tblDraw('onb-l',cfgL);
+  if(ONB_V.o==='table')tblDraw('onb-o',cfgO);
+  tblDraw('onb-r',cfgR);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="leads-'+esc(foc.payload.id)+'"]');
+}
+function onbToggleHtml(kind){
+  const v=ONB_V[kind];
+  return `<button class="kb-view-btn ${v==='table'?'on':''}" onclick="onbSetView('${kind}','table')">📋 Table</button><button class="kb-view-btn ${v==='kanban'?'on':''}" onclick="onbSetView('${kind}','kanban')">🪟 Kanban</button>`;
+}
+function onbSetView(kind,mode){ONB_V[kind]=mode;renderOnboarding();}
+function kanbanHtml(kind){
+  const pipe=kind==='l'?LEAD_PIPE:ONB_PIPE;
+  const arr=kind==='l'?ONB.leads:ONB.onboarding;
+  const def=kind==='l'?'New':'Started';
+  const cols=pipe.map(st=>{
+    const items=arr.filter(x=>String(x.status||def)===st);
+    return `<div class="kb-col" data-status="${esc(st)}" ondragover="kbOver(event)" ondragleave="kbLeave(event)" ondrop="kbDrop(event,'${kind}','${esc(st)}')"><div class="kb-h">${esc(st)}<span class="kb-n">${items.length}</span></div><div class="kb-body">${items.map(x=>kind==='l'?kbLeadCard(x):kbOnbCard(x)).join('')||'<div class="kb-empty">—</div>'}</div></div>`;
+  }).join('');
+  const rest=arr.filter(x=>!pipe.includes(String(x.status||def)));
+  const restCol=rest.length?`<div class="kb-col" data-status="Other"><div class="kb-h">Other<span class="kb-n">${rest.length}</span></div><div class="kb-body">${rest.map(x=>kind==='l'?kbLeadCard(x):kbOnbCard(x)).join('')}</div></div>`:'';
+  return `<div class="kb-wrap">${cols}${restCol}</div>`;
+}
+function kbLeadCard(x){
+  const days=Math.floor((Date.now()-new Date(x.ts||Date.now()).getTime())/86400000);
+  return `<div class="kb-card" draggable="true" ondragstart="kbDragStart(event,'l','${esc(x.id)}')" ondragend="kbDragEnd(event)"><div class="kb-card-h"><b>${esc(x.name)}</b>${days>=0?`<span class="kb-age">${days}d</span>`:''}</div><div class="kb-card-s">${esc(x.prop||'')}${x.phone?' · '+esc(x.phone):''}</div><div class="kb-card-tags"><span class="kb-tag">${esc(x.source||'listing')}</span>${x.assigned_to?`<span class="kb-tag kb-user">👤 ${esc(x.assigned_to)}</span>`:''}</div><div class="kb-card-acts"><button class="btn-ghost" onclick="leadDetail('${esc(x.id)}')" title="View">👁</button><button class="btn-ghost" onclick="leadForm('${esc(x.id)}')" title="Edit">✎</button><button class="btn-ghost" onclick="leadConvert('${esc(x.id)}')" title="Convert to onboarding application">🔄</button><button class="btn-ghost" onclick="leadAdvance('${esc(x.id)}')" title="Next stage">➡️</button><button class="btn-ghost" style="color:var(--danger)" onclick="leadDelete('${esc(x.id)}')" title="Delete">🗑</button></div></div>`;
+}
+function kbOnbCard(x){
+  return `<div class="kb-card" draggable="true" ondragstart="kbDragStart(event,'o','${esc(x.id)}')" ondragend="kbDragEnd(event)"><div class="kb-card-h"><b>${esc(x.name||x.applicant||x.id)}</b></div><div class="kb-card-s">${esc(x.prop||'')}${x.unit?' · '+esc(x.unit):''}${x.rent?` · ${money(x.rent)}`:''}</div><div class="kb-card-tags">${x.nid?`<span class="kb-tag">🪪 NID</span>`:''}${x.verified_by?`<span class="kb-tag kb-ok">✓ ${esc(x.verified_by)}</span>`:''}</div><div class="kb-card-acts"><button class="btn-ghost" onclick="onbDetail('${esc(x.id)}')" title="View">👁</button><button class="btn-ghost" onclick="onbForm('${esc(x.id)}')" title="Edit">✎</button><button class="btn-ghost" onclick="onbAdvance('${esc(x.id)}')" title="Next stage">➡️</button><button class="btn-ghost" style="color:var(--danger)" onclick="onbDelete('${esc(x.id)}')" title="Delete">🗑</button></div></div>`;
+}
+let KB_DRAG=null;
+function kbDragStart(e,kind,id){KB_DRAG={kind,id};try{e.dataTransfer.setData('text/plain',id);}catch(_){}
+  const c=e.target.closest('.kb-card');if(c)c.classList.add('drag');}
+function kbDragEnd(){document.querySelectorAll('.kb-card.drag').forEach(c=>c.classList.remove('drag'));KB_DRAG=null;}
+function kbOver(e){e.preventDefault();e.currentTarget.classList.add('kb-over');}
+function kbLeave(e){e.currentTarget.classList.remove('kb-over');}
+async function kbDrop(e,kind,status){
+  e.preventDefault();e.currentTarget.classList.remove('kb-over');
+  if(!KB_DRAG||KB_DRAG.kind!==kind)return;
+  const id=KB_DRAG.id;KB_DRAG=null;
+  if(status==='Other'){toast('Not a pipeline stage — set it from the edit form','error');return;}
+  if(kind==='l')await leadStatus(id,status,true);else await onbStatus(id,status,true);
+}
+async function leadStatus(id,status,silent){
+  const d=await admin({action:'lead-status',id,status});
+  if(!d.ok){if(!silent)toast(d.error||'Failed','error');return false;}
+  const x=ONB.leads.find(y=>String(y.id)===String(id));if(x)x.status=status;
+  renderOnboarding();
+  return true;
+}
+async function onbStatus(id,status,silent){
+  const d=await admin({action:'onboard-status',id,status});
+  if(!d.ok){if(!silent)toast(d.error||'Failed','error');return false;}
+  const x=ONB.onboarding.find(y=>String(y.id)===String(id));if(x)x.status=status;
+  renderOnboarding();
+  return true;
+}
+function leadAdvance(id){
+  const x=ONB.leads.find(y=>String(y.id)===String(id));if(!x)return;
+  const i=LEAD_PIPE.indexOf(x.status);
+  if(i<0){toast('Status not in the pipeline — use Edit to set a stage','error');return;}
+  if(i>=LEAD_PIPE.length-1){toast('Already at the final stage','error');return;}
+  leadStatus(id,LEAD_PIPE[i+1]);
+}
+function onbAdvance(id){
+  const x=ONB.onboarding.find(y=>String(y.id)===String(id));if(!x)return;
+  const i=ONB_PIPE.indexOf(x.status);
+  if(i<0){toast('Status not in the pipeline — use Edit to set a stage','error');return;}
+  if(i>=ONB_PIPE.length-1){toast('Already at the final stage','error');return;}
+  onbStatus(id,ONB_PIPE[i+1]);
+}
+function leadForm(id){
+  const x=id?ONB.leads.find(y=>String(y.id)===String(id)):{id:'',name:'',phone:'',email:'',prop:'',source:'listing',message:'',status:'New',assigned_to:'',notes:''};
+  openDrawer(id?'Edit lead '+id:'New lead',
+    `<div class="frm">
+      <div class="grid-2"><div><label class="lb">Name</label><input id="lf_name" value="${esc(x.name)}"></div><div><label class="lb">Phone</label><input id="lf_phone" value="${esc(x.phone)}"></div></div>
+      <div class="grid-2"><div><label class="lb">Email</label><input id="lf_email" value="${esc(x.email)}"></div><div><label class="lb">Property (P-XXX)</label><input id="lf_prop" value="${esc(x.prop)}"></div></div>
+      <div class="grid-2"><div><label class="lb">Source</label><select id="lf_source">${['listing','referral','website','facebook','instagram','walk-in','event','agent','cold-call','other'].map(s=>`<option ${x.source===s?'selected':''}>${s}</option>`).join('')}</select></div><div><label class="lb">Status</label><select id="lf_status">${LEAD_PIPE.map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></div></div>
+      <div><label class="lb">Assigned to</label><input id="lf_assigned" value="${esc(x.assigned_to)}" placeholder="Team member"></div>
+      <div><label class="lb">Message</label><textarea id="lf_msg" placeholder="Interested in…">${esc(x.message)}</textarea></div>
+      <div><label class="lb">Internal notes</label><textarea id="lf_notes">${esc(x.notes)}</textarea></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="leadSave('${esc(id||'')}')">💾 Save</button></div>`);
+}
+async function leadSave(id){
+  const d=await admin({action:'lead-save',id,name:$('lf_name').value.trim(),phone:$('lf_phone').value.trim(),email:$('lf_email').value.trim(),prop:$('lf_prop').value.trim(),source:$('lf_source').value,message:$('lf_msg').value.trim(),status:$('lf_status').value,assigned_to:$('lf_assigned').value.trim(),notes:$('lf_notes').value.trim()});
+  if(d.ok){toast('Lead saved','ok');closeDrawer();renderOnboarding();}else toast(d.error||'Failed','error');
+}
+function leadDelete(id){
+  if(!confirm('Delete lead '+id+'?'))return;
+  admin({action:'lead-delete',id}).then(d=>{if(d.ok){toast('Lead deleted','ok');renderOnboarding();}else toast(d.error||'Failed','error');});
+}
+function leadConvert(id){
+  const x=ONB.leads.find(y=>String(y.id)===String(id));if(!x)return;
+  if(!confirm('🔄 Convert lead '+id+' ('+x.name+') into an onboarding application?\n\nThe lead moves to “Applied” and a new application is created from its details.'))return;
+  admin({action:'lead-convert',id}).then(d=>{
+    if(d.ok){toast('Converted → '+d.onboarding_id+' (lead → Applied)','ok');renderOnboarding();}
+    else toast(d.error||'Failed','error');
+  });
+}
+function onbForm(id){
+  const x=id?ONB.onboarding.find(y=>String(y.id)===String(id)):{id:'',name:'',email:'',phone:'',nid:'',unit:'',prop:'',rent:'',adv:'',months:12,start:'',status:'Started',notes:'',verified_by:''};
+  openDrawer(id?'Edit application '+id:'New onboarding application',
+    `<div class="frm">
+      <div class="grid-2"><div><label class="lb">Applicant name</label><input id="of_name" value="${esc(x.name)}"></div><div><label class="lb">Phone</label><input id="of_phone" value="${esc(x.phone)}"></div></div>
+      <div class="grid-2"><div><label class="lb">Email</label><input id="of_email" value="${esc(x.email)}"></div><div><label class="lb">NID</label><input id="of_nid" value="${esc(x.nid)}"></div></div>
+      <div class="grid-2"><div><label class="lb">Property (P-XXX)</label><input id="of_prop" value="${esc(x.prop)}"></div><div><label class="lb">Unit</label><input id="of_unit" value="${esc(x.unit)}"></div></div>
+      <div class="grid-2"><div><label class="lb">Rent (৳/month)</label><input id="of_rent" type="number" value="${x.rent||''}"></div><div><label class="lb">Advance (৳)</label><input id="of_adv" type="number" value="${x.adv||''}"></div></div>
+      <div class="grid-2"><div><label class="lb">Lease months</label><input id="of_months" type="number" value="${x.months||12}"></div><div><label class="lb">Start date</label><input id="of_start" value="${esc(x.start)}" placeholder="2026-09-01"></div></div>
+      <div class="grid-2"><div><label class="lb">Status</label><select id="of_status">${ONB_PIPE.map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></div><div><label class="lb">Verified by</label><input id="of_verified" value="${esc(x.verified_by)}" placeholder="Empty keeps current"></div></div>
+      <div><label class="lb">Notes</label><textarea id="of_notes">${esc(x.notes)}</textarea></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="onbSave('${esc(id||'')}')">💾 Save</button></div>`);
+}
+async function onbSave(id){
+  const d=await admin({action:'onboard-save',id,name:$('of_name').value.trim(),email:$('of_email').value.trim(),phone:$('of_phone').value.trim(),nid:$('of_nid').value.trim(),unit:$('of_unit').value.trim(),prop:$('of_prop').value.trim(),rent:+$('of_rent').value||0,adv:+$('of_adv').value||0,months:+$('of_months').value||12,start:$('of_start').value.trim(),status:$('of_status').value,notes:$('of_notes').value.trim(),verified_by:$('of_verified').value.trim()});
+  if(d.ok){toast('Application saved','ok');closeDrawer();renderOnboarding();}else toast(d.error||'Failed','error');
+}
+function onbDelete(id){
+  if(!confirm('Delete onboarding application '+id+'?'))return;
+  admin({action:'onboard-delete',id}).then(d=>{if(d.ok){toast('Application deleted','ok');renderOnboarding();}else toast(d.error||'Failed','error');});
+}
+function refForm(id){
+  const x=id?ONB.referrals.find(y=>String(y.id)===String(id)):{id:'',code:'',user_email:'',role:'owner',referred_name:'',referred_email:'',reward:0,status:'Pending'};
+  openDrawer(id?'Edit referral '+id:'New referral',
+    `<div class="frm">
+      <div class="grid-2"><div><label class="lb">Referral code</label><input id="rf_code" value="${esc(x.code)}" placeholder="KRT-XXXX"></div><div><label class="lb">Referrer email</label><input id="rf_user" value="${esc(x.user_email)}"></div></div>
+      <div class="grid-2"><div><label class="lb">Referred name</label><input id="rf_rname" value="${esc(x.referred_name)}"></div><div><label class="lb">Referred email</label><input id="rf_remail" value="${esc(x.referred_email)}"></div></div>
+      <div class="grid-2"><div><label class="lb">Role</label><select id="rf_role">${['owner','manager','tenant','accountant','crm','hr','legal','svc_mgr','partner'].map(r=>`<option ${x.role===r?'selected':''}>${r}</option>`).join('')}</select></div><div><label class="lb">Reward (৳)</label><input id="rf_reward" type="number" value="${x.reward||0}"></div></div>
+      <div><label class="lb">Status</label><select id="rf_status">${REF_PIPE.map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    </div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="refSave('${esc(id||'')}')">💾 Save</button></div>`);
+}
+async function refSave(id){
+  const d=await admin({action:'referral-save',id,code:$('rf_code').value.trim(),user_email:$('rf_user').value.trim(),role:$('rf_role').value,referred_name:$('rf_rname').value.trim(),referred_email:$('rf_remail').value.trim(),reward:+$('rf_reward').value||0,status:$('rf_status').value});
+  if(d.ok){toast('Referral saved','ok');closeDrawer();renderOnboarding();}else toast(d.error||'Failed','error');
+}
+function refDelete(id){
+  if(!confirm('Delete referral '+id+'?'))return;
+  admin({action:'referral-delete',id}).then(d=>{if(d.ok){toast('Referral deleted','ok');renderOnboarding();}else toast(d.error||'Failed','error');});
 }
 /* ── MIS Reports ── */
 async function renderMis(){
