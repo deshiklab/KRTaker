@@ -161,6 +161,21 @@ tbody tr:hover{background:var(--bg-alt)}
 td .c-name{font-weight:600;color:var(--text);font-size:13px}
 td .c-sub{font-size:11.5px;color:var(--text-mute)}
 .row-actions{display:flex;gap:6px;justify-content:flex-end}
+/* ── Table toolkit (v3.64): search bar + filters + sort + pagination ── */
+.tbl-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
+.tbl-bar .tbl-q{flex:1;min-width:170px;max-width:280px}
+.tbl-bar select{width:auto;min-width:120px;padding:7px 10px;font-size:12px}
+.tbl-count{margin-left:auto;font-size:11.5px;color:var(--text-mute);white-space:nowrap}
+.tbl-pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;padding:10px 16px;flex-wrap:wrap}
+.tbl-pg{min-width:30px;height:30px;padding:0 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text-soft);font-size:12px;font-weight:600}
+.tbl-pg.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.tbl-pg:disabled{opacity:.45;cursor:not-allowed}
+.tbl-pg:not(:disabled):hover{background:var(--primary-light)}
+.tbl-dot{color:var(--text-mute);padding:0 2px}
+.tbl-ps{width:auto;padding:6px 10px;font-size:12px}
+.tbl-s{cursor:pointer;user-select:none}
+.tbl-s:hover{color:var(--primary)}
+.tbl-s.on{color:var(--primary)}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
@@ -601,16 +616,111 @@ async function renderDashboard(){
     ['🧊','DB size',(s.db_size/1048576).toFixed(1)+' MB',s.tables+' tables · '+s.files+' files']
   ];
   const signups=mis.signups_by_month||[],premium=mis.premium_by_month||[],tix=mis.tickets_by_status||[],plans=mis.subscribers_by_plan||[];
-  const recent=(s.recent_subs||[]).slice(0,6),audit=s.audit||[];
+  const recent=(s.recent_subs||[]),audit=s.audit||[];
   const pnl=(ico,t,body)=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${ico}</span>${t}</span></div><div class="panel-b">${body}</div></div>`;
+  const cfgD={
+    data:recent, ph:'Search subscriber…',
+    search:['name','email'],
+    filters:[['plan','Plan'],['status','Status']],
+    sortable:['name','plan','status','created_at'],
+    head:st=>`<tr>${tblTh('dash','Subscriber','name',st)}${tblTh('dash','Plan','plan',st)}${tblTh('dash','Status','status',st)}${tblTh('dash','Joined','created_at',st)}</tr>`,
+    row:x=>`<tr><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.email)}</div></td><td>${x.plan?badge(x.plan):'—'}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.created_at||'').slice(0,10))}</td></tr>`,
+    empty:'<tr><td colspan="4"><div class="empty">No subscribers yet.</div></td></tr>'
+  };
+  tblReg('dash',cfgD);
   load('pageBody',
     `<div class="stats">${cards.map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>`+
     `<div class="grid-2" style="gap:18px">${pnl('📈','Signups by month',signups.length?barChartSVG(signups):'<div class="empty">No signups yet.</div>')}${pnl('💰','Subscription revenue by month',premium.length?barChartSVG(premium,{color:'var(--accent)',tc:'#1E8A4C',fmt:moneyC}):'<div class="empty">No revenue yet.</div>')}</div>`+
     `<div class="grid-2" style="gap:18px">${pnl('📦','Subscribers by plan',hbarChart(plans))}${pnl('🎫','Tickets by status',donutChart(tix))}</div>`+
-    `<div class="grid-2" style="gap:18px">${pnl('🆕','Recent subscribers',recent.length?`<div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>Subscriber</th><th>Plan</th><th>Status</th><th>Joined</th></tr></thead><tbody>${recent.map(x=>`<tr><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.email)}</div></td><td>${x.plan?badge(x.plan):'—'}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.created_at||'').slice(0,10))}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No subscribers yet.</div>')}${pnl('🕒','Recent activity',audit.length?audit.map(a=>`<div class="kv"><span class="k">${esc(a.user)} · ${esc(a.action)} <span style="color:var(--text-mute);font-size:11px">${esc(a.module)}</span></span><span class="v" style="font-size:11.5px;color:var(--text-mute)">${esc(a.ts||'').slice(0,16)}</span></div>`).join(''):'<div class="empty">No activity yet.</div>')}</div>`);
+    `<div class="grid-2" style="gap:18px">${pnl('🆕','Recent subscribers',recent.length?tblPanel('dash',cfgD):'<div class="empty">No subscribers yet.</div>')}${pnl('🕒','Recent activity',audit.length?audit.map(a=>`<div class="kv"><span class="k">${esc(a.user)} · ${esc(a.action)} <span style="color:var(--text-mute);font-size:11px">${esc(a.module)}</span></span><span class="v" style="font-size:11.5px;color:var(--text-mute)">${esc(a.ts||'').slice(0,16)}</span></div>`).join(''):'<div class="empty">No activity yet.</div>')}</div>`);
+  if(recent.length)tblDraw('dash',cfgD);
 }
 /* ── Subscribers ── */
 let SUBS={list:[],plans:[]};
+/* ── Table toolkit (v3.64): client-side search + filters + sort + pagination for every table view ── */
+let TBLK = {}; // per-view state: {q, f:{col:val}, p, ps, s, dir}
+let TBLREG = {}; // per-view cfg registry for re-render after filter change
+function tblState(k){ return TBLK[k] || (TBLK[k] = {q:'', f:{}, p:1, ps:10, s:'', dir:1}); }
+function tblUniq(data, col){ return [...new Set((data||[]).map(r=>r[col]).filter(v=>v!==null&&v!==undefined&&v!==''))].sort(); }
+function tblApply(k, data, cfg){
+  const st = tblState(k);
+  let rows = (data||[]).slice();
+  const q = st.q.trim().toLowerCase();
+  if(q && cfg.search) rows = rows.filter(r=>cfg.search.some(f=>String(r[f]??'').toLowerCase().includes(q)));
+  for(const col in st.f){ const v = st.f[col]; if(v) rows = rows.filter(r=>String(r[col]??'')===String(v)); }
+  if(st.s && cfg.sortable && cfg.sortable.includes(st.s)){
+    const col = st.s, dir = st.dir;
+    rows.sort((a,b)=>{ const x=a[col], y=b[col]; if(typeof x==='number'&&typeof y==='number') return (x-y)*dir; return String(x??'').localeCompare(String(y??''))*dir; });
+  }
+  const total = rows.length;
+  const pages = Math.max(1, Math.ceil(total/st.ps));
+  if(st.p > pages) st.p = pages;
+  const from = (st.p-1)*st.ps;
+  return { rows: rows.slice(from, from+st.ps), total, pages, from: total?from+1:0, to: Math.min(total, from+st.ps) };
+}
+function tblBar(k, cfg){
+  const st = tblState(k);
+  const nF = Object.keys(st.f).filter(c=>st.f[c]).length;
+  const fsel = (cfg.filters||[]).map(f=>{
+    const col=f[0], label=f[1], cur=st.f[col]||'';
+    const src = (f[2]||tblUniq(cfg.data,col)).map(v=>typeof v==='object'?v:{v:String(v),l:String(v)});
+    return `<select data-col="${col}" onchange="tblSetF('${k}','${col}',this.value)"><option value="">${label}: all</option>${src.map(o=>`<option value="${esc(o.v)}" ${cur===String(o.v)?'selected':''}>${esc(o.l)}</option>`).join('')}</select>`;
+  }).join('');
+  return `<div class="tbl-bar" id="tblBar-${k}">
+    <input class="tbl-q" id="tblQ-${k}" placeholder="🔍 ${cfg.ph||'Search…'}" value="${esc(st.q)}" oninput="tblSetQ('${k}',this.value)">
+    ${fsel}
+    ${nF?`<button class="btn-ghost" onclick="tblClear('${k}')">✕ Clear (${nF})</button>`:''}
+    <span class="tbl-count" id="tblCount-${k}"></span>
+  </div>`;
+}
+function tblTh(k,label,col,st){
+  if(!col) return `<th>${label}</th>`;
+  const on = st.s===col;
+  return `<th class="tbl-s${on?' on':''}" onclick="tblSort('${k}','${col}')" title="Sort by ${label}">${label} ${on?(st.dir===1?'▲':'▼'):'⇅'}</th>`;
+}
+function tblPager(k, meta){
+  if(meta.pages<=1) return '';
+  const st = tblState(k);
+  const pg = [];
+  for(let i=1;i<=meta.pages;i++){ if(i===1||i===meta.pages||Math.abs(i-st.p)<=2) pg.push(i); else if(pg[pg.length-1]!=='…') pg.push('…'); }
+  return `<div class="tbl-pager">
+    <span class="c-sub">${meta.from}–${meta.to} of ${meta.total}</span>
+    <button class="tbl-pg" onclick="tblGo('${k}',${st.p-1})" ${st.p<=1?'disabled':''}>‹</button>
+    ${pg.map(p=>p==='…'?`<span class="tbl-dot">…</span>`:`<button class="tbl-pg ${p===st.p?'on':''}" onclick="tblGo('${k}',${p})">${p}</button>`).join('')}
+    <button class="tbl-pg" onclick="tblGo('${k}',${st.p+1})" ${st.p>=meta.pages?'disabled':''}>›</button>
+    <select class="tbl-ps" onchange="tblSetPs('${k}',this.value)">${[10,25,50,100].map(n=>`<option value="${n}" ${st.ps===n?'selected':''}>${n}/pg</option>`).join('')}</select>
+  </div>`;
+}
+function tblPanel(k, cfg){
+  return `<div class="panel">${tblBar(k,cfg)}<div class="tbl-wrap"><table><thead id="tblHead-${k}"></thead><tbody id="tblBody-${k}"></tbody></table></div><div id="tblPager-${k}"></div></div>`;
+}
+function tblDraw(k, cfg){
+  const st = tblState(k), meta = tblApply(k, cfg.data, cfg);
+  const h = $('tblHead-'+k); if(h) h.innerHTML = cfg.head(st);
+  const b = $('tblBody-'+k); if(b) b.innerHTML = meta.rows.map(cfg.row).join('') || cfg.empty;
+  const p = $('tblPager-'+k); if(p) p.innerHTML = tblPager(k, meta);
+  const c = $('tblCount-'+k); if(c) c.textContent = meta.total+' row'+(meta.total===1?'':'s');
+}
+function tblSetQ(k,v){ tblState(k).q=v; tblState(k).p=1; const c=TBLREG[k]; if(c) tblDraw(k,c); }
+function tblSetF(k,col,v){
+  const st=tblState(k);
+  if(v) st.f[col]=String(v); else delete st.f[col];
+  st.p=1;
+  const c=TBLREG[k]; if(!c) return;
+  const bar=$('tblBar-'+k); if(bar) bar.outerHTML = tblBar(k,c);
+  tblDraw(k,c);
+}
+function tblClear(k){
+  delete TBLK[k];
+  const q=$('tblQ-'+k); if(q) q.value='';
+  const c=TBLREG[k]; if(!c) return;
+  const bar=$('tblBar-'+k); if(bar) bar.outerHTML = tblBar(k,c);
+  tblDraw(k,c);
+}
+function tblGo(k,p){ const st=tblState(k); st.p=p; const c=TBLREG[k]; if(c) tblDraw(k,c); }
+function tblSetPs(k,v){ const st=tblState(k); st.ps=+v; st.p=1; const c=TBLREG[k]; if(c) tblDraw(k,c); }
+function tblSort(k,col){ const st=tblState(k); if(st.s===col) st.dir*=-1; else { st.s=col; st.dir=1; } st.p=1; const c=TBLREG[k]; if(c) tblDraw(k,c); }
+function tblReg(k,cfg){ TBLREG[k]=cfg; }
 async function renderSubscribers(){
   pageHead('Manage platform subscribers — plans, status, trial windows',`<button class="btn-primary" onclick="subscriberForm()">＋ Add subscriber</button>`);
   load('pageBody','<div class="empty">Loading…</div>');
@@ -618,7 +728,18 @@ async function renderSubscribers(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   SUBS={list:d.subscribers||[],plans:d.plans||[]};
   const foc=gsConsumeFocus();
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subscriber</th><th>Plan</th><th>Role</th><th>Status</th><th>Trial end</th><th>Created</th><th></th></tr></thead><tbody>${SUBS.list.map(s=>`<tr data-gsid="subscribers-${s.id}"><td>#${s.id}</td><td><div class="c-name">${esc(s.name)}</div><div class="c-sub">${esc(s.email)}${s.phone?' · '+esc(s.phone):''}</div></td><td>${s.plan?badge(s.plan):'—'}</td><td>${esc(s.role||'owner')}</td><td>${badge(s.status)}</td><td class="c-sub">${esc(s.trial_end||'—')}</td><td class="c-sub">${esc((s.created_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="impersonateUser('${esc(s.email)}','${esc(s.name)}')" data-tip="Impersonate — view the platform as this subscriber (30 min)" data-tip-pos="left" title="Impersonate">🔀</button><button class="btn-ghost" onclick="subscriberForm(${s.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="subscriberDelete(${s.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No subscribers.</div></td></tr>'}</tbody></table></div></div>`);
+  const cfg={
+    data:SUBS.list, ph:'Search name, email, phone, org…',
+    search:['name','email','phone','org'],
+    filters:[['plan','Plan'],['status','Status'],['role','Role']],
+    sortable:['id','name','plan','role','status','trial_end','created_at'],
+    head:st=>`<tr>${tblTh('subs','ID','id',st)}${tblTh('subs','Subscriber','name',st)}${tblTh('subs','Plan','plan',st)}${tblTh('subs','Role','role',st)}${tblTh('subs','Status','status',st)}${tblTh('subs','Trial end','trial_end',st)}${tblTh('subs','Created','created_at',st)}<th></th></tr>`,
+    row:s=>`<tr data-gsid="subscribers-${s.id}"><td>#${s.id}</td><td><div class="c-name">${esc(s.name)}</div><div class="c-sub">${esc(s.email)}${s.phone?' · '+esc(s.phone):''}</div></td><td>${s.plan?badge(s.plan):'—'}</td><td>${esc(s.role||'owner')}</td><td>${badge(s.status)}</td><td class="c-sub">${esc(s.trial_end||'—')}</td><td class="c-sub">${esc((s.created_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="impersonateUser('${esc(s.email)}','${esc(s.name)}')" data-tip="Impersonate — view the platform as this subscriber (30 min)" data-tip-pos="left" title="Impersonate">🔀</button><button class="btn-ghost" onclick="subscriberForm(${s.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="subscriberDelete(${s.id})">🗑</button></div></td></tr>`,
+    empty:'<tr><td colspan="8"><div class="empty">No subscribers.</div></td></tr>'
+  };
+  tblReg('subs',cfg);
+  load('pageBody',tblPanel('subs',cfg));
+  tblDraw('subs',cfg);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="subscribers-'+foc.payload.id+'"]');
 }
 function subscriberForm(id){
@@ -657,7 +778,18 @@ async function renderBlog(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   BLOG.list=d.posts||[];
   const foc=gsConsumeFocus();
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Slug</th><th>Tag</th><th>Read</th><th>Status</th><th>Created</th><th>Updated</th><th></th></tr></thead><tbody>${BLOG.list.map(p=>`<tr data-gsid="blog-${p.id}"><td><div class="c-name">${esc(p.title)}</div></td><td class="c-sub">/${esc(p.slug)}</td><td>${p.tag?badge(p.tag):'—'}</td><td class="c-sub">${p.read_min||5} min</td><td>${p.status==='published'?`<span class="badge b-green">🟢 published</span>`:`<span class="badge b-orange">🔴 draft</span>`}</td><td class="c-sub">${esc((p.created_at||'').slice(0,10))}</td><td class="c-sub">${esc((p.updated_at||'').slice(0,10))}</td><td><div class="row-actions">${p.status==='published'?`<a class="btn-ghost" href="https://krtaker.com/blog/${esc(p.slug)}" target="_blank" title="Open live" data-tip="Open live" data-tip-pos="left">↗</a>`:''}<button class="btn-ghost" onclick="blogForm(${p.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="blogDelete(${p.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No posts yet — create your first article.</div></td></tr>'}</tbody></table></div></div>`);
+  const cfg={
+    data:BLOG.list, ph:'Search title, slug, tag…',
+    search:['title','slug','tag'],
+    filters:[['status','Status'],['tag','Tag']],
+    sortable:['title','slug','tag','read_min','status','created_at','updated_at'],
+    head:st=>`<tr>${tblTh('blog','Title','title',st)}${tblTh('blog','Slug','slug',st)}${tblTh('blog','Tag','tag',st)}<th>Read</th>${tblTh('blog','Status','status',st)}${tblTh('blog','Created','created_at',st)}${tblTh('blog','Updated','updated_at',st)}<th></th></tr>`,
+    row:p=>`<tr data-gsid="blog-${p.id}"><td><div class="c-name">${esc(p.title)}</div></td><td class="c-sub">/${esc(p.slug)}</td><td>${p.tag?badge(p.tag):'—'}</td><td class="c-sub">${p.read_min||5} min</td><td>${p.status==='published'?`<span class="badge b-green">🟢 published</span>`:`<span class="badge b-orange">🔴 draft</span>`}</td><td class="c-sub">${esc((p.created_at||'').slice(0,10))}</td><td class="c-sub">${esc((p.updated_at||'').slice(0,10))}</td><td><div class="row-actions">${p.status==='published'?`<a class="btn-ghost" href="https://krtaker.com/blog/${esc(p.slug)}" target="_blank" title="Open live" data-tip="Open live" data-tip-pos="left">↗</a>`:''}<button class="btn-ghost" onclick="blogForm(${p.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="blogDelete(${p.id})">🗑</button></div></td></tr>`,
+    empty:'<tr><td colspan="8"><div class="empty">No posts yet — create your first article.</div></td></tr>'
+  };
+  tblReg('blog',cfg);
+  load('pageBody',tblPanel('blog',cfg));
+  tblDraw('blog',cfg);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="blog-'+foc.payload.id+'"]');
 }
 function blogForm(id){
@@ -689,8 +821,19 @@ async function renderPackages(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   PKG={list:d.packages||[],registry:d.registry||[],roles:d.roles||[]};
   const foc=gsConsumeFocus();
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Package</th><th>Price</th><th>Seats</th><th>Modules</th><th>Subscribers</th><th></th></tr></thead><tbody>${PKG.list.map(p=>`<tr data-gsid="packages-${esc(p.code)}"><td>${esc(p.code)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.tag||'')}</div></td><td class="c-sub">${money(p.price)}/mo</td><td>${p.seats||1}</td><td class="c-sub">${(p.modules||{}).owner?Object.keys(p.modules).length+' roles · '+(p.modules.owner||[]).length+' owner mods':Object.keys(p.modules||{}).length+' roles'}</td><td>${p.subscribers||0}</td><td><div class="row-actions"><button class="btn-ghost" onclick="packageForm('${esc(p.code)}')">✎</button><button class="btn-ghost" onclick="packageMatrix('${esc(p.code)}')">🧩</button><button class="btn-ghost" onclick="packageLimits('${esc(p.code)}')">📏</button><button class="btn-ghost" onclick="packageAssign('${esc(p.code)}')">👥</button><button class="btn-ghost" style="color:var(--danger)" onclick="packageDelete('${esc(p.code)}')">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No packages yet.</div></td></tr>'}</tbody></table></div></div>
-   <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧩</span>Module registry</span></div><div class="panel-b"><div style="display:flex;flex-wrap:wrap;gap:6px">${PKG.registry.map(m=>`<span class="chip ${m.built?'on':''}">${esc(m.id)}${m.built?'':' 🔜'}</span>`).join('')}</div></div></div>`);
+  const cfg={
+    data:PKG.list, ph:'Search code, name, tag…',
+    search:['code','name','tag'],
+    filters:[],
+    sortable:['code','name','price','seats','subscribers'],
+    head:st=>`<tr>${tblTh('pkgs','Code','code',st)}${tblTh('pkgs','Package','name',st)}${tblTh('pkgs','Price','price',st)}${tblTh('pkgs','Seats','seats',st)}<th>Modules</th>${tblTh('pkgs','Subscribers','subscribers',st)}<th></th></tr>`,
+    row:p=>`<tr data-gsid="packages-${esc(p.code)}"><td>${esc(p.code)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.tag||'')}</div></td><td class="c-sub">${money(p.price)}/mo</td><td>${p.seats||1}</td><td class="c-sub">${(p.modules||{}).owner?Object.keys(p.modules).length+' roles · '+(p.modules.owner||[]).length+' owner mods':Object.keys(p.modules||{}).length+' roles'}</td><td>${p.subscribers||0}</td><td><div class="row-actions"><button class="btn-ghost" onclick="packageForm('${esc(p.code)}')">✎</button><button class="btn-ghost" onclick="packageMatrix('${esc(p.code)}')">🧩</button><button class="btn-ghost" onclick="packageLimits('${esc(p.code)}')">📏</button><button class="btn-ghost" onclick="packageAssign('${esc(p.code)}')">👥</button><button class="btn-ghost" style="color:var(--danger)" onclick="packageDelete('${esc(p.code)}')">🗑</button></div></td></tr>`,
+    empty:'<tr><td colspan="7"><div class="empty">No packages yet.</div></td></tr>'
+  };
+  tblReg('pkgs',cfg);
+  load('pageBody',tblPanel('pkgs',cfg)+
+   ` <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧩</span>Module registry</span></div><div class="panel-b"><div style="display:flex;flex-wrap:wrap;gap:6px">${PKG.registry.map(m=>`<span class="chip ${m.built?'on':''}">${esc(m.id)}${m.built?'':' 🔜'}</span>`).join('')}</div></div></div>`);
+  tblDraw('pkgs',cfg);
   if(foc&&foc.payload&&foc.payload.code)gsHighlight('[data-gsid="packages-'+esc(foc.payload.code)+'"]');
 }
 function packageForm(code){
@@ -768,7 +911,18 @@ async function renderUsers(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   USRS=d.users||[];
   const foc=gsConsumeFocus();
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>User</th><th>Role</th><th>Dept</th><th>Active</th><th>Last login</th><th></th></tr></thead><tbody>${USRS.map(u=>`<tr data-gsid="users-${u.id}"><td>#${u.id}</td><td><div class="c-name">${esc(u.name)}</div><div class="c-sub">${esc(u.email)}</div></td><td>${badge(u.role)}</td><td class="c-sub">${esc(u.dept||'—')}</td><td>${u.active?badge('Active'):badge('Suspended')}</td><td class="c-sub">${esc(u.last_login||'—')}</td><td><div class="row-actions">${u.role==='superadmin'?'':`<button class="btn-ghost" onclick="impersonateUser('${esc(u.email)}','${esc(u.name)}')" data-tip="Impersonate this staff member (30 min)" data-tip-pos="left" title="Impersonate">🔀</button>`}<button class="btn-ghost" onclick="userForm(${u.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="userDelete(${u.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>'}</tbody></table></div></div>`);
+  const cfg={
+    data:USRS, ph:'Search name, email, dept…',
+    search:['name','email','dept'],
+    filters:[['role','Role'],['active','Status',[{v:'1',l:'Active'},{v:'0',l:'Suspended'}]]],
+    sortable:['id','name','role','active','last_login'],
+    head:st=>`<tr>${tblTh('usrs','ID','id',st)}${tblTh('usrs','User','name',st)}${tblTh('usrs','Role','role',st)}${tblTh('usrs','Dept','dept',st)}${tblTh('usrs','Active','active',st)}${tblTh('usrs','Last login','last_login',st)}<th></th></tr>`,
+    row:u=>`<tr data-gsid="users-${u.id}"><td>#${u.id}</td><td><div class="c-name">${esc(u.name)}</div><div class="c-sub">${esc(u.email)}</div></td><td>${badge(u.role)}</td><td class="c-sub">${esc(u.dept||'—')}</td><td>${u.active?badge('Active'):badge('Suspended')}</td><td class="c-sub">${esc(u.last_login||'—')}</td><td><div class="row-actions">${u.role==='superadmin'?'':`<button class="btn-ghost" onclick="impersonateUser('${esc(u.email)}','${esc(u.name)}')" data-tip="Impersonate this staff member (30 min)" data-tip-pos="left" title="Impersonate">🔀</button>`}<button class="btn-ghost" onclick="userForm(${u.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="userDelete(${u.id})">🗑</button></div></td></tr>`,
+    empty:'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>'
+  };
+  tblReg('usrs',cfg);
+  load('pageBody',tblPanel('usrs',cfg));
+  tblDraw('usrs',cfg);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="users-'+foc.payload.id+'"]');
 }
 function userForm(id){
@@ -797,7 +951,18 @@ async function renderProviders(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   PROVS=d.providers||[];
   const foc=gsConsumeFocus();
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Provider</th><th>Trade</th><th>Rating</th><th>Jobs</th><th>Status</th><th></th></tr></thead><tbody>${PROVS.map(p=>`<tr data-gsid="providers-${esc(p.id)}"><td>${esc(p.id)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.sub_email||'')}</div></td><td>${esc(p.trade||'—')}</td><td>${p.rating||0}</td><td>${p.jobs||0}</td><td>${badge(p.status)}</td><td><div class="row-actions"><button class="btn-ghost" onclick="providerForm('${esc(p.id)}')">✎</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No providers.</div></td></tr>'}</tbody></table></div></div>`);
+  const cfg={
+    data:PROVS, ph:'Search provider, trade, email…',
+    search:['name','trade','sub_email'],
+    filters:[['trade','Trade'],['status','Status']],
+    sortable:['id','name','trade','rating','jobs','status'],
+    head:st=>`<tr>${tblTh('provs','ID','id',st)}${tblTh('provs','Provider','name',st)}${tblTh('provs','Trade','trade',st)}${tblTh('provs','Rating','rating',st)}${tblTh('provs','Jobs','jobs',st)}${tblTh('provs','Status','status',st)}<th></th></tr>`,
+    row:p=>`<tr data-gsid="providers-${esc(p.id)}"><td>${esc(p.id)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.sub_email||'')}</div></td><td>${esc(p.trade||'—')}</td><td>${p.rating||0}</td><td>${p.jobs||0}</td><td>${badge(p.status)}</td><td><div class="row-actions"><button class="btn-ghost" onclick="providerForm('${esc(p.id)}')">✎</button></div></td></tr>`,
+    empty:'<tr><td colspan="7"><div class="empty">No providers.</div></td></tr>'
+  };
+  tblReg('provs',cfg);
+  load('pageBody',tblPanel('provs',cfg));
+  tblDraw('provs',cfg);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="providers-'+esc(foc.payload.id)+'"]');
 }
 function providerForm(id){
@@ -1306,12 +1471,41 @@ async function renderOnboarding(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   ONB=d;
   const foc=gsConsumeFocus();
-  const l=(d.leads||[]).slice(0,40), o=(d.onboarding||[]).slice(0,40), r=(d.referrals||[]).slice(0,30);
+  const l=(d.leads||[]), o=(d.onboarding||[]), r=(d.referrals||[]);
+  const cfgL={
+    data:l, ph:'Search name, phone, email…',
+    search:['name','phone','email','prop'],
+    filters:[['source','Source'],['status','Status']],
+    sortable:['id','name','source','status'],
+    head:st=>`<tr>${tblTh('onb-l','ID','id',st)}${tblTh('onb-l','Name','name',st)}<th>Contact</th>${tblTh('onb-l','Source','source',st)}${tblTh('onb-l','Status','status',st)}${tblTh('onb-l','Created','ts',st)}</tr>`,
+    row:x=>`<tr data-gsid="leads-${esc(x.id)}"><td>${esc(x.id)}</td><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.prop||'')}</div></td><td class="c-sub">${esc(x.phone||'')}${x.email?' · '+esc(x.email):''}</td><td>${esc(x.source||'—')}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`,
+    empty:'<tr><td colspan="6"><div class="empty">No leads.</div></td></tr>'
+  };
+  const cfgO={
+    data:o, ph:'Search applicant, details…',
+    search:['name','applicant','details','note'],
+    filters:[['status','Status']],
+    sortable:['id','name','status','ts'],
+    head:st=>`<tr>${tblTh('onb-o','ID','id',st)}${tblTh('onb-o','Applicant','name',st)}<th>Details</th>${tblTh('onb-o','Status','status',st)}${tblTh('onb-o','Created','ts',st)}</tr>`,
+    row:x=>`<tr><td>${esc(x.id)}</td><td class="c-name">${esc(x.name||x.applicant||'—')}</td><td class="c-sub">${esc((x.details||x.note||'').slice(0,60))}</td><td>${badge(x.status||'Pending')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`,
+    empty:'<tr><td colspan="5"><div class="empty">No onboarding applications.</div></td></tr>'
+  };
+  const cfgR={
+    data:r, ph:'Search referrer, code…',
+    search:['code','referrer'],
+    filters:[['status','Status']],
+    sortable:['code','referrer','status','ts'],
+    head:st=>`<tr>${tblTh('onb-r','Code','code',st)}${tblTh('onb-r','Referrer','referrer',st)}${tblTh('onb-r','Status','status',st)}${tblTh('onb-r','Created','ts',st)}</tr>`,
+    row:x=>`<tr><td>${esc(x.code||x.id)}</td><td class="c-name">${esc(x.referrer||'—')}</td><td>${badge(x.status||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`,
+    empty:'<tr><td colspan="4"><div class="empty">No referrals.</div></td></tr>'
+  };
+  tblReg('onb-l',cfgL); tblReg('onb-o',cfgO); tblReg('onb-r',cfgR);
   load('pageBody',
     `<div class="stats">${[['🧲','Leads',l.length,'recent'],['📋','Onboarding apps',o.length,'pending review'],['🤝','Referrals',r.length,'program'],['👥','Subscribers',(d.subs||0),'total']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>`+
-    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧲</span>Leads</span></div><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Source</th><th>Status</th><th>Created</th></tr></thead><tbody>${l.map(x=>`<tr data-gsid="leads-${esc(x.id)}"><td>${esc(x.id)}</td><td><div class="c-name">${esc(x.name)}</div><div class="c-sub">${esc(x.prop||'')}</div></td><td class="c-sub">${esc(x.phone||'')}${x.email?' · '+esc(x.email):''}</td><td>${esc(x.source||'—')}</td><td>${badge(x.status)}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="6"><div class="empty">No leads.</div></td></tr>'}</tbody></table></div></div>`+
-    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">📋</span>Onboarding applications</span></div><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Applicant</th><th>Details</th><th>Status</th><th>Created</th></tr></thead><tbody>${o.map(x=>`<tr><td>${esc(x.id)}</td><td class="c-name">${esc(x.name||x.applicant||'—')}</td><td class="c-sub">${esc((x.details||x.note||'').slice(0,60))}</td><td>${badge(x.status||'Pending')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="5"><div class="empty">No onboarding applications.</div></td></tr>'}</tbody></table></div></div>`+
-    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🤝</span>Referrals</span></div><div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Referrer</th><th>Status</th><th>Created</th></tr></thead><tbody>${r.map(x=>`<tr><td>${esc(x.code||x.id)}</td><td class="c-name">${esc(x.referrer||'—')}</td><td>${badge(x.status||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="4"><div class="empty">No referrals.</div></td></tr>'}</tbody></table></div></div>`);
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧲</span>Leads</span></div></div>`+tblPanel('onb-l',cfgL)+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">📋</span>Onboarding applications</span></div></div>`+tblPanel('onb-o',cfgO)+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🤝</span>Referrals</span></div></div>`+tblPanel('onb-r',cfgR));
+  tblDraw('onb-l',cfgL); tblDraw('onb-o',cfgO); tblDraw('onb-r',cfgR);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="leads-'+esc(foc.payload.id)+'"]');
 }
 /* ── MIS Reports ── */
@@ -1322,6 +1516,17 @@ async function renderMis(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   const m=d.mis||{};
   const rows=(arr,cls)=>arr.map(x=>`<div class="kv"><span class="k">${esc(x.m||x.plan||x.status||x.role||'—')}</span><span class="v ${cls?cls(x):''}">${x.n??x.amt??x.total??''}</span></div>`).join('');
+  const led=(m.ledger_by_month||[]);
+  const cfg={
+    data:led, ph:'Search month…',
+    search:['m','kind'],
+    filters:[['kind','Kind']],
+    sortable:['m','kind','amt'],
+    head:st=>`<tr>${tblTh('misled','Month','m',st)}${tblTh('misled','Kind','kind',st)}<th>Amount</th></tr>`,
+    row:x=>`<tr><td>${esc(x.m)}</td><td>${badge(x.kind)}</td><td class="${x.kind==='expense'?'t-neg':'t-pos'}" style="font-weight:700">${money(x.amt)}</td></tr>`,
+    empty:'<tr><td colspan="3"><div class="empty">No ledger entries.</div></td></tr>'
+  };
+  tblReg('misled',cfg);
   load('pageBody',
     `<div class="grid-2" style="gap:18px">
       <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📦</span>Subscribers by plan</span></div><div class="panel-b">${rows(m.subscribers_by_plan||[])}</div></div>
@@ -1331,7 +1536,8 @@ async function renderMis(){
       <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📈</span>Signups by month</span></div><div class="panel-b">${rows(m.signups_by_month||[])}</div></div>
       <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💎</span>Premium revenue by month</span></div><div class="panel-b">${rows(m.premium_by_month||[],x=>'pos')}</div></div>
     </div>
-    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💰</span>Company ledger by month</span></div><div class="tbl-wrap"><table><thead><tr><th>Month</th><th>Kind</th><th>Amount</th></tr></thead><tbody>${(m.ledger_by_month||[]).map(x=>`<tr><td>${esc(x.m)}</td><td>${badge(x.kind)}</td><td class="${x.kind==='expense'?'t-neg':'t-pos'}" style="font-weight:700">${money(x.amt)}</td></tr>`).join('')||'<tr><td colspan="3"><div class="empty">No ledger entries.</div></td></tr>'}</tbody></table></div></div>`);
+    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💰</span>Company ledger by month</span></div></div>`+tblPanel('misled',cfg));
+  tblDraw('misled',cfg);
 }
 /* ── Payment Integrations ── */
 let GW=[];
@@ -1341,9 +1547,21 @@ async function renderPayments(){
   const d=await admin({action:'integrations'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   GW=d.gateways||[];
+  const INTS2=d.integrations||[];
+  const cfg={
+    data:INTS2, ph:'Search id, name, type…',
+    search:['id','name','type'],
+    filters:[['type','Type'],['status','Status']],
+    sortable:['id','type','name','status','updated_at'],
+    head:st=>`<tr>${tblTh('ints','ID','id',st)}${tblTh('ints','Type','type',st)}${tblTh('ints','Name','name',st)}${tblTh('ints','Status','status',st)}${tblTh('ints','Updated','updated_at',st)}<th></th></tr>`,
+    row:i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`,
+    empty:'<tr><td colspan="6"><div class="empty">No integrations configured.</div></td></tr>'
+  };
+  tblReg('ints',cfg);
   load('pageBody',
     `<div class="grid-3" style="gap:16px;margin-bottom:18px">${GW.map(g=>`<div class="panel"><div class="panel-b"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span class="s-ico" style="width:34px;height:34px;border-radius:10px;background:var(--primary-light);display:inline-flex;align-items:center;justify-content:center;font-size:15px">💳</span><div><div class="c-name" style="font-size:14px">${esc(g.name)}</div><div class="c-sub">${g.sandbox?'sandbox mode':'LIVE mode'} · ${g.ready?'ready':'placeholders set'}</div></div></div>${g.ready?badge('ready'):badge('unconfigured')}<div style="margin-top:12px"><button class="btn-outline" style="width:100%;justify-content:center" onclick="gatewayForm('${esc(g.code)}')">⚙ Configure</button></div></div></div>`).join('')}</div>`+
-    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🔌</span>Other integrations</span></div><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Type</th><th>Name</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>${(d.integrations||[]).map(i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`).join('')||'<tr><td colspan="6"><div class="empty">No integrations configured.</div></td></tr>'}</tbody></table></div></div>`);
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🔌</span>Other integrations</span></div></div>`+tblPanel('ints',cfg));
+  tblDraw('ints',cfg);
 }
 function gatewayForm(code){
   const g=GW.find(x=>x.code===code);if(!g)return;
@@ -1397,9 +1615,20 @@ async function renderFinance(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   const f=d.finance||{};LED=d.ledger||[];
   const foc=gsConsumeFocus();
+  const cfg={
+    data:LED, ph:'Search label, cat, ref…',
+    search:['label','cat','ref','method'],
+    filters:[['kind','Kind']],
+    sortable:['id','kind','label','amount','ts'],
+    head:st=>`<tr>${tblTh('led','#','id',st)}${tblTh('led','Kind','kind',st)}${tblTh('led','Label','label',st)}${tblTh('led','Amount','amount',st)}<th>Method</th>${tblTh('led','When','ts',st)}<th></th></tr>`,
+    row:x=>`<tr data-gsid="finance-${x.id}"><td>${x.id}</td><td>${badge(x.kind)}</td><td class="c-name">${esc(x.label)}<div class="c-sub">${esc(x.cat)}${x.ref?' · '+esc(x.ref):''}</div></td><td style="font-weight:700">${money(x.amount)}</td><td class="c-sub">${esc(x.method||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,16))}</td><td><button class="btn-ghost" style="color:var(--danger)" onclick="ledgerDelete(${x.id})">🗑</button></td></tr>`,
+    empty:'<tr><td colspan="7"><div class="empty">No ledger entries.</div></td></tr>'
+  };
+  tblReg('led',cfg);
   load('pageBody',
     `<div class="stats">${[['💰','Total income',moneyC(f.income),'all ledger income'],['📤','Total expense',moneyC(f.expense),'all ledger expense'],['⚖️','Balance',moneyC(f.balance),f.balance>=0?'positive':'negative'],['🧾','Entries',LED.length,'company ledger']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value ${c[3]==='negative'?'':''}">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>
-     <div class="grid-2" style="gap:18px"><div class="panel"><div class="panel-h"><span class="t"><span class="pi">🏷️</span>By category</span></div><div class="panel-b">${(d.cats||[]).map(c=>`<div class="kv"><span class="k">${esc(c.kind)} / ${esc(c.cat)}</span><span class="v">${money(c.total)} <span class="c-sub">(${c.n})</span></span></div>`).join('')||'<div class="empty">No entries.</div>'}</div></div><div class="panel"><div class="panel-h"><span class="t"><span class="pi">📜</span>Ledger</span></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Kind</th><th>Label</th><th>Amount</th><th>Method</th><th>When</th><th></th></tr></thead><tbody>${LED.map(x=>`<tr data-gsid="finance-${x.id}"><td>${x.id}</td><td>${badge(x.kind)}</td><td class="c-name">${esc(x.label)}<div class="c-sub">${esc(x.cat)}${x.ref?' · '+esc(x.ref):''}</div></td><td style="font-weight:700">${money(x.amount)}</td><td class="c-sub">${esc(x.method||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,16))}</td><td><button class="btn-ghost" style="color:var(--danger)" onclick="ledgerDelete(${x.id})">🗑</button></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No ledger entries.</div></td></tr>'}</tbody></table></div></div></div>`);
+     <div class="grid-2" style="gap:18px"><div class="panel"><div class="panel-h"><span class="t"><span class="pi">🏷️</span>By category</span></div><div class="panel-b">${(d.cats||[]).map(c=>`<div class="kv"><span class="k">${esc(c.kind)} / ${esc(c.cat)}</span><span class="v">${money(c.total)} <span class="c-sub">(${c.n})</span></span></div>`).join('')||'<div class="empty">No entries.</div>'}</div></div>`+tblPanel('led',cfg)+`</div>`);
+  tblDraw('led',cfg);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="finance-'+foc.payload.id+'"]');
 }
 function ledgerForm(){
@@ -1529,8 +1758,21 @@ async function aiStats(){
     cards.map(c=>`<div style="background:var(--bg-soft,#f4f6fb);border:1px solid var(--line,#e8ecf4);border-radius:10px;padding:10px 12px"><div style="font-size:20px;font-weight:800">${c[1]}</div><div class="c-sub" style="font-size:11px">${c[0]}</div></div>`).join('')+`</div>`+
     `<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><b>Recent conversations</b><button class="btn-outline" style="margin-left:auto" onclick="aiClearLog()">🧹 Clear log</button></div>`+
     (d.recent&&d.recent.length?
-      `<table style="width:100%;border-collapse:collapse;font-size:12.5px"><tr style="text-align:left;color:var(--text-mute,#8a93a6)"><th style="padding:5px 6px">When</th><th style="padding:5px 6px">User</th><th style="padding:5px 6px">Mode</th><th style="padding:5px 6px">ms</th><th style="padding:5px 6px">Question</th><th style="padding:5px 6px">Reply</th></tr>`+
-      d.recent.map(r=>`<tr style="border-top:1px solid var(--line,#e8ecf4)"><td class="c-sub" style="padding:6px">${esc(r.ts)}</td><td style="padding:6px">${esc(r.user)}</td><td style="padding:6px">${r.mode==='llm'?'<span class="badge" style="background:#27AE60">LLM</span>':'<span class="badge" style="background:#F39C12">offline</span>'}</td><td style="padding:6px">${r.ms||'—'}</td><td style="padding:6px">${esc((r.query||'').slice(0,60))}</td><td class="c-sub" style="padding:6px">${esc((r.result||'').slice(0,70))}</td></tr>`).join('')+`</table>`
+      (()=>{const rc=d.recent;
+        const cfg={
+          data:rc, ph:'Search question, reply, user…',
+          search:['user','query','result'],
+          filters:[['mode','Mode',[{v:'llm',l:'LLM'},{v:'offline',l:'Offline'}]]],
+          sortable:['ts','user','ms'],
+          head:st=>`<tr>${tblTh('ai','When','ts',st)}${tblTh('ai','User','user',st)}<th>Mode</th>${tblTh('ai','ms','ms',st)}<th>Question</th><th>Reply</th></tr>`,
+          row:r=>`<tr style="border-top:1px solid var(--line,#e8ecf4)"><td class="c-sub" style="padding:6px">${esc(r.ts)}</td><td style="padding:6px">${esc(r.user)}</td><td style="padding:6px">${r.mode==='llm'?'<span class="badge" style="background:#27AE60">LLM</span>':'<span class="badge" style="background:#F39C12">offline</span>'}</td><td style="padding:6px">${r.ms||'—'}</td><td style="padding:6px">${esc((r.query||'').slice(0,60))}</td><td class="c-sub" style="padding:6px">${esc((r.result||'').slice(0,70))}</td></tr>`,
+          empty:'<tr><td colspan="6"><div class="empty">No chats logged yet.</div></td></tr>'
+        };
+        tblReg('ai',cfg);
+        const html=tblPanel('ai',cfg);
+        setTimeout(()=>tblDraw('ai',cfg),0);
+        return html;
+      })()
       :`<div class="empty">No chats logged yet — ask KR something in the caretaker chat (🤖 module in the dashboard).</div>`);
 }
 async function aiClearLog(){
@@ -1548,11 +1790,13 @@ async function renderWebhooks(){
   WH.hooks=d.webhooks||[]; WH.events=d.events||[]; WH.subs=d.subscribers||[];
   const active=WH.hooks.filter(h=>h.active).length;
   const tot=WH.hooks.reduce((a,h)=>a+h.stats.n,0), okc=WH.hooks.reduce((a,h)=>a+h.stats.ok,0), fail=WH.hooks.reduce((a,h)=>a+h.stats.fail,0);
-  load('pageBody',
-    `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px">`+
-    [['Endpoints',WH.hooks.length],['Active',active],['Deliveries',tot],['OK',okc],['Failed',fail]].map(c=>`<div style="background:var(--bg-soft,#f4f6fb);border:1px solid var(--line,#e8ecf4);border-radius:10px;padding:10px 12px"><div style="font-size:20px;font-weight:800">${c[1]}</div><div class="c-sub" style="font-size:11px">${c[0]}</div></div>`).join('')+`</div>`+
-    `<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Endpoint</th><th>Subscriber</th><th>Events</th><th>Status</th><th>Last delivery</th><th></th></tr></thead><tbody>`+
-    WH.hooks.map(h=>{
+  const cfg={
+    data:WH.hooks, ph:'Search label, url, subscriber…',
+    search:['label','url','tenant_name'],
+    filters:[['active','Status',[{v:'1',l:'Active'},{v:'0',l:'Paused'}]]],
+    sortable:['label','last_at'],
+    head:st=>`<tr>${tblTh('wh','Endpoint','label',st)}<th>Subscriber</th><th>Events</th><th>Status</th>${tblTh('wh','Last delivery','last_at',st)}<th></th></tr>`,
+    row:h=>{
       const evs=(()=>{try{return JSON.parse(h.events||'[]')}catch(e){return[]}})();
       const lastOk=h.last_status>=200&&h.last_status<300&&h.last_status>0;
       return `<tr data-gsid="webhooks-${h.id}"><td><div class="c-name">${esc(h.label)}</div><div class="c-sub">${esc(h.url.slice(0,52))}${h.url.length>52?'…':''}</div></td>
@@ -1565,8 +1809,15 @@ async function renderWebhooks(){
         <button class="btn-ghost" onclick="webhookLogs(${h.id})" title="Delivery log" data-tip="Delivery log" data-tip-pos="left">📜</button>
         <button class="btn-ghost" onclick="webhookForm(${h.id})" title="Edit" data-tip="Edit" data-tip-pos="left">✎</button>
         <button class="btn-ghost" style="color:var(--danger)" onclick="webhookDelete(${h.id})" title="Delete" data-tip="Delete" data-tip-pos="left">🗑</button>
-      </div></td></tr>`}).join('')||`<tr><td colspan="6"><div class="empty">No webhooks yet — create one to deliver KRTaker events (payments, tickets, leases, signups) to your server.</div></td></tr>`+
-    `</tbody></table></div></div>`);
+      </div></td></tr>`},
+    empty:'<tr><td colspan="6"><div class="empty">No webhooks yet — create one to deliver KRTaker events (payments, tickets, leases, signups) to your server.</div></td></tr>'
+  };
+  tblReg('wh',cfg);
+  load('pageBody',
+    `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px">`+
+    [['Endpoints',WH.hooks.length],['Active',active],['Deliveries',tot],['OK',okc],['Failed',fail]].map(c=>`<div style="background:var(--bg-soft,#f4f6fb);border:1px solid var(--line,#e8ecf4);border-radius:10px;padding:10px 12px"><div style="font-size:20px;font-weight:800">${c[1]}</div><div class="c-sub" style="font-size:11px">${c[0]}</div></div>`).join('')+`</div>`+
+    tblPanel('wh',cfg));
+  tblDraw('wh',cfg);
 }
 function webhookForm(id){
   const h=id?WH.hooks.find(x=>x.id===id):{id:0,label:'',tenant_id:0,url:'',events:[],active:1};
@@ -1643,7 +1894,18 @@ async function renderIntegrations(){
   const d=await admin({action:'integrations'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   INTS=d.integrations||[];
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Type</th><th>Name</th><th>Status</th><th>Config</th><th>Updated</th><th></th></tr></thead><tbody>${INTS.map(i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc(JSON.stringify(i.config||{}).slice(0,60))}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No integrations configured.</div></td></tr>'}</tbody></table></div></div>`);
+  const cfg={
+    data:INTS, ph:'Search id, name, type…',
+    search:['id','name','type'],
+    filters:[['type','Type'],['status','Status']],
+    sortable:['id','type','name','status','updated_at'],
+    head:st=>`<tr>${tblTh('ints','ID','id',st)}${tblTh('ints','Type','type',st)}${tblTh('ints','Name','name',st)}${tblTh('ints','Status','status',st)}<th>Config</th>${tblTh('ints','Updated','updated_at',st)}<th></th></tr>`,
+    row:i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc(JSON.stringify(i.config||{}).slice(0,60))}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`,
+    empty:'<tr><td colspan="7"><div class="empty">No integrations configured.</div></td></tr>'
+  };
+  tblReg('ints',cfg);
+  load('pageBody',tblPanel('ints',cfg));
+  tblDraw('ints',cfg);
 }
 /* ── Tickets ── */
 let TKTS=[];
@@ -1654,7 +1916,18 @@ async function renderTickets(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   TKTS=d.tickets||[];
   const foc=gsConsumeFocus();
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subject</th><th>From</th><th>Prio</th><th>Status</th><th>Assignee</th><th>Updated</th><th></th></tr></thead><tbody>${TKTS.map(t=>`<tr data-gsid="tickets-${esc(t.id)}"><td>${esc(t.id)}</td><td><div class="c-name">${esc(t.subject)}</div><div class="c-sub">${esc((t.body||'').slice(0,50))}</div></td><td class="c-sub">${esc(t.from_name||'—')}<br>${esc(t.from_email||'')}</td><td>${badge(t.prio)}</td><td>${badge(t.status)}</td><td class="c-sub">${esc(t.assignee||'—')}</td><td class="c-sub">${esc((t.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="ticketReply('${esc(t.id)}')">✉</button><button class="btn-ghost" onclick="ticketStatus('${esc(t.id)}')">🔧</button><button class="btn-ghost" style="color:var(--danger)" onclick="ticketDelete('${esc(t.id)}')">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No platform tickets.</div></td></tr>'}</tbody></table></div></div>`);
+  const cfg={
+    data:TKTS, ph:'Search subject, body, from, assignee…',
+    search:['subject','body','from_name','from_email','assignee'],
+    filters:[['prio','Priority'],['status','Status']],
+    sortable:['id','subject','prio','status','updated_at'],
+    head:st=>`<tr>${tblTh('tkts','ID','id',st)}${tblTh('tkts','Subject','subject',st)}<th>From</th>${tblTh('tkts','Prio','prio',st)}${tblTh('tkts','Status','status',st)}${tblTh('tkts','Assignee','assignee',st)}${tblTh('tkts','Updated','updated_at',st)}<th></th></tr>`,
+    row:t=>`<tr data-gsid="tickets-${esc(t.id)}"><td>${esc(t.id)}</td><td><div class="c-name">${esc(t.subject)}</div><div class="c-sub">${esc((t.body||'').slice(0,50))}</div></td><td class="c-sub">${esc(t.from_name||'—')}<br>${esc(t.from_email||'')}</td><td>${badge(t.prio)}</td><td>${badge(t.status)}</td><td class="c-sub">${esc(t.assignee||'—')}</td><td class="c-sub">${esc((t.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="ticketReply('${esc(t.id)}')">✉</button><button class="btn-ghost" onclick="ticketStatus('${esc(t.id)}')">🔧</button><button class="btn-ghost" style="color:var(--danger)" onclick="ticketDelete('${esc(t.id)}')">🗑</button></div></td></tr>`,
+    empty:'<tr><td colspan="8"><div class="empty">No platform tickets.</div></td></tr>'
+  };
+  tblReg('tkts',cfg);
+  load('pageBody',tblPanel('tkts',cfg));
+  tblDraw('tkts',cfg);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="tickets-'+esc(foc.payload.id)+'"]');
 }
 function ticketForm(){
@@ -1703,10 +1976,22 @@ async function renderBackup(){
   load('pageBody','<div class="empty">Loading…</div>');
   const d=await admin({action:'backup-list'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  const BKS=d.backups||[];
+  const cfg={
+    data:BKS, ph:'Search note, kind…',
+    search:['note','kind'],
+    filters:[['kind','Kind']],
+    sortable:['id','kind','size','ts'],
+    head:st=>`<tr>${tblTh('bkp','#','id',st)}${tblTh('bkp','Kind','kind',st)}${tblTh('bkp','Size','size',st)}${tblTh('bkp','When','ts',st)}<th>Note</th></tr>`,
+    row:b=>`<tr><td>${b.id}</td><td>${badge(b.kind)}</td><td>${(b.size/1048576).toFixed(1)} MB</td><td class="c-sub">${esc(b.ts)}</td><td class="c-sub">${esc(b.note||'')}</td></tr>`,
+    empty:'<tr><td colspan="5"><div class="empty">No snapshots yet.</div></td></tr>'
+  };
+  tblReg('bkp',cfg);
   load('pageBody',
     `<div class="stats">${[['📸','Snapshots',(d.backups||[]).length,'backup_log'],['⬇️','Download DB','.db','full SQLite'],['📦','Export JSON','_tables','PG-ready']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>
      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💾</span>Download / export</span></div><div class="panel-b" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn-outline" onclick="backupDownload()">⬇️ Download database (.db)</button><button class="btn-outline" onclick="backupExport()">📦 Export full JSON</button><button class="btn-outline" onclick="nav('health')">🩺 System health</button></div></div>
-     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📜</span>Snapshot history</span></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Kind</th><th>Size</th><th>When</th><th>Note</th></tr></thead><tbody>${(d.backups||[]).map(b=>`<tr><td>${b.id}</td><td>${badge(b.kind)}</td><td>${(b.size/1048576).toFixed(1)} MB</td><td class="c-sub">${esc(b.ts)}</td><td class="c-sub">${esc(b.note||'')}</td></tr>`).join('')||'<tr><td colspan="5"><div class="empty">No snapshots yet.</div></td></tr>'}</tbody></table></div></div>`);
+     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📜</span>Snapshot history</span></div></div>`+tblPanel('bkp',cfg));
+  tblDraw('bkp',cfg);
 }
 async function backupRun(){
   const d=await admin({action:'backup-run'});
@@ -1731,10 +2016,21 @@ async function renderModules(){
   const d=await admin({action:'modules'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   const reg=d.registry||[],pkg=d.packages||[];
+  const cfg={
+    data:pkg, ph:'Search package, code…',
+    search:['name','code'],
+    filters:[],
+    sortable:['name','code'],
+    head:st=>`<tr>${tblTh('mods','Package','name',st)}<th>Roles configured</th><th>Owner modules</th><th>Manager modules</th><th>Tenant modules</th></tr>`,
+    row:p=>{const m=p.modules||{};return `<tr><td class="c-name">${esc(p.name)} <span class="c-sub">(${esc(p.code)})</span></td><td>${Object.keys(m).length}</td><td class="c-sub">${(m.owner||[]).length} mods</td><td class="c-sub">${(m.manager||[]).length} mods</td><td class="c-sub">${(m.tenant||[]).length} mods</td></tr>`},
+    empty:'<tr><td colspan="5"><div class="empty">No packages.</div></td></tr>'
+  };
+  tblReg('mods',cfg);
   load('pageBody',
     `<div class="stats">${[['🧩','Registry modules',reg.length,'built + roadmap'],['📦','Packages',pkg.length,'catalog'],['🔄','Matrix editable','Packages','role × module'],['🔜','Roadmap slots',reg.filter(m=>!m.built).length,'parking → insurance']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>
      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🧩</span>Module registry</span></div><div class="panel-b"><div style="display:flex;flex-wrap:wrap;gap:6px">${reg.map(m=>`<span class="chip ${m.built?'on':''}">${esc(m.id)}${m.built?'':' 🔜'}</span>`).join('')}</div><div class="c-sub" style="margin-top:10px">Built modules are live. Roadmap slots (🔜) appear in the package matrix but are not built yet.</div></div></div>
-     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📦</span>Package module coverage</span></div><div class="tbl-wrap"><table><thead><tr><th>Package</th><th>Roles configured</th><th>Owner modules</th><th>Manager modules</th><th>Tenant modules</th></tr></thead><tbody>${pkg.map(p=>{const m=p.modules||{};return `<tr><td class="c-name">${esc(p.name)} <span class="c-sub">(${esc(p.code)})</span></td><td>${Object.keys(m).length}</td><td class="c-sub">${(m.owner||[]).length} mods</td><td class="c-sub">${(m.manager||[]).length} mods</td><td class="c-sub">${(m.tenant||[]).length} mods</td></tr>`}).join('')||'<tr><td colspan="5"><div class="empty">No packages.</div></td></tr>'}</tbody></table></div></div>`);
+     <div class="panel"><div class="panel-h"><span class="t"><span class="pi">📦</span>Package module coverage</span></div></div>`+tblPanel('mods',cfg));
+  tblDraw('mods',cfg);
 }
 /* ── White Label ── */
 let WL={};
@@ -1785,7 +2081,19 @@ async function renderAudit(){
   const d=await admin({action:'audit'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   const foc=gsConsumeFocus();
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>#</th><th>When</th><th>User</th><th>Action</th><th>Module</th><th>Entity</th><th>Details</th></tr></thead><tbody>${(d.audit||[]).map(a=>`<tr data-gsid="audit-${a.id}"><td>${a.id}</td><td class="c-sub">${esc(a.ts||'')}</td><td>${esc(a.user||'')}</td><td class="c-name">${esc(a.action||'')}</td><td>${badge(a.module||'—')}</td><td class="c-sub">${esc(a.entity||'')}</td><td class="c-sub">${esc((a.details||'').slice(0,70))}</td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No audit rows.</div></td></tr>'}</tbody></table></div></div>`);
+  const AUD=d.audit||[];
+  const cfg={
+    data:AUD, ph:'Search user, action, entity, details…',
+    search:['user','action','entity','details'],
+    filters:[['module','Module'],['user','User']],
+    sortable:['id','ts','user','action','module'],
+    head:st=>`<tr>${tblTh('aud','#','id',st)}${tblTh('aud','When','ts',st)}${tblTh('aud','User','user',st)}${tblTh('aud','Action','action',st)}${tblTh('aud','Module','module',st)}<th>Entity</th><th>Details</th></tr>`,
+    row:a=>`<tr data-gsid="audit-${a.id}"><td>${a.id}</td><td class="c-sub">${esc(a.ts||'')}</td><td>${esc(a.user||'')}</td><td class="c-name">${esc(a.action||'')}</td><td>${badge(a.module||'—')}</td><td class="c-sub">${esc(a.entity||'')}</td><td class="c-sub">${esc((a.details||'').slice(0,70))}</td></tr>`,
+    empty:'<tr><td colspan="7"><div class="empty">No audit rows.</div></td></tr>'
+  };
+  tblReg('aud',cfg);
+  load('pageBody',tblPanel('aud',cfg));
+  tblDraw('aud',cfg);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="audit-'+foc.payload.id+'"]');
 }
 /* ── Auth ── */
@@ -2033,13 +2341,13 @@ async function renderApiTenantKeys(){
   TK.keys=d.keys||[]; TK.subs=d.subscribers||[];
   const active=TK.keys.filter(k=>k.active).length;
   const calls=TK.keys.reduce((a,k)=>a+(k.calls||0),0);
-  load('apiBody',
-    `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-      <button class="btn-primary" onclick="tenantKeyForm()">＋ Tenant key</button>
-      <span class="c-sub">${TK.keys.length} keys · ${active} active · ${calls} total calls — each subscriber gets its own <code>X-API-Key</code> for server-to-server integrations</span>
-    </div>
-    <div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Subscriber</th><th>Label</th><th>Key</th><th>Status</th><th>Last used</th><th>Calls</th><th></th></tr></thead><tbody>`+
-    TK.keys.map(k=>`<tr data-gsid="tkeys-${k.id}"><td><div class="c-name">${esc(k.tenant_name||('#'+k.tenant_id))}</div><div class="c-sub">${esc(k.tenant_email||'')} · ${esc(k.plan||'')}</div></td>
+  const cfg={
+    data:TK.keys, ph:'Search tenant, label, key…',
+    search:['tenant_name','tenant_email','label','key'],
+    filters:[['active','Status'],['plan','Plan']],
+    sortable:['tenant_name','label','calls','last_used_at'],
+    head:st=>`<tr>${tblTh('tkeys','Subscriber','tenant_name',st)}${tblTh('tkeys','Label','label',st)}<th>Key</th><th>Status</th>${tblTh('tkeys','Last used','last_used_at',st)}${tblTh('tkeys','Calls','calls',st)}<th></th></tr>`,
+    row:k=>`<tr data-gsid="tkeys-${k.id}"><td><div class="c-name">${esc(k.tenant_name||('#'+k.tenant_id))}</div><div class="c-sub">${esc(k.tenant_email||'')} · ${esc(k.plan||'')}</div></td>
       <td class="c-sub">${esc(k.label||'—')}</td>
       <td><code style="font-size:11px">${esc(k.key)}</code></td>
       <td><span class="badge ${k.active?'b-green':'b-gray'}" style="cursor:pointer" onclick="tenantKeyToggle(${k.id})" title="Click to ${k.active?'disable':'enable'}">${k.active?'● active':'○ disabled'}</span></td>
@@ -2049,14 +2357,23 @@ async function renderApiTenantKeys(){
         <button class="btn-ghost" onclick="tenantKeyRotate(${k.id})" title="Rotate key" data-tip="Rotate key" data-tip-pos="left">🔄</button>
         <button class="btn-ghost" onclick="tenantKeyForm(${k.id})" title="Edit" data-tip="Edit" data-tip-pos="left">✎</button>
         <button class="btn-ghost" style="color:var(--danger)" onclick="tenantKeyDelete(${k.id})" title="Revoke" data-tip="Revoke" data-tip-pos="left">🗑</button>
-      </div></td></tr>`).join('')||`<tr><td colspan="7"><div class="empty">No tenant API keys yet — create one for a subscriber so their backend can call KRTaker with its own key (see <code>app-tenant-me</code> in the endpoint catalog).</div></td></tr>`+
-    `</tbody></table></div></div>
-    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">💡</span>How tenant keys work</span></div><div class="panel-b"><div style="font-size:12.5px;color:var(--text-soft);line-height:1.7">
+      </div></td></tr>`,
+    empty:'<tr><td colspan="7"><div class="empty">No tenant API keys yet — create one for a subscriber so their backend can call KRTaker with its own key (see <code>app-tenant-me</code> in the endpoint catalog).</div></td></tr>'
+  };
+  tblReg('tkeys',cfg);
+  load('apiBody',
+    `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="btn-primary" onclick="tenantKeyForm()">＋ Tenant key</button>
+      <span class="c-sub">${TK.keys.length} keys · ${active} active · ${calls} total calls — each subscriber gets its own <code>X-API-Key</code> for server-to-server integrations</span>
+    </div>`+
+    tblPanel('tkeys',cfg)+
+    `<div class="panel"><div class="panel-h"><span class="t"><span class="pi">💡</span>How tenant keys work</span></div><div class="panel-b"><div style="font-size:12.5px;color:var(--text-soft);line-height:1.7">
       <div>1. Create a key for a subscriber — the full key is shown <b>once</b> (send it to their backend securely).</div>
       <div>2. The tenant's server calls <code>app-tenant-me</code> with <code>X-API-Key: &lt;their key&gt;</code> to verify identity and fetch its subscriber profile.</div>
       <div>3. Tenant keys are accepted anywhere the web/mobile keys are enforced (<code>app-photo</code>, <code>app-job-media</code>), with per-tenant rate limiting + usage telemetry.</div>
       <div style="margin-top:6px">🔄 <b>Rotate</b> issues a new key and immediately invalidates the old one. 🗑 <b>Revoke</b> deletes the key — the tenant gets 401 on every call.</div>
     </div></div></div>`);
+  tblDraw('tkeys',cfg);
 }
 function tenantKeyForm(id){
   const k=id?TK.keys.find(x=>x.id===id):{id:0,tenant_id:0,label:'',active:1};
@@ -2111,6 +2428,16 @@ async function renderApiUsage(){
   const max=Math.max(1,...top.map(r=>+(r.n||0)));
   const errRate=u.d24_total?Math.round((u.d24_errors||0)/u.d24_total*100):0;
   const recent=u.recent||[];
+  const cfg={
+    data:recent, ph:'Search action…',
+    search:['action'],
+    filters:[['auth','Auth'],['method','Method']],
+    sortable:['ts','action','ms'],
+    head:st=>`<tr>${tblTh('apius','When','ts',st)}${tblTh('apius','Action','action',st)}<th>Method</th><th>Auth</th><th>Status</th>${tblTh('apius','ms','ms',st)}</tr>`,
+    row:r=>`<tr><td class="c-sub">${esc((r.ts||'').slice(11,19))}</td><td><code style="font-size:12px;color:var(--primary)">${esc(r.action)}</code></td><td>${r.method==='GET'?badge('GET'):badge('POST')}</td><td>${badge(r.auth)}</td><td>${r.status<400?badge('OK'):badge(r.status)}</td><td class="c-sub">${r.ms}ms</td></tr>`,
+    empty:'<tr><td colspan="6"><div class="empty">No requests yet.</div></td></tr>'
+  };
+  tblReg('apius',cfg);
   load('apiUsageBody',
     `<div class="stats">${[['📈','Calls (24h)',u.d24_total??0,'tracked via api_usage'],['🗓️','Calls (7d)',u.d7_total??0,'rolling window'],['⚠️','Errors (24h)',u.d24_errors??0,errRate+'% error rate'],['⚡','Avg top-10 latency',(top.length?Math.round(top.reduce((s,r)=>s+(+(r.avg_ms||0)),0)/top.length):0)+' ms','fastest endpoints first']].map(c=>`<div class="stat"><div class="s-label"><span class="s-ico">${c[0]}</span>${c[1]}</div><div class="s-value">${c[2]}</div><div class="s-trend">${c[3]}</div></div>`).join('')}</div>
     <div class="grid-2" style="gap:18px">
@@ -2118,7 +2445,8 @@ async function renderApiUsage(){
         return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;margin-bottom:4px"><code style="color:var(--primary);font-weight:700">${esc(r.action)}</code><span style="font-size:11px;color:var(--text-mute)">${r.n} calls${r.errs?' · '+r.errs+' errs':''} · ${r.avg_ms}ms</span></div><div style="height:8px;background:var(--bg-alt);border:1px solid var(--border);border-radius:99px;overflow:hidden"><div style="width:${pct}%;height:100%;border-radius:99px;background:${(r.errs||0)>0?'#E74C3C':'var(--primary)'}"></div></div></div>`;}).join(''):'<div class="empty">No API calls in the last 24h yet.</div>'}</div></div>
       <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🔐</span>Auth mix (24h)</span></div><div class="panel-b">${(u.by_auth||[]).length?(u.by_auth||[]).map(a=>`<div class="kv"><span class="k">${esc(a.auth)}</span><span class="v">${a.n}</span></div>`).join(''):'<div class="empty">No data yet.</div>'}</div></div>
     </div>
-    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🕒</span>Recent requests</span><button class="btn-outline" style="margin-left:auto" onclick="renderApiUsage()">🔄 Refresh</button></div><div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>When</th><th>Action</th><th>Method</th><th>Auth</th><th>Status</th><th>ms</th></tr></thead><tbody>${recent.map(r=>`<tr><td class="c-sub">${esc((r.ts||'').slice(11,19))}</td><td><code style="font-size:12px;color:var(--primary)">${esc(r.action)}</code></td><td>${r.method==='GET'?badge('GET'):badge('POST')}</td><td>${badge(r.auth)}</td><td>${r.status<400?badge('OK'):badge(r.status)}</td><td class="c-sub">${r.ms}ms</td></tr>`).join('')||'<tr><td colspan="6"><div class="empty">No requests yet.</div></td></tr>'}</tbody></table></div></div>`);
+    <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🕒</span>Recent requests</span><button class="btn-outline" style="margin-left:auto" onclick="renderApiUsage()">🔄 Refresh</button></div></div>`+tblPanel('apius',cfg));
+  tblDraw('apius',cfg);
 }
 function apiSchemaExport(){
   const schema={openapi:'3.0.3',info:{title:'KRTaker API',version:'v1',description:'KRTaker platform API — web & mobile data management'},paths:{}};
@@ -2172,9 +2500,18 @@ async function apiTableDrawer(tb){
   if(!d.ok){$('drawerBody').innerHTML=`<div class="empty">${esc(d.error||'Failed')}</div>`;return}
   const cols=d.columns||[],rows=d.rows||[];
   if(!rows.length){$('drawerBody').innerHTML='<div class="empty">No rows in this table.</div>';return}
-  $('drawerBody').innerHTML=`<div class="tbl-wrap"><table style="min-width:0"><thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${
-    rows.map(r=>`<tr>${cols.map(c=>{const v=r[c];return `<td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(typeof v==='string'&&v.length>60?v.slice(0,60)+'…':v)}</td>`}).join('')}</tr>`).join('')
-  }</tbody></table></div>`;
+  const cfg={
+    data:rows, ph:'Search any column…',
+    search:cols,
+    filters:[],
+    sortable:cols,
+    head:st=>`<tr>${cols.map(c=>tblTh('aptb',c,c,st)).join('')}</tr>`,
+    row:r=>`<tr>${cols.map(c=>{const v=r[c];return `<td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(typeof v==='string'&&v.length>60?v.slice(0,60)+'…':v)}</td>`}).join('')}</tr>`,
+    empty:'<tr><td colspan="'+cols.length+'"><div class="empty">No rows.</div></td></tr>'
+  };
+  tblReg('aptb',cfg);
+  $('drawerBody').innerHTML=tblPanel('aptb',cfg);
+  tblDraw('aptb',cfg);
 }
 function renderApi(){
   pageHead('API Library — manage how the web and mobile apps use the platform API',`<button class="btn-outline" onclick="apiSchemaExport()" data-tip="Download the endpoint catalog as OpenAPI JSON for client developers" data-tip-pos="left">📦 Export schema</button>`);
