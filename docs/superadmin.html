@@ -889,7 +889,7 @@ function cmsSeoPanel(){
     <div class="panel-b"><div class="frm"><div class="cms-field">
       <label class="lb">Sitemap URL — submit this once in Google Search Console & Bing Webmaster</label>
       <div style="display:flex;gap:6px;flex-wrap:wrap"><input id="cmsSitemapUrl" readonly value="${url}" style="flex:1;min-width:220px"><button class="btn-outline" onclick="cmsCopySitemap()" data-tip="Copy the sitemap URL" data-tip-pos="top">📋 Copy</button><button class="btn-outline" onclick="cmsPingSitemap()" data-tip="Ask Bing to re-crawl the sitemap (Google removed pings)" data-tip-pos="top">🔔 Ping Bing</button></div>
-      <div class="c-sub" style="font-size:10.5px;margin-top:4px">Draft pages are excluded; lastmod follows your CMS edits. Paste your Google / Bing verification tokens in the fields above, save, then verify the property in each console.</div>
+      <div class="c-sub" style="font-size:10.5px;margin-top:4px">Draft pages are excluded; lastmod follows your CMS edits. Paste your Google / Bing verification tokens in the fields above, save, then verify the property in each console. Ping Bing notifies via IndexNow (Bing's modern protocol).</div>
     </div></div></div></div>`;
 }
 function cmsCopySitemap(){
