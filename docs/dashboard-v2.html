@@ -343,6 +343,10 @@ tr.focus{animation:focusFlash 2.4s ease}
 .demo-banner{display:none;position:fixed;top:64px;left:0;right:0;z-index:54;background:linear-gradient(135deg,#FEF6E7,#FDEBD0);border-bottom:1px solid #F0D9A8;color:#7A5A14;font-size:12px;font-weight:600;padding:8px 16px;text-align:center}
 [data-theme="dark"] .demo-banner{background:#2A2410;border-color:#4A3E14;color:#E8C46B}
 .demo-banner a{color:var(--primary);font-weight:700;cursor:pointer;text-decoration:underline}
+/* ── Phase 61: Impersonation banner ── */
+.imp-banner{display:none;position:fixed;top:64px;left:0;right:0;z-index:55;background:linear-gradient(135deg,#FDECEC,#FADBD8);border-bottom:1px solid #E6B0AA;color:#7B241C;font-size:12px;font-weight:600;padding:8px 16px;text-align:center}
+[data-theme="dark"] .imp-banner{background:#2C1613;border-color:#4A2A24;color:#F2C4BD}
+.imp-banner a{color:var(--danger);font-weight:800;cursor:pointer;text-decoration:underline;margin-left:8px}
 
 /* ── Phase 2: Subscription manager ── */
 .sub-hero{background:var(--grad);border-radius:var(--radius);padding:24px 26px;color:#fff;margin-bottom:20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;box-shadow:0 18px 40px rgba(47,128,237,.28)}
@@ -622,6 +626,7 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
 
 <!-- ═══ Phase 2: Demo preview banner ═══ -->
 <div class="demo-banner" id="demoBanner">🎭 Demo preview — you're seeing sample data, not your workspace · <a onclick="backToLive()">Back to my workspace</a></div>
+<div class="imp-banner" id="impBanner">🔀 You are viewing <b id="impAs"></b> — impersonated by <b id="impBy"></b><a onclick="exitImpersonation()">✕ Exit impersonation</a></div>
 
 <div class="app">
 
@@ -1239,6 +1244,17 @@ let DEMO_MODE = false;
 function showAuth() { $('authScreen').classList.add('open'); }
 function hideAuth() { $('authScreen').classList.remove('open'); }
 function showDemoBanner(on) { $('demoBanner').style.display = (on && LIVE.user) ? 'block' : 'none'; }
+function showImpBanner(){
+  const b=$('impBanner');if(!b)return;
+  const imp=LIVE.user&&LIVE.user.impersonator;
+  if(imp){$('impAs').textContent=LIVE.user.name+' ('+LIVE.user.email+')';$('impBy').textContent=imp;b.style.display='block';}
+  else b.style.display='none';
+}
+async function exitImpersonation(){
+  try{await apiCall('app-logout',{});}catch(e){}
+  try{localStorage.removeItem('krtaker_dash_token');}catch(e){}
+  location.href='/superadmin.html';
+}
 async function apiCall(path, data) {
   const opts = { method: data ? 'POST' : 'GET', headers: {} };
   if (data) opts.headers['Content-Type'] = 'application/json';
@@ -1270,6 +1286,7 @@ function applyLive(d, silent) {
   DEMO_MODE = false;
   $('logoutBtn').style.display = 'block';
   hideAuth(); showDemoBanner(false);
+  showImpBanner();
   renderNav(); render(); updateCrumb();
   if (!silent) toast('Signed in as ' + LIVE.user.name + ' — ' + LIVE.user.role);
   gatewayReturn();   /* handle real-gateway callback (returned from bKash/SSLCommerz/Nagad) */

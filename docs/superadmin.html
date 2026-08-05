@@ -616,7 +616,7 @@ async function renderSubscribers(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   SUBS={list:d.subscribers||[],plans:d.plans||[]};
   const foc=gsConsumeFocus();
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subscriber</th><th>Plan</th><th>Role</th><th>Status</th><th>Trial end</th><th>Created</th><th></th></tr></thead><tbody>${SUBS.list.map(s=>`<tr data-gsid="subscribers-${s.id}"><td>#${s.id}</td><td><div class="c-name">${esc(s.name)}</div><div class="c-sub">${esc(s.email)}${s.phone?' · '+esc(s.phone):''}</div></td><td>${s.plan?badge(s.plan):'—'}</td><td>${esc(s.role||'owner')}</td><td>${badge(s.status)}</td><td class="c-sub">${esc(s.trial_end||'—')}</td><td class="c-sub">${esc((s.created_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="subscriberForm(${s.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="subscriberDelete(${s.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No subscribers.</div></td></tr>'}</tbody></table></div></div>`);
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Subscriber</th><th>Plan</th><th>Role</th><th>Status</th><th>Trial end</th><th>Created</th><th></th></tr></thead><tbody>${SUBS.list.map(s=>`<tr data-gsid="subscribers-${s.id}"><td>#${s.id}</td><td><div class="c-name">${esc(s.name)}</div><div class="c-sub">${esc(s.email)}${s.phone?' · '+esc(s.phone):''}</div></td><td>${s.plan?badge(s.plan):'—'}</td><td>${esc(s.role||'owner')}</td><td>${badge(s.status)}</td><td class="c-sub">${esc(s.trial_end||'—')}</td><td class="c-sub">${esc((s.created_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="impersonateUser('${esc(s.email)}','${esc(s.name)}')" data-tip="Impersonate — view the platform as this subscriber (30 min)" data-tip-pos="left" title="Impersonate">🔀</button><button class="btn-ghost" onclick="subscriberForm(${s.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="subscriberDelete(${s.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">No subscribers.</div></td></tr>'}</tbody></table></div></div>`);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="subscribers-'+foc.payload.id+'"]');
 }
 function subscriberForm(id){
@@ -636,6 +636,15 @@ async function subscriberDelete(id){
   if(!confirm('Delete subscriber #'+id+'?'))return;
   const d=await admin({action:'subscriber-delete',id});
   if(d.ok){toast('Subscriber deleted','ok');renderSubscribers();}else toast(d.error||'Failed','error');
+}
+/* ── User impersonation (v3.61): temp 30-min token → dashboard as the target ── */
+async function impersonateUser(email,name){
+  if(!confirm('🔀 Impersonate '+name+' ('+email+')?\n\nYou will be signed into their workspace for 30 minutes.\nEvery action is recorded in the audit log.\n\nExit anytime via the red banner in the dashboard.'))return;
+  const d=await admin({action:'impersonate',email});
+  if(!d.ok)return toast(d.error||'Failed','error');
+  try{localStorage.setItem('krtaker_dash_token',d.token);}catch(e){}
+  toast('Impersonating '+name+' — redirecting to their workspace…','ok');
+  setTimeout(()=>{location.href='/dashboard-v2.html';},450);
 }
 /* ── Blog manager (SA1-fullsite-v4.3): articles served at /blog/<slug> ── */
 let BLOG={list:[]};
@@ -757,7 +766,7 @@ async function renderUsers(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   USRS=d.users||[];
   const foc=gsConsumeFocus();
-  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>User</th><th>Role</th><th>Dept</th><th>Active</th><th>Last login</th><th></th></tr></thead><tbody>${USRS.map(u=>`<tr data-gsid="users-${u.id}"><td>#${u.id}</td><td><div class="c-name">${esc(u.name)}</div><div class="c-sub">${esc(u.email)}</div></td><td>${badge(u.role)}</td><td class="c-sub">${esc(u.dept||'—')}</td><td>${u.active?badge('Active'):badge('Suspended')}</td><td class="c-sub">${esc(u.last_login||'—')}</td><td><div class="row-actions"><button class="btn-ghost" onclick="userForm(${u.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="userDelete(${u.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>'}</tbody></table></div></div>`);
+  load('pageBody',`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>User</th><th>Role</th><th>Dept</th><th>Active</th><th>Last login</th><th></th></tr></thead><tbody>${USRS.map(u=>`<tr data-gsid="users-${u.id}"><td>#${u.id}</td><td><div class="c-name">${esc(u.name)}</div><div class="c-sub">${esc(u.email)}</div></td><td>${badge(u.role)}</td><td class="c-sub">${esc(u.dept||'—')}</td><td>${u.active?badge('Active'):badge('Suspended')}</td><td class="c-sub">${esc(u.last_login||'—')}</td><td><div class="row-actions">${u.role==='superadmin'?'':`<button class="btn-ghost" onclick="impersonateUser('${esc(u.email)}','${esc(u.name)}')" data-tip="Impersonate this staff member (30 min)" data-tip-pos="left" title="Impersonate">🔀</button>`}<button class="btn-ghost" onclick="userForm(${u.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="userDelete(${u.id})">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>'}</tbody></table></div></div>`);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="users-'+foc.payload.id+'"]');
 }
 function userForm(id){
