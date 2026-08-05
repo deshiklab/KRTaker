@@ -772,20 +772,21 @@ async function renderSubscribers(){
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="subscribers-'+foc.payload.id+'"]');
 }
 function subscriberForm(id){
-  const s=id?SUBS.list.find(x=>x.id===id):{id:0,name:'',org:'',email:'',phone:'',plan:'',role:'owner',status:'pending',trial_end:'',address:'',city:'',industry:'',company_size:'',website:'',notes:'',tags:''};
+  const s=id?SUBS.list.find(x=>x.id===id):{id:0,name:'',org:'',email:'',phone:'',plan:'',role:'owner',status:'pending',trial_end:'',address:'',city:'',industry:'',company_size:'',website:'',notes:'',tags:'',country:'',source:''};
   openDrawer(id?'Edit subscriber #'+id:'New subscriber',
     `<div class="frm"><div class="grid-2"><div><label class="lb">Name</label><input id="sf_name" value="${esc(s.name)}"></div><div><label class="lb">Org</label><input id="sf_org" value="${esc(s.org)}"></div></div>
      <div class="grid-2"><div><label class="lb">Email</label><input id="sf_email" value="${esc(s.email)}"></div><div><label class="lb">Phone</label><input id="sf_phone" value="${esc(s.phone)}"></div></div>
      <div class="grid-2"><div><label class="lb">Plan</label><select id="sf_plan"><option value="">— none —</option>${SUBS.plans.map(p=>`<option value="${esc(p.code)}" ${s.plan===p.code?'selected':''}>${esc(p.name)} (${esc(p.code)})</option>`).join('')}</select></div><div><label class="lb">Role</label><select id="sf_role">${['owner','manager','tenant','accountant','crm','hr','legal','svc_mgr','partner'].map(r=>`<option ${s.role===r?'selected':''}>${r}</option>`).join('')}</select></div></div>
      <div class="grid-2"><div><label class="lb">Status</label><select id="sf_status">${['pending','trial','active','suspended','cancelled'].map(st=>`<option ${s.status===st?'selected':''}>${st}</option>`).join('')}</select></div><div><label class="lb">Trial end (YYYY-MM-DD)</label><input id="sf_trial" value="${esc(s.trial_end||'')}" placeholder="2026-08-31"></div></div>
      <div class="grid-2"><div><label class="lb">Address</label><input id="sf_address" value="${esc(s.address||'')}" placeholder="House, road, area"></div><div><label class="lb">City</label><input id="sf_city" value="${esc(s.city||'')}" placeholder="Dhaka"></div></div>
+     <div class="grid-2"><div><label class="lb">Country</label><input id="sf_country" value="${esc(s.country||'')}" placeholder="Bangladesh"></div><div><label class="lb">Source (how they found us)</label><select id="sf_source"><option value="">— select —</option>${['website','referral','facebook','google','walk-in','event','partner','cold-call','other'].map(c=>`<option ${s.source===c?'selected':''}>${c}</option>`).join('')}</select></div></div>
      <div class="grid-2"><div><label class="lb">Industry</label><input id="sf_industry" value="${esc(s.industry||'')}" placeholder="Real estate, developer…"></div><div><label class="lb">Company size</label><select id="sf_csize"><option value="">— select —</option>${['1-10','11-50','51-200','201-500','500+'].map(c=>`<option ${s.company_size===c?'selected':''}>${c}</option>`).join('')}</select></div></div>
      <div class="grid-2"><div><label class="lb">Website</label><input id="sf_website" value="${esc(s.website||'')}" placeholder="https://…"></div><div><label class="lb">Tags (comma separated)</label><input id="sf_tags" value="${esc(s.tags||'')}" placeholder="vip, pilot, enterprise"></div></div>
      <div><label class="lb">Internal notes</label><textarea id="sf_notes">${esc(s.notes||'')}</textarea></div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="subscriberSave(${id})">💾 Save</button></div>`);
 }
 async function subscriberSave(id){
-  const d=await admin({action:'subscriber-save',id,name:$('sf_name').value.trim(),org:$('sf_org').value.trim(),email:$('sf_email').value.trim(),phone:$('sf_phone').value.trim(),plan:$('sf_plan').value,role:$('sf_role').value,status:$('sf_status').value,trial_end:$('sf_trial').value.trim(),address:$('sf_address').value.trim(),city:$('sf_city').value.trim(),industry:$('sf_industry').value.trim(),company_size:$('sf_csize').value,website:$('sf_website').value.trim(),notes:$('sf_notes').value.trim(),tags:$('sf_tags').value.trim()});
+  const d=await admin({action:'subscriber-save',id,name:$('sf_name').value.trim(),org:$('sf_org').value.trim(),email:$('sf_email').value.trim(),phone:$('sf_phone').value.trim(),plan:$('sf_plan').value,role:$('sf_role').value,status:$('sf_status').value,trial_end:$('sf_trial').value.trim(),address:$('sf_address').value.trim(),city:$('sf_city').value.trim(),industry:$('sf_industry').value.trim(),company_size:$('sf_csize').value,website:$('sf_website').value.trim(),notes:$('sf_notes').value.trim(),tags:$('sf_tags').value.trim(),country:$('sf_country').value.trim(),source:$('sf_source').value});
   if(d.ok){toast('Subscriber saved','ok');closeDrawer();renderSubscribers();}else toast(d.error||'Failed','error');
 }
 async function subscriberDelete(id){
@@ -805,13 +806,15 @@ async function impersonateUser(email,name){
 /* ── Detail drawers (👁 View): formatted read-only view of any row ── */
 function detVal(v, k, o){
   if(v===undefined||v===null||v==='')return '';
-  if(k==='status'||k==='role'||k==='plan')return badge(v);
+  if(Array.isArray(v))return esc(v.join(', '));
+  if(k==='status'||k==='role'||k==='plan'||k==='billing_cycle')return badge(v);
+  if(k==='popular')return v?badge('⭐ popular'):badge('standard');
   if(k==='active')return o[k]?badge('Active'):badge('Suspended');
   if(k==='rating')return '⭐ '+v;
   if(k==='is_staff')return v?badge('staff'):badge('subscriber');
   if(k==='verified')return v?badge('verified'):badge('unverified');
   if(k==='jobs')return v+' jobs';
-  if(k==='reward'||k==='rent'||k==='adv')return money(v);
+  if(k==='reward'||k==='rent'||k==='adv'||k==='hourly_rate'||k==='budget')return money(v);
   return esc(v);
 }
 function detDrawer(icon,title,o,spec,extra){
@@ -829,33 +832,40 @@ function subscriberDetail(id){
   detDrawer('👥','Subscriber #'+id,s,{
     name:'Name',org:'Organisation',email:'Email',phone:'Phone',
     role:'Role',plan:'Plan',status:'Status',trial_end:'Trial ends',
-    address:'Address',city:'City',industry:'Industry',company_size:'Company size',
+    address:'Address',city:'City',country:'Country',source:'Source',
+    industry:'Industry',company_size:'Company size',
     website:'Website',tags:'Tags',notes:'Notes',
     verified_at:'Verified',last_login:'Last login',created_at:'Created'},extra);
 }
 function userDetail(id){
   const u=USRS.find(x=>x.id===id);if(!u)return;
   detDrawer('👤','User #'+id,u,{
-    name:'Name',email:'Email',role:'Role',dept:'Department',
-    active:'Status',is_staff:'Kind',last_login:'Last login'});
+    name:'Name',title:'Title',employee_id:'Employee ID',email:'Email',phone:'Phone',
+    role:'Role',dept:'Department',joined_at:'Joined',
+    active:'Status',is_staff:'Kind',last_login:'Last login',
+    address:'Address',notes:'Notes'});
 }
 function providerDetail(id){
   const p=PROVS.find(x=>x.id===id);if(!p)return;
   detDrawer('🛠️','Provider '+id,p,{
     name:'Name',trade:'Trade',sub_email:'Subscriber email',
-    rating:'Rating',jobs:'Jobs',status:'Status'});
+    phone:'Phone',email:'Email',address:'Address',city:'City',
+    hourly_rate:'Hourly rate',specialties:'Specialties',
+    rating:'Rating',jobs:'Jobs',status:'Status',notes:'Notes'});
 }
 function leadDetail(id){
   const x=ONB.leads.find(y=>String(y.id)===String(id));if(!x)return;
   detDrawer('🧲','Lead #'+id,x,{
     name:'Name',phone:'Phone',email:'Email',prop:'Property',
     source:'Source',status:'Status',assigned_to:'Assigned to',
+    budget:'Budget',move_in:'Wants to move in',
     message:'Message',notes:'Notes',ts:'Created',updated_at:'Updated'});
 }
 function onbDetail(id){
   const x=ONB.onboarding.find(y=>String(y.id)===String(id));if(!x)return;
   detDrawer('📋','Onboarding app #'+id,x,{
     name:'Applicant',email:'Email',phone:'Phone',nid:'NID',
+    occupation:'Occupation',employer:'Employer',reference:'Reference',
     unit:'Unit',prop:'Property',rent:'Rent',adv:'Advance',months:'Months',
     start:'Start',status:'Status',notes:'Notes',verified_by:'Verified by',
     verified_at:'Verified at',tenant_id:'Tenant',lease_id:'Lease',invoice_id:'Invoice',
@@ -865,7 +875,7 @@ function refDetail(id){
   const x=ONB.referrals.find(y=>String(y.id)===String(id));if(!x)return;
   detDrawer('🤝','Referral '+id,x,{
     code:'Code',user_email:'Referred by',role:'Role',
-    referred_name:'Referred name',referred_email:'Referred email',
+    referred_name:'Referred name',referred_email:'Referred email',referred_phone:'Referred phone',
     reward:'Reward',status:'Status',ts:'Created'});
 }
 /* ── Blog manager (SA1-fullsite-v4.3): articles served at /blog/<slug> ── */
@@ -883,7 +893,7 @@ async function renderBlog(){
     filters:[['status','Status'],['tag','Tag']],
     sortable:['title','slug','tag','read_min','status','created_at','updated_at'],
     head:st=>`<tr>${tblTh('blog','Title','title',st)}${tblTh('blog','Slug','slug',st)}${tblTh('blog','Tag','tag',st)}<th>Read</th>${tblTh('blog','Status','status',st)}${tblTh('blog','Created','created_at',st)}${tblTh('blog','Updated','updated_at',st)}<th></th></tr>`,
-    row:p=>`<tr data-gsid="blog-${p.id}"><td><div class="c-name">${esc(p.title)}</div></td><td class="c-sub">/${esc(p.slug)}</td><td>${p.tag?badge(p.tag):'—'}</td><td class="c-sub">${p.read_min||5} min</td><td>${p.status==='published'?`<span class="badge b-green">🟢 published</span>`:`<span class="badge b-orange">🔴 draft</span>`}</td><td class="c-sub">${esc((p.created_at||'').slice(0,10))}</td><td class="c-sub">${esc((p.updated_at||'').slice(0,10))}</td><td><div class="row-actions">${p.status==='published'?`<a class="btn-ghost" href="https://krtaker.com/blog/${esc(p.slug)}" target="_blank" title="Open live" data-tip="Open live" data-tip-pos="left">↗</a>`:''}<button class="btn-ghost" onclick="blogForm(${p.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="blogDelete(${p.id})">🗑</button></div></td></tr>`,
+    row:p=>`<tr data-gsid="blog-${p.id}"><td><div class="c-name">${esc(p.title)}</div></td><td class="c-sub">/${esc(p.slug)}</td><td>${p.tag?badge(p.tag):'—'}</td><td class="c-sub">${p.read_min||5} min</td><td>${p.status==='published'?`<span class="badge b-green">🟢 published</span>`:`<span class="badge b-orange">🔴 draft</span>`}</td><td class="c-sub">${esc((p.created_at||'').slice(0,10))}</td><td class="c-sub">${esc((p.updated_at||'').slice(0,10))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="blogDetail(${p.id})" data-tip="View details" data-tip-pos="left" title="View">👁</button>${p.status==='published'?`<a class="btn-ghost" href="https://krtaker.com/blog/${esc(p.slug)}" target="_blank" title="Open live" data-tip="Open live" data-tip-pos="left">↗</a>`:''}<button class="btn-ghost" onclick="blogForm(${p.id})">✎</button><button class="btn-ghost" style="color:var(--danger)" onclick="blogDelete(${p.id})">🗑</button></div></td></tr>`,
     empty:'<tr><td colspan="8"><div class="empty">No posts yet — create your first article.</div></td></tr>'
   };
   tblReg('blog',cfg);
@@ -892,19 +902,31 @@ async function renderBlog(){
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="blog-'+foc.payload.id+'"]');
 }
 function blogForm(id){
-  const p=id?BLOG.list.find(x=>x.id===id):{id:0,slug:'',title:'',tag:'',excerpt:'',body:'',cover_emoji:'📰',read_min:5,status:'draft'};
+  const p=id?BLOG.list.find(x=>x.id===id):{id:0,slug:'',title:'',tag:'',excerpt:'',body:'',cover_emoji:'📰',read_min:5,status:'draft',author:'',meta_title:'',meta_desc:'',cover_image:'',category:''};
   openDrawer(id?'Edit post':'New post',
     `<div class="frm"><div class="grid-2"><div><label class="lb">Title *</label><input id="bg_title" value="${esc(p.title)}" placeholder="Why your 2-year lease is legally invisible"></div><div><label class="lb">Slug * (a-z 0-9 -)</label><input id="bg_slug" value="${esc(p.slug)}" placeholder="lease-registration-guide"></div></div>
-     <div class="grid-2"><div><label class="lb">Tag</label><input id="bg_tag" value="${esc(p.tag)}" placeholder="Legal"></div><div><label class="lb">Cover emoji</label><input id="bg_cover" value="${esc(p.cover_emoji)}" placeholder="📰"></div></div>
+     <div class="grid-2"><div><label class="lb">Tag</label><input id="bg_tag" value="${esc(p.tag)}" placeholder="Legal"></div><div><label class="lb">Category</label><input id="bg_cat" value="${esc(p.category||'')}" placeholder="Guides"></div></div>
+     <div class="grid-2"><div><label class="lb">Author</label><input id="bg_author" value="${esc(p.author||'')}" placeholder="KRTaker Team"></div><div><label class="lb">Cover emoji</label><input id="bg_cover" value="${esc(p.cover_emoji)}" placeholder="📰"></div></div>
+     <div><label class="lb">Cover image URL</label><input id="bg_coverimg" value="${esc(p.cover_image||'')}" placeholder="https://…/cover.jpg"></div>
      <div class="grid-2"><div><label class="lb">Read time (min)</label><input id="bg_read" type="number" min="1" max="120" value="${p.read_min||5}"></div><div><label class="lb">Status</label><select id="bg_status"><option value="draft" ${p.status==='draft'?'selected':''}>🔴 draft</option><option value="published" ${p.status==='published'?'selected':''}>🟢 published</option></select></div></div>
      <div><label class="lb">Excerpt (card + SEO description)</label><textarea id="bg_excerpt" rows="2">${esc(p.excerpt)}</textarea></div>
+     <div class="grid-2"><div><label class="lb">Meta title (SEO — 50–60 chars)</label><input id="bg_metat" value="${esc(p.meta_title||'')}"></div><div><label class="lb">Meta description (SEO — 150–160 chars)</label><input id="bg_metad" value="${esc(p.meta_desc||'')}"></div></div>
      <div><label class="lb">Body (HTML — h2 / p / ul / ol / b allowed)</label><textarea id="bg_body" rows="12" placeholder="<p>Start writing…</p>">${esc(p.body)}</textarea></div>
      <div class="c-sub" style="font-size:10.5px">Published posts appear on the blog index automatically and are served at https://krtaker.com/blog/&lt;slug&gt; with full SEO meta + JSON-LD. Drafts stay hidden.</div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="blogSave(${id})">💾 Save</button></div>`);
 }
 async function blogSave(id){
-  const d=await admin({action:'blog-save',id,slug:$('bg_slug').value.trim(),title:$('bg_title').value.trim(),tag:$('bg_tag').value.trim(),cover_emoji:$('bg_cover').value.trim(),read_min:$('bg_read').value,status:$('bg_status').value,excerpt:$('bg_excerpt').value,body:$('bg_body').value});
+  const d=await admin({action:'blog-save',id,slug:$('bg_slug').value.trim(),title:$('bg_title').value.trim(),tag:$('bg_tag').value.trim(),cover_emoji:$('bg_cover').value.trim(),read_min:$('bg_read').value,status:$('bg_status').value,excerpt:$('bg_excerpt').value,body:$('bg_body').value,author:$('bg_author').value.trim(),meta_title:$('bg_metat').value.trim(),meta_desc:$('bg_metad').value.trim(),cover_image:$('bg_coverimg').value.trim(),category:$('bg_cat').value.trim()});
   if(d.ok){toast((d.status==='published'?'Published':'Saved')+' — /blog/'+d.slug,'ok');closeDrawer();renderBlog();}else toast(d.error||'Failed','error');
+}
+function blogDetail(id){
+  const p=BLOG.list.find(x=>x.id===id);if(!p)return;
+  detDrawer('📝','Post #'+id,p,{
+    title:'Title',slug:'Slug',tag:'Tag',category:'Category',
+    author:'Author',read_min:'Read time',status:'Status',
+    cover_emoji:'Cover emoji',cover_image:'Cover image',
+    meta_title:'Meta title',meta_desc:'Meta description',
+    excerpt:'Excerpt',created_at:'Created',updated_at:'Updated'});
 }
 async function blogDelete(id){
   if(!confirm('Delete this post?'))return;
@@ -926,7 +948,7 @@ async function renderPackages(){
     filters:[],
     sortable:['code','name','price','seats','subscribers'],
     head:st=>`<tr>${tblTh('pkgs','Code','code',st)}${tblTh('pkgs','Package','name',st)}${tblTh('pkgs','Price','price',st)}${tblTh('pkgs','Seats','seats',st)}<th>Modules</th>${tblTh('pkgs','Subscribers','subscribers',st)}<th></th></tr>`,
-    row:p=>`<tr data-gsid="packages-${esc(p.code)}"><td>${esc(p.code)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.tag||'')}</div></td><td class="c-sub">${money(p.price)}/mo</td><td>${p.seats||1}</td><td class="c-sub">${(p.modules||{}).owner?Object.keys(p.modules).length+' roles · '+(p.modules.owner||[]).length+' owner mods':Object.keys(p.modules||{}).length+' roles'}</td><td>${p.subscribers||0}</td><td><div class="row-actions"><button class="btn-ghost" onclick="packageForm('${esc(p.code)}')">✎</button><button class="btn-ghost" onclick="packageMatrix('${esc(p.code)}')">🧩</button><button class="btn-ghost" onclick="packageLimits('${esc(p.code)}')">📏</button><button class="btn-ghost" onclick="packageAssign('${esc(p.code)}')">👥</button><button class="btn-ghost" style="color:var(--danger)" onclick="packageDelete('${esc(p.code)}')">🗑</button></div></td></tr>`,
+    row:p=>`<tr data-gsid="packages-${esc(p.code)}"><td>${esc(p.code)}</td><td><div class="c-name">${esc(p.name)}</div><div class="c-sub">${esc(p.tag||'')}${p.popular?' · ⭐ popular':''}</div></td><td class="c-sub">${money(p.price)}/mo</td><td>${p.seats||1}</td><td class="c-sub">${(p.modules||{}).owner?Object.keys(p.modules).length+' roles · '+(p.modules.owner||[]).length+' owner mods':Object.keys(p.modules||{}).length+' roles'}</td><td>${p.subscribers||0}</td><td><div class="row-actions"><button class="btn-ghost" onclick="packageDetail('${esc(p.code)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button><button class="btn-ghost" onclick="packageForm('${esc(p.code)}')">✎</button><button class="btn-ghost" onclick="packageMatrix('${esc(p.code)}')">🧩</button><button class="btn-ghost" onclick="packageLimits('${esc(p.code)}')">📏</button><button class="btn-ghost" onclick="packageAssign('${esc(p.code)}')">👥</button><button class="btn-ghost" style="color:var(--danger)" onclick="packageDelete('${esc(p.code)}')">🗑</button></div></td></tr>`,
     empty:'<tr><td colspan="7"><div class="empty">No packages yet.</div></td></tr>'
   };
   tblReg('pkgs',cfg);
@@ -936,18 +958,30 @@ async function renderPackages(){
   if(foc&&foc.payload&&foc.payload.code)gsHighlight('[data-gsid="packages-'+esc(foc.payload.code)+'"]');
 }
 function packageForm(code){
-  const p=code?PKG.list.find(x=>x.code===code):{code:'',name:'',price:0,seats:1,tag:'',features:[]};
+  const p=code?PKG.list.find(x=>x.code===code):{code:'',name:'',price:0,seats:1,tag:'',features:[],description:'',billing_cycle:'monthly',trial_days:0,popular:0,sort_order:0,color:''};
   openDrawer(code?'Edit package — '+code:'New package',
     `<div class="frm"><div class="grid-2"><div><label class="lb">Code (a-z, 0-9, _)</label><input id="pk_code" value="${esc(p.code)}" ${code?'disabled':''}></div><div><label class="lb">Name</label><input id="pk_name" value="${esc(p.name)}"></div></div>
      <div class="grid-2"><div><label class="lb">Price (৳/month)</label><input id="pk_price" type="number" value="${p.price}"></div><div><label class="lb">Seats</label><input id="pk_seats" type="number" value="${p.seats||1}"></div></div>
      <div><label class="lb">Tagline</label><input id="pk_tag" value="${esc(p.tag||'')}"></div>
+     <div><label class="lb">Description</label><textarea id="pk_desc" rows="2" placeholder="What is this plan for?">${esc(p.description||'')}</textarea></div>
+     <div class="grid-2"><div><label class="lb">Billing cycle</label><select id="pk_cycle"><option value="monthly" ${p.billing_cycle==='monthly'?'selected':''}>Monthly</option><option value="quarterly" ${p.billing_cycle==='quarterly'?'selected':''}>Quarterly</option><option value="yearly" ${p.billing_cycle==='yearly'?'selected':''}>Yearly</option></select></div><div><label class="lb">Trial days</label><input id="pk_trial" type="number" min="0" value="${p.trial_days||0}"></div></div>
+     <div class="grid-2"><div><label class="lb">Badge color</label><input id="pk_color" type="color" value="${p.color||'#2F80ED'}" style="height:38px;padding:2px"></div><div><label class="lb">Sort order</label><input id="pk_sort" type="number" value="${p.sort_order||0}"></div></div>
+     <div><label class="lb">Popular (highlight on pricing)</label><select id="pk_popular"><option value="1" ${p.popular?'selected':''}>⭐ Yes</option><option value="0" ${!p.popular?'selected':''}>No</option></select></div>
      <div><label class="lb">Features (one per line)</label><textarea id="pk_features">${esc((p.features||[]).join('\n'))}</textarea></div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="packageSave('${esc(code||'')}')">💾 Save</button></div>`);
 }
 async function packageSave(code){
   const features=$('pk_features').value.split('\n').map(s=>s.trim()).filter(Boolean);
-  const d=await api('app-packages',{action:'save',code:code||$('pk_code').value.trim().toLowerCase(),name:$('pk_name').value.trim(),price:+$('pk_price').value||0,seats:+$('pk_seats').value||1,tag:$('pk_tag').value.trim(),features});
+  const d=await api('app-packages',{action:'save',code:code||$('pk_code').value.trim().toLowerCase(),name:$('pk_name').value.trim(),price:+$('pk_price').value||0,seats:+$('pk_seats').value||1,tag:$('pk_tag').value.trim(),features,description:$('pk_desc').value.trim(),billing_cycle:$('pk_cycle').value,trial_days:+$('pk_trial').value||0,popular:+$('pk_popular').value||0,sort_order:+$('pk_sort').value||0,color:$('pk_color').value});
   if(d.ok){toast('Package saved','ok');closeDrawer();renderPackages();}else toast(d.error||'Failed','error');
+}
+function packageDetail(code){
+  const p=PKG.list.find(x=>x.code===code);if(!p)return;
+  detDrawer('📦','Package '+code,p,{
+    code:'Code',name:'Name',tag:'Tagline',description:'Description',
+    price:'Price (৳/mo)',billing_cycle:'Billing cycle',trial_days:'Trial days',
+    seats:'Seats',popular:'Popular',sort_order:'Sort order',color:'Badge color',
+    subscribers:'Subscribers',features:'Features'});
 }
 async function packageDelete(code){
   if(!confirm('Delete package '+code+'?'))return;
@@ -1025,15 +1059,19 @@ async function renderUsers(){
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="users-'+foc.payload.id+'"]');
 }
 function userForm(id){
-  const u=id?USRS.find(x=>x.id===id):{id:0,name:'',email:'',role:'staff',dept:'',active:1};
+  const u=id?USRS.find(x=>x.id===id):{id:0,name:'',email:'',role:'staff',dept:'',active:1,phone:'',title:'',employee_id:'',joined_at:'',address:'',notes:''};
   openDrawer(id?'Edit user #'+id:'New system user',
     `<div class="frm"><div class="grid-2"><div><label class="lb">Name</label><input id="us_name" value="${esc(u.name)}"></div><div><label class="lb">Email</label><input id="us_email" value="${esc(u.email)}"></div></div>
      <div class="grid-2"><div><label class="lb">Role</label><select id="us_role">${['superadmin','owner','manager','svc_mgr','legal','crm','accountant','hr','tenant','partner'].map(r=>`<option ${u.role===r?'selected':''}>${r}</option>`).join('')}</select></div><div><label class="lb">Dept</label><input id="us_dept" value="${esc(u.dept||'')}"></div></div>
-     <div class="grid-2"><div><label class="lb">${id?'New password (blank = keep)':'Password'}</label><input id="us_pass" type="password" placeholder="••••••"></div><div><label class="lb">Active</label><select id="us_active"><option value="1" ${u.active?'selected':''}>Active</option><option value="0" ${!u.active?'selected':''}>Suspended</option></select></div></div></div>`,
+     <div class="grid-2"><div><label class="lb">Title / designation</label><input id="us_title" value="${esc(u.title||'')}" placeholder="Senior Accountant"></div><div><label class="lb">Employee ID</label><input id="us_eid" value="${esc(u.employee_id||'')}" placeholder="EMP-0042"></div></div>
+     <div class="grid-2"><div><label class="lb">Phone</label><input id="us_phone" value="${esc(u.phone||'')}"></div><div><label class="lb">Joined (YYYY-MM-DD)</label><input id="us_joined" value="${esc(u.joined_at||'')}" placeholder="2026-01-15"></div></div>
+     <div><label class="lb">Address</label><input id="us_address" value="${esc(u.address||'')}" placeholder="House, road, area"></div>
+     <div class="grid-2"><div><label class="lb">${id?'New password (blank = keep)':'Password'}</label><input id="us_pass" type="password" placeholder="••••••"></div><div><label class="lb">Active</label><select id="us_active"><option value="1" ${u.active?'selected':''}>Active</option><option value="0" ${!u.active?'selected':''}>Suspended</option></select></div></div>
+     <div><label class="lb">Internal notes</label><textarea id="us_notes">${esc(u.notes||'')}</textarea></div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="userSave(${id})">💾 Save</button></div>`);
 }
 async function userSave(id){
-  const d=await admin({action:'user-save',id,name:$('us_name').value.trim(),email:$('us_email').value.trim(),role:$('us_role').value,dept:$('us_dept').value.trim(),password:$('us_pass').value,active:+$('us_active').value});
+  const d=await admin({action:'user-save',id,name:$('us_name').value.trim(),email:$('us_email').value.trim(),role:$('us_role').value,dept:$('us_dept').value.trim(),password:$('us_pass').value,active:+$('us_active').value,phone:$('us_phone').value.trim(),title:$('us_title').value.trim(),employee_id:$('us_eid').value.trim(),joined_at:$('us_joined').value.trim(),address:$('us_address').value.trim(),notes:$('us_notes').value.trim()});
   if(d.ok){toast('User saved','ok');closeDrawer();renderUsers();}else toast(d.error||'Failed','error');
 }
 async function userDelete(id){
@@ -1065,14 +1103,18 @@ async function renderProviders(){
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="providers-'+esc(foc.payload.id)+'"]');
 }
 function providerForm(id){
-  const p=id?PROVS.find(x=>x.id===id):{id:'',name:'',trade:'',status:'Active',sub_email:''};
+  const p=id?PROVS.find(x=>x.id===id):{id:'',name:'',trade:'',status:'Active',sub_email:'',phone:'',email:'',address:'',city:'',hourly_rate:0,specialties:'',notes:''};
   openDrawer(id?'Edit provider — '+id:'New service provider',
     `<div class="frm"><div class="grid-2"><div><label class="lb">Name</label><input id="pv_name" value="${esc(p.name)}"></div><div><label class="lb">Trade</label><input id="pv_trade" value="${esc(p.trade||'')}"></div></div>
-     <div class="grid-2"><div><label class="lb">Status</label><select id="pv_status"><option ${p.status==='Active'?'selected':''}>Active</option><option ${p.status==='Inactive'?'selected':''}>Inactive</option></select></div><div><label class="lb">Subscriber email (portal)</label><input id="pv_email" value="${esc(p.sub_email||'')}"></div></div></div>`,
+     <div class="grid-2"><div><label class="lb">Status</label><select id="pv_status"><option ${p.status==='Active'?'selected':''}>Active</option><option ${p.status==='Inactive'?'selected':''}>Inactive</option></select></div><div><label class="lb">Subscriber email (portal)</label><input id="pv_email" value="${esc(p.sub_email||'')}"></div></div>
+     <div class="grid-2"><div><label class="lb">Phone</label><input id="pv_phone" value="${esc(p.phone||'')}"></div><div><label class="lb">Email</label><input id="pv_email2" value="${esc(p.email||'')}"></div></div>
+     <div class="grid-2"><div><label class="lb">Address</label><input id="pv_address" value="${esc(p.address||'')}"></div><div><label class="lb">City</label><input id="pv_city" value="${esc(p.city||'')}"></div></div>
+     <div class="grid-2"><div><label class="lb">Hourly rate (৳)</label><input id="pv_rate" type="number" value="${p.hourly_rate||0}"></div><div><label class="lb">Specialties (comma separated)</label><input id="pv_spec" value="${esc(p.specialties||'')}" placeholder="AC repair, wiring"></div></div>
+     <div><label class="lb">Notes</label><textarea id="pv_notes">${esc(p.notes||'')}</textarea></div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="providerSave('${esc(id||'')}')">💾 Save</button></div>`);
 }
 async function providerSave(id){
-  const d=await admin({action:'provider-save',id,name:$('pv_name').value.trim(),trade:$('pv_trade').value.trim(),status:$('pv_status').value,sub_email:$('pv_email').value.trim()});
+  const d=await admin({action:'provider-save',id,name:$('pv_name').value.trim(),trade:$('pv_trade').value.trim(),status:$('pv_status').value,sub_email:$('pv_email').value.trim(),phone:$('pv_phone').value.trim(),email:$('pv_email2').value.trim(),address:$('pv_address').value.trim(),city:$('pv_city').value.trim(),hourly_rate:+$('pv_rate').value||0,specialties:$('pv_spec').value.trim(),notes:$('pv_notes').value.trim()});
   if(d.ok){toast('Provider saved','ok');closeDrawer();renderProviders();}else toast(d.error||'Failed','error');
 }
 /* ── Web CMS (SA1-fullsite-v3 redesign: collapsible sections, dirty tracking, publish/draft,
@@ -1676,24 +1718,38 @@ function onbToggleHtml(kind){
   return `<button class="kb-view-btn ${v==='table'?'on':''}" onclick="onbSetView('${kind}','table')">📋 Table</button><button class="kb-view-btn ${v==='kanban'?'on':''}" onclick="onbSetView('${kind}','kanban')">🪟 Kanban</button>`;
 }
 function onbSetView(kind,mode){ONB_V[kind]=mode;renderOnboarding();}
+/* ── SA1 v16: colour-coded kanban stages ── */
+const KB_COLORS={
+  'New':{c:'#3B82F6',t:'rgba(59,130,246,.10)'},'Contacted':{c:'#06B6D4',t:'rgba(6,182,212,.10)'},
+  'Qualified':{c:'#8B5CF6',t:'rgba(139,92,246,.10)'},'Viewing':{c:'#F59E0B',t:'rgba(245,158,11,.12)'},
+  'Applied':{c:'#10B981',t:'rgba(16,185,129,.10)'},'Negotiation':{c:'#F97316',t:'rgba(249,115,22,.12)'},
+  'Won':{c:'#059669',t:'rgba(5,150,105,.12)'},'Lost':{c:'#EF4444',t:'rgba(239,68,68,.10)'},
+  'Started':{c:'#3B82F6',t:'rgba(59,130,246,.10)'},'Submitted':{c:'#F59E0B',t:'rgba(245,158,11,.12)'},
+  'Verified':{c:'#10B981',t:'rgba(16,185,129,.10)'},'Approved':{c:'#059669',t:'rgba(5,150,105,.12)'},
+  'Rejected':{c:'#EF4444',t:'rgba(239,68,68,.10)'}
+};
+function kbColor(st){return KB_COLORS[st]||{c:'#6B7280',t:'rgba(107,114,128,.10)'};}
 function kanbanHtml(kind){
   const pipe=kind==='l'?LEAD_PIPE:ONB_PIPE;
   const arr=kind==='l'?ONB.leads:ONB.onboarding;
   const def=kind==='l'?'New':'Started';
   const cols=pipe.map(st=>{
     const items=arr.filter(x=>String(x.status||def)===st);
-    return `<div class="kb-col" data-status="${esc(st)}" ondragover="kbOver(event)" ondragleave="kbLeave(event)" ondrop="kbDrop(event,'${kind}','${esc(st)}')"><div class="kb-h">${esc(st)}<span class="kb-n">${items.length}</span></div><div class="kb-body">${items.map(x=>kind==='l'?kbLeadCard(x):kbOnbCard(x)).join('')||'<div class="kb-empty">—</div>'}</div></div>`;
+    const col=kbColor(st);
+    return `<div class="kb-col" data-status="${esc(st)}" style="border-top:3px solid ${col.c}" ondragover="kbOver(event)" ondragleave="kbLeave(event)" ondrop="kbDrop(event,'${kind}','${esc(st)}')"><div class="kb-h" style="background:${col.t};color:${col.c}">${esc(st)}<span class="kb-n" style="background:${col.t};color:${col.c}">${items.length}</span></div><div class="kb-body">${items.map(x=>kind==='l'?kbLeadCard(x):kbOnbCard(x)).join('')||'<div class="kb-empty">—</div>'}</div></div>`;
   }).join('');
   const rest=arr.filter(x=>!pipe.includes(String(x.status||def)));
-  const restCol=rest.length?`<div class="kb-col" data-status="Other"><div class="kb-h">Other<span class="kb-n">${rest.length}</span></div><div class="kb-body">${rest.map(x=>kind==='l'?kbLeadCard(x):kbOnbCard(x)).join('')}</div></div>`:'';
+  const restCol=rest.length?`<div class="kb-col" data-status="Other" style="border-top:3px solid #6B7280"><div class="kb-h" style="background:rgba(107,114,128,.10);color:#6B7280">Other<span class="kb-n" style="background:rgba(107,114,128,.10);color:#6B7280">${rest.length}</span></div><div class="kb-body">${rest.map(x=>kind==='l'?kbLeadCard(x):kbOnbCard(x)).join('')}</div></div>`:'';
   return `<div class="kb-wrap">${cols}${restCol}</div>`;
 }
 function kbLeadCard(x){
   const days=Math.floor((Date.now()-new Date(x.ts||Date.now()).getTime())/86400000);
-  return `<div class="kb-card" draggable="true" ondragstart="kbDragStart(event,'l','${esc(x.id)}')" ondragend="kbDragEnd(event)"><div class="kb-card-h"><b>${esc(x.name)}</b>${days>=0?`<span class="kb-age">${days}d</span>`:''}</div><div class="kb-card-s">${esc(x.prop||'')}${x.phone?' · '+esc(x.phone):''}</div><div class="kb-card-tags"><span class="kb-tag">${esc(x.source||'listing')}</span>${x.assigned_to?`<span class="kb-tag kb-user">👤 ${esc(x.assigned_to)}</span>`:''}</div><div class="kb-card-acts"><button class="btn-ghost" onclick="leadDetail('${esc(x.id)}')" title="View">👁</button><button class="btn-ghost" onclick="leadForm('${esc(x.id)}')" title="Edit">✎</button><button class="btn-ghost" onclick="leadConvert('${esc(x.id)}')" title="Convert to onboarding application">🔄</button><button class="btn-ghost" onclick="leadAdvance('${esc(x.id)}')" title="Next stage">➡️</button><button class="btn-ghost" style="color:var(--danger)" onclick="leadDelete('${esc(x.id)}')" title="Delete">🗑</button></div></div>`;
+  const col=kbColor(x.status||'New');
+  return `<div class="kb-card" draggable="true" style="border-left:3px solid ${col.c}" ondragstart="kbDragStart(event,'l','${esc(x.id)}')" ondragend="kbDragEnd(event)"><div class="kb-card-h"><b>${esc(x.name)}</b>${days>=0?`<span class="kb-age">${days}d</span>`:''}</div><div class="kb-card-s">${esc(x.prop||'')}${x.phone?' · '+esc(x.phone):''}</div><div class="kb-card-tags"><span class="kb-tag">${esc(x.source||'listing')}</span>${x.assigned_to?`<span class="kb-tag kb-user">👤 ${esc(x.assigned_to)}</span>`:''}</div><div class="kb-card-acts"><button class="btn-ghost" onclick="leadDetail('${esc(x.id)}')" title="View">👁</button><button class="btn-ghost" onclick="leadForm('${esc(x.id)}')" title="Edit">✎</button><button class="btn-ghost" onclick="leadConvert('${esc(x.id)}')" title="Convert to onboarding application">🔄</button><button class="btn-ghost" onclick="leadAdvance('${esc(x.id)}')" title="Next stage">➡️</button><button class="btn-ghost" style="color:var(--danger)" onclick="leadDelete('${esc(x.id)}')" title="Delete">🗑</button></div></div>`;
 }
 function kbOnbCard(x){
-  return `<div class="kb-card" draggable="true" ondragstart="kbDragStart(event,'o','${esc(x.id)}')" ondragend="kbDragEnd(event)"><div class="kb-card-h"><b>${esc(x.name||x.applicant||x.id)}</b></div><div class="kb-card-s">${esc(x.prop||'')}${x.unit?' · '+esc(x.unit):''}${x.rent?` · ${money(x.rent)}`:''}</div><div class="kb-card-tags">${x.nid?`<span class="kb-tag">🪪 NID</span>`:''}${x.verified_by?`<span class="kb-tag kb-ok">✓ ${esc(x.verified_by)}</span>`:''}</div><div class="kb-card-acts"><button class="btn-ghost" onclick="onbDetail('${esc(x.id)}')" title="View">👁</button><button class="btn-ghost" onclick="onbForm('${esc(x.id)}')" title="Edit">✎</button><button class="btn-ghost" onclick="onbAdvance('${esc(x.id)}')" title="Next stage">➡️</button><button class="btn-ghost" style="color:var(--danger)" onclick="onbDelete('${esc(x.id)}')" title="Delete">🗑</button></div></div>`;
+  const col=kbColor(x.status||'Started');
+  return `<div class="kb-card" draggable="true" style="border-left:3px solid ${col.c}" ondragstart="kbDragStart(event,'o','${esc(x.id)}')" ondragend="kbDragEnd(event)"><div class="kb-card-h"><b>${esc(x.name||x.applicant||x.id)}</b></div><div class="kb-card-s">${esc(x.prop||'')}${x.unit?' · '+esc(x.unit):''}${x.rent?` · ${money(x.rent)}`:''}</div><div class="kb-card-tags">${x.nid?`<span class="kb-tag">🪪 NID</span>`:''}${x.verified_by?`<span class="kb-tag kb-ok">✓ ${esc(x.verified_by)}</span>`:''}</div><div class="kb-card-acts"><button class="btn-ghost" onclick="onbDetail('${esc(x.id)}')" title="View">👁</button><button class="btn-ghost" onclick="onbForm('${esc(x.id)}')" title="Edit">✎</button><button class="btn-ghost" onclick="onbAdvance('${esc(x.id)}')" title="Next stage">➡️</button><button class="btn-ghost" style="color:var(--danger)" onclick="onbDelete('${esc(x.id)}')" title="Delete">🗑</button></div></div>`;
 }
 let KB_DRAG=null;
 function kbDragStart(e,kind,id){KB_DRAG={kind,id};try{e.dataTransfer.setData('text/plain',id);}catch(_){}
@@ -1737,12 +1793,13 @@ function onbAdvance(id){
   onbStatus(id,ONB_PIPE[i+1]);
 }
 function leadForm(id){
-  const x=id?ONB.leads.find(y=>String(y.id)===String(id)):{id:'',name:'',phone:'',email:'',prop:'',source:'listing',message:'',status:'New',assigned_to:'',notes:''};
+  const x=id?ONB.leads.find(y=>String(y.id)===String(id)):{id:'',name:'',phone:'',email:'',prop:'',source:'listing',message:'',status:'New',assigned_to:'',notes:'',budget:0,move_in:''};
   openDrawer(id?'Edit lead '+id:'New lead',
     `<div class="frm">
       <div class="grid-2"><div><label class="lb">Name</label><input id="lf_name" value="${esc(x.name)}"></div><div><label class="lb">Phone</label><input id="lf_phone" value="${esc(x.phone)}"></div></div>
       <div class="grid-2"><div><label class="lb">Email</label><input id="lf_email" value="${esc(x.email)}"></div><div><label class="lb">Property (P-XXX)</label><input id="lf_prop" value="${esc(x.prop)}"></div></div>
       <div class="grid-2"><div><label class="lb">Source</label><select id="lf_source">${['listing','referral','website','facebook','instagram','walk-in','event','agent','cold-call','other'].map(s=>`<option ${x.source===s?'selected':''}>${s}</option>`).join('')}</select></div><div><label class="lb">Status</label><select id="lf_status">${LEAD_PIPE.map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></div></div>
+      <div class="grid-2"><div><label class="lb">Budget (৳/month)</label><input id="lf_budget" type="number" value="${x.budget||''}" placeholder="25000"></div><div><label class="lb">Wants to move in</label><input id="lf_movein" value="${esc(x.move_in||'')}" placeholder="2026-09-01"></div></div>
       <div><label class="lb">Assigned to</label><input id="lf_assigned" value="${esc(x.assigned_to)}" placeholder="Team member"></div>
       <div><label class="lb">Message</label><textarea id="lf_msg" placeholder="Interested in…">${esc(x.message)}</textarea></div>
       <div><label class="lb">Internal notes</label><textarea id="lf_notes">${esc(x.notes)}</textarea></div>
@@ -1750,7 +1807,7 @@ function leadForm(id){
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="leadSave('${esc(id||'')}')">💾 Save</button></div>`);
 }
 async function leadSave(id){
-  const d=await admin({action:'lead-save',id,name:$('lf_name').value.trim(),phone:$('lf_phone').value.trim(),email:$('lf_email').value.trim(),prop:$('lf_prop').value.trim(),source:$('lf_source').value,message:$('lf_msg').value.trim(),status:$('lf_status').value,assigned_to:$('lf_assigned').value.trim(),notes:$('lf_notes').value.trim()});
+  const d=await admin({action:'lead-save',id,name:$('lf_name').value.trim(),phone:$('lf_phone').value.trim(),email:$('lf_email').value.trim(),prop:$('lf_prop').value.trim(),source:$('lf_source').value,message:$('lf_msg').value.trim(),status:$('lf_status').value,assigned_to:$('lf_assigned').value.trim(),notes:$('lf_notes').value.trim(),budget:+$('lf_budget').value||0,move_in:$('lf_movein').value.trim()});
   if(d.ok){toast('Lead saved','ok');closeDrawer();renderOnboarding();}else toast(d.error||'Failed','error');
 }
 function leadDelete(id){
@@ -1766,21 +1823,23 @@ function leadConvert(id){
   });
 }
 function onbForm(id){
-  const x=id?ONB.onboarding.find(y=>String(y.id)===String(id)):{id:'',name:'',email:'',phone:'',nid:'',unit:'',prop:'',rent:'',adv:'',months:12,start:'',status:'Started',notes:'',verified_by:''};
+  const x=id?ONB.onboarding.find(y=>String(y.id)===String(id)):{id:'',name:'',email:'',phone:'',nid:'',unit:'',prop:'',rent:'',adv:'',months:12,start:'',status:'Started',notes:'',verified_by:'',occupation:'',employer:'',reference:''};
   openDrawer(id?'Edit application '+id:'New onboarding application',
     `<div class="frm">
       <div class="grid-2"><div><label class="lb">Applicant name</label><input id="of_name" value="${esc(x.name)}"></div><div><label class="lb">Phone</label><input id="of_phone" value="${esc(x.phone)}"></div></div>
       <div class="grid-2"><div><label class="lb">Email</label><input id="of_email" value="${esc(x.email)}"></div><div><label class="lb">NID</label><input id="of_nid" value="${esc(x.nid)}"></div></div>
-      <div class="grid-2"><div><label class="lb">Property (P-XXX)</label><input id="of_prop" value="${esc(x.prop)}"></div><div><label class="lb">Unit</label><input id="of_unit" value="${esc(x.unit)}"></div></div>
+      <div class="grid-2"><div><label class="lb">Occupation</label><input id="of_occ" value="${esc(x.occupation||'')}" placeholder="Software Engineer"></div><div><label class="lb">Employer</label><input id="of_emp" value="${esc(x.employer||'')}" placeholder="Company name"></div></div>
+      <div class="grid-2"><div><label class="lb">Reference (who referred?)</label><input id="of_ref" value="${esc(x.reference||'')}" placeholder="Agent / previous tenant"></div><div><label class="lb">Property (P-XXX)</label><input id="of_prop" value="${esc(x.prop)}"></div></div>
+      <div class="grid-2"><div><label class="lb">Unit</label><input id="of_unit" value="${esc(x.unit)}"></div><div><label class="lb">Start date</label><input id="of_start" value="${esc(x.start)}" placeholder="2026-09-01"></div></div>
       <div class="grid-2"><div><label class="lb">Rent (৳/month)</label><input id="of_rent" type="number" value="${x.rent||''}"></div><div><label class="lb">Advance (৳)</label><input id="of_adv" type="number" value="${x.adv||''}"></div></div>
-      <div class="grid-2"><div><label class="lb">Lease months</label><input id="of_months" type="number" value="${x.months||12}"></div><div><label class="lb">Start date</label><input id="of_start" value="${esc(x.start)}" placeholder="2026-09-01"></div></div>
-      <div class="grid-2"><div><label class="lb">Status</label><select id="of_status">${ONB_PIPE.map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></div><div><label class="lb">Verified by</label><input id="of_verified" value="${esc(x.verified_by)}" placeholder="Empty keeps current"></div></div>
+      <div class="grid-2"><div><label class="lb">Lease months</label><input id="of_months" type="number" value="${x.months||12}"></div><div><label class="lb">Status</label><select id="of_status">${ONB_PIPE.map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></div></div>
+      <div class="grid-2"><div><label class="lb">Verified by</label><input id="of_verified" value="${esc(x.verified_by)}" placeholder="Empty keeps current"></div><div class="c-sub" style="align-self:center">Setting Verified by stamps verified_at</div></div>
       <div><label class="lb">Notes</label><textarea id="of_notes">${esc(x.notes)}</textarea></div>
     </div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="onbSave('${esc(id||'')}')">💾 Save</button></div>`);
 }
 async function onbSave(id){
-  const d=await admin({action:'onboard-save',id,name:$('of_name').value.trim(),email:$('of_email').value.trim(),phone:$('of_phone').value.trim(),nid:$('of_nid').value.trim(),unit:$('of_unit').value.trim(),prop:$('of_prop').value.trim(),rent:+$('of_rent').value||0,adv:+$('of_adv').value||0,months:+$('of_months').value||12,start:$('of_start').value.trim(),status:$('of_status').value,notes:$('of_notes').value.trim(),verified_by:$('of_verified').value.trim()});
+  const d=await admin({action:'onboard-save',id,name:$('of_name').value.trim(),email:$('of_email').value.trim(),phone:$('of_phone').value.trim(),nid:$('of_nid').value.trim(),unit:$('of_unit').value.trim(),prop:$('of_prop').value.trim(),rent:+$('of_rent').value||0,adv:+$('of_adv').value||0,months:+$('of_months').value||12,start:$('of_start').value.trim(),status:$('of_status').value,notes:$('of_notes').value.trim(),verified_by:$('of_verified').value.trim(),occupation:$('of_occ').value.trim(),employer:$('of_emp').value.trim(),reference:$('of_ref').value.trim()});
   if(d.ok){toast('Application saved','ok');closeDrawer();renderOnboarding();}else toast(d.error||'Failed','error');
 }
 function onbDelete(id){
@@ -1788,18 +1847,19 @@ function onbDelete(id){
   admin({action:'onboard-delete',id}).then(d=>{if(d.ok){toast('Application deleted','ok');renderOnboarding();}else toast(d.error||'Failed','error');});
 }
 function refForm(id){
-  const x=id?ONB.referrals.find(y=>String(y.id)===String(id)):{id:'',code:'',user_email:'',role:'owner',referred_name:'',referred_email:'',reward:0,status:'Pending'};
+  const x=id?ONB.referrals.find(y=>String(y.id)===String(id)):{id:'',code:'',user_email:'',role:'owner',referred_name:'',referred_email:'',referred_phone:'',reward:0,status:'Pending'};
   openDrawer(id?'Edit referral '+id:'New referral',
     `<div class="frm">
       <div class="grid-2"><div><label class="lb">Referral code</label><input id="rf_code" value="${esc(x.code)}" placeholder="KRT-XXXX"></div><div><label class="lb">Referrer email</label><input id="rf_user" value="${esc(x.user_email)}"></div></div>
       <div class="grid-2"><div><label class="lb">Referred name</label><input id="rf_rname" value="${esc(x.referred_name)}"></div><div><label class="lb">Referred email</label><input id="rf_remail" value="${esc(x.referred_email)}"></div></div>
+      <div><label class="lb">Referred phone</label><input id="rf_rphone" value="${esc(x.referred_phone||'')}" placeholder="01700-000000"></div>
       <div class="grid-2"><div><label class="lb">Role</label><select id="rf_role">${['owner','manager','tenant','accountant','crm','hr','legal','svc_mgr','partner'].map(r=>`<option ${x.role===r?'selected':''}>${r}</option>`).join('')}</select></div><div><label class="lb">Reward (৳)</label><input id="rf_reward" type="number" value="${x.reward||0}"></div></div>
       <div><label class="lb">Status</label><select id="rf_status">${REF_PIPE.map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
     </div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="refSave('${esc(id||'')}')">💾 Save</button></div>`);
 }
 async function refSave(id){
-  const d=await admin({action:'referral-save',id,code:$('rf_code').value.trim(),user_email:$('rf_user').value.trim(),role:$('rf_role').value,referred_name:$('rf_rname').value.trim(),referred_email:$('rf_remail').value.trim(),reward:+$('rf_reward').value||0,status:$('rf_status').value});
+  const d=await admin({action:'referral-save',id,code:$('rf_code').value.trim(),user_email:$('rf_user').value.trim(),role:$('rf_role').value,referred_name:$('rf_rname').value.trim(),referred_email:$('rf_remail').value.trim(),referred_phone:$('rf_rphone').value.trim(),reward:+$('rf_reward').value||0,status:$('rf_status').value});
   if(d.ok){toast('Referral saved','ok');closeDrawer();renderOnboarding();}else toast(d.error||'Failed','error');
 }
 function refDelete(id){
@@ -1852,7 +1912,7 @@ async function renderPayments(){
     filters:[['type','Type'],['status','Status']],
     sortable:['id','type','name','status','updated_at'],
     head:st=>`<tr>${tblTh('ints','ID','id',st)}${tblTh('ints','Type','type',st)}${tblTh('ints','Name','name',st)}${tblTh('ints','Status','status',st)}${tblTh('ints','Updated','updated_at',st)}<th></th></tr>`,
-    row:i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`,
+    row:i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationDetail('${esc(i.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`,
     empty:'<tr><td colspan="6"><div class="empty">No integrations configured.</div></td></tr>'
   };
   tblReg('ints',cfg);
@@ -1888,17 +1948,24 @@ async function gatewaySave(code){
 }
 let INTS=[];
 function integrationForm(id){
-  const i=id?INTS.find(x=>x.id===id):{id:'',type:'third_party',name:'',enabled:0,config:{}};
+  const i=id?INTS.find(x=>x.id===id):{id:'',type:'third_party',name:'',enabled:0,config:{},description:''};
   openDrawer(id?'Edit integration — '+id:'New integration',
     `<div class="frm"><div class="grid-2"><div><label class="lb">ID (slug)</label><input id="in_id" value="${esc(i.id)}" ${id?'disabled':''}></div><div><label class="lb">Name</label><input id="in_name" value="${esc(i.name)}"></div></div>
      <div class="grid-2"><div><label class="lb">Type</label><select id="in_type">${['third_party','sms','email','ai','payment','analytics'].map(t=>`<option ${i.type===t?'selected':''}>${t}</option>`).join('')}</select></div><div><label class="lb">Enabled</label><select id="in_enabled"><option value="1" ${i.enabled?'selected':''}>Enabled</option><option value="0" ${!i.enabled?'selected':''}>Disabled</option></select></div></div>
+     <div><label class="lb">Description</label><input id="in_desc" value="${esc(i.description||'')}" placeholder="What does this integration do?"></div>
      <div><label class="lb">Config (JSON)</label><textarea id="in_config">${esc(JSON.stringify(i.config||{},null,1))}</textarea></div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="integrationSave('${esc(id||'')}')">💾 Save</button></div>`);
 }
 async function integrationSave(id){
   let cfg={};try{cfg=JSON.parse($('in_config').value||'{}')}catch(e){toast('Config JSON invalid','error');return}
-  const d=await admin({action:'integration-save',id:id||$('in_id').value.trim(),name:$('in_name').value.trim(),type:$('in_type').value,enabled:+$('in_enabled').value,config:cfg});
-  if(d.ok){toast('Integration saved','ok');closeDrawer();renderPayments();}else toast(d.error||'Failed','error');
+  const d=await admin({action:'integration-save',id:id||$('in_id').value.trim(),name:$('in_name').value.trim(),type:$('in_type').value,enabled:+$('in_enabled').value,config:cfg,description:$('in_desc').value.trim()});
+  if(d.ok){toast('Integration saved','ok');closeDrawer();if(STATE.view==='integrations')renderIntegrations();else renderPayments();}else toast(d.error||'Failed','error');
+}
+function integrationDetail(id){
+  const i=INTS.find(x=>x.id===id);if(!i)return;
+  detDrawer('🔌','Integration '+id,i,{
+    id:'ID',name:'Name',type:'Type',description:'Description',
+    status:'Status',enabled:'Enabled',config:'Config',updated_at:'Updated'});
 }
 async function integrationTest(id){
   const d=await admin({action:'integration-test',id});
@@ -1919,7 +1986,7 @@ async function renderFinance(){
     filters:[['kind','Kind']],
     sortable:['id','kind','label','amount','ts'],
     head:st=>`<tr>${tblTh('led','#','id',st)}${tblTh('led','Kind','kind',st)}${tblTh('led','Label','label',st)}${tblTh('led','Amount','amount',st)}<th>Method</th>${tblTh('led','When','ts',st)}<th></th></tr>`,
-    row:x=>`<tr data-gsid="finance-${x.id}"><td>${x.id}</td><td>${badge(x.kind)}</td><td class="c-name">${esc(x.label)}<div class="c-sub">${esc(x.cat)}${x.ref?' · '+esc(x.ref):''}</div></td><td style="font-weight:700">${money(x.amount)}</td><td class="c-sub">${esc(x.method||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,16))}</td><td><button class="btn-ghost" style="color:var(--danger)" onclick="ledgerDelete(${x.id})">🗑</button></td></tr>`,
+    row:x=>`<tr data-gsid="finance-${x.id}"><td>${x.id}</td><td>${badge(x.kind)}</td><td class="c-name">${esc(x.label)}<div class="c-sub">${esc(x.cat)}${x.ref?' · '+esc(x.ref):''}${x.payee?' · 👤 '+esc(x.payee):''}${x.note?'<div>'+esc(x.note)+'</div>':''}</div></td><td style="font-weight:700">${money(x.amount)}</td><td class="c-sub">${esc(x.method||'—')}</td><td class="c-sub">${esc((x.ts||'').slice(0,16))}</td><td><button class="btn-ghost" style="color:var(--danger)" onclick="ledgerDelete(${x.id})">🗑</button></td></tr>`,
     empty:'<tr><td colspan="7"><div class="empty">No ledger entries.</div></td></tr>'
   };
   tblReg('led',cfg);
@@ -1934,11 +2001,12 @@ function ledgerForm(){
     `<div class="frm"><div class="grid-2"><div><label class="lb">Kind</label><select id="le_kind"><option value="income">Income</option><option value="expense">Expense</option></select></div><div><label class="lb">Category</label><input id="le_cat" value="subscription"></div></div>
      <div><label class="lb">Label</label><input id="le_label" placeholder="e.g. Enterprise subscription — Rofiqul"></div>
      <div class="grid-2"><div><label class="lb">Amount (৳)</label><input id="le_amount" type="number" value="0"></div><div><label class="lb">Method</label><input id="le_method" placeholder="bKash / Bank / Cash"></div></div>
-     <div><label class="lb">Ref</label><input id="le_ref" placeholder="optional reference"></div></div>`,
+     <div class="grid-2"><div><label class="lb">Payee / payer</label><input id="le_payee" placeholder="Rofiqul Islam"></div><div><label class="lb">Ref</label><input id="le_ref" placeholder="optional reference"></div></div>
+     <div><label class="lb">Note</label><textarea id="le_note" rows="2" placeholder="optional internal note"></textarea></div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="ledgerSave()">💾 Add</button></div>`);
 }
 async function ledgerSave(){
-  const d=await admin({action:'ledger-add',kind:$('le_kind').value,cat:$('le_cat').value.trim()||'other',label:$('le_label').value.trim(),amount:+$('le_amount').value||0,method:$('le_method').value.trim(),ref:$('le_ref').value.trim()});
+  const d=await admin({action:'ledger-add',kind:$('le_kind').value,cat:$('le_cat').value.trim()||'other',label:$('le_label').value.trim(),amount:+$('le_amount').value||0,method:$('le_method').value.trim(),ref:$('le_ref').value.trim(),note:$('le_note').value.trim(),payee:$('le_payee').value.trim()});
   if(d.ok){toast('Ledger entry added','ok');closeDrawer();renderFinance();}else toast(d.error||'Failed','error');
 }
 async function ledgerDelete(id){
@@ -2103,6 +2171,7 @@ async function renderWebhooks(){
       <td><span class="badge ${h.active?'b-green':'b-gray'}" style="cursor:pointer" onclick="webhookToggle(${h.id})" title="Click to ${h.active?'pause':'enable'}">${h.active?'● active':'○ paused'}</span></td>
       <td class="c-sub">${h.last_at?`${lastOk?'✅':'❌'} HTTP ${h.last_status} · ${esc((h.last_at||'').slice(11,16))} UTC<br><span style="font-size:11px">${h.ok_count} ok / ${h.fail_count} fail</span>`:'— never'}</td>
       <td><div class="row-actions">
+        <button class="btn-ghost" onclick="webhookDetail(${h.id})" title="View details" data-tip="View details" data-tip-pos="left">👁</button>
         <button class="btn-ghost" onclick="webhookTest(${h.id})" title="Send test ping" data-tip="Send test ping" data-tip-pos="left">🧪</button>
         <button class="btn-ghost" onclick="webhookLogs(${h.id})" title="Delivery log" data-tip="Delivery log" data-tip-pos="left">📜</button>
         <button class="btn-ghost" onclick="webhookForm(${h.id})" title="Edit" data-tip="Edit" data-tip-pos="left">✎</button>
@@ -2118,17 +2187,19 @@ async function renderWebhooks(){
   tblDraw('wh',cfg);
 }
 function webhookForm(id){
-  const h=id?WH.hooks.find(x=>x.id===id):{id:0,label:'',tenant_id:0,url:'',events:[],active:1};
+  const h=id?WH.hooks.find(x=>x.id===id):{id:0,label:'',tenant_id:0,url:'',events:[],active:1,description:'',max_retries:3};
   const evs=(()=>{try{return JSON.parse(h.events||'[]')}catch(e){return[]}})();
   const subOpts=WH.subs.map(s=>`<option value="${s.id}" ${h.tenant_id===s.id?'selected':''}>${esc(s.name||s.email)} — ${esc(s.email)} (${esc(s.plan)})</option>`).join('');
   openDrawer(id?'Edit webhook #'+id:'New webhook',
     `<div class="frm"><div class="grid-2"><div><label class="lb">Label <span class="c-sub">(optional)</span></label><input id="wh_label" value="${esc(h.label)}" placeholder="My backend receiver"></div>
       <div><label class="lb">Subscriber <span class="c-sub">(optional)</span></label><select id="wh_tenant"><option value="0">🌐 Platform-wide</option>${subOpts}</select></div></div>
      <div><label class="lb">Endpoint URL</label><input id="wh_url" value="${esc(h.url)}" placeholder="https://your-server.com/krtaker-hook"></div>
+     <div><label class="lb">Description <span class="c-sub">(optional)</span></label><input id="wh_desc" value="${esc(h.description||'')}" placeholder="What does this receiver do?"></div>
      <div><label class="lb">Events</label><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:6px">${WH.events.map(e=>`<label style="display:flex;gap:8px;align-items:center;background:var(--bg-soft,#f4f6fb);border:1px solid var(--line,#e8ecf4);border-radius:8px;padding:8px 10px;cursor:pointer"><input type="checkbox" value="${esc(e.id)}" ${evs.includes(e.id)?'checked':''} onchange="whEvChk()">${e.ic} <span style="font-size:12.5px">${esc(e.label)}</span></label>`).join('')}</div></div>
-     <div style="display:flex;gap:18px;align-items:center;margin-top:14px"><label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="wh_active" ${h.active?'checked':''}> Enabled</label>
-       ${id?`<label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="wh_rotate"> 🔑 Rotate signing secret</label>`:''}
-       <span class="c-sub">Every POST is signed <code>X-KRTaker-Signature: sha256=…</code> (HMAC-SHA256 of the body)</span></div></div>`,
+     <div class="grid-2" style="margin-top:14px"><div><label class="lb">Max retries (0–20)</label><input id="wh_retry" type="number" min="0" max="20" value="${h.max_retries!=null?h.max_retries:3}"></div>
+      <div><label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-top:24px"><input type="checkbox" id="wh_active" ${h.active?'checked':''}> Enabled</label>
+      ${id?`<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-top:24px"><input type="checkbox" id="wh_rotate"> 🔑 Rotate signing secret</label>`:''}</div></div>
+     <div class="c-sub" style="font-size:11px">Every POST is signed <code>X-KRTaker-Signature: sha256=…</code> (HMAC-SHA256 of the body); failed deliveries retry up to the max.</div></div>`,
     `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="webhookSave(${id})">💾 Save</button></div>`);
   setTimeout(whEvChk,0);
 }
@@ -2136,12 +2207,21 @@ let WH_EVS=[];
 function whEvChk(){WH_EVS=[...document.querySelectorAll('#drawerBody input[type=checkbox][value]')].filter(c=>c.checked).map(c=>c.value)}
 async function webhookSave(id){
   whEvChk();
-  const d=await admin({action:'webhook-save',id,label:$('wh_label').value.trim(),tenant_id:+($('wh_tenant').value||0),url:$('wh_url').value.trim(),events:WH_EVS,active:$('wh_active')&&$('wh_active').checked?1:0,regenerate:($('wh_rotate')&&$('wh_rotate').checked)?1:0});
+  const d=await admin({action:'webhook-save',id,label:$('wh_label').value.trim(),tenant_id:+($('wh_tenant').value||0),url:$('wh_url').value.trim(),events:WH_EVS,active:$('wh_active')&&$('wh_active').checked?1:0,regenerate:($('wh_rotate')&&$('wh_rotate').checked)?1:0,description:$('wh_desc').value.trim(),max_retries:+$('wh_retry').value||0});
   if(!d.ok)return toast(d.error||'Failed','error');
   closeDrawer();
   toast(id?'Webhook updated':'Webhook created','ok');
   if(!id)webhookShowSecret(d.id,d.secret);
   renderWebhooks();
+}
+function webhookDetail(id){
+  const h=WH.hooks.find(x=>x.id===id);if(!h)return;
+  const evs=(()=>{try{return JSON.parse(h.events||'[]')}catch(e){return[]}})();
+  detDrawer('🔗','Webhook #'+id,h,{
+    label:'Label',description:'Description',url:'Endpoint URL',
+    tenant_name:'Subscriber',active:'Status',max_retries:'Max retries',
+    last_status:'Last HTTP',last_at:'Last delivery',
+    ok_count:'OK deliveries',fail_count:'Failed deliveries',created_at:'Created'});
 }
 function webhookShowSecret(id,secret){
   openDrawer('🔑 Signing secret — copy it now',
@@ -2275,7 +2355,7 @@ async function renderIntegrations(){
     filters:[['type','Type'],['status','Status']],
     sortable:['id','type','name','status','updated_at'],
     head:st=>`<tr>${tblTh('ints','ID','id',st)}${tblTh('ints','Type','type',st)}${tblTh('ints','Name','name',st)}${tblTh('ints','Status','status',st)}<th>Config</th>${tblTh('ints','Updated','updated_at',st)}<th></th></tr>`,
-    row:i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc(JSON.stringify(i.config||{}).slice(0,60))}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`,
+    row:i=>`<tr><td>${esc(i.id)}</td><td>${badge(i.type)}</td><td class="c-name">${esc(i.name)}</td><td>${badge(i.status)}</td><td class="c-sub">${esc(JSON.stringify(i.config||{}).slice(0,60))}</td><td class="c-sub">${esc((i.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="integrationDetail('${esc(i.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button><button class="btn-ghost" onclick="integrationForm('${esc(i.id)}')">✎</button><button class="btn-ghost" onclick="integrationTest('${esc(i.id)}')">🧪</button></div></td></tr>`,
     empty:'<tr><td colspan="7"><div class="empty">No integrations configured.</div></td></tr>'
   };
   tblReg('ints',cfg);
@@ -2297,7 +2377,7 @@ async function renderTickets(){
     filters:[['prio','Priority'],['status','Status']],
     sortable:['id','subject','prio','status','updated_at'],
     head:st=>`<tr>${tblTh('tkts','ID','id',st)}${tblTh('tkts','Subject','subject',st)}<th>From</th>${tblTh('tkts','Prio','prio',st)}${tblTh('tkts','Status','status',st)}${tblTh('tkts','Assignee','assignee',st)}${tblTh('tkts','Updated','updated_at',st)}<th></th></tr>`,
-    row:t=>`<tr data-gsid="tickets-${esc(t.id)}"><td>${esc(t.id)}</td><td><div class="c-name">${esc(t.subject)}</div><div class="c-sub">${esc((t.body||'').slice(0,50))}</div></td><td class="c-sub">${esc(t.from_name||'—')}<br>${esc(t.from_email||'')}</td><td>${badge(t.prio)}</td><td>${badge(t.status)}</td><td class="c-sub">${esc(t.assignee||'—')}</td><td class="c-sub">${esc((t.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="ticketReply('${esc(t.id)}')">✉</button><button class="btn-ghost" onclick="ticketStatus('${esc(t.id)}')">🔧</button><button class="btn-ghost" style="color:var(--danger)" onclick="ticketDelete('${esc(t.id)}')">🗑</button></div></td></tr>`,
+    row:t=>`<tr data-gsid="tickets-${esc(t.id)}"><td>${esc(t.id)}</td><td><div class="c-name">${esc(t.subject)}</div><div class="c-sub">${esc((t.body||'').slice(0,50))}</div></td><td class="c-sub">${esc(t.from_name||'—')}<br>${esc(t.from_email||'')}</td><td>${badge(t.prio)}</td><td>${badge(t.status)}</td><td class="c-sub">${esc(t.assignee||'—')}</td><td class="c-sub">${esc((t.updated_at||'').slice(0,16))}</td><td><div class="row-actions"><button class="btn-ghost" onclick="ticketDetail('${esc(t.id)}')" data-tip="View details" data-tip-pos="left" title="View">👁</button><button class="btn-ghost" onclick="ticketForm('${esc(t.id)}')" title="Edit">✎</button><button class="btn-ghost" onclick="ticketReply('${esc(t.id)}')">✉</button><button class="btn-ghost" onclick="ticketStatus('${esc(t.id)}')">🔧</button><button class="btn-ghost" style="color:var(--danger)" onclick="ticketDelete('${esc(t.id)}')">🗑</button></div></td></tr>`,
     empty:'<tr><td colspan="8"><div class="empty">No platform tickets.</div></td></tr>'
   };
   tblReg('tkts',cfg);
@@ -2305,17 +2385,28 @@ async function renderTickets(){
   tblDraw('tkts',cfg);
   if(foc&&foc.payload&&foc.payload.id)gsHighlight('[data-gsid="tickets-'+esc(foc.payload.id)+'"]');
 }
-function ticketForm(){
-  openDrawer('New platform ticket',
-    `<div class="frm"><div class="grid-2"><div><label class="lb">From name</label><input id="tk_from_name" value="${esc(LIVE.user?LIVE.user.name:'')}"></div><div><label class="lb">From email</label><input id="tk_from_email" value="${esc(LIVE.user?LIVE.user.email:'')}"></div></div>
-     <div><label class="lb">Subject</label><input id="tk_subject" placeholder="Issue summary"></div>
-     <div><label class="lb">Body</label><textarea id="tk_body"></textarea></div>
-     <div class="grid-2"><div><label class="lb">Priority</label><select id="tk_prio">${['Low','Normal','High','Urgent'].map(p=>`<option ${p==='Normal'?'selected':''}>${p}</option>`).join('')}</select></div><div><label class="lb">Assignee</label><input id="tk_assignee" placeholder="ops team"></div></div></div>`,
-    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="ticketSave()">＋ Create</button></div>`);
+function ticketForm(id){
+  const t=id?TKTS.find(x=>x.id===id):{id:'',from_name:(LIVE.user?LIVE.user.name:''),from_email:(LIVE.user?LIVE.user.email:''),subject:'',body:'',prio:'Normal',assignee:'',category:'',due_at:'',tags:''};
+  openDrawer(id?'Edit ticket '+id:'New platform ticket',
+    `<div class="frm"><div class="grid-2"><div><label class="lb">From name</label><input id="tk_from_name" value="${esc(t.from_name)}"></div><div><label class="lb">From email</label><input id="tk_from_email" value="${esc(t.from_email)}"></div></div>
+     <div><label class="lb">Subject</label><input id="tk_subject" value="${esc(t.subject)}" placeholder="Issue summary"></div>
+     <div><label class="lb">Body</label><textarea id="tk_body">${esc(t.body)}</textarea></div>
+     <div class="grid-2"><div><label class="lb">Priority</label><select id="tk_prio">${['Low','Normal','High','Urgent'].map(p=>`<option ${t.prio===p?'selected':''}>${p}</option>`).join('')}</select></div><div><label class="lb">Assignee</label><input id="tk_assignee" value="${esc(t.assignee||'')}" placeholder="ops team"></div></div>
+     <div class="grid-2"><div><label class="lb">Category</label><select id="tk_cat"><option value="">— none —</option>${['Billing','Technical','Account','Feature request','Bug','Other'].map(c=>`<option ${t.category===c?'selected':''}>${c}</option>`).join('')}</select></div><div><label class="lb">Due (YYYY-MM-DD)</label><input id="tk_due" value="${esc(t.due_at||'')}" placeholder="2026-08-20"></div></div>
+     <div><label class="lb">Tags (comma separated)</label><input id="tk_tags" value="${esc(t.tags||'')}" placeholder="high-value, partner"></div></div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="ticketSave('${esc(id||'')}')">${id?'💾 Save':'＋ Create'}</button></div>`);
 }
-async function ticketSave(){
-  const d=await admin({action:'ticket-save',from_name:$('tk_from_name').value.trim(),from_email:$('tk_from_email').value.trim(),subject:$('tk_subject').value.trim(),body:$('tk_body').value.trim(),prio:$('tk_prio').value,assignee:$('tk_assignee').value.trim()});
-  if(d.ok){toast('Ticket '+d.id+' created','ok');closeDrawer();renderTickets();}else toast(d.error||'Failed','error');
+async function ticketSave(id){
+  const d=await admin({action:'ticket-save',id,from_name:$('tk_from_name').value.trim(),from_email:$('tk_from_email').value.trim(),subject:$('tk_subject').value.trim(),body:$('tk_body').value.trim(),prio:$('tk_prio').value,assignee:$('tk_assignee').value.trim(),category:$('tk_cat').value,due_at:$('tk_due').value.trim(),tags:$('tk_tags').value.trim()});
+  if(d.ok){toast(id?'Ticket updated':'Ticket '+d.id+' created','ok');closeDrawer();renderTickets();}else toast(d.error||'Failed','error');
+}
+function ticketDetail(id){
+  const t=TKTS.find(x=>x.id===id);if(!t)return;
+  detDrawer('🎫','Ticket '+id,t,{
+    subject:'Subject',body:'Body',from_name:'From name',from_email:'From email',
+    prio:'Priority',status:'Status',assignee:'Assignee',
+    category:'Category',due_at:'Due',tags:'Tags',
+    reply:'Reply',ts:'Created',updated_at:'Updated'});
 }
 function ticketReply(id){
   const t=TKTS.find(x=>x.id===id)||{};
