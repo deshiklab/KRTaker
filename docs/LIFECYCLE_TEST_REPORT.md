@@ -221,8 +221,68 @@ payment-init/confirm, RCP receipts, collections autopilot, statements, ticket st
 
 ## How to re-run
 ```bash
-cd /tmp/krtest && python3 test_lifecycle.py          # 149 lifecycle checks
-cd /tmp/krtest && python3 run_all.py                  # full 2824-check regression
+cd /tmp/krtest && python3 test_lifecycle.py          # 157 lifecycle checks (15 scenarios)
+cd /tmp/krtest && python3 run_all.py                  # full 2832-check regression
 ```
 State is reset before/after each run (idempotent; dangling refs, test fixtures, rate-limit
 bookkeeping and corrupted nets are all repaired by run_all's reset block).
+
+---
+
+# ROUND 2 — Bug fixes applied & full re-test (2026-08-05)
+
+Per user instruction ("fix any bugs/issues found, then continue/start over the testing"), all findings
+were fixed and the entire test cycle re-run.
+
+## Fixes applied
+
+### FIX-01 (HIGH) — Invoice net zeroing — fixed & deployed live (round 1), re-verified
+Status-only invoice edits (mark Overdue/Paid) no longer clobber `net`. Regression-guarded in SC-09
+(net preserved after status update) and SC-15 (no invoice in the whole dataset has `net ≠ gross − tds`).
+
+### FIX-02 — Orphan unit U-011 — fixed (seed + rig)
+Root cause: U-011 ("Flat 1A") referenced `P-006`, a property that does not exist anywhere (it was
+added to the rig DB by an old migration and never made it into the canonical seed; the live DB never
+had it). test_p56 hardcodes U-011 as its fixture unit, so the unit must exist.
+- Canonical seed now includes `U-011 → P-005 (Dhanmondi Apartment)`; run_all reset `INSERT OR IGNORE`s
+  the fixture unit; SC-15 asserts **zero orphan units** across the dataset.
+- Live DB: confirmed already clean (10 units, all valid parents) — no live migration needed.
+
+### FIX-03 — Invoice id padding — fixed (run_all normalization)
+The anomaly was a 3-digit id (`INV-2026-010`) among 4-digit auto-generated siblings
+(`INV-2026-0010`). run_all re-inserted the 3-digit form every run. Now it deletes both spellings and
+re-inserts the canonical 4-digit `INV-2026-0010` (+ the July `INV-2026-0009` it had been accidentally
+deleting — that caused a P41 aging regression caught by this re-test). Seed rows `INV-2026-001…008`
+(3-digit) are accepted legacy (tests depend on them; MAX() parsing unaffected). SC-15 asserts no
+mixed-pad ids beyond the legacy set.
+
+### FIX-04 — Trial accounts got full Enterprise access — fixed & deployed live
+New signups (plan `Trial`) previously fell through to the full base module set and unlimited limits.
+- `effective_modules()` / `effective_limits()` now map `Trial → Starter` (1 property, 5 units, 1 seat,
+  no KR AI, no API access; owner modules exclude maintenance/gate/etc.).
+- `package.code` stays `'trial'` so the dashboard trial banner is unaffected.
+- Verified: SC-02 + SC-15 assert trial limits/modules; Enterprise owner unchanged (live probe).
+
+## New finding from re-testing
+
+### NOTE-02 — Plan limits are advisory (display-only), not enforced on create
+`property_limit` / `unit_limit` are surfaced in `app-me` and the dashboard (progress bars, "∞" for
+Enterprise) but app-crud does not block creates beyond the limit. Global enforcement would be
+incorrect in the current shared/unscoped dataset (a Starter/Trial user sees the seed properties and
+would be blocked from creating even their first one). **Recommendation:** enforce per-subscriber counts
+during the multi-tenant (Phase 7) work, when ownership scoping exists.
+
+## Re-test results (round 2)
+
+| Suite | Checks | Result |
+|---|---|---|
+| test_lifecycle.py (15 scenarios: SC-01…SC-15) | **157** | all pass |
+| Full regression (49 suites incl. lifecycle) | **2832** | 0 failed |
+| Live probes | API deployed (1,262,370 B) · Enterprise owner unchanged · trial register OK · probe subscriber cleaned | OK |
+
+## Round-2 change log
+- API: seed U-011 (valid parent) · Trial→Starter limits/modules fallback (effective_*)
+- run_all: invoice id normalization (0010/0009 canonical) · U-011 fixture insert · NULL-safe dangling
+  cleanup (`IS NULL OR NOT IN`) — the NULL case was silently surviving `NOT IN`
+- test_lifecycle: SC-02 trial-limit asserts (+2) · SC-15 data integrity (+6) · NULL-safe cleanup
+- Live: ftp_api_p45.py deploy · liveprobe subscriber deleted via app-admin

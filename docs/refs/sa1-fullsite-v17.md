@@ -48,3 +48,20 @@
 - Changing password **invalidates all existing sessions** (old token → 401) — test the
   "change w/o old password 400" case BEFORE the change.
 - Invoice print HTML formats money with commas (`42,500`) — strip commas when asserting amounts.
+
+## Round 2 (same session) — all findings fixed + full re-test
+- **FIX-02 U-011 orphan:** root cause = old rig migration added U-011→P-006; P-006 never existed in
+  seed; test_p56 hardcodes U-011 as fixture. Fixed: seed U-011→P-005 + run_all INSERT OR IGNORE fixture.
+  Live was already clean (10 units, no U-011).
+- **FIX-03 invoice pad:** run_all re-inserted 3-digit INV-2026-010 every run → normalized to 4-digit
+  INV-2026-0010 + restored INV-2026-0009 (July 28k) which the reset was accidentally deleting
+  (P41 aging regression caught by re-test). Seed 001–008 stay 3-digit (legacy, tests depend).
+- **FIX-04 Trial = full access:** effective_modules/effective_limits now map 'trial' → starter catalog
+  (1 prop / 5 units / 1 seat / no AI / no API; modules exclude maintenance+). package.code stays
+  'trial' (dashboard banner unaffected). Verified live (Enterprise owner unchanged).
+- **NEW NOTE-02:** property_limit/unit_limit are display-only (no create-time enforcement); global
+  enforcement would break trial UX in the shared dataset → enforce per-subscriber in Phase 7.
+- **NULL trap:** `x NOT IN (subquery)` silently SKIPS NULL x — dangling-row cleanup must use
+  `x IS NULL OR x NOT IN (...)`. Junk invoices with l=NULL (empty-data create artifacts) survived cleanup.
+- **Re-test:** lifecycle 157/157 (SC-02 +2 trial asserts, SC-15 +6 integrity) · run_all 2832/2832.
+- Live: API redeployed (1,262,370 B); liveprobe subscriber cleaned via app-admin subscriber-delete.

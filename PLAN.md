@@ -436,3 +436,13 @@ User: "start real life testing of the platform from onboarding to registration t
 - **Findings:** U-011 orphan unit (p=P-006 missing); INV-2026-0009 zero-pad; Trial plan = full base modules + unlimited limits (no trial catalog row).
 - **Rig traps:** TWO API copies — `/tmp/krtest/api/index.php` (router /api/*) AND `/tmp/krtest/index.php` (bare-path directory index, what helpers.api hits) — sync BOTH; stale 8899 process may survive kill → verify ss -tlnp; permission-probe with update {} not create {} (create auto-fills leases status / invoices net).
 - **Commit** → 3 remotes. Deployed: API (ftp_api_p45.py). Skill ref `sa1-fullsite-v17.md`.
+
+### SA1-fullsite-v17 round 2 (2026-08-12): fixes for all findings + full re-test
+User: "if any test found any bugs / issues, fix it and then continue / start over the testing again, after completion of the tests report give me the test reports."
+- **FIX-02** U-011 orphan → seed U-011→P-005 + run_all fixture insert (test_p56 hardcodes U-011); live already clean.
+- **FIX-03** invoice pad → run_all normalizes INV-2026-0010 (4-digit) + restores INV-2026-0009 (July 28k; was being deleted → P41 aging regression caught by re-test).
+- **FIX-04** Trial ≈ Starter: effective_modules/effective_limits map 'trial'→starter catalog; package.code stays 'trial'.
+- **NOTE-02** plan limits display-only (no create enforcement) — per-subscriber enforcement deferred to Phase 7.
+- **NULL trap:** dangling cleanup needs `IS NULL OR NOT IN` (NULL silently skips NOT IN).
+- Re-test: lifecycle **157/157** (SC-02 +2, SC-15 +6) · run_all **2832/2832** · live redeployed + probe cleaned.
+- Commits → 3 remotes. Skill ref `sa1-fullsite-v17.md` (round 2 section). Report: docs/LIFECYCLE_TEST_REPORT.md (Round 2).
