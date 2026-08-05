@@ -1,7 +1,7 @@
 /* KRTaker landing — production Service Worker
    Strategy: network-first for HTML (always fresh), cache-first for static assets,
    API (/api/*) is NEVER intercepted. */
-const CACHE = 'krtaker-site-v63';
+const CACHE = 'krtaker-site-v64';
 const STATIC = [
   'css/style.css',
   'js/main.js',

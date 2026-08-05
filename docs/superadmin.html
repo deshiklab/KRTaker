@@ -767,7 +767,7 @@ async function providerSave(id){
 /* ── Web CMS (SA1-fullsite-v3 redesign: collapsible sections, dirty tracking, publish/draft,
       global find & replace, clone page, field-type inputs, all-page search, generic preview) ── */
 let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en',dirty:new Set(),openSecs:{},pub:{}};
-const CMS_PAGES={home:{l:'Home',ic:'🏠',f:'index.html'},features:{l:'Features',ic:'✨',f:'features.html'},pricing:{l:'Pricing',ic:'💎',f:'pricing.html'},about:{l:'About',ic:'ℹ️',f:'about.html'},contact:{l:'Contact',ic:'📮',f:'contact.html'},howitworks:{l:'How it works',ic:'🗺️',f:'how-it-works.html'},ai:{l:'AI Caretaker',ic:'🤖',f:'ai-caretaker.html'},owners:{l:'For Owners',ic:'🏠',f:'for-owners.html'},tenants:{l:'For Tenants',ic:'👤',f:'for-tenants.html'},partners:{l:'For Partners',ic:'🛠️',f:'for-partners.html'},nrb:{l:'For NRB',ic:'🌍',f:'for-nrb.html'},legal:{l:'Legal & Compliance',ic:'⚖️',f:'legal-compliance.html'},faq:{l:'FAQ',ic:'❓',f:'faq.html'},tools:{l:'Calculators',ic:'🧮',f:'tools.html'},blog:{l:'Blog',ic:'📰',f:'blog.html'},blog-eviction:{l:'Eviction guide',ic:'📄',f:'blog-eviction.html'},blog-holding-tax:{l:'Holding tax',ic:'📄',f:'blog-holding-tax.html'},blog-lease-registration:{l:'Lease registration',ic:'📄',f:'blog-lease-registration.html'},blog-nrb-buying:{l:'NRB buying',ic:'📄',f:'blog-nrb-buying.html'},blog-nrb-remittance:{l:'NRB remittance',ic:'📄',f:'blog-nrb-remittance.html'},blog-tds-commercial:{l:'TDS commercial',ic:'📄',f:'blog-tds-commercial.html'},terms:{l:'Terms',ic:'📜',f:'terms.html'},privacy:{l:'Privacy',ic:'🔒',f:'privacy.html'},listings:{l:'Listings',ic:'🏘️',f:'listings.html'},cases:{l:'Case Studies',ic:'📈',f:'case-studies.html'},login:{l:'Login',ic:'🔐',f:'login.html'},register:{l:'Register',ic:'📝',f:'register.html'},site:{l:'Site',ic:'⚙️',f:'index.html'},footer:{l:'Footer',ic:'🔗',f:'index.html'},seo:{l:'SEO',ic:'🔍',f:'index.html'}};
+const CMS_PAGES={home:{l:'Home',ic:'🏠',f:'index.html'},features:{l:'Features',ic:'✨',f:'features.html'},pricing:{l:'Pricing',ic:'💎',f:'pricing.html'},about:{l:'About',ic:'ℹ️',f:'about.html'},contact:{l:'Contact',ic:'📮',f:'contact.html'},howitworks:{l:'How it works',ic:'🗺️',f:'how-it-works.html'},ai:{l:'AI Caretaker',ic:'🤖',f:'ai-caretaker.html'},owners:{l:'For Owners',ic:'🏠',f:'for-owners.html'},tenants:{l:'For Tenants',ic:'👤',f:'for-tenants.html'},partners:{l:'For Partners',ic:'🛠️',f:'for-partners.html'},nrb:{l:'For NRB',ic:'🌍',f:'for-nrb.html'},legal:{l:'Legal & Compliance',ic:'⚖️',f:'legal-compliance.html'},faq:{l:'FAQ',ic:'❓',f:'faq.html'},tools:{l:'Calculators',ic:'🧮',f:'tools.html'},blog:{l:'Blog',ic:'📰',f:'blog.html'},'blog-eviction':{l:'Eviction guide',ic:'📄',f:'blog-eviction.html'},'blog-holding-tax':{l:'Holding tax',ic:'📄',f:'blog-holding-tax.html'},'blog-lease-registration':{l:'Lease registration',ic:'📄',f:'blog-lease-registration.html'},'blog-nrb-buying':{l:'NRB buying',ic:'📄',f:'blog-nrb-buying.html'},'blog-nrb-remittance':{l:'NRB remittance',ic:'📄',f:'blog-nrb-remittance.html'},'blog-tds-commercial':{l:'TDS commercial',ic:'📄',f:'blog-tds-commercial.html'},terms:{l:'Terms',ic:'📜',f:'terms.html'},privacy:{l:'Privacy',ic:'🔒',f:'privacy.html'},listings:{l:'Listings',ic:'🏘️',f:'listings.html'},cases:{l:'Case Studies',ic:'📈',f:'case-studies.html'},login:{l:'Login',ic:'🔐',f:'login.html'},register:{l:'Register',ic:'📝',f:'register.html'},site:{l:'Site',ic:'⚙️',f:'index.html'},footer:{l:'Footer',ic:'🔗',f:'index.html'},seo:{l:'SEO',ic:'🔍',f:'index.html'}};
 const CMS_SEC_LABEL={hero:'Hero',article:'Article body',usp:'Why rent with us',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',stats:'Stats bar',trust:'Trust strip',steps:'How it works steps',roles:'Roles',featcards:'Feature cards',gallery:'Product gallery',legal:'Legal strip',testi:'Testimonials',ctaband:'CTA band',partners:'Partners',sticky:'Sticky CTA',modules:'Feature modules',visual:'Visual band',note:'Pricing note',compare:'Compare table',callout:'Callout',why:'Why we exist',principles:'Principles',team:'Team',milestones:'Milestones',join:'Join CTA',talk:'Talk to the team',rows:'Contact rows',form:'Contact form',items:'Items',sections:'Sections',cols:'Footer columns',contact:'Contact',news:'Newsletter',pay:'Payment chips',bottom:'Footer bottom',home:'Home',features:'Features',pricing:'Pricing',about:'About',footer:'Footer'};
 const CMS_LONG=['subtitle','desc','meta_description','tagline','address','body','_text','content','story'];
 function cmsIsLong(k){return CMS_LONG.some(s=>k.includes(s));}
@@ -836,6 +836,9 @@ async function renderCms(){
     `<button class="chip ${CMS.lang==='bn'?'on':''}" onclick="cmsLang('bn')" data-tip="Show বাংলা fields" data-tip-pos="top">বাংলা</button>`+
     `<a class="chip" href="https://krtaker.com/${CMS_PAGES[cur].f||'index.html'}" target="_blank" data-tip="Open the live page in a new tab" data-tip-pos="top">↗ Open</a>`+
     `<span class="chip ${pubOn?'':'on'}" style="${pubOn?'':'background:#FDEBD0;color:#B9770E'}" onclick="cmsPubToggle('${cur}')" data-tip="${pubOn?'Live — click to set this page to DRAFT (hidden from the site)':'Draft — changes hidden from the site until you publish'}" data-tip-pos="top">${pubOn?'🟢 Live':'🔴 Draft'}</span>`+
+    `${CMS.pub[cur]&&CMS.pub[cur].publish_at?`<span class="chip" style="background:#E8F0FE;color:#1A56DB" data-tip="Auto-publishes at this time" data-tip-pos="top">⏳ Scheduled ${esc(fmtPubAt(CMS.pub[cur].publish_at))} <span style="cursor:pointer;font-weight:900" onclick="cmsPubCancelSchedule('${cur}')" data-tip="Cancel schedule" data-tip-pos="top">✕</span></span>`:''}`+
+    `<input id="cmsPubAt" type="datetime-local" style="max-width:172px;font-size:13px;height:30px" data-tip="Pick a future time to auto-publish this page" data-tip-pos="top">`+
+    `<button class="chip" onclick="cmsPubSchedule('${cur}')" data-tip="Schedule auto-publish — page stays draft until the time arrives" data-tip-pos="top">📅 Schedule</button>`+
     `<input id="cmsSearch" placeholder="🔍 Search all pages…" style="max-width:220px;margin-left:auto" oninput="cmsFilter()"></div>`+
     `<div id="cmsJump" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>`+
     `<div id="cmsPanels"></div>`);
@@ -965,7 +968,20 @@ async function cmsPubToggle(p){
   const cur=CMS.pub[p]?CMS.pub[p].published:1;
   const next=cur?0:1;
   const d=await admin({action:'cms-pub-save',page:p,published:next});
-  if(d.ok){CMS.pub[p]={published:next};toast(next?'Page published — live now':'Page set to draft — changes hidden from the site','ok');renderCms();}else toast(d.error||'Failed','error');
+  if(d.ok){CMS.pub[p]={published:next,publish_at:''};toast(next?'Page published — live now':'Page set to draft — changes hidden from the site','ok');renderCms();}else toast(d.error||'Failed','error');
+}
+function fmtPubAt(s){
+  try{const d=new Date((s||'').replace(' ','T'));if(isNaN(d.getTime()))return s;return d.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return s;}
+}
+async function cmsPubSchedule(p){
+  const el=$('cmsPubAt');if(!el||!el.value)return toast('Pick a date & time first','error');
+  const d=await admin({action:'cms-pub-save',page:p,publish_at:el.value});
+  if(d.ok){CMS.pub[p]={published:0,publish_at:d.publish_at||''};toast('Scheduled — page auto-publishes '+fmtPubAt(d.publish_at||el.value),'ok');renderCms();}else toast(d.error||'Failed','error');
+}
+async function cmsPubCancelSchedule(p){
+  if(!confirm('Cancel the scheduled publish for this page? (it stays draft until you publish manually)'))return;
+  const d=await admin({action:'cms-pub-save',page:p,publish_at:''});
+  if(d.ok){CMS.pub[p]={published:0,publish_at:''};toast('Schedule cancelled — page remains draft','ok');renderCms();}else toast(d.error||'Failed','error');
 }
 function cmsReplaceDrawer(){
   openDrawer('🔁 Global find & replace',
@@ -1557,8 +1573,8 @@ const API_CATALOG = [
   ['app-admin api-keys-save','POST','admin','Admin','API Library — rotate web/mobile API keys; set enforcement + rate limit.'],
   ['app-admin api-stats','POST','admin','Admin','API Library — row counts for web and mobile tables.'],
   ['app-admin api-table','POST','admin','Admin','API Library — recent rows from a whitelisted table.'],
-  ['app-admin cms-pub-get','POST','admin','Admin','CMS — publish/draft flags for every page.'],
-  ['app-admin cms-pub-save','POST','admin','Admin','CMS — set a page live or draft (draft pages hide edits from the site).'],
+  ['app-admin cms-pub-get','POST','admin','Admin','CMS — publish/draft + scheduled publish flags for every page.'],
+  ['app-admin cms-pub-save','POST','admin','Admin','CMS — set a page live/draft, or schedule auto-publish with publish_at (YYYY-MM-DDTHH:MM).'],
   ['app-admin cms-replace','POST','admin','Admin','CMS — global find & replace across blocks (dry-run preview supported).'],
   ['app-admin cms-clone','POST','admin','Admin','CMS — duplicate a page as a starting point for a new page.'],
 ];
