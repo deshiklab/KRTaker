@@ -385,3 +385,10 @@ User: "…continue to next tasks (CNAME verify → Theming v2)." Second half bat
 - **Frontend**: 🌐 Custom Domains view (Developers group) — stats, toolkit table (domain/tenant/status/masked token+note/verified-at/🔎✎🗑), add-form → TXT token drawer with `_krtaker.<domain>` + copy, Check DNS → ✓ or note, delete confirm; `host-tenant` in API catalog.
 - **Verify**: rig smoke **19/19** · test_superadmin **428/428** (397+31) · full **2592/2592** (48 suites) · live API probe **11/11** · live browser E2E (add → token drawer → real DNS check fails with note → delete → 0 rows) **0 JS errors** · live DB clean.
 - **Versions**: ?v=3.64→3.65 (28 pages), sw v71→v72. Commit c1f408a → 3 remotes. Skill ref `sa1-fullsite-v11.md`.
+
+## SA1-fullsite-v12 (2026-08-12): Theming v2 (v3.66 / SW v73)
+User: "…continue to next tasks (CNAME verify → Theming v2)." Final item of the batch shipped as **v3.66 / SW v73**.
+- **Backend**: whitelabel defaults + `wl_secondary_color`/`wl_accent_color`/`wl_logo_url`; **`app-theme`** public GET → theme {site_name, logo_text, primary, secondary, accent, logo_url, favicon, theme} from wl_% keys (no auth — needed pre-login).
+- **Frontend**: White Label 🎨 Brand colors (type=color pickers + hex text sync + live preview swatches + logo URL) + `applyAdminTheme()` (panel CSS vars after login/boot); dashboard `applyBrandTheme()` (fetch app-theme → CSS vars + logo mark + favicon + title, fires every load). ⚠️ Name collision pitfall: pre-existing `applyTheme()` (dark toggle) shadows later declarations — used `applyBrandTheme`.
+- **Verify**: rig smoke **9/9** · test_superadmin **446/446** (428+18) · full **2610/2610** (48 suites) · live E2E (set purple via UI → app-theme reflects → panel re-themes → dashboard auto-themes on load → restore → PRISTINE) **0 JS errors**.
+- **Versions**: ?v=3.65→3.66 (28 pages), sw v72→v73. Commit d834bda (amended) → 3 remotes. Skill ref `sa1-fullsite-v12.md`.
