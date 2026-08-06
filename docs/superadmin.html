@@ -166,6 +166,13 @@ td .c-sub{font-size:11.5px;color:var(--text-mute)}
 .tbl-bar .tbl-q{flex:1;min-width:170px;max-width:280px}
 .tbl-bar select{width:auto;min-width:120px;padding:7px 10px;font-size:12px}
 .tbl-count{margin-left:auto;font-size:11.5px;color:var(--text-mute);white-space:nowrap}
+/* SA1 v23: page header folded into the table toolbar — title + subtitle + head-actions live in the primary table's tbl-bar */
+.tbl-bar .tbTitle{display:flex;flex-direction:column;gap:2px;padding-right:6px}
+.tbl-bar .tb-title{font-size:15px;font-weight:800;letter-spacing:-.3px;color:var(--text);line-height:1.25}
+.tbl-bar .tb-sub{font-size:11.5px;color:var(--text-mute);line-height:1.45;max-width:520px}
+.tbl-bar .head-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+td .c-name{cursor:pointer}
+td .c-name:hover{color:var(--primary)}
 .tbl-pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;padding:10px 16px;flex-wrap:wrap}
 .tbl-pg{min-width:30px;height:30px;padding:0 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text-soft);font-size:12px;font-weight:600}
 .tbl-pg.on{background:var(--primary);border-color:var(--primary);color:#fff}
@@ -573,10 +580,14 @@ function nav(v){closeSidebar();STATE.view=v;renderNav();renderTitle();render();w
 function render(){
   const el=$('content');
   const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi,ai:renderAi,webhooks:renderWebhooks,domains:renderDomains}[STATE.view];
-  el.innerHTML=`<div class="page-head"><div><h1>${NAV[STATE.view].l}</h1><div class="sub" id="pageSub"></div></div><div class="head-actions" id="pageActions"></div></div><div id="pageBody"></div>`;
+  el.innerHTML='<div id="pageBody"></div>';STATE._sub='';STATE._actions='';STATE._primary=null;
   r();
 }
-function pageHead(sub,actions){if(sub)$('pageSub').textContent=sub;if(actions)$('pageActions').innerHTML=actions;}
+function pageHead(sub,actions){STATE._sub=sub||'';STATE._actions=actions||'';}
+/* SA1 v23: header bar for pages without a table (title + subtitle + actions in a tbl-bar shell) */
+function pageBar(){
+  return `<div class="tbl-bar" style="margin-bottom:14px"><div class="tbTitle"><div class="tb-title">${esc(NAV[STATE.view].l)}</div>${STATE._sub?`<div class="tb-sub">${esc(STATE._sub)}</div>`:''}</div>${STATE._actions?`<div class="head-actions">${STATE._actions}</div>`:''}</div>`;
+}
 function load(el,html){const e=$(el);if(e)e.innerHTML=html;}
 
 /* ── Dashboard ── */
@@ -689,13 +700,17 @@ function tblApply(k, data, cfg){
 }
 function tblBar(k, cfg){
   const st = tblState(k);
+  const isP = !cfg.noHead && (STATE._primary===null || STATE._primary===k);
+  if(isP && STATE._primary===null) STATE._primary=k;
   const nF = Object.keys(st.f).filter(c=>st.f[c]).length;
+  const head = isP?`<div class="tbTitle"><div class="tb-title">${esc(NAV[STATE.view].l)}</div>${STATE._sub?`<div class="tb-sub">${esc(STATE._sub)}</div>`:''}</div>${STATE._actions?`<div class="head-actions">${STATE._actions}</div>`:''}`:'';
   const fsel = (cfg.filters||[]).map(f=>{
     const col=f[0], label=f[1], cur=st.f[col]||'';
     const src = (f[2]||tblUniq(cfg.data,col)).map(v=>typeof v==='object'?v:{v:String(v),l:String(v)});
     return `<select data-col="${col}" onchange="tblSetF('${k}','${col}',this.value)"><option value="">${label}: all</option>${src.map(o=>`<option value="${esc(o.v)}" ${cur===String(o.v)?'selected':''}>${esc(o.l)}</option>`).join('')}</select>`;
   }).join('');
   return `<div class="tbl-bar" id="tblBar-${k}">
+    ${head}
     <input class="tbl-q" id="tblQ-${k}" placeholder="🔍 ${cfg.ph||'Search…'}" value="${esc(st.q)}" oninput="tblSetQ('${k}',this.value)">
     ${fsel}
     ${nF?`<button class="btn-ghost" onclick="tblClear('${k}')">✕ Clear (${nF})</button>`:''}
@@ -750,6 +765,15 @@ function tblGo(k,p){ const st=tblState(k); st.p=p; const c=TBLREG[k]; if(c) tblD
 function tblSetPs(k,v){ const st=tblState(k); st.ps=+v; st.p=1; const c=TBLREG[k]; if(c) tblDraw(k,c); }
 function tblSort(k,col){ const st=tblState(k); if(st.s===col) st.dir*=-1; else { st.s=col; st.dir=1; } st.p=1; const c=TBLREG[k]; if(c) tblDraw(k,c); }
 function tblReg(k,cfg){ TBLREG[k]=cfg; }
+/* SA1 v23: clicking a row's c-name triggers the same drawer action as its 👁 View (or ✎ Edit) ghost button.
+   Only fires for Detail(/Form( handlers — never destructive ones (Delete/Rotate/Toggle). */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('td .c-name'); if(!t) return;
+  const tr=t.closest('tr'); if(!tr) return;
+  const b=tr.querySelector('button.btn-ghost[onclick*="Detail("]')||tr.querySelector('button.btn-ghost[onclick*="Form("]');
+  if(!b) return;
+  e.preventDefault(); b.click();
+});
 async function renderSubscribers(){
   pageHead('Manage platform subscribers — plans, status, trial windows',`<button class="btn-primary" onclick="subscriberForm()">＋ Add subscriber</button>`);
   load('pageBody','<div class="empty">Loading…</div>');
@@ -1182,7 +1206,7 @@ async function renderCms(){
   const cur=CMS_PAGES[CMS.tab]?CMS.tab:'home';
   const pubOn=(CMS.pub[cur]?CMS.pub[cur].published!==0:true);
   const fltOn=cmsFilterActive();
-  load('pageBody',
+  load('pageBody',pageBar()+
     `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">`+
     `<select id="cmsPageSel" onchange="cmsPageSelChange(this.value)" style="max-width:250px;font-size:13px;height:32px;padding:0 8px;border-radius:8px;border:1px solid var(--border,#e3e8f0);background:var(--bg,#fff);color:var(--text,#1a2233);cursor:pointer" data-tip="Pick a page to edit — ${Object.keys(CMS_PAGES).length} pages; 🔴 = draft, count = fields" data-tip-pos="bottom">${cmsPageOptions(cur)}</select>`+
     `<span style="width:1px;height:22px;background:var(--border);margin:0 4px"></span>`+
@@ -2047,7 +2071,7 @@ async function renderSettings(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   SETS=d.settings||{};
   const maint=SETS.maintenance_mode==='1';
-  load('pageBody',
+  load('pageBody',pageBar()+
     `<div class="panel" style="${maint?'border-color:#E67E22':''}"><div class="panel-h"><span class="t"><span class="pi">🛑</span>Maintenance mode<span class="c-sub" style="font-size:11px;margin-left:8px">when on, the login screen shows a maintenance notice and signups are blocked</span></span></div>
      <div class="panel-b"><div class="frm"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><select id="st_maintenance_mode" style="max-width:140px"><option value="1" ${maint?'selected':''}>🛑 On</option><option value="0" ${!maint?'selected':''}>🟢 Off</option></select><span class="c-sub">${maint?'The platform is currently in maintenance mode.':'The platform is live.'}</span></div></div></div></div>`+
     SET_GROUPS.map(g=>`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">${g.ic}</span>${esc(g.t)}<span class="c-sub" style="font-size:11px;margin-left:8px">${esc(g.sub)}</span></span></div>
@@ -2506,7 +2530,7 @@ async function renderWhitelabel(){
   const d=await admin({action:'whitelabel-get'});
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   WL=d.whitelabel||{};
-  load('pageBody',`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🎨</span>Brand colors<span class="c-sub" style="font-size:11px;margin-left:8px">applied live to the dashboard, login screen and tenant portals via CSS variables (app-theme)</span></span></div><div class="panel-b">
+  load('pageBody',pageBar()+`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🎨</span>Brand colors<span class="c-sub" style="font-size:11px;margin-left:8px">applied live to the dashboard, login screen and tenant portals via CSS variables (app-theme)</span></span></div><div class="panel-b">
     <div class="frm grid-2">
       <div><label class="lb">Primary color</label><div style="display:flex;gap:8px;align-items:center"><input type="color" id="wl_primary_color" value="${esc(WL.wl_primary_color||'#2F80ED')}" style="width:52px;height:40px;padding:2px;flex:none"><input id="wl_primary_color_txt" value="${esc(WL.wl_primary_color||'#2F80ED')}" placeholder="#2F80ED" oninput="themeColorSync('wl_primary_color')"></div></div>
       <div><label class="lb">Secondary color <span class="c-sub">(gradient end)</span></label><div style="display:flex;gap:8px;align-items:center"><input type="color" id="wl_secondary_color" value="${esc(WL.wl_secondary_color||'#1E5EB8')}" style="width:52px;height:40px;padding:2px;flex:none"><input id="wl_secondary_color_txt" value="${esc(WL.wl_secondary_color||'#1E5EB8')}" placeholder="#1E5EB8" oninput="themeColorSync('wl_secondary_color')"></div></div>
@@ -2553,7 +2577,7 @@ async function renderHealth(){
   if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
   const h=d.health||{};
   const kv=[['PHP version',h.php],['Database',h.db],['DB size',(h.db_size/1048576).toFixed(1)+' MB'],['Tables',h.tables],['Journal mode',h.journal],['Server time (UTC)',h.now_utc],['Audit rows',h.audit_rows],['Active tokens',h.tokens],['Auth attempts',h.auth_attempts]];
-  load('pageBody',`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🩺</span>Runtime</span></div><div class="panel-b">${kv.map(x=>`<div class="kv"><span class="k">${x[0]}</span><span class="v">${esc(String(x[1]))}</span></div>`).join('')}</div></div>
+  load('pageBody',pageBar()+`<div class="panel"><div class="panel-h"><span class="t"><span class="pi">🩺</span>Runtime</span></div><div class="panel-b">${kv.map(x=>`<div class="kv"><span class="k">${x[0]}</span><span class="v">${esc(String(x[1]))}</span></div>`).join('')}</div></div>
      <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🛡️</span>Security & hygiene</span></div><div class="panel-b">
        <div class="kv"><span class="k">Password hashing</span><span class="v">${badge('OK')} bcrypt (PASSWORD_DEFAULT)</span></div>
        <div class="kv"><span class="k">API auth</span><span class="v">${badge('OK')} Bearer tokens</span></div>
@@ -2867,7 +2891,7 @@ async function renderApiTenantKeys(){
     data:TK.keys, ph:'Search tenant, label, key…',
     search:['tenant_name','tenant_email','label','key'],
     filters:[['active','Status'],['plan','Plan']],
-    sortable:['tenant_name','label','calls','last_used_at'],
+    sortable:['tenant_name','label','calls','last_used_at'], noHead:true,   /* API page has its own persistent pageBar */
     head:st=>`<tr>${tblTh('tkeys','Subscriber','tenant_name',st)}${tblTh('tkeys','Label','label',st)}<th>Key</th><th>Status</th>${tblTh('tkeys','Last used','last_used_at',st)}${tblTh('tkeys','Calls','calls',st)}<th></th></tr>`,
     row:k=>`<tr data-gsid="tkeys-${k.id}"><td><div class="c-name">${esc(k.tenant_name||('#'+k.tenant_id))}</div><div class="c-sub">${esc(k.tenant_email||'')} · ${esc(k.plan||'')}</div></td>
       <td class="c-sub">${esc(k.label||'—')}</td>
@@ -2954,7 +2978,7 @@ async function renderApiUsage(){
     data:recent, ph:'Search action…',
     search:['action'],
     filters:[['auth','Auth'],['method','Method']],
-    sortable:['ts','action','ms'],
+    sortable:['ts','action','ms'], noHead:true,   /* API page has its own persistent pageBar */
     head:st=>`<tr>${tblTh('apius','When','ts',st)}${tblTh('apius','Action','action',st)}<th>Method</th><th>Auth</th><th>Status</th>${tblTh('apius','ms','ms',st)}</tr>`,
     row:r=>`<tr><td class="c-sub">${esc((r.ts||'').slice(11,19))}</td><td><code style="font-size:12px;color:var(--primary)">${esc(r.action)}</code></td><td>${r.method==='GET'?badge('GET'):badge('POST')}</td><td>${badge(r.auth)}</td><td>${r.status<400?badge('OK'):badge(r.status)}</td><td class="c-sub">${r.ms}ms</td></tr>`,
     empty:'<tr><td colspan="6"><div class="empty">No requests yet.</div></td></tr>'
@@ -3026,7 +3050,7 @@ async function apiTableDrawer(tb){
     data:rows, ph:'Search any column…',
     search:cols,
     filters:[],
-    sortable:cols,
+    sortable:cols, noHead:true,   /* drawer-embedded table — never hosts the page header */
     head:st=>`<tr>${cols.map(c=>tblTh('aptb',c,c,st)).join('')}</tr>`,
     row:r=>`<tr>${cols.map(c=>{const v=r[c];return `<td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(typeof v==='string'&&v.length>60?v.slice(0,60)+'…':v)}</td>`}).join('')}</tr>`,
     empty:'<tr><td colspan="'+cols.length+'"><div class="empty">No rows.</div></td></tr>'
@@ -3037,7 +3061,7 @@ async function apiTableDrawer(tb){
 }
 function renderApi(){
   pageHead('API Library — manage how the web and mobile apps use the platform API',`<button class="btn-outline" onclick="apiSchemaExport()" data-tip="Download the endpoint catalog as OpenAPI JSON for client developers" data-tip-pos="left">📦 Export schema</button>`);
-  load('pageBody',
+  load('pageBody',pageBar()+
     `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:16px">
       <button class="chip ${API_TAB==='endpoints'?'on':''}" onclick="apiTab('endpoints')">📚 Endpoints</button>
       <button class="chip ${API_TAB==='console'?'on':''}" onclick="apiTab('console')">🧪 Console</button>
