@@ -1266,6 +1266,15 @@ async function apiCall(path, data) {
   const res = await fetch(API + path, opts);
   return res.json();
 }
+/* safe variant — never throws; retries transient failures (network drop, 5xx HTML, timeout)
+   so one flaky endpoint can't nuke a Promise.all of independent calls */
+async function apiCallSafe(path, data, retries = 2) {
+  for (let i = 0; i <= retries; i++) {
+    try { return await apiCall(path, data); }
+    catch (e) { if (i < retries) await new Promise(r => setTimeout(r, 600 * (i + 1))); }
+  }
+  return { ok: false };
+}
 /* ── Theming v2 (SA1-fullsite v12, v3.66): brand colors + logo → CSS vars ── */
 function hexToRgba(hex, a) {
   const m = /^#?([0-9a-f]{6})$/i.exec((hex || '').trim());
@@ -2766,7 +2775,7 @@ async function legalEngineLoad(){
   const isStaff=legalStaff();
   let sum={},notices=[],audits={count:0,avg:0,high:0,items:[]},tds={month:'',items:[],total:0,rate:10},cases=[];
   if(TOKEN&&!DEMO_MODE){
-    const [a,b,c,d,e]=await Promise.all([apiCall('app-legal?action=summary'),apiCall('app-legal?action=notices-list'),apiCall('app-legal?action=audit-all'),apiCall('app-legal?action=tds-due'),apiCall('app-legal?action=cases-list')]);
+    const [a,b,c,d,e]=await Promise.all([apiCallSafe('app-legal?action=summary'),apiCallSafe('app-legal?action=notices-list'),apiCallSafe('app-legal?action=audit-all'),apiCallSafe('app-legal?action=tds-due'),apiCallSafe('app-legal?action=cases-list')]);
     if(a.ok) sum=a; if(b.ok) notices=b.items||[]; if(c.ok) audits=c.audits||{count:0,avg:0,high:0,items:[]};
     if(d.ok) tds=d; if(e.ok) cases=e.items||[];
   } else {
@@ -5766,7 +5775,7 @@ async function remitLoad(){
   const host=document.getElementById('remitLive'); if(!host) return;
   let rows=[],groups=[],tot={};
   if(TOKEN&&!DEMO_MODE){
-    const [a,b]=await Promise.all([apiCall('app-remit?action=list'),apiCall('app-remit?action=summary')]);
+    const [a,b]=await Promise.all([apiCallSafe('app-remit?action=list'),apiCallSafe('app-remit?action=summary')]);
     if(a.ok) rows=a.remittances||[]; if(b.ok){ groups=b.groups||[]; tot=b.total||{}; }
   } else {
     rows=(DB.remittances||[]).map(r=>({...r,property_name:(DB.properties||[]).find(p=>p.id===r.prop)?.name||''}));
@@ -9043,9 +9052,10 @@ async function loadRecon(){
   await new Promise(r=>setTimeout(r,0));   /* let render() finish writing #reconLive first */
   const el=document.getElementById('reconLive'); if(!el)return;
   let coll={ok:false}, rec={ok:false};
-  try{
-    [coll, rec] = await Promise.all([apiCall('app-collections-summary'), apiCall('app-payment-recon')]);
-  }catch(e){}
+  /* sequential safe calls — a flake on one endpoint no longer discards the other
+     (Promise.all rejected both on any single failure); each gets its own retries */
+  coll = await apiCallSafe('app-collections-summary');
+  rec = await apiCallSafe('app-payment-recon');
   if(!coll.ok||!rec.ok){ el.innerHTML=`<div class="panel"><div class="panel-b c-sub">${t('Live reconciliation unavailable — showing local data.','লাইভ রিকনসিলিয়েশন পাওয়া যায়নি — লোকাল ডেটা দেখানো হচ্ছে।')}</div></div>`; return; }
   const invs=coll.invoices||[];
   const byTen=coll.by_tenant||{};
@@ -9109,7 +9119,8 @@ async function loadReminders(){
   await new Promise(r=>setTimeout(r,0));
   const el=document.getElementById('remLive'); if(!el) return;
   let cfg={ok:false}, sum={ok:false};
-  try{ [cfg,sum]=await Promise.all([apiCall('app-reminder-config'), apiCall('app-reminder-summary')]); }catch(e){}
+  cfg = await apiCallSafe('app-reminder-config');
+  sum = await apiCallSafe('app-reminder-summary');
   if(!cfg.ok||!sum.ok){ el.innerHTML=`<div class="panel-b c-sub">${t('Reminders unavailable — live data only.','রিমাইন্ডার পাওয়া যায়নি — লাইভ ডেটা প্রয়োজন।')}</div>`; return; }
   const c=cfg.config||{}, plan=sum.plan||[], byTier=sum.by_tier||{}, hist=cfg.history||[];
   const tierBadge=tier=>tier===0?`<span class="badge b-gray">${t('Not due','বাকি নয়')}</span>`:tier===1?`<span class="badge b-green">${t('Tier','টিয়ার')} 1</span>`:tier===2?`<span class="badge b-orange">${t('Tier','টিয়ার')} 2</span>`:`<span class="badge b-red">${t('Tier','টিয়ার')} 3</span>`;
