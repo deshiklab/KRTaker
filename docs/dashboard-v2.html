@@ -8600,6 +8600,8 @@ async function saveForm(collection, id, isNew){
       });
     }
     closeDrawer(); toast((isNew?'Created ':'Saved ')+(d.id||pid),'ok');
+  } else if (d && d.error) {
+    toast(d.error,'error');   /* SA1 v18: surface plan-limit / scope errors to the user */
   }
 }
 async function deleteRow(collection, id){
