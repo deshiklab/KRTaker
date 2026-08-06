@@ -88,7 +88,7 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 ### 3.2 Notifications & messaging
 - [ ] SMS OTP provider (BD): SSLCommerz SMS / DopeSMS / SMS4BD / Revesoft — needs the same KYC docs; wire into register/login OTP; keep email OTP as fallback. [! blocked on provider choice + creds]
 - [ ] Web push (v19) — verify real-browser registration on desktop + Android Chrome (blocked in all sandboxes; user must test in a normal browser).
-- [ ] Transactional email: switch from mail.inceptia.io (that's the careers box — don't abuse it) to a proper transactional sender (SMTP from coderdrop / SES / Brevo) with DKIM/SPF/DMARC records on krtaker.com.
+- [x] Transactional email: switched off mail.inceptia.io (was the careers box) to krtaker.com's own Exim — `noreply@krtaker.com` mailbox on mail.krtaker.com:587, DKIM (d=krtaker.com; s=default, cryptographically verified), SPF (`+a +mx +ip4:37.27.134.21`), DMARC `p=none` present (tightening to quarantine blocked — reseller cPanel DNS API is read-only; needs host DNS panel). Live-verified via OTP send + IMAP read-back.
 - [ ] Rent-due push + digest cron already live via cPanel SERVICE_KEY cron — verify timing + delivery after any DNS/DKIM changes.
 
 ### 3.3 AI console (KR AI)
@@ -98,7 +98,7 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 
 ### 3.4 Infrastructure & ops
 - [ ] Backups: SQLite DB backup job (app-backup exists) → offsite (Google Drive rclone token expired — re-auth [!]; or add S3/Backblaze as backup target). Test a restore drill end-to-end.
-- [ ] Uptime monitoring: hit `https://krtaker.com/api/health` every 1 min (UptimeRobot/UptimeKuma) → alert to the Discord home channel (already wired).
+- [x] Uptime monitoring: hit `https://krtaker.com/api/health` every 1 min (Hermes cron `krtaker-uptime-watchdog` — script `krtaker_uptime.sh`, silent when healthy, alerts after 3 consecutive failures + recovery notice; delivers to origin chat, Discord home available).
 - [ ] Error tracking: add Sentry (or server.log capture) for the dashboard JS + API fatal errors.
 - [ ] cPanel disk quota: currently 1GB FTP-only — check headroom; upgrade hosting or move app+DB to the Lightsail box (18.142.98.150) with the PG migration path (phase7-deploy.md) when user count grows. SQLite is fine for launch (~100–500 active buildings); PG when you scale past that.
 - [ ] Rate limiting at the web-server layer (mod_evasive / Cloudflare) for login endpoints.
