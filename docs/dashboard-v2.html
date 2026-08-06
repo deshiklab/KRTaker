@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2F80ED">
 <meta name="description" content="KRTaker Dashboard V2 — redesigned subscriber dashboards in the landing design system.">
+<link rel="manifest" href="manifest-dash.json">
 <title>KRTaker — Dashboard V2</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232F80ED'/><text x='32' y='42' font-size='28' font-weight='800' fill='white' text-anchor='middle' font-family='Arial'>KR</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -9291,6 +9292,16 @@ async function openSettings(){
         ${notifyRow('email_digest','Daily email digest','দৈনিক ইমেইল ডাইজেস্ট')}
         ${notifyRow('notify_premium','Caretaker updates','কেয়ারটেকার আপডেট')}
       </div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px">🔔 ${t('Push notifications','পুশ নোটিফিকেশন')}</div>
+        <div style="font-size:11.5px;color:var(--text-mute);margin-bottom:8px;line-height:1.5">${t('Instant device alerts for maintenance tickets and rent payments — no email needed.','রক্ষণাবেক্ষণ টিকিট ও ভাড়া পেমেন্টের তাৎক্ষণিক ডিভাইস অ্যালার্ট — ইমেইল ছাড়াই।')}</div>
+        <div class="row-item" style="border:1px solid var(--border);border-radius:10px"><div class="ri-body"><div class="ri-t" id="pushStatusText">${t('Checking…','চেক হচ্ছে…')}</div><div class="ri-s">${t('Alerts on this device','এই ডিভাইসে অ্যালার্ট')}</div></div></div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn-primary" style="flex:1;padding:8px 10px;font-size:12px" id="pushEnableBtn" onclick="enablePush()">🔔 ${t('Enable','সক্রিয়')}</button>
+          <button class="btn-ghost" style="flex:1;padding:8px 10px;font-size:12px;display:none" id="pushTestBtn" onclick="testPush()">📨 ${t('Send test','টেস্ট পাঠান')}</button>
+          <button class="btn-ghost" style="flex:1;padding:8px 10px;font-size:12px;display:none" id="installAppBtn" onclick="installApp()">📲 ${t('Install app','অ্যাপ ইনস্টল')}</button>
+        </div>
+      </div>
       <button class="btn-primary" style="width:100%;margin-top:10px" onclick="saveSettings()">${t('Save preferences','পছন্দ সংরক্ষণ')}</button>
       </div></div>
     </div>
@@ -9314,6 +9325,7 @@ async function openSettings(){
     el.innerHTML=gws.map(g=>`<div class="row-item" style="padding:6px 0;border:none"><div class="ri-ic">${g.name==='bKash'?'💗':g.name==='Nagad'?'🟠':'🔒'}</div><div class="ri-body"><div class="ri-t">${esc(g.name)}</div><div class="ri-s">${g.sandbox?'Sandbox (demo checkout — no real money)':'Live (real payments)'}</div></div><div class="ri-r">${g.sandbox?'<span class="kr-pill">🧪 sandbox</span>':badge('Live')}</div></div>`).join('')
       ||'<div style="color:var(--text-mute);font-size:13px">No gateways configured.</div>';
   });
+  setTimeout(pushUpdateUI, 350);
 }
 function setPhotoPreview(inp){
   if(inp.files&&inp.files[0]){ window.__pendingPhotoFile=inp.files[0]; showPhotoPreview('setPhotoPrev',inp.files[0]); }
@@ -9551,6 +9563,122 @@ $('langBtn').textContent = state.lang==='en' ? 'বাংলা' : 'EN';
 syncFS();
 initApp();   // token → live bootstrap · no token → auth screen
 applyBrandTheme();   // Theming v2 (v3.66): brand colors + logo → CSS vars on every load
+</script>
+<script>
+/* ═══ SA1 v19: PWA install + Push notifications ═══ */
+(function () {
+  window.__deferredInstall = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window.__deferredInstall = e;
+    const b = document.getElementById('installAppBtn');
+    if (b) b.style.display = '';
+  });
+  window.addEventListener('appinstalled', () => {
+    window.__deferredInstall = null;
+    const b = document.getElementById('installAppBtn');
+    if (b) b.style.display = 'none';
+    toast('📲 KRTaker installed');
+  });
+})();
+function isSecureCtx() { return !!window.isSecureContext; }
+function b64u(buf) {
+  const b = buf instanceof ArrayBuffer ? new Uint8Array(buf) : new Uint8Array(buf.buffer || buf);
+  let s = '';
+  b.forEach((x) => { s += String.fromCharCode(x); });
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+async function getActiveSub() {
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    return reg ? await reg.pushManager.getSubscription() : null;
+  } catch (e) { return null; }
+}
+async function pushUpdateUI() {
+  const txt = document.getElementById('pushStatusText');
+  if (!txt) return;
+  const enBtn = document.getElementById('pushEnableBtn');
+  const tBtn = document.getElementById('pushTestBtn');
+  const set = (label, showEnable, showTest) => {
+    txt.textContent = label;
+    if (enBtn) enBtn.style.display = showEnable ? '' : 'none';
+    if (tBtn) tBtn.style.display = showTest ? '' : 'none';
+  };
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !isSecureCtx()) {
+    set(t('Not supported on this browser','এই ব্রাউজারে সাপোর্টেড নয়'), 'none', 'none'); return;
+  }
+  if (!TOKEN || DEMO_MODE) { set(t('Log in to manage push notifications','পুশ নোটিফিকেশন চালাতে লগইন করুন'), 'none', 'none'); return; }
+  try {
+    const r = await apiCall('push-state', {});
+    if (!r.ok) { set('Push unavailable', 'none', 'none'); return; }
+    window.__vapidPublic = r.vapid_public;
+    const sub = await getActiveSub();
+    if (Notification.permission === 'granted' && sub) {
+      set(t('🔔 On — alerts active on this device','🔔 চালু — এই ডিভাইসে অ্যালার্ট সক্রিয়'), 'none', '');
+    } else if (Notification.permission === 'denied') {
+      set(t('🚫 Blocked — enable in browser settings','🚫 ব্লকড — ব্রাউজার সেটিংসে চালু করুন'), 'none', 'none');
+    } else {
+      set(t('Off — enable to get ticket & payment alerts','বন্ধ — টিকিট ও পেমেন্ট অ্যালার্ট পেতে সক্রিয় করুন'), '', 'none');
+    }
+  } catch (e) { set('Push unavailable', 'none', 'none'); }
+}
+async function enablePush() {
+  if (!TOKEN || DEMO_MODE) { toast(t('Log in first','আগে লগইন করুন'), 'error'); return; }
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { toast(t('Notifications blocked by browser','ব্রাউজার নোটিফিকেশন ব্লক করেছে'), 'error'); pushUpdateUI(); return; }
+    let reg = await navigator.serviceWorker.getRegistration();
+    if (!reg) reg = await navigator.serviceWorker.register('sw.js', { scope: './' });
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      if (!window.__vapidPublic) {
+        const r = await apiCall('push-state', {});
+        if (!r.ok) { toast('Push not ready', 'error'); return; }
+        window.__vapidPublic = r.vapid_public;
+      }
+      sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: window.__vapidPublic });
+    }
+    const r = await apiCall('push-save', {
+      endpoint: sub.endpoint,
+      p256dh: b64u(sub.getKey('p256dh')),
+      auth: b64u(sub.getKey('auth'))
+    });
+    if (r.ok) { toast(t('🔔 Push notifications enabled','🔔 পুশ নোটিফিকেশন চালু হয়েছে')); pushUpdateUI(); }
+    else toast(r.error || 'Failed to save device', 'error');
+  } catch (e) { toast(t('Could not enable push','পুশ চালু করা যায়নি') + ': ' + e.message, 'error'); }
+}
+async function testPush() {
+  if (!TOKEN || DEMO_MODE) { toast(t('Log in first','আগে লগইন করুন'), 'error'); return; }
+  try {
+    const r = await apiCall('push-test');
+    if (r.ok && r.result) {
+      if (r.result.sent > 0) toast('📨 ' + t('Test sent to','টেস্ট পাঠানো হয়েছে') + ' ' + r.result.sent + ' ' + t('device(s)','ডিভাইস'));
+      else if (r.result.errors && r.result.errors.length) toast(t('Push service error','পুশ সার্ভিস সমস্যা') + ': HTTP ' + r.result.errors[0].code, 'error');
+      else toast(t('No devices registered','কোনো ডিভাইস রেজিস্টার্ড নেই'), 'error');
+    } else toast((r.error) || 'Test failed', 'error');
+  } catch (e) { toast('Test failed', 'error'); }
+}
+async function installApp() {
+  if (window.__deferredInstall) { window.__deferredInstall.prompt(); return; }
+  toast(t('Use your browser menu → "Add to Home Screen"','ব্রাউজার মেনু → "হোম স্ক্রিনে যোগ করুন"'));
+}
+/* SW registration + auto-update */
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', { scope: './' }).then((reg) => {
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (nw) nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            toast(t('🔄 KRTaker updated — reloading…','🔄 KRTaker আপডেট হয়েছে — রিলোড হচ্ছে…'));
+            setTimeout(() => location.reload(), 1200);
+          }
+        });
+      });
+    }).catch(() => {});
+  });
+})();
 </script>
 </body>
 </html>

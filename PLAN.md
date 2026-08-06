@@ -447,3 +447,19 @@ User: "if any test found any bugs / issues, fix it and then continue / start ove
 - **NULL trap:** dangling cleanup needs `IS NULL OR NOT IN` (NULL silently skips NOT IN).
 - Re-test: lifecycle **157/157** (SC-02 +2, SC-15 +6) · run_all **2832/2832** · live redeployed + probe cleaned.
 - Commits → 3 remotes. Skill ref `sa1-fullsite-v17.md` (round 2 section). Report: docs/LIFECYCLE_TEST_REPORT.md (Round 2).
+
+## SA1-fullsite-v18 (2026-08-12): Per-subscriber plan limits enforced (panel+API, no version bump)
+User: "Start the recommended one" (per-subscriber limit enforcement).
+- `sub_email` scoping on properties/units (idempotent migration + backfill v1 → seeded portfolio → Enterprise owner).
+- Create-time enforcement in `app-crud`: Trial/Starter capped at 1 property / 5 units (`403 Plan limit reached: 1 of 1 properties. Upgrade to lift limits.`); cross-account unit blocked; create stamps `sub_email`, update strips it for subs; staff/superadmin unaffected; dashboard error toast.
+- **Real bug found live:** `plan_catalog.limits='[]'` — old backfill only fixed `'{}'`/empty, and `seed_app()` never ran on live → per-plan caps were inert (Trial users had 9999/99999). Fixed with boot-time self-heal in the schema block.
+- Lifecycle **166/166** (SC-16: 9 checks) · regression **2841/2841** · superadmin **511/511** · live curl E2E (prop2/unit6/cross → 403, Enterprise → 200; live DB pristine 5 props/10 units).
+- Commit `203c48a` → 3 remotes. Skill ref `sa1-fullsite-v18.md`.
+
+## SA1-fullsite-v19 (2026-08-12): PWA installable dashboard + Web Push notifications (no version bump; SW v73→v74)
+User: "Ok next" → PWA + push (DeepSeek/GA4/re-auth all blocked on user keys).
+- **Assets:** `web/manifest-dash.json` (start_url=dashboard-v2.html, standalone, shortcuts); `web/sw.js` v74 adds `push` + `notificationclick` + manifest-dash to STATIC; dashboard `<link rel="manifest">` + SW registration + auto-update reload + beforeinstallprompt → Install app button (Settings→Preferences).
+- **API:** `push_subs` table; VAPID ES256 keypair embedded; actions `push-state/save/remove/test/send` (Bearer auth, endpoint https + key validation, 10 devices/user cap, upsert on endpoint); `push_to_user()` helper; **real triggers**: `app-ticket-create` → push property owner (unless creator is owner), `app-payment-confirm` → push invoice owner (tenant pays → owner alert).
+- **Crypto (RFC 8291/8292), all validated:** `openssl_pkey_derive` needs PEM (raw DER rejected → SPKI→PEM armor); `hash_hkdf` NOT RFC 8291-compatible → manual HKDF-Expand; DER→raw r||s for JWT; aes128gcm framing with AAD=header; cURL h2; 404/410 → dead-sub cleanup.
+- **Tests:** Node decrypt round-trip PASS (incl. ৳); JWT signature verified; `test_push.py` **22/22** on rig (FCM 404 on fake token proves full chain reaches Google — 403 would mean bad VAPID); wired into run_all (50 suites). Fake sub keys must be REAL curve points (openssl rejects off-curve).
+- **Deploy:** deploy_landing.py + manifest-dash.json; ftp_api_p45.py; rig both-copies sync. Skill ref `sa1-fullsite-v19.md`.

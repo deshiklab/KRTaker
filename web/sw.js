@@ -1,7 +1,7 @@
-/* KRTaker landing — production Service Worker
+/* KRTaker landing + dashboard — production Service Worker
    Strategy: network-first for HTML (always fresh), cache-first for static assets,
-   API (/api/*) is NEVER intercepted. */
-const CACHE = 'krtaker-site-v73';
+   API (/api/*) is NEVER intercepted. Push notifications handled for the dashboard. */
+const CACHE = 'krtaker-site-v74';
 const STATIC = [
   'css/style.css',
   'js/main.js',
@@ -11,6 +11,7 @@ const STATIC = [
   'js/register.js',
   'i18n/i18n-dict.js',
   'manifest.json',
+  'manifest-dash.json',
   'pwa/icon.svg',
   'pwa/icon-192.png',
   'pwa/icon-512.png'
@@ -60,5 +61,39 @@ self.addEventListener('fetch', (e) => {
       }
       return res;
     }))
+  );
+});
+
+/* ── Push notifications (SA1 v19) ── */
+self.addEventListener('push', (e) => {
+  let data = { title: 'KRTaker', body: '', url: '/dashboard-v2.html' };
+  try {
+    if (e.data) {
+      const parsed = e.data.json();
+      if (parsed && typeof parsed === 'object') data = Object.assign(data, parsed);
+    }
+  } catch (err) { /* non-JSON payload — use defaults */ }
+  const opts = {
+    body: data.body || '',
+    icon: 'pwa/icon-192.png',
+    badge: 'pwa/icon-192.png',
+    vibrate: [120, 60, 120],
+    tag: data.tag || 'kr-notify',
+    renotify: true,
+    data: { url: data.url || '/dashboard-v2.html', ts: Date.now() }
+  };
+  e.waitUntil(self.registration.showNotification(data.title || 'KRTaker', opts));
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || '/dashboard-v2.html';
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const c of list) {
+        if ('focus' in c) { c.navigate(url); return c.focus(); }
+      }
+      return clients.openWindow(url);
+    })
   );
 });
