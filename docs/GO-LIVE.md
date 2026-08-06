@@ -83,7 +83,7 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 - [x] Sitemap.xml exists — submit to Google Search Console (verify property: DNS TXT or HTML tag).
 - [ ] GA4: replace `G-XXXXXXXXXX` in ALL web/*.html (currently placeholder) with the real Measurement ID; configure events: signup, payment_completed, trial_started.
 - [ ] Search Console: submit sitemap, monitor indexing, fix the known blog slug 404s (`/blog/<slug>` route needs .htaccess rewrite — currently dormant) — decide: enable dynamic blog or keep static blog-*.html (recommend static for launch; fix 404s to avoid SEO bleed).
-- [ ] IndexNow: key exists in platform_meta (indexnow_key) — verify the key endpoint works (Bing had 410s); resubmit.
+- [x] IndexNow: key generated live + stored in platform_meta (`cms-ping-sitemap` admin action; live key `98d9653cfce08cc2928a42fe97b41546` — the old rig-mirror key `bb63…` was never in the LIVE DB, so the key file 404'd); `https://krtaker.com/<key>.txt` serves 200; 22 URLs submitted to api.indexnow.org → HTTP 200 (the old /ping 410s are gone).
 
 ### 3.2 Notifications & messaging
 - [ ] SMS OTP provider (BD): SSLCommerz SMS / DopeSMS / SMS4BD / Revesoft — needs the same KYC docs; wire into register/login OTP; keep email OTP as fallback. [! blocked on provider choice + creds]
@@ -100,7 +100,7 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 - [ ] Backups: SQLite DB backup job (app-backup exists) → offsite (Google Drive rclone token expired — re-auth [!]; or add S3/Backblaze as backup target). Test a restore drill end-to-end.
 - [x] Uptime monitoring: hit `https://krtaker.com/api/health` every 1 min (Hermes cron `krtaker-uptime-watchdog` — script `krtaker_uptime.sh`, silent when healthy, alerts after 3 consecutive failures + recovery notice; delivers to origin chat, Discord home available).
 - [x] Error tracking: `app-error-log`/`app-log-error` API endpoints (JS `window.onerror` + `unhandledrejection` reporter in dashboard-v2.html via sendBeacon; PHP fatal capture via shutdown `error_get_last()`; per-IP rate limit, 24h dedup with counts, 30-day retention) + Hermes cron `krtaker-error-watchdog` (`krtaker_error_watch.py`, every 30 min, silent when clean, grouped digest when new errors).
-- [ ] cPanel disk quota: currently 1GB FTP-only — check headroom; upgrade hosting or move app+DB to the Lightsail box (18.142.98.150) with the PG migration path (phase7-deploy.md) when user count grows. SQLite is fine for launch (~100–500 active buildings); PG when you scale past that.
+- [x] cPanel disk quota: checked 2026-08 via UAPI Quota/get_quota_info — 182.97 MB used / 1 GB limit → **817 MB free (82% headroom)**; bandwidth 524 MB/10 GB. Comfortable for launch; re-check when uploads/media grow.
 - [ ] Rate limiting at the web-server layer (mod_evasive / Cloudflare) for login endpoints.
 - [ ] Cloudflare: already used for tunnel; put the apex site behind CF (free tier) for CDN + WAF + caching of static assets.
 - [ ] SSL: confirm auto-renew on the cPanel cert (no manual expiry handling).
