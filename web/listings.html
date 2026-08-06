@@ -58,13 +58,14 @@
 .ls-toggle{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;color:var(--text);cursor:pointer;padding:7px 2px;font-family:inherit;background:none;border:0;width:100%;text-align:left}
 .ls-toggle input{width:auto;accent-color:var(--ls-accent)}
 /* ── results column ── */
+.ls-results{min-width:0}
 .ls-res-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 14px}
 .ls-count{font-size:13px;font-weight:700;color:var(--text)}
 .ls-count b{color:var(--ls-accent)}
-.ls-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.ls-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
 .ls-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.25);color:var(--ls-accent);border-radius:999px;padding:3px 9px;font-size:11px;font-weight:600}
 .ls-chip button{background:none;border:0;color:inherit;cursor:pointer;font-size:12px;line-height:1;padding:0}
-.ls-tools{display:flex;gap:8px;align-items:center;margin-left:auto}
+.ls-tools{display:flex;gap:8px;align-items:center;margin-left:auto;min-width:0}
 .ls-tools select{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:600;outline:0;cursor:pointer;font-family:inherit}
 .ls-iview{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .ls-iview button{border:0;background:var(--card);color:var(--muted);padding:7px 10px;cursor:pointer;font-size:14px;font-family:inherit}
@@ -126,6 +127,8 @@
 .ls-more button:hover{border-color:var(--ls-accent);color:var(--ls-accent)}
 .ls-empty{text-align:center;padding:70px 20px;color:var(--muted)}
 .ls-empty .big{font-size:40px;margin-bottom:10px}
+.ls-retry{display:inline-flex;align-items:center;gap:7px;background:var(--ls-accent);color:#fff;border:0;border-radius:999px;padding:11px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(47,128,237,.3)}
+.ls-retry:hover{filter:brightness(1.06)}
 /* ── detail modal ── */
 .ls-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.55);backdrop-filter:blur(3px)}
 .ls-modal.open{display:flex}
@@ -241,6 +244,9 @@
           <a href="features.html"><span class="mega-ico">🧾</span><span data-i18n="nav.features">Features</span></a>
           <a href="how-it-works.html"><span class="mega-ico">🗺️</span><span data-i18n="nav.how">How it works</span></a>
           <a href="legal-compliance.html"><span class="mega-ico">⚖️</span><span data-i18n="footer.legal">Legal &amp; Compliance</span></a>
+          <a href="features.html"><span class="mega-ico">🏦</span><span data-i18n="home.feat2t">Holding tax engine</span></a>
+          <a href="features.html"><span class="mega-ico">💳</span><span data-i18n="home.feat4t">bKash &amp; SSLCommerz</span></a>
+          <a href="features.html"><span class="mega-ico">📊</span><span data-i18n="home.feat9t">Reports that tell the truth</span></a>
         </div>
       </li>
       <li class="mega-li">
@@ -259,20 +265,23 @@
         </div>
       </li>
       <li class="mega-li">
-        <a href="listings.html" class="mega-trigger active" data-i18n="nav.listings">Listings <span class="chev">▾</span></a>
+        <a href="blog.html" class="mega-trigger " data-i18n="nav.resources">Resources <span class="chev">▾</span></a>
         <div class="mega-dropdown mega-center">
           <div class="mega-featured">
-            <h4 data-i18n="nav.mfListings">Rent a verified property</h4>
-            <p data-i18n="nav.mfListingsSub">Flats, offices and sheds with vacant units, managed end-to-end by KRTaker.</p>
+            <h4 data-i18n="nav.mfResources">Insights &amp; Blog</h4>
+            <p data-i18n="nav.mfResourcesSub">Guides on BD property law, taxes &amp; portfolio management.</p>
           </div>
-          <a href="listings.html"><span class="mega-ico">🏘️</span><span data-i18n="nav.listings">Browse listings</span></a>
-          <a href="register.html"><span class="mega-ico">🔑</span><span data-i18n="nav.tenants">Become a tenant</span></a>
-          <a href="for-owners.html"><span class="mega-ico">📢</span><span data-i18n="nav.publish">List my property</span></a>
+          <a href="tools.html"><span class="mega-ico">🧮</span><span data-i18n="misc.calculators">Calculators</span></a>
+          <a href="blog.html"><span class="mega-ico">📰</span><span data-i18n="footer.blog">Insights &amp; Blog</span></a>
+          <a href="case-studies.html"><span class="mega-ico">📈</span><span data-i18n="footer.caseStudies">Case studies</span></a>
+          <a href="faq.html"><span class="mega-ico">❓</span><span data-i18n="footer.faq">FAQ</span></a>
+          <a href="about.html"><span class="mega-ico">ℹ️</span><span data-i18n="footer.about">About us</span></a>
           <a href="contact.html"><span class="mega-ico">📞</span><span data-i18n="footer.contact">Contact</span></a>
         </div>
       </li>
       <li><a href="pricing.html" class="" data-i18n="nav.pricing">Pricing</a></li>
       <li><a href="ai-caretaker.html" class="" data-i18n="nav.ai">AI Caretaker</a></li>
+      <li><a href="listings.html" class="active" data-i18n="nav.listings">Listings</a></li>
     </ul>
     <div class="nav-cta">
       <button class="icon-btn" data-lang-toggle aria-label="Language">বাং</button>
@@ -385,61 +394,86 @@
     <div class="footer-top">
       <div class="footer-brand">
         <div class="nav-logo"><span class="logo-mark">KR</span> KRTaker</div>
-        <p data-i18n="footer.blurb">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
+        <p data-i18n="footer.blurb" data-cms="footer.section.tagline">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
         <div class="footer-socials">
           <a href="https://www.facebook.com/krtaker" class="soc" aria-label="Facebook" target="_blank" rel="noopener">f</a>
           <a href="https://www.linkedin.com/company/krtaker" class="soc" aria-label="LinkedIn" target="_blank" rel="noopener">in</a>
           <a href="https://x.com/krtaker" class="soc" aria-label="X (Twitter)" target="_blank" rel="noopener">𝕏</a>
+          <a href="https://www.youtube.com/@krtaker" class="soc" aria-label="YouTube" target="_blank" rel="noopener">▶</a>
+          <a href="https://wa.me/8801722759646" class="soc" aria-label="WhatsApp" target="_blank" rel="noopener">✆</a>
         </div>
       </div>
-      <div class="footer-col">
-        <h4 data-i18n="footer.product">Product</h4>
+      <div class="footer-news">
+        <h4 data-i18n="footer.newsTitle" data-cms="footer.news.title">Property insights, in Bengali &amp; English</h4>
+        <p data-i18n="footer.newsSub" data-cms="footer.news.sub">Holding tax, TDS, PRCA updates and product news — once a month, no spam.</p>
+        <form class="news-form" id="newsletterForm" novalidate>
+          <input type="email" id="newsEmail" data-i18n-ph="footer.newsPh" placeholder="you@example.com" required data-cms-ph="footer.news.ph">
+          <button type="submit" data-i18n="footer.newsBtn" data-cms="footer.news.btn">Subscribe</button>
+        </form>
+        <div class="footer-pay">
+          <span data-cms="footer.pay.label">Pays with</span>
+          <span class="pay-chip">bKash</span>
+          <span class="pay-chip">Nagad</span>
+          <span class="pay-chip">SSLCommerz</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <h4 data-i18n="footer.p1" data-cms="footer.cols.c1">Platform</h4>
         <ul>
-          <li><a href="features.html" data-i18n="nav.features">Features</a></li>
-          <li><a href="how-it-works.html" data-i18n="nav.how">How it works</a></li>
-          <li><a href="pricing.html" data-i18n="nav.pricing">Pricing</a></li>
-          <li><a href="listings.html" data-i18n="nav.listings">Listings</a></li>
-          <li><a href="ai-caretaker.html" data-i18n="nav.ai">AI Caretaker</a></li>
+          <li><a href="features.html" data-i18n="footer.features">Features</a></li>
+          <li><a href="how-it-works.html" data-i18n="footer.how">How it works</a></li>
+          <li><a href="pricing.html" data-i18n="footer.pricing">Pricing</a></li>
+          <li><a href="register.html" data-i18n="footer.register">Register</a></li>
+          <li><a href="login.html" data-i18n="footer.login">Log in</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4 data-i18n="footer.audience">For you</h4>
+      <div>
+        <h4 data-i18n="footer.p2" data-cms="footer.cols.c2">For you</h4>
         <ul>
           <li><a href="for-owners.html" data-i18n="footer.owners">Property Owners</a></li>
           <li><a href="for-tenants.html" data-i18n="footer.tenants">Tenants</a></li>
           <li><a href="for-partners.html" data-i18n="footer.partners">Service Partners</a></li>
           <li><a href="for-nrb.html" data-i18n="footer.nrb">NRB Investors</a></li>
+          <li><a href="legal-compliance.html" data-i18n="footer.legal">Legal &amp; Compliance</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4 data-i18n="footer.resources">Resources</h4>
+      <div>
+        <h4 data-i18n="footer.p3" data-cms="footer.cols.c3">Company</h4>
         <ul>
+          <li><a href="about.html" data-i18n="footer.about">About us</a></li>
           <li><a href="blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
-          <li><a href="tools.html" data-i18n="misc.calculators">Calculators</a></li>
           <li><a href="case-studies.html" data-i18n="footer.caseStudies">Case studies</a></li>
           <li><a href="faq.html" data-i18n="footer.faq">FAQ</a></li>
-          <li><a href="about.html" data-i18n="footer.about">About us</a></li>
+          <li><a href="contact.html" data-i18n="footer.contact">Contact</a></li>
+          <li><a href="ai-caretaker.html" data-i18n="footer.ai">AI Caretaker</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4 data-i18n="footer.legal2">Legal</h4>
-        <ul>
-          <li><a href="terms.html" data-i18n="footer.terms">Terms of Service</a></li>
-          <li><a href="privacy.html" data-i18n="footer.privacy">Privacy Policy</a></li>
-          <li><a href="legal-compliance.html" data-i18n="footer.legal">Legal &amp; Compliance</a></li>
+      <div>
+        <h4 data-i18n="footer.p4" data-cms="footer.cols.c4">Get in touch</h4>
+        <ul class="footer-contact">
+          <li data-i18n="footer.c1" data-cms="footer.contact.c1">📧 hello@krtaker.com</li>
+          <li data-i18n="footer.c2" data-cms="footer.contact.c2">📞 +880 1712-000000</li>
+          <li data-i18n="footer.c3" data-cms="footer.contact.c3">📍 Dhaka, Bangladesh</li>
+          <li data-i18n="footer.c4" data-cms="footer.contact.c4">🕐 24/7 AI caretaker online</li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 KRTaker. All rights reserved.</span>
-      <span data-i18n="footer.made">Made in Bangladesh 🇧🇩</span>
+      <span data-i18n="footer.rights">© 2026 KRTaker. All rights reserved.</span>
+      <span class="footer-made" data-i18n="footer.madeIn" data-cms="footer.bottom.made">Made in Bangladesh 🇧🇩</span>
+      <span><a href="terms.html" data-i18n="footer.terms">Terms</a> · <a href="privacy.html" data-i18n="footer.privacy">Privacy</a> · <a href="contact.html" data-i18n="footer.support">Support</a></span>
     </div>
   </div>
 </footer>
 
-<div class="wa-float">
-  <a href="https://wa.me/8801722759646?text=Hi%2C%20I%27m%20interested%20in%20a%20KRTaker%20listing" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><span>WhatsApp</span></a>
+<!-- Mobile sticky CTA -->
+<div class="sticky-cta">
+  <a href="register.html" data-i18n="shared.stickyCta" data-cms="home.sticky.cta">Start free trial — 14 days, no card</a>
 </div>
+<!-- Back to top -->
+<button class="btt-btn" aria-label="Back to top">↑</button>
 
 <!-- detail modal -->
 <div class="ls-modal" id="lsModal" role="dialog" aria-modal="true">
@@ -461,7 +495,7 @@
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const bn=()=>document.documentElement.lang==='bn'||localStorage.getItem('krtaker_lang')==='bn';
   const T=(en,b)=>bn()?(b||en):en;
-  const BN={Flat:'ফ্ল্যাট',Commercial:'কমার্শিয়াল',Industrial:'ইন্ডাস্ট্রিয়াল',Plot:'প্লট',All:'সব','Dhaka North':'ঢাকা উত্তর','Dhaka South':'ঢাকা দক্ষিণ',Chattogram:'চট্টগ্রাম',sqft:'বর্গফুট','per month':'প্রতি মাসে','Floor':'তলা','Available units':'উপলব্ধ ইউনিট','Loading listings…':'লিস্টিং লোড হচ্ছে…','No listings available right now.':'এই মুহূর্তে কোনো লিস্টিং নেই।','Could not load listings. Please try again.':'লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।','No listings match your search.':'আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।','Clear filters':'ফিল্টার মুছুন','Clear all':'সব মুছুন','Filters':'ফিল্টার','Property type':'সম্পত্তির ধরন','Location':'অবস্থান','Monthly rent (৳)':'মাসিক ভাড়া (৳)','Size (sqft)':'আয়তন (বর্গফুট)','Bedrooms':'বেডরুম','Furnishing':'ফার্নিশিং','Only properties with vacancies':'শুধু খালি ইউনিট আছে এমন','Saved only':'শুধু সেভ করা','Featured':'ফিচার্ড','Verified':'ভেরিফায়েড','Any':'যেকোনো','Furnished':'ফার্নিশড','Unfurnished':'আনফার্নিশড','Sort: featured':'সাজান: ফিচার্ড','Newest first':'নতুন আগে','Rent: low → high':'ভাড়া: কম → বেশি','Rent: high → low':'ভাড়া: বেশি → কম','Largest first':'বড় আগে','৳/sqft: high → low':'৳/বর্গফুট: বেশি → কম','Load more listings':'আরও লিস্টিং দেখুন','No vacancies right now':'এই মুহূর্তে কোনো খালি ইউনিট নেই','Enquire on WhatsApp':'হোয়াটসঅ্যাপে জানুন','Ask about this property':'এই সম্পত্তি সম্পর্কে জানুন','View details':'বিস্তারিত দেখুন','Save':'সেভ করুন','Saved':'সেভ হয়েছে','Share':'শেয়ার','Copy link':'লিংক কপি','Description':'বিবরণ','Amenities':'সুবিধাসমূহ','Available units':'উপলব্ধ ইউনিট','Contact':'যোগাযোগ','Building area':'বিল্ডিং আয়তন','Property value':'সম্পত্তির মূল্য','Rent / sqft':'ভাড়া/বর্গফুট','From':'থেকে','List your property':'আপনার সম্পত্তি লিস্ট করুন','Clear search':'খোঁজ মুছুন','property':'সম্পত্তি','properties':'সম্পত্তি','unit':'ইউনিট','units':'ইউনিট','Saved listings':'সেভকৃত লিস্টিং','Bed':'বেড','Bath':'বাথ','beds':'বেড','baths':'বাথ','Call':'কল করুন','Email':'ইমেইল','Show':'দেখুন'};
+  const BN={Flat:'ফ্ল্যাট',Commercial:'কমার্শিয়াল',Industrial:'ইন্ডাস্ট্রিয়াল',Plot:'প্লট',All:'সব','Dhaka North':'ঢাকা উত্তর','Dhaka South':'ঢাকা দক্ষিণ',Chattogram:'চট্টগ্রাম',sqft:'বর্গফুট','per month':'প্রতি মাসে','Floor':'তলা','Available units':'উপলব্ধ ইউনিট','Loading listings…':'লিস্টিং লোড হচ্ছে…','No listings available right now.':'এই মুহূর্তে কোনো লিস্টিং নেই।','Could not load listings. Please try again.':'লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।','No listings match your search.':'আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।','Clear filters':'ফিল্টার মুছুন','Clear all':'সব মুছুন','Filters':'ফিল্টার','Property type':'সম্পত্তির ধরন','Location':'অবস্থান','Monthly rent (৳)':'মাসিক ভাড়া (৳)','Size (sqft)':'আয়তন (বর্গফুট)','Bedrooms':'বেডরুম','Furnishing':'ফার্নিশিং','Only properties with vacancies':'শুধু খালি ইউনিট আছে এমন','Saved only':'শুধু সেভ করা','Featured':'ফিচার্ড','Verified':'ভেরিফায়েড','Any':'যেকোনো','Furnished':'ফার্নিশড','Unfurnished':'আনফার্নিশড','Sort: featured':'সাজান: ফিচার্ড','Newest first':'নতুন আগে','Rent: low → high':'ভাড়া: কম → বেশি','Rent: high → low':'ভাড়া: বেশি → কম','Largest first':'বড় আগে','৳/sqft: high → low':'৳/বর্গফুট: বেশি → কম','Load more listings':'আরও লিস্টিং দেখুন','No vacancies right now':'এই মুহূর্তে কোনো খালি ইউনিট নেই','Enquire on WhatsApp':'হোয়াটসঅ্যাপে জানুন','Ask about this property':'এই সম্পত্তি সম্পর্কে জানুন','View details':'বিস্তারিত দেখুন','Save':'সেভ করুন','Saved':'সেভ হয়েছে','Share':'শেয়ার','Copy link':'লিংক কপি','Description':'বিবরণ','Amenities':'সুবিধাসমূহ','Available units':'উপলব্ধ ইউনিট','Contact':'যোগাযোগ','Building area':'বিল্ডিং আয়তন','Property value':'সম্পত্তির মূল্য','Rent / sqft':'ভাড়া/বর্গফুট','From':'থেকে','List your property':'আপনার সম্পত্তি লিস্ট করুন','Clear search':'খোঁজ মুছুন','property':'সম্পত্তি','properties':'সম্পত্তি','unit':'ইউনিট','units':'ইউনিট','Saved listings':'সেভকৃত লিস্টিং','Bed':'বেড','Bath':'বাথ','beds':'বেড','baths':'বাথ','Call':'কল করুন','Email':'ইমেইল','Show':'দেখুন','Try again':'আবার চেষ্টা করুন','Your connection may be slow — we tried 3 times.':'আপনার সংযোগ ধীর হতে পারে — আমরা ৩ বার চেষ্টা করেছি।'};
   const WA='8801722759646';
   const fmt=n=>'৳'+(Math.round(n||0)).toLocaleString('en-IN');
   const fmtN=n=>Math.round(n||0).toLocaleString('en-IN');
@@ -777,18 +811,41 @@
   }
 
   /* ── init ── */
-  function init(){
-    const pid=readURL();
+  function loadingHTML(){
+    return `<div class="ls-empty"><div class="big">🏘️</div><div class="spinner" style="display:inline-block;width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--ls-accent);border-radius:50%;animation:krspin 1s linear infinite"></div><br><br><span data-i18n="ls.loading">${T('Loading listings…','লিস্টিং লোড হচ্ছে…')}</span></div>`;
+  }
+  function loadListings(attempt){
+    const ctrl=new AbortController();
+    const to=setTimeout(()=>ctrl.abort(),15000);
+    return fetch('api/listings',{signal:ctrl.signal})
+      .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
+      .then(d=>{clearTimeout(to);if(!d.ok||!Array.isArray(d.properties))throw new Error('bad payload');return d})
+      .catch(err=>{
+        clearTimeout(to);
+        if(attempt<3)return new Promise(res=>setTimeout(res,600*attempt)).then(()=>loadListings(attempt+1));
+        throw err;
+      });
+  }
+  function showLoadError(){
     const grid=$('lsGrid');
     grid.className='ls-grid';
-    fetch('api/listings').then(r=>r.json()).then(d=>{
-      if(!d.ok||!Array.isArray(d.properties)){grid.innerHTML=`<div class="ls-empty"><div class="big">🏘️</div>${T('No listings available right now.','এই মুহূর্তে কোনো লিস্টিং নেই।')}</div>`;return}
+    grid.innerHTML=`<div class="ls-empty"><div class="big">⚠️</div><div style="font-weight:800;font-size:15px;margin-bottom:6px">${T('Could not load listings. Please try again.','লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।')}</div><div style="font-size:12.5px;color:var(--muted);margin-bottom:16px">${T('Your connection may be slow — we tried 3 times.','আপনার সংযোগ ধীর হতে পারে — আমরা ৩ বার চেষ্টা করেছি।')}</div><button class="ls-retry" onclick="retryLoad()">🔄 ${T('Try again','আবার চেষ্টা করুন')}</button></div>`;
+  }
+  function startLoad(pid){
+    const grid=$('lsGrid');
+    grid.className='ls-grid';
+    grid.innerHTML=loadingHTML();
+    loadListings(1).then(d=>{
       all=d.properties;
       $('lsQ').value=F.q;
       syncFilterInputs();
       render();renderFeatured();
       if(pid)setTimeout(()=>openDetail(pid),100);
-    }).catch(()=>{grid.innerHTML=`<div class="ls-empty"><div class="big">⚠️</div>${T('Could not load listings. Please try again.','লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।')}</div>`});
+    }).catch(()=>showLoadError());
+  }
+  function init(){
+    const pid=readURL();
+    startLoad(pid);
     // events
     let dt=null;
     $('lsQ').addEventListener('input',e=>{clearTimeout(dt);dt=setTimeout(()=>{F.q=e.target.value.trim();apply()},250)});
@@ -817,6 +874,7 @@
   window.openDetail=openDetail;window.closeDetail=closeDetail;window.toggleFav=toggleFav;
   window.shareProp=shareProp;window.copyLink=copyLink;
   window.apply=apply;window.F=F;
+  window.retryLoad=()=>startLoad(readURL());
 })();
 </script>
 <script>
