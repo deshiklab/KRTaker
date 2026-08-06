@@ -463,3 +463,12 @@ User: "Ok next" → PWA + push (DeepSeek/GA4/re-auth all blocked on user keys).
 - **Crypto (RFC 8291/8292), all validated:** `openssl_pkey_derive` needs PEM (raw DER rejected → SPKI→PEM armor); `hash_hkdf` NOT RFC 8291-compatible → manual HKDF-Expand; DER→raw r||s for JWT; aes128gcm framing with AAD=header; cURL h2; 404/410 → dead-sub cleanup.
 - **Tests:** Node decrypt round-trip PASS (incl. ৳); JWT signature verified; `test_push.py` **22/22** on rig (FCM 404 on fake token proves full chain reaches Google — 403 would mean bad VAPID); wired into run_all (50 suites). Fake sub keys must be REAL curve points (openssl rejects off-curve).
 - **Deploy:** deploy_landing.py + manifest-dash.json; ftp_api_p45.py; rig both-copies sync. Skill ref `sa1-fullsite-v19.md`.
+
+## SA1-fullsite-v20 (2026-08-12): Team / sub-accounts + seat enforcement (panel+API, no version bump)
+User: "Next" → last display-only limit (`seats`) closed via subscriber team members.
+- **Auth:** token kind `'team'`; `current_user()` resolves member → parent subscriber row overlaid (kind='sub', team_member, team_id, member name/role) so plan/limits/scoping/modules all inherit. **Critical fix:** skip the trailing `$row['kind']=$tok['kind']` overwrite for team tokens or members get Enterprise/full-base (escalation).
+- **API:** `team_members` table; actions team-list/invite/reset/update/remove (owner or superadmin only); seats = owner + active members (team_limit = seats−1); invite validates email uniqueness across all identity tables + enforces cap (403); password shown once; role change / disable / remove revokes tokens.
+- **Self-service safety:** `app-profile` routes members to their OWN row (team_members, team_id, token kind 'team') — member password/name edits can't touch the owner's account or sessions.
+- **Dashboard:** Settings → Team tab (owner/superadmin): seats card, add-member form (name/email/role), member list with 🔑 reset / ⏸ toggle / 🗑 remove; team members get a normal role-driven workspace.
+- **Tests:** `test_team.py` **46/46** (overlay, RBAC, scoping, role-change revocation, disable/enable, reset, seat cap on business plan, duplicate email, self-service isolation, remove). Pitfalls: PHP functions inside switch cases aren't hoisted (move helpers to global area); rig IP 127.0.0.1 trips 429 lockout across repeated runs → clear `auth_attempts` in tests + run_all reset.
+- **Deploy:** ftp_api_p45.py + ftp_dash.py; rig both-copies sync; wired into run_all (51 suites). Skill ref `sa1-fullsite-v20.md`.

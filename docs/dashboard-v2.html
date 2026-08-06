@@ -9237,9 +9237,11 @@ async function openSettings(){
   },120);
   const sub=(DEMO_MODE?null:(LIVE.subscription||null));
   const planInfo=sub?`<div class="row-item"><div class="ri-body"><div class="ri-t">${esc(sub.plan_name||'Trial')}</div><div class="ri-s">${t('Current plan','বর্তমান প্ল্যান')} · ${esc(sub.plan_code||'')}</div></div><div class="ri-r"><span class="badge b-blue">${esc(sub.status||'active')}</span></div></div>`:'';
+  const canTeam=!DEMO_MODE&&!u.team_member&&(rid==='owner'||rid==='superadmin');
   const tabs=krTabBar([
     {id:'profile',l:'👤 '+t('Profile','প্রোফাইল')},
     {id:'prefs',l:'🎨 '+t('Preferences','পছন্দসমূহ')},
+    ...(canTeam?[{id:'team',l:'👥 '+t('Team','টিম')}]:[]),
     {id:'security',l:'🔑 '+t('Security','নিরাপত্তা')},
     {id:'billing',l:'💳 '+t('Billing','বিলিং')},
     {id:'data',l:'🗂️ '+t('Data','ডেটা')}
@@ -9305,6 +9307,24 @@ async function openSettings(){
       <button class="btn-primary" style="width:100%;margin-top:10px" onclick="saveSettings()">${t('Save preferences','পছন্দ সংরক্ষণ')}</button>
       </div></div>
     </div>
+    ${canTeam?`<div class="kr-tab-panel" data-p="set" data-tab="team">
+      <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">👥</span>${t('Team seats','টিম সিট')}</div></div><div class="panel-b" id="teamSeatsCard"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div></div>
+      <div class="panel" style="margin-bottom:12px"><div class="panel-h"><div class="t"><span class="pi">➕</span>${t('Add team member','টিম মেম্বার যোগ করুন')}</div></div><div class="panel-b">
+        <div class="form-field"><label>${t('Full name','পুরো নাম')}</label><input id="teamName" placeholder="e.g. Anisur Rahman"></div>
+        <div class="form-field"><label>${t('Email (login)','ইমেইল (লগইন)')}</label><input id="teamEmail" type="email" placeholder="colleague@company.com"></div>
+        <div class="form-field"><label>${t('Role','ভূমিকা')}</label><select id="teamRole" style="width:100%;padding:9px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px">
+          <option value="manager">${t('Manager','ম্যানেজার')}</option>
+          <option value="accountant">${t('Accountant','হিসাবরক্ষক')}</option>
+          <option value="svc_mgr">${t('Service Manager','সার্ভিস ম্যানেজার')}</option>
+          <option value="legal">${t('Legal','আইনি')}</option>
+          <option value="crm">${t('CRM','সিআরএম')}</option>
+          <option value="hr">${t('HR','এইচআর')}</option>
+        </select></div>
+        <button class="btn-primary" style="width:100%" onclick="teamAdd()">${t('Add member','মেম্বার যোগ করুন')}</button>
+        <div class="c-sub" style="margin-top:6px;font-size:11px">${t('A login password is generated and shown once — share it securely with the new member.','লগইন পাসওয়ার্ড একবার দেখানো হবে — নতুন মেম্বারকে নিরাপদে দিন।')}</div>
+      </div></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📋</span>${t('Members','মেম্বারগণ')}</div></div><div class="panel-b" id="teamMembersList"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div></div>
+    </div>`:''}
     <div class="kr-tab-panel" data-p="set" data-tab="security">
       <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔑</span>${t('Change password','পাসওয়ার্ড পরিবর্তন')}</div></div><div class="panel-b">
         <div class="form-field"><label>${t('Current password','বর্তমান পাসওয়ার্ড')}</label><input type="password" id="setOldPw" autocomplete="current-password"></div>
@@ -9326,9 +9346,78 @@ async function openSettings(){
       ||'<div style="color:var(--text-mute);font-size:13px">No gateways configured.</div>';
   });
   setTimeout(pushUpdateUI, 350);
+  setTimeout(teamLoad, 450);
 }
 function setPhotoPreview(inp){
   if(inp.files&&inp.files[0]){ window.__pendingPhotoFile=inp.files[0]; showPhotoPreview('setPhotoPrev',inp.files[0]); }
+}
+/* ── SA1 v20: team (sub-accounts) management ── */
+async function teamLoad() {
+  const el = document.getElementById('teamMembersList');
+  const seatEl = document.getElementById('teamSeatsCard');
+  if (!el) return;
+  try {
+    const r = await apiCall('team-list', {});
+    if (!r.ok) {
+      if (seatEl) seatEl.innerHTML = `<div class="c-sub">${esc(r.error || 'Cannot load team')}</div>`;
+      el.innerHTML = ''; return;
+    }
+    if (seatEl) seatEl.innerHTML = `<div class="row-item"><div class="ri-body"><div class="ri-t">${r.used} ${t('of','এর মধ্যে')} ${r.seats} ${t('seats used','সিট ব্যবহৃত')}</div><div class="ri-s">${r.team_limit} ${t('team seat(s) available on your plan','আপনার প্ল্যানে টিম সিট উপলব্ধ')}</div></div><div class="ri-r"><span class="badge b-blue">${r.used}/${r.seats}</span></div></div>`;
+    if (!r.members || !r.members.length) {
+      el.innerHTML = `<div class="c-sub">${t('No team members yet — add your first one above.','এখনো কোনো টিম মেম্বার নেই — উপরে প্রথমটি যোগ করুন।')}</div>`;
+      return;
+    }
+    el.innerHTML = r.members.map(m => `
+      <div class="row-item" style="border:1px solid var(--border);border-radius:10px;margin-bottom:6px;flex-wrap:wrap">
+        <div class="ri-body">
+          <div class="ri-t">${esc(m.name)} <span class="kr-pill" style="margin-left:4px">${esc(m.role)}</span></div>
+          <div class="ri-s">${esc(m.email)} · ${esc(m.status)} · ${t('last login','শেষ লগইন')} ${esc(m.last_login || '—')}</div>
+        </div>
+        <div class="ri-r" style="display:flex;gap:4px;margin-top:4px">
+          <button class="btn-ghost" style="padding:4px 9px;font-size:11px" title="${t('Reset password','পাসওয়ার্ড রিসেট')}" onclick="teamResetPw(${m.id})">🔑</button>
+          <button class="btn-ghost" style="padding:4px 9px;font-size:11px" title="${t('Enable / disable','সক্রিয় / নিষ্ক্রিয়')}" onclick="teamToggleStatus(${m.id},'${m.status}')">${m.status==='active'?'⏸':'▶️'}</button>
+          <button class="btn-ghost" style="padding:4px 9px;font-size:11px;color:var(--danger)" title="${t('Remove','সরান')}" onclick="teamRemove(${m.id})">🗑</button>
+        </div>
+      </div>`).join('');
+  } catch (e) {
+    if (seatEl) seatEl.innerHTML = `<div class="c-sub">${t('Team unavailable','টিম অনুপলব্ধ')}</div>`;
+  }
+}
+async function teamAdd() {
+  const name = ((document.getElementById('teamName')||{}).value||'').trim();
+  const email = ((document.getElementById('teamEmail')||{}).value||'').trim();
+  const role = ((document.getElementById('teamRole')||{}).value) || 'manager';
+  if (!name || !email) { toast(t('Name and email are required','নাম ও ইমেইল প্রয়োজন'), 'error'); return; }
+  try {
+    const r = await apiCall('team-invite', { name, email, role });
+    if (r.ok) {
+      toast(t('Member added — password','মেম্বার যোগ হয়েছে — পাসওয়ার্ড') + ': ' + r.password);
+      const ni = document.getElementById('teamName'); if (ni) ni.value = '';
+      const ei = document.getElementById('teamEmail'); if (ei) ei.value = '';
+      teamLoad();
+    } else toast(r.error || 'Failed', 'error');
+  } catch (e) { toast('Failed', 'error'); }
+}
+async function teamResetPw(id) {
+  try {
+    const r = await apiCall('team-reset', { id });
+    if (r.ok) toast(t('New password','নতুন পাসওয়ার্ড') + ': ' + r.password);
+    else toast(r.error || 'Failed', 'error');
+  } catch (e) { toast('Failed', 'error'); }
+}
+async function teamToggleStatus(id, cur) {
+  try {
+    const r = await apiCall('team-update', { id, status: cur === 'active' ? 'disabled' : 'active' });
+    if (r.ok) { teamLoad(); } else toast(r.error || 'Failed', 'error');
+  } catch (e) { toast('Failed', 'error'); }
+}
+async function teamRemove(id) {
+  if (!confirm(t('Remove this team member? Access is revoked immediately.','এই টিম মেম্বারটি সরাবেন? অ্যাক্সেস সাথে সাথে বাতিল হবে।'))) return;
+  try {
+    const r = await apiCall('team-remove', { id });
+    if (r.ok) { toast(t('Team member removed','টিম মেম্বার সরানো হয়েছে')); teamLoad(); }
+    else toast(r.error || 'Failed', 'error');
+  } catch (e) { toast('Failed', 'error'); }
 }
 async function submitUserPhoto(){
   const u=LIVE.user||{}; if(!TOKEN||DEMO_MODE){ toast('Demo — photo upload needs live login','error'); return; }
