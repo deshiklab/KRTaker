@@ -1,6 +1,6 @@
 # SA1-fullsite v22 — Rent-Due Push Notifications (panel+API, no version bump)
 
-Shipped 2026-08-12 on branch `superadmin-panel`. API + dashboard changes → **no version bump** (precedent: v18–v21). Live = v3.66 / SW v74 + v22. Commit: `PENDING` → 3 remotes.
+Shipped 2026-08-12 on branch `superadmin-panel`. API + dashboard changes → **no version bump** (precedent: v18–v21). Live = v3.66 / SW v74 + v22. Commit: `2795747` → 3 remotes.
 
 ## Why
 
