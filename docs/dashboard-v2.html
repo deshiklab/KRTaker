@@ -6193,7 +6193,7 @@ function portalHtml(d){
   h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">🔧</span>${t('My maintenance','আমার মেরামত')}</div><span class="link" onclick="nav('maintenance')">${t('All','সব')} →</span></div><div class="panel-b">${tickRows}</div></div>`;
   h+=`</div>`;
   h+=`<div>`;
-  h+=`<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Payment history','পেমেন্ট ইতিহাস')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Month','মাস')}</th><th>${t('Net','নিট')}</th><th>${t('Paid','পরিশোধিত')}</th><th>${t('Due','বাকি')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>${invRows}</tbody></table></div>${payRows?`<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">${payRows}</div>`:''}</div>`;
+  h+=`<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Payment history','পেমেন্ট ইতিহাস')}</div></div><div class="tbl-wrap"><table><thead><tr><th>${t('Invoice','ইনভয়েস')}</th><th>${t('Month','মাস')}</th><th>${t('Net','নিট')}</th><th>${t('Paid','পরিশোধিত')}</th><th>${t('Due','বাকি')}</th><th>${t('Status','স্ট্যাটাস')}</th><th></th></tr></thead><tbody>${invRows}</tbody></table></div>${payRows?`<div style="margin-top:10px;border-top:1px solid var(--border);padding:8px 18px 0">${payRows}</div>`:''}</div>`;
   h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">📢</span>${t('Notices','নোটিশ')}</div></div><div class="panel-b">${noticeRows}</div></div>`;
   h+=`</div>`;
   h+=`</div>`;
