@@ -32,9 +32,23 @@ Full audit of `/root/krtaker-deploy/api/index.php` (~1.29 MB). Already strong (n
 Headers (7), contact CRLF-sanitized + stored clean, contact length 400, contact throttle 429 (pre-seeded 5 rows — **no SMTP hammering**), newsletter throttle 429 + positive, register CRLF + throttle 429, oversize 413 + normal 200, expired token 401, app-setup wrong key 403, no user enumeration (generic 401), login + app-me still work. Two positive-path tests (newsletter/contact) send 1 real mail each to ADMIN_EMAIL (delivery smoke).
 
 ## Verification
-- Rig: test_security 26/26; full regression (51 suites) 2935/2935, 0 failed
+- Rig: test_security 26/26; full regression (52 suites) 2935/2935, 0 failed
 - Deployed live via `deploy_landing.py` API push; live checks: headers present, wrong app-setup key 403, CRLF contact sanitized, throttles active
 - Commit + push to 3 remotes after user confirmation of the pending v20/v21 commit stack
 
+## Round 2 — HTML/static-site audit (same session)
+User asked "What about html files?" → audited the ~40 static pages + .htaccess + landing JS.
+
+**Audit findings (mostly clean):** no mixed content (http:// = 0), no exposed sensitive files (.git/.env/config.php/backups all 404 — `api/index.php.bak` 405 is the router, not a file leak), landing JS escapes user input (chat.js `escapeHtml`, tools.js numeric-only, register.js static), robots/sitemap fine. `_headers` file is Netlify-format dead weight on cPanel (harmless).
+
+**Fixed:**
+1. **No CSP on HTML pages** — added via `.htaccess` for all non-API responses: `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https:; frame-src 'self' blob: https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests` + `X-Permitted-Cross-Domain-Policies: none` + `Cross-Origin-Resource-Policy: same-origin`.
+2. **CRITICAL PITFALL — Apache `Header always set` OVERRIDES PHP headers.** First deploy stripped the API's strict `default-src 'none'` + CORP cross-origin (replaced by the loose HTML CSP). Fix: wrap HTML-page headers in `<If "%{REQUEST_URI} !~ m#^/api#">` so PHP's own headers survive. Verify by curl-ing BOTH / and /api/health after any .htaccess change.
+3. **Blog article CSP override** — `/blog/<slug>` is PHP-rendered HTML; it sets `text/html` but the API-wide `default-src 'none'` would blank article styling → explicit article CSP override (same as HTML pages).
+4. **Reverse tabnabbing** — dashboard NRB listing link `target="_blank"` without rel → `rel="noopener noreferrer"`.
+5. **Stale third-party links** — dead `trycloudflare.com` tunnel URLs in ai-caretaker.html + faq.html → live dashboard URL.
+
+**Verification:** live headers (API `default-src 'none'` preserved, HTML pages get full CSP), browser: landing fonts/images load, dashboard login + views + doc viewer path render with **0 console errors / 0 CSP violations**, superadmin.html clean.
+
 ## Status
-Live-verified. Commits pending user confirmation.
+Live-verified. Committed `2759293` (v21 core) + round-2 HTML fixes commit → 3 remotes.
