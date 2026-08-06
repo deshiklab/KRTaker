@@ -123,6 +123,7 @@ img{max-width:100%}
 .grid-2eq{grid-template-columns:1fr 1fr}
 .grid-3{grid-template-columns:repeat(3,1fr)}
 .grid-4{grid-template-columns:repeat(4,1fr)}
+.grid > div{min-width:0}
 .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 .panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 18px;border-bottom:1px solid var(--border)}
 .panel-h .t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
@@ -1410,7 +1411,7 @@ function rowItem(ic,title,sub,right){return `<div class="row-item"><div class="r
 function toast(msg,type){const d=document.createElement('div');const t=type==='ok'||type==='success'?'ok':(type==='error'?'error':'info');d.className='toast '+t;d.textContent=msg;$('toastWrap').appendChild(d);setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),300)},2600)}
 function pageHead(title,sub,actions){return `<div class="page-head"><div><h1>${title}</h1><div class="sub">${sub}</div></div><div class="head-actions">${actions||''}</div></div>`}
 function statsRow(list){return `<div class="stats">${list.join('')}</div>`}
-function barChart(data,labels,color){const w=560,h=150,pad=26;const max=Math.max(...data)*1.15;const bw=(w-pad*2)/data.length;const bars=data.map((v,i)=>{const bh=(v/max)*(h-pad*2);const x=pad+i*bw+bw*.18;const y=h-pad-bh;return `<rect x="${x}" y="${y}" width="${bw*.64}" height="${bh}" rx="5" fill="${color||'url(#gBar)'}"><title>${labels[i]}: ${money(v)}</title></rect>`}).join('');
+function barChart(data,labels,color){const w=560,h=150,pad=26;const max=Math.max(...data)*1.15;if(!data||!data.length||!(max>0))return '<div class="c-sub" style="padding:6px 0">'+t('No data','কোনো ডেটা নেই')+'</div>';const bw=(w-pad*2)/data.length;const bars=data.map((v,i)=>{const bh=(v/max)*(h-pad*2);const x=pad+i*bw+bw*.18;const y=h-pad-bh;return `<rect x="${x}" y="${y}" width="${bw*.64}" height="${bh}" rx="5" fill="${color||'url(#gBar)'}"><title>${labels[i]}: ${money(v)}</title></rect>`}).join('');
   const gx=[];data.forEach((_,i)=>{gx.push(`<text x="${pad+i*bw+bw*.5}" y="${h-8}" font-size="10" fill="var(--text-mute)" text-anchor="middle">${labels[i]}</text>`)});
   return `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img"><defs><linearGradient id="gBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F80ED"/><stop offset="1" stop-color="#1E5EB8"/></linearGradient></defs><line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="var(--border)" stroke-width="1"/>${bars}${gx.join('')}</svg>`;
 }
@@ -6172,6 +6173,7 @@ function portalHtml(d){
     stat(t('Lease countdown','লিজ কাউন্টডাউন'),S.min_days_left!=null?(S.min_days_left+' '+t('days','দিন')):'—',S.min_days_left!=null?(S.min_days_left<60?t('renews soon — plan ahead','শীঘ্রই মেয়াদ শেষ — আগাম পরিকল্পনা করুন'):t('of your tenancy','আপনার টেন্যান্সির')):t('no active lease','কোনো সক্রিয় লিজ নেই'),S.min_days_left!=null&&S.min_days_left<60?'warn':'up','⏳'),
     stat(t('My tickets','আমার টিকিট'),S.tickets_open||0,t('repairs & requests','মেরামত ও অনুরোধ'),'','🔧')
   ]);
+  h+=portalProfilePanelHtml(d);
   if(d.score && d.score.score!=null){
     const sc=d.score, col=SCORE_COLORS[sc.band]||'#8A94A6';
     const tip=(sc.tips||[]).slice(0,3).map(x=>`<span style="display:inline-block;background:var(--bg-alt);border:1px solid var(--border);padding:4px 10px;border-radius:999px;font-size:11.5px;color:var(--text-soft);margin:3px 6px 0 0">💡 ${esc(x)}</span>`).join('');
@@ -6197,7 +6199,89 @@ function portalHtml(d){
   h+=`<div class="panel"><div class="panel-h"><div class="t"><span class="pi">📢</span>${t('Notices','নোটিশ')}</div></div><div class="panel-b">${noticeRows}</div></div>`;
   h+=`</div>`;
   h+=`</div>`;
+  h+=portalChatPanelHtml(d);
   return h;
+}
+function portalProfilePanelHtml(d){
+  const rid = DEMO_MODE ? (role().id||'') : ((LIVE.user&&LIVE.user.role)||'');
+  if(rid!=='tenant') return '';
+  const u=LIVE.user||{};
+  const te=d.tenant||{};
+  const nameVal=esc(u.name||te.name||'');
+  const phoneVal=esc(u.phone||te.phone||'');
+  const orgVal=esc(u.org||'');
+  setTimeout(()=>{ if(TOKEN&&!DEMO_MODE&&LIVE.user&&LIVE.user.photo) attachPhoto(document.getElementById('portalAvPrev'),'user',LIVE.user.id); },120);
+  return `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">👤</span>${t('My profile','আমার প্রোফাইল')}</div><button class="btn-ghost" style="padding:5px 12px;font-size:11.5px" onclick="openSettings()">⚙️ ${t('More settings','আরও সেটিংস')}</button></div><div class="panel-b">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div class="tpd-prev" id="portalAvPrev" style="width:58px;height:58px">${avatarMarkup(u, u.avatar||'👤')}</div>
+      <div style="flex:1;min-width:200px"><div class="c-name" style="font-size:15px">${esc(te.name||u.name||'')}</div><div class="c-sub">${esc(te.email||u.email||'')}</div></div>
+      <button class="btn-outline" style="padding:6px 12px;font-size:11.5px" onclick="openSettings()">📷 ${t('Photo','ছবি')}</button>
+    </div>
+    <div class="form-grid" style="margin-top:12px">
+      <div class="form-field"><label>${t('Name','নাম')}</label><input id="portalName" value="${nameVal}"></div>
+      <div class="form-field"><label>${t('Phone','ফোন')}</label><input id="portalPhone" value="${phoneVal}" placeholder="+8801XXXXXXXXX"></div>
+      <div class="form-field full"><label>${t('Organization','প্রতিষ্ঠান')}</label><input id="portalOrg" value="${orgVal}"></div>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:12px" onclick="portalProfileSave()">💾 ${t('Save profile','প্রোফাইল সংরক্ষণ')}</button>
+  </div></div>`;
+}
+async function portalProfileSave(){
+  const name=(document.getElementById('portalName').value||'').trim();
+  const phone=(document.getElementById('portalPhone').value||'').trim();
+  const org=(document.getElementById('portalOrg').value||'').trim();
+  if(!name){ toast(t('Name is required','নাম প্রয়োজন'),'error'); return; }
+  if(DEMO_MODE){
+    toast(t('Profile updated (demo)','প্রোফাইল আপডেট হয়েছে (ডেমো)'),'ok');
+    return;
+  }
+  const d=await apiCall('app-profile',{name,phone,org});
+  if(!d.ok){ toast(d.error||t('Failed to save','সেভ ব্যর্থ'),'error'); return; }
+  toast(t('Profile updated ✓','প্রোফাইল আপডেট হয়েছে ✓'),'ok');
+  if(d.user) LIVE.user=d.user;
+  renderNav(); loadPortal();
+}
+function portalChatPanelHtml(d){
+  const tid=(d.tenant&&d.tenant.id)||'';
+  setTimeout(()=>portalChatLoad(tid),0);
+  const isTenant=(DEMO_MODE?(role().id||''):((LIVE.user&&LIVE.user.role)||''))==='tenant';
+  const title=isTenant?t('Message owner / property manager','মালিক / প্রপার্টি ম্যানেজারকে মেসেজ করুন'):t('Chat with tenant','ভাড়াটিয়ার সাথে চ্যাট');
+  return `<div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">💬</span>${title}</div><span class="c-sub">${t('They reply here — thread is shared with your building team.','এখানে উত্তর পান — থ্রেডটি আপনার ভবনের টিমের সাথে শেয়ার করা।')}</span></div>
+    <div class="ten-chat" id="portalChatBox" style="max-height:320px;padding:14px 18px"><div class="c-sub">${t('Loading…','লোড হচ্ছে…')}</div></div>
+    <div class="kr-input"><input id="portalChatMsg" placeholder="${t('Send a message…','মেসেজ পাঠান…')}" onkeydown="if(event.key==='Enter')portalChatSend('${esc(tid)}')"><button class="btn-primary" style="padding:8px 14px" onclick="portalChatSend('${esc(tid)}')">➤</button></div>
+  </div>`;
+}
+async function portalChatLoad(tid){
+  const box=document.getElementById('portalChatBox'); if(!box) return;
+  let msgs=[];
+  if(DEMO_MODE){ msgs=(DEMO_CHAT[tid]||[]); }
+  else {
+    const d=await apiCall('app-tenant-chat',{tenant_id:tid});
+    if(!d.ok){ box.innerHTML=`<div class="c-sub" style="padding:12px 4px">${esc(d.error||'Failed to load')}</div>`; return; }
+    msgs=d.messages||[];
+  }
+  const meName=(LIVE.user&&LIVE.user.name)||'';
+  const meRole=(DEMO_MODE?(role().id||''):((LIVE.user&&LIVE.user.role)||''));
+  box.innerHTML=msgs.length?msgs.map(m=>{
+    const mine = meRole==='tenant' ? (m.sender_role==='tenant') : (m.sender===meName);
+    return `<div class="chat-b ${mine?'you':'them'}"><div class="cb-h"><span>${esc(m.sender)}${m.sender_role&&m.sender_role!=='tenant'?' · '+esc(m.sender_role):''}</span><span>${esc((m.ts||'').slice(0,16))}</span></div><div>${esc(m.body)}</div></div>`;
+  }).join(''):`<div class="c-sub" style="padding:12px 4px">${t('No messages yet — say hello 👋','এখনো কোনো মেসেজ নেই — হ্যালো বলুন 👋')}</div>`;
+  box.scrollTop=box.scrollHeight;
+}
+async function portalChatSend(tid){
+  const el=document.getElementById('portalChatMsg'); if(!el||!el.value.trim()){toast(t('Write a message first','আগে একটি মেসেজ লিখুন'),'error');return}
+  const body=el.value.trim(); el.value='';
+  if(DEMO_MODE){
+    const arr=DEMO_CHAT[tid]=DEMO_CHAT[tid]||[];
+    const meName=(LIVE.user&&LIVE.user.name)||'You';
+    const meRole=(DEMO_MODE?(role().id||''):'');
+    arr.push({id:arr.length+1,sender:meName,sender_role:meRole,body,ts:new Date().toISOString().slice(0,16).replace('T',' ')});
+    toast(t('Message sent (demo)','মেসেজ পাঠানো হয়েছে (ডেমো)'),'ok');
+    portalChatLoad(tid);
+    return;
+  }
+  const d=await apiCall('app-tenant-chat-send',{tenant_id:tid,body});
+  if(d.ok){ toast(t('Message sent','মেসেজ পাঠানো হয়েছে'),'ok'); portalChatLoad(tid); }
+  else { el.value=body; toast(d.error||t('Failed to send','পাঠানো ব্যর্থ'),'error'); }
 }
 function portalLeaseCard(l,d){
   const days=l.days_left,pct=l.pct;
