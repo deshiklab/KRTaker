@@ -1,0 +1,167 @@
+# KRTaker — Go-Live Checklist (real users, Bangladesh)
+
+Status legend: `[ ]` not started · `[~]` in progress · `[x]` done · `[!]` blocked/needs input
+Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `superadmin-panel`
+
+---
+
+## 0. Legal & Business Foundation (Bangladesh)
+
+### 0.1 Company identity — MUST be done before payments/merchant KYC
+- [ ] Confirm the operating legal entity (footer says "Developed By: BITSCOL" — decide: BITSCOL Ltd is the merchant, or register a KRTaker entity). Every payment gateway + bank account must belong to ONE consistent legal entity.
+- [ ] RJSC certificate of incorporation (if using a new KRTaker entity: name availability check → registration with RJSC, ~2–4 weeks, fees depend on capital).
+- [ ] Trade license (City Corporation / Pourasabha / Upazila) — renewed annually.
+- [ ] e-TIN (individual or company) — from NBR; needed for bank account + gateway KYC.
+- [ ] BIN (Business Identification Number) — VAT registration from NBR if annual turnover crosses VAT threshold; even if below, register voluntarily because bKash/Nagad/SSLCommerz merchant onboarding usually asks for BIN.
+- [ ] Company bank account (current account) in the entity's name — needed by all gateways.
+- [ ] Business email domain (e.g. billing@krtaker.com, support@krtaker.com) + shared inbox. Current prod sender is krtaker@server.coderdrop.com — decide if that stays or moves to a branded address.
+
+### 0.2 Tax & VAT (Bangladesh SaaS)
+- [ ] Confirm VAT treatment of the SaaS subscription: domestic software/SaaS services are subject to 15% VAT (SDA services). Prices on pricing.html are ৳ — decide whether VAT is inclusive or added at checkout; keep the price display consistent with what the gateway charges.
+- [ ] Build the monthly VAT return process (Mushak 9.1) — export the transaction list per month from the DB (app-payment-recon gives you the ledger).
+- [ ] Issue proper VAT-compliant invoices/receipts to subscribers. `app-invoice-print` exists — verify it prints a compliant Mushak-6.3-style invoice with BIN, invoice no, VAT line.
+- [ ] Keep books: income vs. expense ledger; bank statements match gateway settlements monthly (reconciliation — app-payment-recon already does this internally; export for the accountant).
+
+### 0.3 Intellectual property & contracts
+- [ ] Trademark search + registration of "KRTaker" with DPDT (Department of Patents, Designs & Trademarks) — class 42 (SaaS/software) primarily; ~1–2 years but filing early locks priority.
+- [ ] Copyright registration of the software (Bangladesh Copyright Act 2000) — optional but cheap; useful if ever litigating.
+- [ ] Domain: confirm krtaker.com is owned by the legal entity (registrant WHOIS), auto-renew ON, lock enabled.
+- [ ] Contracts: subscriber Terms of Service + Privacy Policy + Refund Policy must reference the legal entity name, be reviewed by a BD lawyer, and be GDPR/DPA-2023-aware (the product already has app-gdpr-export — keep it).
+
+---
+
+## 1. Data Protection & Security Compliance
+
+### 1.1 Bangladesh Data Protection Act 2023
+- [ ] Read the Act + Rules (in force — confirm current registration thresholds/effective dates with a lawyer before relying on specifics).
+- [ ] Determine if KRTaker is a "significant" data fiduciary → register with the appropriate authority if threshold applies (processes citizens' personal data; property/rental data).
+- [ ] Appoint/designate a Data Protection Officer (can be internal, documented).
+- [ ] Update Privacy Policy: lawful basis, retention periods, data-subject rights (access/correct/erase/port — app-gdpr-export covers export; add "delete my data" flow).
+- [ ] Data localization: keep subscriber data on the BD cPanel host (it is). If you add a US VPS/DB (Phase 7 PG), document cross-border transfer basis.
+- [ ] Breach notification plan: internal incident log + notify regulator/users within the Act's window (verify current requirement — DSA-2018 era was 72h-ish for some classes; confirm under DPA-2023).
+- [ ] Consent: onboarding must capture explicit consent for marketing email/push (check register flow; the v19 push permission already asks — make sure opt-in is recorded per-email in DB).
+
+### 1.2 Security hardening (continue the v21 program)
+- [ ] Security headers + CSP already scoped (v21b/v21c) — re-audit once more for the dashboard + API.
+- [ ] Rate limiting + login throttling verified under real load (v21 has throttle; stress it).
+- [ ] 2FA for subscriber logins + admin (superadmin) — assess; even optional TOTP for owners is a differentiator.
+- [ ] Session hygiene: token expiry, revocation on role change (exists for team), force logout-all.
+- [ ] Secrets management: gateway store_id/store_pass, SMTP password, DeepSeek key — move out of PHP constants to environment/.env or a secrets table (they are in the DB/platform_meta already for some — audit which keys are hardcoded).
+- [ ] Dependency audit: PHP extensions + any composer deps; keep PHP 8.1 patches current on cPanel.
+- [ ] Pen-test / OWASP Top 10 pass before launch (at minimum: IDOR checks on app-crud/app-* actions — the app-* surface is huge; spot-check every app-* action for authorization).
+- [ ] Add `security.txt` + `/.well-known/security.txt`.
+
+---
+
+## 2. Payments — the #1 launch blocker
+
+### 2.1 Merchant onboarding (KYC) — start NOW, it takes weeks
+- [ ] SSLCommerz merchant account (covers Visa/MC/AmEx cards + bKash + Nagad + other wallets via one integration). Docs: sandbox.sslcommerz.com. Requires: trade license, BIN, bank statement, NID of owner, website URL, business email, IPN URL.
+- [ ] Decide direct bKash Merchant / Nagad Merchant APIs vs. SSLCommerz aggregation. Recommendation: launch with SSLCommerz only (one KYC, one integration, one settlement), add direct bKash/Nagad later.
+- [ ] Ask SSLCommerz for the LIVE store_id/store_pass when KYC completes (current code has sandbox `krtakerTEST`; gateway config sits in DB/app-gateways — plan the switch).
+- [ ] Set up the IPN/notify URL + webhook secret verification (current checkout URL is sandbox v4 — production URL: https://securepay.sslcommerz.com/gwprocess/v4/api.php).
+
+### 2.2 Integration completion
+- [ ] Wire `app-premium-billing` to the real gateway: create session → redirect → IPN → verify → mark subscription active.
+- [ ] Idempotency: prevent double-activation on IPN retries (transaction_id unique).
+- [ ] Refund flow (SSLCommerz refund API) + subscriber-facing refund policy.
+- [ ] Reconciliation job already exists (app-payment-recon) — verify it matches gateway settlements daily.
+- [ ] Invoice generation on successful payment (Mushak-compliant, see 0.2).
+- [ ] Payment failure UX: retry page, "payment pending" state, email the owner.
+- [ ] Test matrix on sandbox: success, failure, IPN retry, amount mismatch, currency, partial refund, bKash/Nagad wallet via SSLCommerz.
+
+### 2.3 Go-live switch
+- [ ] Flip `sandbox => false` / live store creds (config in DB — make the flip a one-command script).
+- [ ] ৳1 live transaction test → verify IPN → verify settlement appears in gateway dashboard.
+- [ ] Monitor first 48h: payment success rate, IPN latency, reconciliation gaps.
+
+---
+
+## 3. Platform readiness — close the known technical gaps
+
+### 3.1 Analytics & SEO
+- [x] Sitemap.xml exists — submit to Google Search Console (verify property: DNS TXT or HTML tag).
+- [ ] GA4: replace `G-XXXXXXXXXX` in ALL web/*.html (currently placeholder) with the real Measurement ID; configure events: signup, payment_completed, trial_started.
+- [ ] Search Console: submit sitemap, monitor indexing, fix the known blog slug 404s (`/blog/<slug>` route needs .htaccess rewrite — currently dormant) — decide: enable dynamic blog or keep static blog-*.html (recommend static for launch; fix 404s to avoid SEO bleed).
+- [ ] IndexNow: key exists in platform_meta (indexnow_key) — verify the key endpoint works (Bing had 410s); resubmit.
+
+### 3.2 Notifications & messaging
+- [ ] SMS OTP provider (BD): SSLCommerz SMS / DopeSMS / SMS4BD / Revesoft — needs the same KYC docs; wire into register/login OTP; keep email OTP as fallback. [! blocked on provider choice + creds]
+- [ ] Web push (v19) — verify real-browser registration on desktop + Android Chrome (blocked in all sandboxes; user must test in a normal browser).
+- [ ] Transactional email: switch from mail.inceptia.io (that's the careers box — don't abuse it) to a proper transactional sender (SMTP from coderdrop / SES / Brevo) with DKIM/SPF/DMARC records on krtaker.com.
+- [ ] Rent-due push + digest cron already live via cPanel SERVICE_KEY cron — verify timing + delivery after any DNS/DKIM changes.
+
+### 3.3 AI console (KR AI)
+- [ ] Add real DeepSeek (or OpenAI) API key — currently placeholder. [! blocked on key]
+- [ ] Rate limits + per-subscriber quotas + cost cap (fail-closed if key exhausted) before exposing to users.
+- [ ] Audit AI output: log prompts/responses, opt-out control for owners.
+
+### 3.4 Infrastructure & ops
+- [ ] Backups: SQLite DB backup job (app-backup exists) → offsite (Google Drive rclone token expired — re-auth [!]; or add S3/Backblaze as backup target). Test a restore drill end-to-end.
+- [ ] Uptime monitoring: hit `https://krtaker.com/api/health` every 1 min (UptimeRobot/UptimeKuma) → alert to the Discord home channel (already wired).
+- [ ] Error tracking: add Sentry (or server.log capture) for the dashboard JS + API fatal errors.
+- [ ] cPanel disk quota: currently 1GB FTP-only — check headroom; upgrade hosting or move app+DB to the Lightsail box (18.142.98.150) with the PG migration path (phase7-deploy.md) when user count grows. SQLite is fine for launch (~100–500 active buildings); PG when you scale past that.
+- [ ] Rate limiting at the web-server layer (mod_evasive / Cloudflare) for login endpoints.
+- [ ] Cloudflare: already used for tunnel; put the apex site behind CF (free tier) for CDN + WAF + caching of static assets.
+- [ ] SSL: confirm auto-renew on the cPanel cert (no manual expiry handling).
+
+### 3.5 Legal pages & trust
+- [ ] Review terms.html / privacy.html / contact.html for: entity name, address, refund policy, DPA-2023 disclosures, dispute/complaint channel, data-subject request procedure.
+- [ ] Add a "Security" page or badge section (SSl, data localization, backups) — buyers in BD ask.
+- [ ] Verify the "128 subscribers · ৳74.55 Cr" claim on the homepage is either true or softened — consumer-protection law (and trust) punish inflated claims once real users compare notes.
+
+---
+
+## 4. Onboarding, support & launch ops
+
+### 4.1 First-run experience
+- [ ] Demo/onboarding tour: after signup, walk the owner through adding their first property + unit + tenant (the seed data helps).
+- [ ] Empty-state design: dashboard with 0 properties should feel intentional (there are already seeded demo properties — decide whether new subscribers start clean or with demo data they can delete).
+- [ ] Import wizard: owners often have existing tenants/ledgers — CSV import for units/tenants/dues (build if not present).
+- [ ] Welcome email sequence: welcome → set up property → invite tenant (app already has tenant-facing portal) → first rent reminder.
+
+### 4.2 Support
+- [ ] Help center: extend faq.html + a docs page (tools.html exists); link from dashboard.
+- [ ] Support channels: contact form → inbox, WhatsApp Business (+8801722759646 or a dedicated line), in-app ticket (app-ticket-thread exists — verify it's user-visible).
+- [ ] Define SLAs: response times, severity levels, escalation to Kabir.
+- [ ] Refund/cancellation workflow documented for support staff.
+
+### 4.3 Launch sequence (recommended)
+1. **Soft launch (2–4 weeks):** invite 10–20 real owners/buildings (network, LinkedIn, the 128 list if real) at free/discounted annual rate. Collect feedback; fix crash bugs; validate payment UX with real ৳ transactions.
+2. **Hardening sprint:** fix everything found in soft launch; run full regression (run_all + test_superadmin + payment test matrix).
+3. **Public launch:** announce on LinkedIn/Facebook, launch offer (first 50 subscribers discounted), Google Business Profile for "KRTaker" if a physical office exists.
+4. **Post-launch 30 days:** daily payment/error/uptime review; weekly KPI readout (signups, activation rate, first-rent-collection rate, churn).
+
+### 4.4 KPIs to track from day one
+- [ ] Signup → activation (first property added) conversion
+- [ ] First payment success rate
+- [ ] Monthly recurring revenue + churn
+- [ ] Support ticket volume + first-response time
+- [ ] App crashes / JS errors / API 5xx per day
+- [ ] Push/email deliverability (bounce + unsubscribe)
+
+---
+
+## 5. Pre-launch sign-off checklist (gate)
+
+| Area | Must be true before flip |
+|---|---|
+| Legal | Entity + trade license + TIN/BIN + bank account |
+| Payments | Live gateway keys, IPN verified, refund tested, ৳1 live test passed |
+| Data | Privacy policy updated (DPA-2023), consent captured, GDPR export works |
+| Security | OWASP spot-check, throttling on, secrets not in code, backups verified |
+| Ops | Uptime monitor on, error tracking on, Discord alerts on, restore drill done |
+| Content | GA4 real ID, Search Console verified, terms/privacy reviewed, claims honest |
+| Code | Full regression green (run_all 2961 + superadmin 511), version bumped + deployed |
+
+---
+
+## 6. Immediate next actions (this week)
+
+1. [ ] Decide the merchant legal entity (BITSCOL vs new KRTaker entity) → start SSLCommerz KYC (longest lead time).
+2. [ ] Get real GA4 Measurement ID + Search Console verification → I'll swap `G-XXXXXXXXXX` everywhere + submit sitemap.
+3. [ ] Provide DeepSeek/OpenAI API key for the AI console.
+4. [ ] Pick an SMS provider (SSLCommerz SMS / DopeSMS) + provide creds → I'll wire OTP.
+5. [ ] Re-auth Google Drive rclone (paste the auth URL output) → backups go offsite.
+6. [ ] Confirm whether "128 subscribers" claim is real or marketing → I'll adjust copy.
+7. [ ] Run one live payment through the sandbox → verify the full flow end-to-end before KYC completes.
