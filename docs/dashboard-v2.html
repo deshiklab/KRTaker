@@ -1405,8 +1405,8 @@ function user(){return role()}
 function badge(st){const map={'Paid':'b-green','Active':'b-green','Success':'b-green','Leased':'b-green','Open':'b-red','Unpaid':'b-orange','Overdue':'b-red','In Progress':'b-blue','Awaiting Payment':'b-orange','Pending Registration':'b-orange','Vacant':'b-gray','Expired':'b-gray','Terminated':'b-red','Maintenance':'b-purple','Onboarding':'b-purple','Trial':'b-purple','Resolved':'b-green','Probation':'b-orange','Approved':'b-green','Payable':'b-orange','Submitted':'b-gray'};return `<span class="badge ${map[st]||'b-gray'}">${esc(st)}</span>`}
 function stat(label,value,trend,cls,ico){return `<div class="stat"><div class="s-label"><span class="s-ico">${ico||''}</span>${esc(label)}</div><div class="s-value">${value}</div>${trend?`<div class="s-trend ${cls||''}">${trend}</div>`:''}</div>`}
 function panel(title,body,ico,link){return `<div class="panel"><div class="panel-h"><div class="t"><span class="pi">${ico||''}</span>${title}</div>${link?`<span class="link" onclick="nav('${link}')">${t('View all','সব দেখুন')} →</span>`:''}</div><div class="panel-b">${body}</div></div>`}
-function kv(k,v,cls){return `<div class="kv"><span class="k">${k}</span><span class="v ${cls||''}">${v}</span></div>`}
-function rowItem(ic,title,sub,right){return `<div class="row-item"><div class="ri-ic">${ic}</div><div class="ri-body"><div class="ri-t">${title}</div><div class="ri-s">${sub}</div></div><div class="ri-r">${right}</div></div>`}
+function kv(k,v,cls,raw){return `<div class="kv"><span class="k">${raw?k:esc(k)}</span><span class="v ${cls||''}">${raw?v:esc(v)}</span></div>`}
+function rowItem(ic,title,sub,right){return `<div class="row-item"><div class="ri-ic">${ic}</div><div class="ri-body"><div class="ri-t">${esc(title)}</div><div class="ri-s">${esc(sub)}</div></div><div class="ri-r">${right}</div></div>`}
 function toast(msg,type){const d=document.createElement('div');const t=type==='ok'||type==='success'?'ok':(type==='error'?'error':'info');d.className='toast '+t;d.textContent=msg;$('toastWrap').appendChild(d);setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),300)},2600)}
 function pageHead(title,sub,actions){return `<div class="page-head"><div><h1>${title}</h1><div class="sub">${sub}</div></div><div class="head-actions">${actions||''}</div></div>`}
 function statsRow(list){return `<div class="stats">${list.join('')}</div>`}
@@ -1816,7 +1816,7 @@ manager(){
   ]);
   h+=`<div class="grid grid-2">
     <div>
-      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🎯</span>${t('Today’s focus','আজকের কাজ')}</div><span class="tagline">${openT.length} open</span></div><div class="panel-b">${openT.map(x=>rowItem('🔧',x.desc,unitById(x.u)?.name+' · '+x.liab+' liability',badge(x.status)+'<br><span style="font-size:10px;color:var(--text-mute)">'+x.reported+'</span>')).join('')}</div></div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🎯</span>${t('Today’s focus','আজকের কাজ')}</div><span class="tagline">${openT.length} open</span></div><div class="panel-b">${openT.map(x=>rowItem('🔧',x.desc,unitById(x.u)?.name+' · '+x.liab+' liability',badge(x.status)+'<br><span style="font-size:10px;color:var(--text-mute)">'+esc(x.reported)+'</span>')).join('')}</div></div>
       <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Upcoming renewals','আসন্ন রিনিউয়াল')}</div><span class="link" onclick="nav('leases')">${t('All','সব')} →</span></div><div class="panel-b">${DB.leases.filter(l=>l.status==='Active'||l.status==='Pending Registration').sort((a,b)=>a.end.localeCompare(b.end)).slice(0,4).map(l=>rowItem('📄',l.id+' · '+unitById(l.u)?.name,tenantById(l.t)?.name+' · ends '+l.end,`<span class="badge ${l.status==='Pending Registration'?'b-orange':'b-blue'}">${l.status}</span>`)).join('')}</div></div>
     </div>
     <div>
@@ -1907,7 +1907,7 @@ legal(){
         ['Rent hikes ≤ 5% / 3yr','Pass','b-green'],
         ['Residential advance ≤ 2 months','Pass','b-green'],
         ['Commercial advance ≤ 3 months','L-004: 1 month ✓','b-green'],
-        ['Eviction notice periods','Pass','b-green']].map(x=>kv(x[0],`<span class="badge ${x[2]}">${x[1]}</span>`)).join('')}</div></div>
+        ['Eviction notice periods','Pass','b-green']].map(x=>kv(x[0],`<span class="badge ${esc(x[2])}">${esc(x[1])}</span>`,'',1)).join('')}</div></div>
     </div>
     <div>
       <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Compliance calendar','কমপ্লায়েন্স ক্যালেন্ডার')}</div></div><div class="panel-b">${[
@@ -1936,7 +1936,7 @@ crm(){
   ]);
   h+=`<div class="grid grid-2">
     <div>
-      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🎧</span>${t('Ticket queue','টিকিট কিউ')}</div><span class="tagline">${open.length} active</span></div><div class="panel-b">${open.map(x=>rowItem('🎧',x.subject,esc(x.from)+' · '+x.age,`<span class="badge ${x.prio==='High'?'b-red':x.prio==='Medium'?'b-orange':'b-gray'}">${x.prio}</span> ${badge(x.status)}`)).join('')}</div></div>
+      <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🎧</span>${t('Ticket queue','টিকিট কিউ')}</div><span class="tagline">${open.length} active</span></div><div class="panel-b">${open.map(x=>rowItem('🎧',x.subject,x.from+' · '+x.age,`<span class="badge ${x.prio==='High'?'b-red':x.prio==='Medium'?'b-orange':'b-gray'}">${esc(x.prio)}</span> ${badge(x.status)}`)).join('')}</div></div>
       <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🚀</span>${t('Tenant onboarding','টেন্যান্ট অনবোর্ডিং')}</div></div><div class="panel-b">${[
         ['T-006','Tanvir Hossain · Shed A','85','green'],
         ['T-009','New lead — Gulshan 3B','40','blue'],
@@ -1970,7 +1970,7 @@ accountant(){
       <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🧾</span>${t('Receivables aging','প্রাপ্য বয়স')}</div></div><div class="panel-b">${[
         ['Current (0–30d)','৳3,57,000','b-blue'],
         ['31–60 days','৳2,10,000','b-orange'],
-        ['60+ days','৳3,42,000','b-red']].map(x=>kv(x[0],`<span class="t-amount" style="font-size:13px">${x[1]}</span> <span class="badge ${x[2]}">${x[2]}</span>`)).join('')}</div></div>
+        ['60+ days','৳3,42,000','b-red']].map(x=>kv(x[0],`<span class="t-amount" style="font-size:13px">${esc(x[1])}</span> <span class="badge ${esc(x[2])}">${esc(x[2])}</span>`,'',1)).join('')}</div></div>
     </div>
     <div>
       <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🏛️</span>${t('TDS summary (Jun)','টিডিএস সারাংশ (জুন)')}</div></div><div class="panel-b">${kv('Commercial TDS @10%',money(tds),'pos')}${kv('Residential (exempt)','৳0','')}${kv('Challan filed','Jun 15','')}${kv('Next filing','Jul 15','')}</div></div>
@@ -6158,13 +6158,13 @@ function portalHtml(d){
   const S=d.stats||{};
   const authed=!!(TOKEN&&!DEMO_MODE);
   const docRows=(d.docs||[]).map(x=>`<div class="row-item" style="padding:7px 0"><div class="ri-ic">📄</div><div class="ri-body"><div class="ri-t">${esc(x.name)}</div><div class="ri-s">${esc(x.id)} · ${esc(x.cat||x.kind||'other')}${x.ref?' · '+esc(x.ref):''}</div></div>${authed?`<div class="ri-r" style="display:flex;gap:4px"><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="viewDoc('${esc(x.id)}')">👁</button><button class="btn-ghost" style="padding:3px 9px;font-size:11px" onclick="downloadDoc('${esc(x.id)}')">⬇</button></div>`:''}</div>`).join('')||`<div class="empty">${t('No documents yet','এখনো কোনো ডকুমেন্ট নেই')}</div>`;
-  const tickRows=(d.tickets||[]).slice(0,4).map(x=>rowItem('🔧',esc(x.desc),esc(x.reported||''),badge(x.status))).join('')||`<div class="empty">${t('No open requests — all quiet 🎉','কোনো খোলা অনুরোধ নেই — সব শান্ত 🎉')}</div>`;
+  const tickRows=(d.tickets||[]).slice(0,4).map(x=>rowItem('🔧',x.desc,x.reported||'',badge(x.status))).join('')||`<div class="empty">${t('No open requests — all quiet 🎉','কোনো খোলা অনুরোধ নেই — সব শান্ত 🎉')}</div>`;
   const noticeRows=(d.notices||[]).map(n=>`<div class="row-item"><div class="ri-ic">📢</div><div class="ri-body"><div class="ri-t">${esc(n.title)}</div><div class="ri-s">${esc(n.body||'')}${n.ts?' · '+esc(String(n.ts).slice(0,10)):''}</div></div></div>`).join('')||`<div class="empty">${t('No notices','কোনো নোটিশ নেই')}</div>`;
   const invRows=(d.invoices||[]).map(i=>{
     const rec=(d.receipts||[]).find(r=>r.inv===i.id);
     return `<tr data-id="${esc(i.id)}"><td><span class="c-name">${esc(i.id)}</span></td><td>${esc(i.m)}</td><td class="t-amount">${money(i.net)}</td><td class="t-pos">${i.paid?money(i.paid):'—'}</td><td class="${i.due?'t-neg':'t-pos'}">${i.due?money(i.due):'0'}</td><td>${badge(i.status)}</td><td><div style="display:flex;gap:4px">${i.due>0?`<button class="btn-primary" style="padding:4px 10px;font-size:11px" onclick="gatewayPay('${esc(i.id)}')">${t('Pay','পরিশোধ')}</button>`:''}<button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="printInvoice('${esc(i.id)}')">🖨</button>${rec?`<button class="btn-ghost" style="padding:4px 10px;font-size:11px" onclick="openDetail('receipts','${esc(rec.id)}')">📎</button>`:''}</div></td></tr>`;
   }).join('')||`<tr><td colspan="7" class="c-sub">${t('No invoices yet','এখনো কোনো ইনভয়েস নেই')}</td></tr>`;
-  const payRows=(d.payments||[]).slice(0,5).map(p=>rowItem('💳',esc(p.id)+' · '+esc(p.method),esc(p.date)+' · '+esc(p.ref||''),`<span class="t-pos">+${money(p.amount)}</span>`)).join('');
+  const payRows=(d.payments||[]).slice(0,5).map(p=>rowItem('💳',p.id+' · '+p.method,p.date+' · '+(p.ref||''),`<span class="t-pos">+${money(p.amount)}</span>`)).join('');
   let h=statsRow([
     stat(t('Outstanding due','বকেয়া'),money(S.outstanding||0),S.outstanding?t('needs attention','মনোযোগ প্রয়োজন'):t('all settled','সব পরিশোধিত'),S.outstanding?'down':'up','💳'),
     stat(t('Paid total','মোট পরিশোধিত'),money(S.paid_total||0),t('bKash · Nagad · bank','বিকাশ · নগদ · ব্যাংক'),'up','✅'),
@@ -7005,8 +7005,8 @@ async function analyticsLoad(){
     </div>
   </div>
   <div class="grid grid-2" style="margin-top:16px">
-    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Receivables aging','প্রাপ্য এজিং')}</div></div><div class="panel-b">${kv(t('Current','বর্তমান'),money(bk2.current),bk2.current?'pos':'')}${kv('30–60d',money(bk2.d30),bk2.d30?'warn':'')}${kv('60–90d',money(bk2.d60),bk2.d60?'warn':'')}${kv('90d+',money(bk2.d90),bk2.d90?'warn':'')}${kv('<b>'+t('Total outstanding','মোট বকেয়া')+'</b>','<b>'+money(bk2.total||0)+'</b>')}</div></div>
-    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏚️</span>${t('Vacancy loss','শূন্যতা ক্ষতি')}</div></div><div class="panel-b">${(vacancy.units||[]).map(u=>kv(esc(u.prop)+' · '+esc(u.name),money(u.rent)+'/mo','warn')).join('')||'<div class="empty">No vacancies 🎉</div>'}<div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)"><b>${t('Monthly loss','মাসিক ক্ষতি')}</b><b class="warn">${money(vacancy.monthly_loss||0)}</b></div></div></div>
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📅</span>${t('Receivables aging','প্রাপ্য এজিং')}</div></div><div class="panel-b">${kv(t('Current','বর্তমান'),money(bk2.current),bk2.current?'pos':'')}${kv('30–60d',money(bk2.d30),bk2.d30?'warn':'')}${kv('60–90d',money(bk2.d60),bk2.d60?'warn':'')}${kv('90d+',money(bk2.d90),bk2.d90?'warn':'')}${kv('<b>'+t('Total outstanding','মোট বকেয়া')+'</b>','<b>'+money(bk2.total||0)+'</b>','',1)}</div></div>
+    <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏚️</span>${t('Vacancy loss','শূন্যতা ক্ষতি')}</div></div><div class="panel-b">${(vacancy.units||[]).map(u=>kv(u.prop+' · '+u.name,money(u.rent)+'/mo','warn')).join('')||'<div class="empty">No vacancies 🎉</div>'}<div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)"><b>${t('Monthly loss','মাসিক ক্ষতি')}</b><b class="warn">${money(vacancy.monthly_loss||0)}</b></div></div></div>
   </div>`;
 }
 async function boardReport(){
@@ -7078,7 +7078,7 @@ const renderers={
     h+=`<div class="grid grid-2">
       <div class="panel"><div class="panel-h"><div class="t"><span class="pi">🏠</span>${t('Holding tax schedule','হোল্ডিং ট্যাক্স তালিকা')}</div></div><div class="tbl-wrap"><table style="min-width:0"><thead><tr><th>Property</th><th>City</th><th>Amount</th><th>Status</th></tr></thead><tbody>${holding.map(x=>`<tr><td><span class="c-name">${x[0]}</span><div class="c-sub">${x[1]}</div></td><td>${x[1]}</td><td class="t-amount">${x[2]}</td><td><span class="badge ${x[4]}">${x[3]}</span></td></tr>`).join('')}</tbody></table></div></div>
       <div>
-        <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🏛️</span>${t('TDS ledger','টিডিএস লেজার')}</div></div><div class="panel-b">${DB.invoices.filter(i=>i.tds).map(i=>kv(i.id+' · '+i.m,'−'+money(i.tds),'neg')).join('')}${kv('<b>Total withheld</b>','<span class="t-pos">'+money(DB.invoices.reduce((s,i)=>s+i.tds,0))+'</span>')}</div></div>
+        <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🏛️</span>${t('TDS ledger','টিডিএস লেজার')}</div></div><div class="panel-b">${DB.invoices.filter(i=>i.tds).map(i=>kv(i.id+' · '+i.m,'−'+money(i.tds),'neg')).join('')}${kv('<b>Total withheld</b>','<span class="t-pos">'+money(DB.invoices.reduce((s,i)=>s+i.tds,0))+'</span>','',1)}</div></div>
         <div class="panel"><div class="panel-h"><div class="t"><span class="pi">⚖️</span>${t('Capital gains estimator','ক্যাপিটাল গেইন এস্টিমেটর')}</div></div><div class="panel-b" style="font-size:12.5px;color:var(--text-soft);line-height:1.65">Sell P-005 (Dhanmondi) at ৳2.4Cr vs cost ৳1.85Cr → estimated gain <b>৳55L</b>. KR computed minimum tax & wealth surcharge brackets per IT Act 2023. <span class="link" onclick="capitalGainsForm()">Open estimator →</span></div></div>
       </div>
     </div>`;
@@ -9004,7 +9004,7 @@ async function loadReminders(){
   const c=cfg.config||{}, plan=sum.plan||[], byTier=sum.by_tier||{}, hist=cfg.history||[];
   const tierBadge=tier=>tier===0?`<span class="badge b-gray">${t('Not due','বাকি নয়')}</span>`:tier===1?`<span class="badge b-green">${t('Tier','টিয়ার')} 1</span>`:tier===2?`<span class="badge b-orange">${t('Tier','টিয়ার')} 2</span>`:`<span class="badge b-red">${t('Tier','টিয়ার')} 3</span>`;
   const rows=plan.map(r=>`<tr><td><span class="c-name">${esc(r.inv)}</span><div class="c-sub">${esc(r.tenant)}</div></td><td>${esc(r.m)}</td><td class="t-amount">${money(r.due)}</td><td>${r.days_overdue>0?r.days_overdue+'d':'—'}</td><td>${tierBadge(r.tier)}</td><td>${r.last_tier?tierBadge(r.last_tier):'<span class="badge b-gray">—</span>'}</td><td>${r.email?esc(r.email):'<span class="badge b-gray">'+t('no email','ইমেইল নেই')+'</span>'}</td></tr>`).join('')||`<tr><td colspan="7" class="c-sub">${t('No unpaid invoices — all settled 🎉','কোনো অপরিশোধিত ইনভয়েস নেই — সব পরিশোধিত 🎉')}</td></tr>`;
-  const histRows=hist.slice(0,6).map(h=>rowItem('📧',esc(h.invoice_id),esc(h.sent_at)+' · via '+esc(h.via),tierBadge(h.tier))).join('')||`<div class="c-sub">${t('No reminders sent yet.','এখনো কোনো রিমাইন্ডার পাঠানো হয়নি।')}</div>`;
+  const histRows=hist.slice(0,6).map(h=>rowItem('📧',h.invoice_id,h.sent_at+' · via '+(h.via||''),tierBadge(h.tier))).join('')||`<div class="c-sub">${t('No reminders sent yet.','এখনো কোনো রিমাইন্ডার পাঠানো হয়নি।')}</div>`;
   const tr=c.tiers||{};
   const cfgChips=['1','2','3'].map(k=>{const tt=tr[k]||{};return `<div style="flex:1;padding:10px 12px;background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;font-size:11.5px"><div style="font-weight:700;margin-bottom:3px">${esc(tt.label||k)}</div><div style="color:var(--text-mute)">${tt.min_days}–${tt.max_days===999?'∞':tt.max_days} ${t('days overdue','দিন বাকি')}</div></div>`}).join('');
   el.innerHTML=`
