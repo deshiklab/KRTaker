@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2F80ED">
 <title>Property Listings — KRTaker</title>
-<meta name="description" content="Browse verified rental properties in Dhaka and Chattogram managed by KRTaker — flats, commercial floors and industrial sheds with vacant units ready to lease. No broker fee.">
+<meta name="description" content="Browse verified rental properties in Dhaka and Chattogram managed by KRTaker — flats, commercial floors and industrial sheds with vacant units ready to lease. Filter by price, bedrooms and amenities. No broker fee.">
 <link rel="canonical" href="https://krtaker.com/listings.html">
 <meta property="og:title" content="Property Listings — KRTaker">
-<meta property="og:description" content="Verified rental properties across Dhaka & Chattogram — flats, commercial floors and sheds. Managed end-to-end, no broker fee.">
+<meta property="og:description" content="Verified rental properties across Dhaka &amp; Chattogram — filter by area, price, bedrooms and amenities. Managed end-to-end, no broker fee.">
 <meta property="og:url" content="https://krtaker.com/listings.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KRTaker">
@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@krtaker">
 <meta name="twitter:title" content="Property Listings — KRTaker">
-<meta name="twitter:description" content="Verified rental properties across Dhaka & Chattogram — managed end-to-end, no broker fee.">
+<meta name="twitter:description" content="Verified rental properties across Dhaka &amp; Chattogram — filter by area, price, bedrooms and amenities. Managed end-to-end, no broker fee.">
 <meta name="twitter:image" content="https://krtaker.com/assets/img/og-card.webp">
 <link rel="icon" href="assets/img/favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,51 +26,152 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=3.66">
 <style>
-/* ── Phase 16 listings v2: search, city/type filters, sort, rent-first cards ── */
-.listing-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:20px 0 6px}
-.ls-search{flex:1 1 220px;min-width:200px;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:9px 16px;transition:border-color .15s}
-.ls-search:focus-within{border-color:#2F80ED;box-shadow:0 0 0 3px rgba(47,128,237,.12)}
-.ls-search input{border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:13.5px;width:100%}
-.ls-search .ico{opacity:.5}
-.ls-sort{margin-left:auto}
-.ls-sort select{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:9px 14px;font-size:12.5px;font-weight:600;outline:0;cursor:pointer;font-family:inherit}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.filter-chip{border:1px solid var(--border);background:var(--card);border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;color:var(--text)}
-.filter-chip.active,.filter-chip:hover{border-color:#2F80ED;color:#2F80ED;background:rgba(47,128,237,.06)}
-.filters .fsep{width:1px;background:var(--border);margin:2px 6px;align-self:stretch}
-.listing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px;margin:24px 0}
-.listing-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column}
-.listing-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(47,128,237,.12)}
-.lc-top{padding:18px 18px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.lc-name{font-weight:800;font-size:16px;line-height:1.3}
-.lc-sub{font-size:12.5px;color:var(--muted);margin-top:3px}
-.lc-body{padding:14px 18px;flex:1}
-.lc-row{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--border)}
-.lc-row:last-child{border-bottom:0}
-.lc-row .k{color:var(--muted)}
-.lc-row .v{font-weight:700}
-.lc-unit{background:rgba(47,128,237,.05);border:1px solid rgba(47,128,237,.18);border-radius:12px;padding:10px 12px;margin-top:10px}
-.lc-unit .u-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700}
-.lc-unit .u-rent{color:#2F80ED;font-size:15px;font-weight:800}
-.lc-unit .u-meta{display:flex;gap:12px;font-size:11.5px;color:var(--muted);margin-top:4px}
-.lc-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px}
-.lc-foot .btn{flex:1;text-align:center;font-size:12.5px;padding:9px 10px}
-.badge-v{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(16,185,129,.12);color:#059669;white-space:nowrap}
-.badge-f{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(47,128,237,.1);color:#2F80ED;white-space:nowrap}
-.badge-n{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(148,163,184,.14);color:#64748B;white-space:nowrap}
-.lc-count{font-size:12.5px;color:var(--muted)}
-.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
-#listRoot.loading{opacity:.5;pointer-events:none}
-.usp-band{background:linear-gradient(135deg,rgba(47,128,237,.06),rgba(16,185,129,.06));border:1px solid var(--border);border-radius:18px;padding:26px 22px;margin:30px 0 8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px}
-.usp-item{display:flex;gap:12px;align-items:flex-start}
-.usp-item .u-ic{font-size:22px;line-height:1.2}
-.usp-item h4{margin:0 0 3px;font-size:13.5px;font-weight:800}
-.usp-item p{margin:0;font-size:12px;color:var(--muted);line-height:1.55}
-.how-line{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:18px 0 4px;font-size:12.5px;color:var(--muted)}
-.how-line b{color:var(--text)}
-@media(max-width:640px){.listing-grid{grid-template-columns:1fr}.ls-sort{margin-left:0;width:100%}.ls-sort select{width:100%}}
+/* ═══ SA1 v24: listings v3 — photo-first cards, filter sidebar, favorites, featured strip, detail modal ═══ */
+:root{--ls-accent:#2F80ED}
+.ls-layout{display:grid;grid-template-columns:262px 1fr;gap:22px;margin:18px 0 8px;align-items:start}
+/* ── filter sidebar ── */
+.ls-filters{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 16px 12px;position:sticky;top:14px;max-height:calc(100vh - 28px);overflow:auto}
+.ls-f-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ls-f-head b{font-size:13.5px}
+.ls-f-clear{font-size:11.5px;color:var(--ls-accent);cursor:pointer;font-weight:600;background:none;border:0;font-family:inherit}
+.ls-f-group{border-top:1px solid var(--border);padding:12px 0 10px}
+.ls-f-group>label{display:block;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.ls-f-row{display:flex;gap:8px;align-items:center}
+.ls-f-row input[type=number]{width:100%;min-width:0;border:1px solid var(--border);border-radius:9px;padding:7px 9px;font-size:12.5px;font-family:inherit;color:var(--text);background:var(--card);outline:0}
+.ls-f-row input[type=number]:focus{border-color:var(--ls-accent)}
+.ls-f-row .sep{color:var(--muted);font-size:11px}
+.ls-mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ls-mini button{border:1px solid var(--border);background:var(--card);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text);font-family:inherit;transition:all .13s}
+.ls-mini button:hover{border-color:var(--ls-accent);color:var(--ls-accent)}
+.ls-f-chip{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--text);background:var(--card);font-family:inherit;width:100%;text-align:left;transition:all .13s}
+.ls-f-chip:hover{border-color:var(--ls-accent)}
+.ls-f-chip.on{border-color:var(--ls-accent);background:rgba(47,128,237,.06);color:var(--ls-accent)}
+.ls-f-chip .c{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.35;flex:none}
+.ls-toggle{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;color:var(--text);cursor:pointer;padding:7px 2px;font-family:inherit;background:none;border:0;width:100%;text-align:left}
+.ls-toggle input{width:auto;accent-color:var(--ls-accent)}
+/* ── results column ── */
+.ls-res-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 14px}
+.ls-count{font-size:13px;font-weight:700;color:var(--text)}
+.ls-count b{color:var(--ls-accent)}
+.ls-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.ls-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.25);color:var(--ls-accent);border-radius:999px;padding:3px 9px;font-size:11px;font-weight:600}
+.ls-chip button{background:none;border:0;color:inherit;cursor:pointer;font-size:12px;line-height:1;padding:0}
+.ls-tools{display:flex;gap:8px;align-items:center;margin-left:auto}
+.ls-tools select{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:600;outline:0;cursor:pointer;font-family:inherit}
+.ls-iview{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.ls-iview button{border:0;background:var(--card);color:var(--muted);padding:7px 10px;cursor:pointer;font-size:14px;font-family:inherit}
+.ls-iview button.on{background:rgba(47,128,237,.1);color:var(--ls-accent)}
+.ls-fbtn{display:none;border:1px solid var(--border);background:var(--card);border-radius:999px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--text);font-family:inherit}
+/* ── featured strip ── */
+.ls-featured{margin-bottom:20px}
+.ls-featured h3{font-size:14px;font-weight:800;margin:0 0 10px;display:flex;align-items:center;gap:7px}
+.ls-featured .fs-row{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity}
+.ls-fcard{flex:0 0 260px;scroll-snap-align:start;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card);cursor:pointer;transition:transform .15s;position:relative}
+.ls-fcard:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(47,128,237,.14)}
+.ls-fcard .fc-img{height:120px;position:relative}
+.ls-fcard .fc-img img,.ls-fcard .fc-img .ph{width:100%;height:100%;object-fit:cover;display:block}
+.ls-fcard .fc-b{position:absolute;top:8px;left:8px;background:rgba(255,255,255,.92);color:#B45309;border-radius:999px;font-size:10px;font-weight:800;padding:3px 8px;letter-spacing:.3px}
+.ls-fcard .fc-body{padding:10px 12px 12px}
+.ls-fcard .fc-price{font-size:15px;font-weight:800;color:var(--ls-accent)}
+.ls-fcard .fc-price small{font-size:10.5px;font-weight:600;color:var(--muted)}
+.ls-fcard .fc-name{font-size:12.5px;font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-fcard .fc-loc{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ── grid ── */
+.ls-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px}
+.ls-grid.list{grid-template-columns:1fr}
+.lcard{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .16s,box-shadow .16s;display:flex;flex-direction:column;position:relative}
+.lcard:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(47,128,237,.13)}
+.lc-img{position:relative;height:180px;background:var(--bg-alt);cursor:pointer;overflow:hidden}
+.lc-img img,.lc-img .ph{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.lc-img:hover img{transform:scale(1.05)}
+.lc-img .ph{display:flex;align-items:center;justify-content:center;font-size:52px}
+.lc-badges{position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap}
+.lc-badge{font-size:10px;font-weight:800;letter-spacing:.3px;padding:4px 9px;border-radius:999px;backdrop-filter:blur(4px)}
+.lc-badge.feat{background:rgba(255,193,7,.95);color:#7A4E00}
+.lc-badge.ver{background:rgba(16,185,129,.95);color:#fff}
+.lc-badge.vac{background:rgba(47,128,237,.95);color:#fff}
+.lc-fav{position:absolute;top:9px;right:9px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:#94A3B8;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.14);transition:all .15s;font-family:inherit}
+.lc-fav.on{color:#EF4444}
+.lc-fav:hover{transform:scale(1.12)}
+.lc-price{position:absolute;bottom:10px;left:10px;background:rgba(15,23,42,.78);color:#fff;border-radius:10px;padding:6px 11px;font-size:15px;font-weight:800;backdrop-filter:blur(3px)}
+.lc-price small{font-size:10px;font-weight:600;opacity:.85}
+.lc-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;cursor:pointer}
+.lc-name{font-weight:800;font-size:15.5px;line-height:1.3}
+.lc-loc{font-size:12px;color:var(--muted);margin-top:3px;display:flex;gap:5px;align-items:flex-start}
+.lc-specs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.lc-spec{background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:11.5px;font-weight:600;color:var(--text-soft)}
+.lc-amens{display:flex;gap:8px;margin-top:11px;font-size:14px;color:var(--muted);flex-wrap:wrap;min-height:18px}
+.lc-foot{margin-top:auto;padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.lc-vac{font-size:11.5px;font-weight:700;color:var(--ls-accent);background:rgba(47,128,237,.08);border-radius:999px;padding:5px 10px;white-space:nowrap}
+.lc-vac.none{color:var(--muted);background:var(--bg-alt)}
+.lc-btn{flex:1;border:1px solid var(--ls-accent);color:var(--ls-accent);background:transparent;border-radius:10px;padding:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .13s}
+.lc-btn:hover{background:var(--ls-accent);color:#fff}
+/* list view */
+.ls-grid.list .lcard{flex-direction:row}
+.ls-grid.list .lc-img{width:300px;min-width:300px;height:auto;min-height:200px}
+.ls-grid.list .lc-body{flex:1}
+.ls-grid.list .lc-foot{border-top:0;border-left:1px solid var(--border);flex-direction:column;justify-content:center;gap:8px;width:170px}
+.ls-grid.list .lc-vac{flex:1;display:flex;align-items:center;justify-content:center;width:100%}
+/* ── load more + empty ── */
+.ls-more{display:flex;justify-content:center;margin:26px 0 6px}
+.ls-more button{border:1px solid var(--border);background:var(--card);border-radius:999px;padding:11px 26px;font-size:13px;font-weight:700;cursor:pointer;color:var(--text);font-family:inherit;transition:all .15s}
+.ls-more button:hover{border-color:var(--ls-accent);color:var(--ls-accent)}
+.ls-empty{text-align:center;padding:70px 20px;color:var(--muted)}
+.ls-empty .big{font-size:40px;margin-bottom:10px}
+/* ── detail modal ── */
+.ls-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.55);backdrop-filter:blur(3px)}
+.ls-modal.open{display:flex}
+.ls-modal-card{background:var(--card);border-radius:18px;max-width:860px;width:100%;max-height:92vh;overflow:auto;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.ls-m-close{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:#334155;font-size:16px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2);font-family:inherit}
+.ls-m-img{height:250px;position:relative;background:var(--bg-alt)}
+.ls-m-img img,.ls-m-img .ph{width:100%;height:100%;object-fit:cover}
+.ls-m-img .ph{display:flex;align-items:center;justify-content:center;font-size:80px}
+.ls-m-body{padding:20px 24px 24px}
+.ls-m-title{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.ls-m-title h2{margin:0;font-size:21px;font-weight:800;letter-spacing:-.3px}
+.ls-m-loc{font-size:12.5px;color:var(--muted);margin-top:4px}
+.ls-m-price{text-align:right}
+.ls-m-price .p{font-size:22px;font-weight:800;color:var(--ls-accent)}
+.ls-m-price .s{font-size:11.5px;color:var(--muted)}
+.ls-m-specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:18px 0}
+.ls-m-spec{background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;padding:11px 12px}
+.ls-m-spec .k{font-size:10.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--muted)}
+.ls-m-spec .v{font-size:15px;font-weight:800;margin-top:2px}
+.ls-m-h{font-size:13px;font-weight:800;margin:18px 0 9px;display:flex;align-items:center;gap:7px}
+.ls-m-desc{font-size:13px;color:var(--text-soft);line-height:1.7}
+.ls-m-amens{display:flex;flex-wrap:wrap;gap:8px}
+.ls-m-amen{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;background:var(--card)}
+.ls-m-units{display:flex;flex-direction:column;gap:9px}
+.ls-m-unit{border:1px solid var(--border);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ls-m-unit .n{font-weight:800;font-size:13.5px}
+.ls-m-unit .m{font-size:11.5px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.ls-m-unit .r{margin-left:auto;font-weight:800;color:var(--ls-accent);font-size:15px}
+.ls-m-unit .w{background:#25D366;color:#fff;border:0;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.ls-m-contact{background:linear-gradient(135deg,rgba(47,128,237,.07),rgba(16,185,129,.07));border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ls-m-contact .q{font-weight:800;font-size:13px;flex:1 1 200px}
+.ls-m-contact .btn{font-size:12.5px;padding:9px 14px;border-radius:10px;text-decoration:none;font-weight:700}
+.ls-m-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.ls-m-actions button{border:1px solid var(--border);background:var(--card);border-radius:10px;padding:8px 13px;font-size:12px;font-weight:700;cursor:pointer;color:var(--text);font-family:inherit}
+.ls-m-actions button:hover{border-color:var(--ls-accent);color:var(--ls-accent)}
+/* ── mobile ── */
+.ls-filter-scrim{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:90;display:none}
+.ls-filter-scrim.open{display:block}
+@media(max-width:900px){
+  .ls-layout{grid-template-columns:1fr}
+  .ls-filters{position:fixed;left:0;top:0;bottom:0;width:min(320px,86vw);max-height:none;border-radius:0 18px 18px 0;z-index:95;transform:translateX(-105%);transition:transform .22s}
+  .ls-filters.open{transform:none}
+  .ls-fbtn{display:inline-flex}
+  .ls-grid.list .lcard{flex-direction:column}
+  .ls-grid.list .lc-img{width:100%;min-width:0;height:170px;min-height:0}
+  .ls-grid.list .lc-foot{border-left:0;border-top:1px solid var(--border);flex-direction:row;width:auto}
+}
+@media(max-width:560px){
+  .ls-tools select{max-width:150px}
+  .ls-m-body{padding:16px}
+  .ls-m-unit .r{margin-left:0}
+}
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"KRTaker Property Listings","url":"https://krtaker.com/listings.html","description":"Verified rental properties across Dhaka and Chattogram managed by KRTaker.","isPartOf":{"@type":"WebSite","name":"KRTaker","url":"https://krtaker.com"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"KRTaker Property Listings","url":"https://krtaker.com/listings.html","description":"Verified rental properties across Dhaka and Chattogram managed by KRTaker — flats, commercial floors and plots. Filter by price, bedrooms and amenities.","isPartOf":{"@type":"WebSite","name":"KRTaker","url":"https://krtaker.com"}}</script>
 </head>
 <body data-page="listings">
 <!-- ===== NAVBAR ===== -->
@@ -135,33 +236,71 @@
   <div class="container">
     <h1 data-i18n="page.hero.listings" data-cms="listings.hero.title">Property listings</h1>
     <p data-i18n="page.hero.listingsSub" data-cms="listings.hero.subtitle">Verified rental properties across Dhaka &amp; Chattogram — every building managed end-to-end by KRTaker. Enquire directly on WhatsApp.</p>
-    <div class="listing-toolbar">
-      <label class="ls-search"><span class="ico">🔍</span><input id="lsQ" type="search" placeholder="Search by name, area or holding…" data-i18n-ph="ls.placeholder"></label>
-      <label class="ls-sort">
-        <select id="lsSort">
-          <option value="default">Sort: featured</option>
-          <option value="rentAsc">Rent: low → high</option>
-          <option value="rentDesc">Rent: high → low</option>
-          <option value="sizeDesc">Largest first</option>
-          <option value="name">Name A–Z</option>
-        </select>
-      </label>
-    </div>
-    <div class="filters" id="filters"></div>
-    <div class="how-line"><span>💡</span><span><b data-i18n="ls.how">How it works:</b> <span data-i18n="ls.howBody">pick a unit → WhatsApp the KRTaker team → signed digital agreement + receipt, no broker fee.</span></span></div>
+    <label class="ls-search" style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:11px 18px;max-width:520px;margin:18px auto 0;transition:border-color .15s">
+      <span style="opacity:.5">🔍</span>
+      <input id="lsQ" type="search" placeholder="Search by name, area, holding or amenity…" style="border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:14px;width:100%">
+    </label>
   </div>
 </div>
 
 <div class="page-body">
   <div class="container">
-    <div class="lc-count" id="listCount"></div>
-    <div class="listing-grid" id="listRoot">
-      <div class="empty-state">Loading listings…</div>
+    <div class="ls-layout">
+      <button class="ls-filter-scrim" id="lsScrim" aria-label="Close filters"></button>
+      <aside class="ls-filters" id="lsFilters">
+        <div class="ls-f-head"><b>⚙️ <span data-i18n="ls.filters">Filters</span></b><button class="ls-f-clear" id="lsClearAll"><span data-i18n="ls.clearAll">Clear all</span></button></div>
+
+        <div class="ls-f-group"><label><span data-i18n="ls.fType">Property type</span></label><div id="fType"></div></div>
+        <div class="ls-f-group"><label><span data-i18n="ls.fCity">Location</span></label><div id="fCity"></div></div>
+        <div class="ls-f-group"><label><span data-i18n="ls.fPrice">Monthly rent (৳)</span></label>
+          <div class="ls-f-row"><input type="number" id="fMin" placeholder="Min" min="0" step="1000"><span class="sep">–</span><input type="number" id="fMax" placeholder="Max" min="0" step="1000"></div>
+          <div class="ls-mini" id="fPricePresets"></div>
+        </div>
+        <div class="ls-f-group"><label><span data-i18n="ls.fSize">Size (sqft)</span></label>
+          <div class="ls-f-row"><input type="number" id="fSqMin" placeholder="Min" min="0" step="50"><span class="sep">–</span><input type="number" id="fSqMax" placeholder="Max" min="0" step="50"></div>
+        </div>
+        <div class="ls-f-group"><label><span data-i18n="ls.fBeds">Bedrooms</span></label><div id="fBeds"></div></div>
+        <div class="ls-f-group"><label><span data-i18n="ls.fFurn">Furnishing</span></label><div id="fFurn"></div></div>
+        <div class="ls-f-group">
+          <button class="ls-toggle"><input type="checkbox" id="fAvail"><span><span data-i18n="ls.fAvail">Only properties with vacancies</span></span></button>
+          <button class="ls-toggle"><input type="checkbox" id="fSaved"><span>❤️ <span data-i18n="ls.fSaved">Saved only</span> <span id="favCount"></span></span></button>
+        </div>
+      </aside>
+
+      <div class="ls-results">
+        <div class="ls-res-bar">
+          <button class="ls-fbtn" id="lsFbtn">⚙️ <span data-i18n="ls.filters">Filters</span></button>
+          <span class="ls-count" id="lsCount"></span>
+          <div class="ls-chips" id="lsChips"></div>
+          <div class="ls-tools">
+            <select id="lsSort">
+              <option value="featured"><span data-i18n="ls.sortFeat">Sort: featured</span></option>
+              <option value="newest"><span data-i18n="ls.sortNew">Newest first</span></option>
+              <option value="rentAsc"><span data-i18n="ls.sortRentAsc">Rent: low → high</span></option>
+              <option value="rentDesc"><span data-i18n="ls.sortRentDesc">Rent: high → low</span></option>
+              <option value="sizeDesc"><span data-i18n="ls.sortSize">Largest first</span></option>
+              <option value="ppsDesc"><span data-i18n="ls.sortPps">৳/sqft: high → low</span></option>
+            </select>
+            <div class="ls-iview">
+              <button id="lsViewGrid" class="on" title="Grid view">⊞</button>
+              <button id="lsViewList" title="List view">☰</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ls-featured" id="lsFeatured" style="display:none"></div>
+        <div class="ls-grid" id="lsGrid" style="grid-template-columns:repeat(auto-fill,minmax(290px,1fr))">
+          <div class="ls-empty"><div class="big">🏘️</div><div class="spinner" style="display:inline-block;width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--ls-accent);border-radius:50%;animation:krspin 1s linear infinite"></div><br><br><span data-i18n="ls.loading">Loading listings…</span></div>
+        </div>
+        <div class="ls-more" id="lsMore" style="display:none"><button><span data-i18n="ls.loadMore">Load more listings</span> ↓</button></div>
+      </div>
     </div>
+
+    <style>@keyframes krspin{to{transform:rotate(360deg)}}</style>
 
     <!-- USP / value-add strip (why rent through KRTaker) -->
     <div class="usp-band">
-      <div class="usp-item"><span class="u-ic">✅</span><div><h4 data-i18n="ls.usp1t" data-cms="listings.usp.1_title" data-cms="listings.usp.2_title" data-cms="listings.usp.3_title" data-cms="listings.usp.4_title">Verified, managed buildings</h4><p data-i18n="ls.usp1b" data-cms="listings.usp.1_body" data-cms="listings.usp.2_body" data-cms="listings.usp.3_body" data-cms="listings.usp.4_body">Every unit is in a building KRTaker actively manages — rent, maintenance, compliance and handover are all digital.</p></div></div>
+      <div class="usp-item"><span class="u-ic">✅</span><div><h4 data-i18n="ls.usp1t" data-cms="listings.usp.1_title">Verified, managed buildings</h4><p data-i18n="ls.usp1b" data-cms="listings.usp.1_body">Every unit is in a building KRTaker actively manages — rent, maintenance, compliance and handover are all digital.</p></div></div>
       <div class="usp-item"><span class="u-ic">📜</span><div><h4 data-i18n="ls.usp2t">Digital agreement + receipt</h4><p data-i18n="ls.usp2b">Signed standard tenancy agreement, instant money receipt after every payment. No more "advance lost" disputes.</p></div></div>
       <div class="usp-item"><span class="u-ic">💳</span><div><h4 data-i18n="ls.usp3t">Pay rent by bKash / Nagad</h4><p data-i18n="ls.usp3b">Payment link per invoice — pay in 30 seconds, get a receipt instantly, reminders handled by the AI caretaker.</p></div></div>
       <div class="usp-item"><span class="u-ic">🏡</span><div><h4 data-i18n="ls.usp4t">No broker fee</h4><p data-i18n="ls.usp4b">Enquire directly, deal directly. Tenants keep the advance that usually goes to a dalal.</p></div></div>
@@ -243,112 +382,362 @@
   <a href="https://wa.me/8801722759646?text=Hi%2C%20I%27m%20interested%20in%20a%20KRTaker%20listing" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><span>WhatsApp</span></a>
 </div>
 
+<!-- detail modal -->
+<div class="ls-modal" id="lsModal" role="dialog" aria-modal="true">
+  <div class="ls-modal-card">
+    <button class="ls-m-close" id="lsMClose" aria-label="Close">✕</button>
+    <div id="lsMBody"></div>
+  </div>
+</div>
+
 <script src="i18n/i18n-dict.js?v=3.66"></script>
 <script src="js/i18n.js?v=3.66"></script>
 <script src="js/cms-hydrate.js?v=3.66"></script>
 <script src="js/main.js?v=3.66"></script>
 <script>
-/* Phase 16: listings v2 — search + city/type filters + sort + rent-first cards (bilingual) */
+/* SA1 v24: listings v3 — photo-first cards, filter sidebar (price/size/beds/furnishing/availability),
+   favorites, featured strip, detail modal, URL state, load-more, grid/list (bilingual) */
 (function(){
-  const root=document.getElementById('listRoot');
-  const countEl=document.getElementById('listCount');
-  const qEl=document.getElementById('lsQ');
-  const sortEl=document.getElementById('lsSort');
-  const filtersEl=document.getElementById('filters');
-  const BN={Flat:'ফ্ল্যাট',Commercial:'কমার্শিয়াল',Industrial:'ইন্ডাস্ট্রিয়াল',Plot:'প্লট','Dhaka North':'ঢাকা উত্তর','Dhaka South':'ঢাকা দক্ষিণ',Chattogram:'চট্টগ্রাম',All:'সব',sqft:'বর্গফুট','No vacancies right now':'এই মুহূর্তে কোনো খালি ইউনিট নেই','Enquire on WhatsApp':'হোয়াটসঅ্যাপে জানুন','List your property':'আপনার সম্পত্তি লিস্ট করুন','per month':'প্রতি মাসে','Floor':'তলা','Available units':'উপলব্ধ ইউনিট','Loading listings…':'লিস্টিং লোড হচ্ছে…','No listings available right now.':'এই মুহূর্তে কোনো লিস্টিং নেই।','Could not load listings. Please try again.':'লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।','No listings match your search.':'আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।','Clear filters':'ফিল্টার মুছুন','property':'সম্পত্তি','properties':'সম্পত্তি','Search by name, area or holding…':'নাম, এলাকা বা হোল্ডিং দিয়ে খুঁজুন…','Sort: featured':'সাজান: ফিচার্ড','Rent: low → high':'ভাড়া: কম → বেশি','Rent: high → low':'ভাড়া: বেশি → কম','Largest first':'বড় আগে','Name A–Z':'নাম A–Z','Featured':'ফিচার্ড'};
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const bn=()=>document.documentElement.lang==='bn'||localStorage.getItem('krtaker_lang')==='bn';
   const T=(en,b)=>bn()?(b||en):en;
-  let all=[],type='all',city='all';
+  const BN={Flat:'ফ্ল্যাট',Commercial:'কমার্শিয়াল',Industrial:'ইন্ডাস্ট্রিয়াল',Plot:'প্লট',All:'সব','Dhaka North':'ঢাকা উত্তর','Dhaka South':'ঢাকা দক্ষিণ',Chattogram:'চট্টগ্রাম',sqft:'বর্গফুট','per month':'প্রতি মাসে','Floor':'তলা','Available units':'উপলব্ধ ইউনিট','Loading listings…':'লিস্টিং লোড হচ্ছে…','No listings available right now.':'এই মুহূর্তে কোনো লিস্টিং নেই।','Could not load listings. Please try again.':'লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।','No listings match your search.':'আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।','Clear filters':'ফিল্টার মুছুন','Clear all':'সব মুছুন','Filters':'ফিল্টার','Property type':'সম্পত্তির ধরন','Location':'অবস্থান','Monthly rent (৳)':'মাসিক ভাড়া (৳)','Size (sqft)':'আয়তন (বর্গফুট)','Bedrooms':'বেডরুম','Furnishing':'ফার্নিশিং','Only properties with vacancies':'শুধু খালি ইউনিট আছে এমন','Saved only':'শুধু সেভ করা','Featured':'ফিচার্ড','Verified':'ভেরিফায়েড','Any':'যেকোনো','Furnished':'ফার্নিশড','Unfurnished':'আনফার্নিশড','Sort: featured':'সাজান: ফিচার্ড','Newest first':'নতুন আগে','Rent: low → high':'ভাড়া: কম → বেশি','Rent: high → low':'ভাড়া: বেশি → কম','Largest first':'বড় আগে','৳/sqft: high → low':'৳/বর্গফুট: বেশি → কম','Load more listings':'আরও লিস্টিং দেখুন','No vacancies right now':'এই মুহূর্তে কোনো খালি ইউনিট নেই','Enquire on WhatsApp':'হোয়াটসঅ্যাপে জানুন','Ask about this property':'এই সম্পত্তি সম্পর্কে জানুন','View details':'বিস্তারিত দেখুন','Save':'সেভ করুন','Saved':'সেভ হয়েছে','Share':'শেয়ার','Copy link':'লিংক কপি','Description':'বিবরণ','Amenities':'সুবিধাসমূহ','Available units':'উপলব্ধ ইউনিট','Contact':'যোগাযোগ','Building area':'বিল্ডিং আয়তন','Property value':'সম্পত্তির মূল্য','Rent / sqft':'ভাড়া/বর্গফুট','From':'থেকে','List your property':'আপনার সম্পত্তি লিস্ট করুন','Clear search':'খোঁজ মুছুন','property':'সম্পত্তি','properties':'সম্পত্তি','unit':'ইউনিট','units':'ইউনিট','Saved listings':'সেভকৃত লিস্টিং','Bed':'বেড','Bath':'বাথ','beds':'বেড','baths':'বাথ','Call':'কল করুন','Email':'ইমেইল'};
+  const WA='8801722759646';
+  const fmt=n=>'৳'+(Math.round(n||0)).toLocaleString('en-IN');
+  const fmtN=n=>Math.round(n||0).toLocaleString('en-IN');
   const TYPES=['Flat','Commercial','Industrial','Plot'];
   const ICONS={Flat:'🏢',Commercial:'🏬',Industrial:'🏭',Plot:'🌳'};
+  const PAGE=9;
+  const F={q:'',type:'all',city:'all',min:'',max:'',sqmin:'',sqmax:'',beds:'',furn:'',avail:false,saved:false,sort:'featured',view:'grid',page:1};
+  let all=[],favs=new Set();
+  try{favs=new Set(JSON.parse(localStorage.getItem('krtaker_ls_favs')||'[]'))}catch(e){}
+
+  function minRent(p){const v=p.vacant_units||[];return v.length?Math.min(...v.map(u=>u.rent||0)):0}
+  function maxRent(p){const v=p.vacant_units||[];return v.length?Math.max(...v.map(u=>u.rent||0)):0}
+  function pps(p){const m=minRent(p);return m&&p.sqft?m/p.sqft:0}
+  function addr(p){return (p.address||'').trim()||[p.holding,p.jur].filter(Boolean).join(', ')||'—'}
+  function phImg(p){return p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;ph&quot;>${ICONS[p.type]||'🏘️'}</div>'">`:`<div class="ph">${ICONS[p.type]||'🏘️'}</div>`}
+  function unitBeds(u){return (u.beds&&+u.beds>0)?`${u.beds} ${T('beds','বেড')}`:null}
+  function specChips(p){
+    const vu=p.vacant_units||[];
+    const chips=[];
+    const b=vu.find(u=>u.beds&&+u.beds>0);
+    if(b)chips.push(`<span class="lc-spec">🛏 ${b.beds} ${T('beds','বেড')}</span>`);
+    const ba=vu.find(u=>u.baths&&+u.baths>0);
+    if(ba)chips.push(`<span class="lc-spec">🛁 ${ba.baths} ${T('baths','বাথ')}</span>`);
+    if(p.sqft)chips.push(`<span class="lc-spec">📐 ${fmtN(p.sqft)} ${T('sqft','বর্গফুট')}</span>`);
+    const fl=vu.find(u=>u.floor);
+    if(fl)chips.push(`<span class="lc-spec">🏢 ${esc(fl.floor)}</span>`);
+    return chips.join('');
+  }
+  function amenIcons(p,n){return (p.amenities||[]).slice(0,n||6).map(a=>`<span title="${esc(a.name)}">${esc(a.icon||'✨')}</span>`).join('')}
+  function waLink(msg){return 'https://wa.me/'+WA+'?text='+encodeURIComponent(msg)}
+  function unitWa(u,p){
+    const msg='Hi, I am interested in '+u.name+' ('+u.id+') at '+p.name+' listed on krtaker.com. Monthly rent ৳'+((u.rent||0).toLocaleString('en-IN'))+'. Is it still available?';
+    return `<a class="w" href="${waLink(msg)}" target="_blank" rel="noopener">💬 ${T('Enquire on WhatsApp','হোয়াটসঅ্যাপে জানুন')}</a>`;
+  }
+  function propWa(p){
+    const msg='Hi, I am interested in '+p.name+' ('+p.id+') listed on krtaker.com. Please share the available units and rent.';
+    return waLink(msg);
+  }
+
+  /* ── filters UI ── */
+  function chip(label,val,cur,cb){
+    const b=document.createElement('button');
+    b.className='ls-f-chip'+(cur===val?' on':'');b.innerHTML=`<span class="c"></span>${esc(label)}`;
+    b.onclick=()=>{cb(val)};return b;
+  }
   function buildFilters(){
     const cities=['all',...new Set(all.map(p=>p.jur))];
-    filtersEl.innerHTML='';
-    TYPES.forEach(t=>{
-      const b=document.createElement('button');
-      b.className='filter-chip'+(type===t?' active':'');
-      b.dataset.f=t; b.textContent=ICONS[t]+' '+T(t,BN[t]);
-      b.onclick=()=>{type=t;renderFilters();render();};
-      filtersEl.appendChild(b);
-    });
-    const sep=document.createElement('div'); sep.className='fsep'; filtersEl.appendChild(sep);
-    cities.forEach(c=>{
-      const b=document.createElement('button');
-      b.className='filter-chip'+(city===c?' active':'');
-      b.dataset.c=c; b.textContent=T(c=== 'all'?'All':c, c==='all'?'সব':BN[c]);
-      b.onclick=()=>{city=c;renderFilters();render();};
-      filtersEl.appendChild(b);
-    });
-    const allB=document.createElement('button');
-    allB.className='filter-chip'+(type==='all'&&city==='all'?' active':'');
-    allB.textContent=T('All','সব');
-    allB.onclick=()=>{type='all';city='all';renderFilters();render();};
-    filtersEl.insertBefore(allB, filtersEl.firstChild);
-  }
-  function renderFilters(){
-    filtersEl.querySelectorAll('[data-f]').forEach(c=>c.classList.toggle('active',c.dataset.f===type));
-    filtersEl.querySelectorAll('[data-c]').forEach(c=>c.classList.toggle('active',c.dataset.c===city));
-    filtersEl.querySelectorAll('.filter-chip').forEach(c=>{
-      if(!c.dataset.f&&!c.dataset.c)c.classList.toggle('active',type==='all'&&city==='all');
+    const ft=$('fType');ft.innerHTML='';
+    ft.appendChild(chip(T('All','সব'),'all',F.type,v=>{F.type=v;apply()}));
+    TYPES.forEach(t=>ft.appendChild(chip(ICONS[t]+' '+T(t,BN[t]),t,F.type,v=>{F.type=v;apply()})));
+    const fc=$('fCity');fc.innerHTML='';
+    fc.appendChild(chip(T('All cities','সব এলাকা'),'all',F.city,v=>{F.city=v;apply()}));
+    cities.filter(c=>c!=='all').forEach(c=>fc.appendChild(chip(T(c,BN[c]),c,F.city,v=>{F.city=v;apply()})));
+    const fb=$('fBeds');fb.innerHTML='';
+    [['',T('Any','যেকোনো')],['1','1+'],['2','2+'],['3','3+'],['4','4+']].forEach(([v,l])=>fb.appendChild(chip(l,v,F.beds,v=>{F.beds=v;apply()})));
+    const ff=$('fFurn');ff.innerHTML='';
+    [['',T('Any','যেকোনো')],['1',T('Furnished','ফার্নিশড')],['0',T('Unfurnished','আনফার্নিশড')]].forEach(([v,l])=>ff.appendChild(chip(l,v,F.furn,v=>{F.furn=v;apply()})));
+    const presets=[['Any',''],['< 30k','30'],['30–60k','60'],['60k–1L','100'],['> 1L','100p']];
+    $('fPricePresets').innerHTML=presets.map(([l,v])=>`<button data-p="${v}">${l}</button>`).join('');
+    $('fPricePresets').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      const v=b.dataset.p;
+      if(v===''){F.min='';F.max=''}
+      else if(v==='30'){F.min='';F.max='30000'}
+      else if(v==='60'){F.min='30000';F.max='60000'}
+      else if(v==='100'){F.min='60000';F.max='100000'}
+      else if(v==='100p'){F.min='100000';F.max=''}
+      $('fMin').value=F.min;$('fMax').value=F.max;apply();
     });
   }
-  function fmt(n){return '৳'+(Math.round(n)).toLocaleString('en-IN')}
-  function minRent(p){const v=p.vacant_units||[];return v.length?Math.min(...v.map(u=>u.rent||0)):0}
+  function syncFilterInputs(){
+    $('fMin').value=F.min;$('fMax').value=F.max;$('fSqMin').value=F.sqmin;$('fSqMax').value=F.sqmax;
+    $('fAvail').checked=F.avail;$('fSaved').checked=F.saved;
+    buildFilters();
+  }
+
+  /* ── filtering / sorting ── */
   function visible(){
-    let list=all.filter(p=>p.type===type||type==='all').filter(p=>p.jur===city||city==='all');
-    const q=(qEl.value||'').trim().toLowerCase();
-    if(q)list=list.filter(p=>(p.name+' '+p.holding+' '+p.jur).toLowerCase().includes(q));
-    const s=sortEl.value;
+    let list=all.slice();
+    const q=F.q.toLowerCase();
+    if(q)list=list.filter(p=>(p.name+' '+p.holding+' '+p.jur+' '+addr(p)+' '+(p.amenities||[]).map(a=>a.name).join(' ')).toLowerCase().includes(q));
+    if(F.type!=='all')list=list.filter(p=>p.type===F.type);
+    if(F.city!=='all')list=list.filter(p=>p.jur===F.city);
+    if(F.min!==''||F.max!==''){
+      const lo=F.min===''?0:+F.min,hi=F.max===''?Infinity:+F.max;
+      list=list.filter(p=>{const m=minRent(p);return m>=lo&&m<=hi||m===0&&p.sqft>=lo&&p.sqft<=hi});
+    }
+    if(F.sqmin!==''||F.sqmax!==''){
+      const lo=F.sqmin===''?0:+F.sqmin,hi=F.sqmax===''?Infinity:+F.sqmax;
+      list=list.filter(p=>p.sqft>=lo&&p.sqft<=hi);
+    }
+    if(F.beds!=='')list=list.filter(p=>(p.vacant_units||[]).some(u=>u.beds&&+u.beds>=+F.beds));
+    if(F.furn!=='')list=list.filter(p=>(p.vacant_units||[]).some(u=>String(u.furnished)===F.furn));
+    if(F.avail)list=list.filter(p=>p.vacancies>0);
+    if(F.saved)list=list.filter(p=>favs.has(p.id));
+    const s=F.sort;
     if(s==='rentAsc')list.sort((a,b)=>minRent(a)-minRent(b));
     else if(s==='rentDesc')list.sort((a,b)=>minRent(b)-minRent(a));
     else if(s==='sizeDesc')list.sort((a,b)=>b.sqft-a.sqft);
-    else if(s==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
+    else if(s==='ppsDesc')list.sort((a,b)=>pps(b)-pps(a));
+    else if(s==='newest')list.sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+    else list.sort((a,b)=>((+b.featured)||0)-((+a.featured)||0));
     return list;
   }
+  function isDefault(){
+    return !F.q&&F.type==='all'&&F.city==='all'&&F.min===''&&F.max===''&&F.sqmin===''&&F.sqmax===''&&F.beds===''&&F.furn===''&&!F.avail&&!F.saved&&F.sort==='featured';
+  }
+
+  /* ── cards ── */
+  function card(p){
+    const vu=p.vacant_units||[];
+    const m=minRent(p);
+    const fav=favs.has(p.id);
+    const badges=`${(+p.featured)?'<span class="lc-badge feat">★ '+T('Featured','ফিচার্ড')+'</span>':''}<span class="lc-badge ver">✓ ${T('Verified','ভেরিফায়েড')}</span>${vu.length?`<span class="lc-badge vac">${vu.length} ${T('available','খালি')}</span>`:''}`;
+    const price=m?`<span class="lc-price">${fmt(m)} <small>/${T('mo','মাস')}</small></span>`:'';
+    const vac=vu.length?`<span class="lc-vac">${vu.length} ${T('unit','ইউনিট')}${vu.length>1?'s':''} · ${T('available','খালি')}</span>`:`<span class="lc-vac none">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')}</span>`;
+    return `<div class="lcard" data-id="${esc(p.id)}">
+      <div class="lc-img" onclick="openDetail('${esc(p.id)}')">${phImg(p)}<div class="lc-badges">${badges}</div><button class="lc-fav${fav?' on':''}" onclick="toggleFav('${esc(p.id)}',this)" aria-label="Save">${fav?'♥':'♡'}</button>${price}</div>
+      <div class="lc-body" onclick="openDetail('${esc(p.id)}')">
+        <div class="lc-name">${ICONS[p.type]||''} ${esc(p.name)}</div>
+        <div class="lc-loc">📍 ${esc(addr(p))}</div>
+        <div class="lc-specs">${specChips(p)}</div>
+        <div class="lc-amens" title="${esc((p.amenities||[]).map(a=>a.name).join(', '))}">${amenIcons(p,6)}</div>
+      </div>
+      <div class="lc-foot">${vac}<button class="lc-btn" onclick="openDetail('${esc(p.id)}')">${T('View details','বিস্তারিত দেখুন')}</button></div>
+    </div>`;
+  }
+  function listCard(p){
+    const vu=p.vacant_units||[];
+    const m=minRent(p);
+    const fav=favs.has(p.id);
+    const badges=`${(+p.featured)?'<span class="lc-badge feat">★ '+T('Featured','ফিচার্ড')+'</span>':''}<span class="lc-badge ver">✓ ${T('Verified','ভেরিফায়েড')}</span>${vu.length?`<span class="lc-badge vac">${vu.length} ${T('available','খালি')}</span>`:''}`;
+    const vac=vu.length?`<span class="lc-vac">${vu.length} ${T('unit','ইউনিট')}${vu.length>1?'s':''} ${T('available','খালি')}</span>`:`<span class="lc-vac none">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')}</span>`;
+    return `<div class="lcard" data-id="${esc(p.id)}">
+      <div class="lc-img" onclick="openDetail('${esc(p.id)}')">${phImg(p)}<div class="lc-badges">${badges}</div><button class="lc-fav${fav?' on':''}" onclick="toggleFav('${esc(p.id)}',this)" aria-label="Save">${fav?'♥':'♡'}</button>${m?`<span class="lc-price">${fmt(m)} <small>/${T('mo','মাস')}</small></span>`:''}</div>
+      <div class="lc-body" onclick="openDetail('${esc(p.id)}')">
+        <div class="lc-name">${ICONS[p.type]||''} ${esc(p.name)}</div>
+        <div class="lc-loc">📍 ${esc(addr(p))}</div>
+        <div class="lc-specs">${specChips(p)}</div>
+        <div class="lc-amens">${amenIcons(p,8)}</div>
+      </div>
+      <div class="lc-foot">${vac}<button class="lc-btn" onclick="openDetail('${esc(p.id)}')">${T('View details','বিস্তারিত দেখুন')}</button></div>
+    </div>`;
+  }
+
+  /* ── featured strip ── */
+  function renderFeatured(){
+    const el=$('lsFeatured');
+    const feats=all.filter(p=>(+p.featured)&&p.vacancies>0).slice(0,5);
+    if(!feats.length||!isDefault()){el.style.display='none';el.innerHTML='';return}
+    el.style.display='block';
+    el.innerHTML=`<h3>⭐ ${T('Featured properties','ফিচার্ড সম্পত্তি')}</h3><div class="fs-row">`+feats.map(p=>{
+      const m=minRent(p);
+      return `<div class="ls-fcard" onclick="openDetail('${esc(p.id)}')">
+        <div class="fc-img">${phImg(p)}<span class="fc-b">★ FEATURED</span></div>
+        <div class="fc-body"><div class="fc-price">${m?fmt(m)+` <small>/${T('mo','মাস')}</small>`:''}</div>
+        <div class="fc-name">${ICONS[p.type]||''} ${esc(p.name)}</div><div class="fc-loc">📍 ${esc(addr(p))}</div></div>
+      </div>`;}).join('')+'</div>';
+  }
+
+  /* ── render results ── */
   function render(){
     const list=visible();
-    root.classList.add('loading');
-    const n=list.length;
-    countEl.textContent=n+' '+T(n===1?'property':'properties',n===1?'সম্পত্তি':'সম্পত্তি')+(type!=='all'||city!=='all'?' · '+T(type==='all'?'All':type,type==='all'?'সব':BN[type])+(city!=='all'?' · '+T(city,BN[city]):''):'');
-    if(!n){root.innerHTML=`<div class="empty-state">${T('No listings match your search.','আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।')}<br><a href="register.html" class="btn btn-primary" style="margin-top:16px">${T('List your property','আপনার সম্পত্তি লিস্ট করুন')}</a></div>`;root.classList.remove('loading');return}
-    root.innerHTML=list.map(p=>{
-      const vu=p.vacant_units||[];
-      const icon=ICONS[p.type]||'🏘️';
-      const vac=vu.length?`<span class="badge-v">${vu.length} ${T('available','খালি')}</span>`:`<span class="badge-f">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')}</span>`;
-      const unitsHtml=vu.length?vu.map(u=>{
-        const msg=encodeURIComponent('Hi, I am interested in '+u.name+' ('+u.id+') at '+p.name+' listed on krtaker.com. Monthly rent ৳'+((u.rent||0).toLocaleString('en-IN'))+'. Is it still available?');
-        const pm=T('per month','প্রতি মাসে');
-        const rentHtml=u.rent?'<span class="u-rent">'+fmt(u.rent)+' <span style="font-size:11px;font-weight:600;color:var(--muted)">'+pm+'</span></span>':'<span class="u-rent">—</span>';
-        return `<div class="lc-unit">
-          <div class="u-head"><span>${u.name}</span>${rentHtml}</div>
-          <div class="u-meta"><span>🏢 ${u.floor||'—'}</span><span>📐 ${u.sqft?u.sqft.toLocaleString('en-IN')+' '+T('sqft','বর্গফুট'):'—'}</span></div>
-          <a class="btn btn-primary" style="margin-top:10px;text-align:center;font-size:12px;padding:8px 10px" href="https://wa.me/8801722759646?text=${msg}" target="_blank" rel="noopener">💬 ${T('Enquire on WhatsApp','হোয়াটসঅ্যাপে জানুন')}</a>
-        </div>`;
-      }).join(''):'';
-      const msg2=encodeURIComponent('Hi, I am interested in '+p.name+' ('+p.id+') listed on krtaker.com. Please share the available units and rent.');
-      return `<div class="listing-card">
-        <div class="lc-top"><div><div class="lc-name">${icon} ${p.name}</div><div class="lc-sub">${T(p.type,BN[p.type])} · ${T(p.jur,BN[p.jur])} · ${p.holding||'—'}</div></div>${vac}</div>
-        <div class="lc-body">
-          <div class="lc-row"><span class="k">${T('Building area','বিল্ডিং আয়তন')}</span><span class="v">${p.sqft?p.sqft.toLocaleString('en-IN')+' '+T('sqft','বর্গফুট'):'—'}</span></div>
-          <div class="lc-row"><span class="k">${T('Property value','সম্পত্তির মূল্য')}</span><span class="v">${fmt(p.value)}</span></div>
-          ${unitsHtml}
+    const total=list.length;
+    const shown=list.slice(0,F.page*PAGE);
+    $('lsCount').innerHTML='<b>'+total+'</b> '+T(total===1?'property':'properties',total===1?'সম্পত্তি':'সম্পত্তি');
+    $('favCount').textContent=favs.size?'('+favs.size+')':'';
+    renderChips();
+    if(!total){
+      $('lsGrid').className='ls-grid';$('lsGrid').style.gridTemplateColumns='';
+      $('lsGrid').innerHTML=`<div class="ls-empty"><div class="big">🔍</div><div style="font-weight:800;font-size:15px;margin-bottom:6px">${T('No listings match your search.','আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।')}</div><div style="font-size:12.5px;margin-bottom:16px">${T('Try clearing filters or widening the price range.','ফিল্টার মুছে বা দামের সীমা বাড়িয়ে দেখুন।')}</div><a href="register.html" class="btn btn-primary">${T('List your property','আপনার সম্পত্তি লিস্ট করুন')}</a></div>`;
+      $('lsMore').style.display='none';
+      return;
+    }
+    const fn=F.view==='grid'?card:listCard;
+    $('lsGrid').className='ls-grid'+(F.view==='list'?' list':'');
+    $('lsGrid').style.gridTemplateColumns=F.view==='list'?'':'';
+    $('lsGrid').innerHTML=shown.map(fn).join('');
+    $('lsMore').style.display=shown.length<total?'flex':'none';
+  }
+  function renderChips(){
+    const chips=[];
+    const add=(l,cb)=>{chips.push(`<span class="ls-chip">${esc(l)}<button onclick="(${cb});return false">✕</button></span>`)};
+    if(F.q)add('“'+F.q+'”',"F.q='';$('lsQ').value='';apply()");
+    if(F.type!=='all')add(ICONS[F.type]+' '+T(F.type,BN[F.type]),"F.type='all';apply()");
+    if(F.city!=='all')add(T(F.city,BN[F.city]),"F.city='all';apply()");
+    if(F.min!==''||F.max!=='')add((F.min?fmt(+F.min):'৳0')+' – '+(F.max?fmt(+F.max):T('Any','যেকোনো')),"F.min='';F.max='';apply()");
+    if(F.sqmin!==''||F.sqmax!=='')add(F.sqmin+'–'+F.sqmax+' '+T('sqft','বর্গফুট'),"F.sqmin='';F.sqmax='';apply()");
+    if(F.beds!=='')add(F.beds+'+ '+T('beds','বেড'),"F.beds='';apply()");
+    if(F.furn!=='')add(T(F.furn==='1'?'Furnished':'Unfurnished',F.furn==='1'?'ফার্নিশড':'আনফার্নিশড'),"F.furn='';apply()");
+    if(F.avail)add(T('With vacancies','খালি সহ'),"F.avail=false;apply()");
+    if(F.saved)add('❤️ '+T('Saved','সেভকৃত'),"F.saved=false;apply()");
+    $('lsChips').innerHTML=chips.join('');
+  }
+  function apply(){
+    F.page=1;
+    writeURL();
+    render();
+    renderFeatured();
+    if(window.innerWidth<=900)$('lsFilters').classList.remove('open'),$('lsScrim').classList.remove('open');
+  }
+
+  /* ── detail modal ── */
+  function openDetail(id){
+    const p=all.find(x=>x.id===id);if(!p)return;
+    const vu=p.vacant_units||[];
+    const m=minRent(p),mx=maxRent(p);
+    const amens=(p.amenities||[]).map(a=>`<span class="ls-m-amen">${esc(a.icon||'✨')} ${esc(a.name)}</span>`).join('')||'<span class="c-sub">—</span>';
+    const units=vu.length?vu.map(u=>`<div class="ls-m-unit">
+        <div><div class="n">${ICONS[p.type]||''} ${esc(u.name)}</div><div class="m"><span>🏢 ${esc(u.floor||'—')}</span>${u.sqft?`<span>📐 ${fmtN(u.sqft)} ${T('sqft','বর্গফুট')}</span>`:''}${u.beds&&+u.beds>0?`<span>🛏 ${u.beds} ${T('beds','বেড')}</span>`:''}${u.baths&&+u.baths>0?`<span>🛁 ${u.baths} ${T('baths','বাথ')}</span>`:''}${u.furnished?`<span>🛋 ${T('Furnished','ফার্নিশড')}</span>`:''}</div></div>
+        <span class="r">${u.rent?fmt(u.rent)+` <small style="font-size:10px;font-weight:600;color:var(--muted)">/${T('mo','মাস')}</small>`:'—'}</span>
+        ${unitWa(u,p)}
+      </div>`).join(''):`<div class="c-sub" style="font-size:12.5px">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')} — ${T('join the waitlist on WhatsApp','হোয়াটসঅ্যাপে ওয়েটলিস্টে যোগ দিন')}.</div>`;
+    const price=(m&&mx&&m!==mx)?`${fmt(m)} – ${fmt(mx)}`:(m?fmt(m):'—');
+    $('lsMBody').innerHTML=`
+      <div class="ls-m-img">${phImg(p)}</div>
+      <div class="ls-m-body">
+        <div class="ls-m-title">
+          <div><h2>${ICONS[p.type]||''} ${esc(p.name)}</h2>
+          <div class="ls-m-loc">📍 ${esc(addr(p))} · ${T(p.type,BN[p.type])} · ${T(p.jur,BN[p.jur])}</div></div>
+          <div class="ls-m-price"><div class="p">${price} <span style="font-size:12px;font-weight:600">/${T('mo','মাস')}</span></div><div class="s">${T('From','থেকে')} ${vu.length} ${T('available','খালি')} ${T('units','ইউনিট')}</div></div>
         </div>
-        <div class="lc-foot">
-          <a class="btn btn-ghost" href="https://wa.me/8801722759646?text=${msg2}" target="_blank" rel="noopener">${T('Ask about this property','এই সম্পত্তি সম্পর্কে জানুন')}</a>
+        <div class="ls-m-specs">
+          ${vu.find(u=>u.beds&&+u.beds>0)?`<div class="ls-m-spec"><div class="k">${T('Bedrooms','বেডরুম')}</div><div class="v">${vu.map(u=>u.beds).filter(b=>b>0).sort((a,b)=>b-a)[0]}</div></div>`:''}
+          ${p.sqft?`<div class="ls-m-spec"><div class="k">${T('Size','আয়তন')}</div><div class="v">${fmtN(p.sqft)} ${T('sqft','বর্গফুট')}</div></div>`:''}
+          ${p.rent_per_sqft?`<div class="ls-m-spec"><div class="k">${T('Rent / sqft','ভাড়া/বর্গফুট')}</div><div class="v">${fmt(p.rent_per_sqft)}</div></div>`:''}
+          ${p.value?`<div class="ls-m-spec"><div class="k">${T('Property value','সম্পত্তির মূল্য')}</div><div class="v">${fmt(p.value)}</div></div>`:''}
+          <div class="ls-m-spec"><div class="k">${T('Type','ধরন')}</div><div class="v">${T(p.type,BN[p.type])}</div></div>
+          ${p.total_units?`<div class="ls-m-spec"><div class="k">${T('Total units','মোট ইউনিট')}</div><div class="v">${p.total_units}</div></div>`:''}
+        </div>
+        ${p.description?`<div class="ls-m-h">📝 ${T('Description','বিবরণ')}</div><div class="ls-m-desc">${esc(p.description)}</div>`:''}
+        ${(p.amenities||[]).length?`<div class="ls-m-h">✨ ${T('Amenities','সুবিধাসমূহ')}</div><div class="ls-m-amens">${amens}</div>`:''}
+        <div class="ls-m-h">🔑 ${T('Available units','উপলব্ধ ইউনিট')} (${vu.length})</div>
+        <div class="ls-m-units">${units}</div>
+        <div class="ls-m-contact">
+          <div class="q">📞 ${T('Questions about this property?','এই সম্পত্তি নিয়ে প্রশ্ন আছে?')}</div>
+          <a class="btn btn-primary" href="${propWa(p)}" target="_blank" rel="noopener">💬 ${T('WhatsApp the KRTaker team','হোয়াটসঅ্যাপে কেআরটেকার টিম')}</a>
+          <a class="btn btn-outline" href="tel:+8801722759646">📞 ${T('Call','কল করুন')}</a>
+          <a class="btn btn-outline" href="mailto:support@krtaker.com">✉️ ${T('Email','ইমেইল')}</a>
+        </div>
+        <div class="ls-m-actions">
+          <button id="lsMSave" onclick="toggleFav('${esc(p.id)}',this)">${favs.has(p.id)?'♥ '+T('Saved','সেভ হয়েছে'):'♡ '+T('Save','সেভ করুন')}</button>
+          <button onclick="shareProp('${esc(p.id)}')">📤 ${T('Share','শেয়ার')}</button>
+          <button onclick="copyLink('${esc(p.id)}')">🔗 ${T('Copy link','লিংক কপি')}</button>
         </div>
       </div>`;
-    }).join('');
-    root.classList.remove('loading');
+    $('lsModal').classList.add('open');
+    document.body.style.overflow='hidden';
   }
-  fetch('api/listings').then(r=>r.json()).then(d=>{
-    if(!d.ok||!Array.isArray(d.properties)){root.innerHTML=`<div class="empty-state">${T('No listings available right now.','এই মুহূর্তে কোনো লিস্টিং নেই।')}</div>`;return}
-    all=d.properties;
-    buildFilters();
-    render();
-  }).catch(()=>{root.innerHTML=`<div class="empty-state">${T('Could not load listings. Please try again.','লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।')}</div>`});
-  qEl.addEventListener('input',render);
-  sortEl.addEventListener('change',render);
-  document.addEventListener('kri18n',()=>{if(all.length){buildFilters();render();}});
+  function closeDetail(){$('lsModal').classList.remove('open');document.body.style.overflow=''}
+  function shareProp(id){
+    const p=all.find(x=>x.id===id);if(!p)return;
+    const msg='Check out '+p.name+' on KRTaker — '+addr(p)+'. Monthly rent from '+fmt(minRent(p))+' · '+location.origin+'/listings.html?pid='+id;
+    window.open(waLink(msg),'_blank');
+  }
+  function copyLink(id){
+    const url=location.origin+'/listings.html?pid='+id;
+    const done=()=>toastMsg(T('Link copied','লিংক কপি হয়েছে'));
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done).catch(()=>{prompt('Copy link:',url);done()})}
+    else{prompt('Copy link:',url);done()}
+  }
+  let toastTimer=null;
+  function toastMsg(t){
+    let el=document.getElementById('lsToast');
+    if(!el){el=document.createElement('div');el.id='lsToast';el.style.cssText='position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#0F172A;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.3)';document.body.appendChild(el)}
+    el.textContent=t;el.style.display='block';
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.display='none',2000);
+  }
+
+  /* ── favorites ── */
+  function toggleFav(id,btn){
+    if(favs.has(id))favs.delete(id);else favs.add(id);
+    localStorage.setItem('krtaker_ls_favs',JSON.stringify([...favs]));
+    if(btn){btn.classList.toggle('on',favs.has(id));btn.innerHTML=favs.has(id)?'♥':'♡'}
+    if(F.saved)render();
+    $('favCount').textContent=favs.size?'('+favs.size+')':'';
+    const ms=$('lsMSave');if(ms)ms.innerHTML=favs.has(id)?'♥ '+T('Saved','সেভ হয়েছে'):'♡ '+T('Save','সেভ করুন');
+  }
+
+  /* ── URL state ── */
+  function readURL(){
+    const p=new URLSearchParams(location.search);
+    F.q=p.get('q')||'';F.type=p.get('type')||'all';F.city=p.get('city')||'all';
+    F.min=p.get('min')||'';F.max=p.get('max')||'';F.sqmin=p.get('sqmin')||'';F.sqmax=p.get('sqmax')||'';
+    F.beds=p.get('beds')||'';F.furn=p.get('furn')||'';F.avail=p.get('avail')==='1';F.saved=p.get('saved')==='1';
+    F.sort=p.get('sort')||'featured';F.view=p.get('view')==='list'?'list':'grid';
+    return p.get('pid')||'';
+  }
+  function writeURL(){
+    const p=new URLSearchParams();
+    if(F.q)p.set('q',F.q);if(F.type!=='all')p.set('type',F.type);if(F.city!=='all')p.set('city',F.city);
+    if(F.min)p.set('min',F.min);if(F.max)p.set('max',F.max);if(F.sqmin)p.set('sqmin',F.sqmin);if(F.sqmax)p.set('sqmax',F.sqmax);
+    if(F.beds)p.set('beds',F.beds);if(F.furn)p.set('furn',F.furn);if(F.avail)p.set('avail','1');if(F.saved)p.set('saved','1');
+    if(F.sort!=='featured')p.set('sort',F.sort);if(F.view==='list')p.set('view','list');
+    const qs=p.toString();
+    history.replaceState(null,'',qs?'listings.html?'+qs:'listings.html');
+  }
+
+  /* ── init ── */
+  function init(){
+    const pid=readURL();
+    const grid=$('lsGrid');
+    grid.className='ls-grid';
+    fetch('api/listings').then(r=>r.json()).then(d=>{
+      if(!d.ok||!Array.isArray(d.properties)){grid.innerHTML=`<div class="ls-empty"><div class="big">🏘️</div>${T('No listings available right now.','এই মুহূর্তে কোনো লিস্টিং নেই।')}</div>`;return}
+      all=d.properties;
+      $('lsQ').value=F.q;
+      syncFilterInputs();
+      render();renderFeatured();
+      if(pid)setTimeout(()=>openDetail(pid),100);
+    }).catch(()=>{grid.innerHTML=`<div class="ls-empty"><div class="big">⚠️</div>${T('Could not load listings. Please try again.','লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।')}</div>`});
+    // events
+    let dt=null;
+    $('lsQ').addEventListener('input',e=>{clearTimeout(dt);dt=setTimeout(()=>{F.q=e.target.value.trim();apply()},250)});
+    $('lsSort').addEventListener('change',e=>{F.sort=e.target.value;apply()});
+    $('lsViewGrid').onclick=()=>{F.view='grid';$('lsViewGrid').classList.add('on');$('lsViewList').classList.remove('on');apply()};
+    $('lsViewList').onclick=()=>{F.view='list';$('lsViewList').classList.add('on');$('lsViewGrid').classList.remove('on');apply()};
+    $('fMin').addEventListener('change',e=>{F.min=e.target.value.trim();apply()});
+    $('fMax').addEventListener('change',e=>{F.max=e.target.value.trim();apply()});
+    $('fSqMin').addEventListener('change',e=>{F.sqmin=e.target.value.trim();apply()});
+    $('fSqMax').addEventListener('change',e=>{F.sqmax=e.target.value.trim();apply()});
+    $('fAvail').addEventListener('change',e=>{F.avail=e.target.checked;apply()});
+    $('fSaved').addEventListener('change',e=>{F.saved=e.target.checked;apply()});
+    $('lsClearAll').onclick=()=>{Object.assign(F,{q:'',type:'all',city:'all',min:'',max:'',sqmin:'',sqmax:'',beds:'',furn:'',avail:false,saved:false,sort:'featured',page:1});$('lsQ').value='';syncFilterInputs();apply()};
+    $('lsMore').querySelector('button').onclick=()=>{F.page++;render()};
+    $('lsFbtn').onclick=()=>{$('lsFilters').classList.add('open');$('lsScrim').classList.add('open')};
+    $('lsScrim').onclick=()=>{$('lsFilters').classList.remove('open');$('lsScrim').classList.remove('open')};
+    $('lsMClose').onclick=closeDetail;
+    $('lsModal').addEventListener('click',e=>{if(e.target===$('lsModal'))closeDetail()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();$('lsFilters').classList.remove('open');$('lsScrim').classList.remove('open')}});
+    document.addEventListener('kri18n',()=>{if(all.length){syncFilterInputs();render();renderFeatured()}});
+  }
+  init();
+  // expose for inline onclick handlers
+  window.openDetail=openDetail;window.closeDetail=closeDetail;window.toggleFav=toggleFav;
+  window.shareProp=shareProp;window.copyLink=copyLink;
 })();
 </script>
 <script>

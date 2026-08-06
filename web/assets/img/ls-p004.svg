@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#7C2D12"/><stop offset="1" stop-color="#F97316"/>
+</linearGradient>
+</defs>
+<rect width="800" height="500" fill="url(#g)"/>
+<circle cx="660" cy="90" r="46" fill="#FFFFFF" opacity=".25"/>
+<circle cx="120" cy="70" r="28" fill="#FFFFFF" opacity=".18"/>
+<rect x="120" y="120" width="560" height="330" rx="14" fill="#FFFFFF" opacity=".14"/>
+<rect x="170" y="160" width="460" height="270" rx="10" fill="#FFFFFF" opacity=".20"/>
+<g fill="#FFFFFF" opacity=".55">
+<rect x="210" y="200" width="56" height="56" rx="6"/><rect x="300" y="200" width="56" height="56" rx="6"/>
+<rect x="390" y="200" width="56" height="56" rx="6"/><rect x="480" y="200" width="56" height="56" rx="6"/>
+<rect x="210" y="290" width="56" height="56" rx="6"/><rect x="300" y="290" width="56" height="56" rx="6"/>
+<rect x="390" y="290" width="56" height="56" rx="6"/><rect x="480" y="290" width="56" height="56" rx="6"/>
+</g>
+<rect x="0" y="450" width="800" height="50" fill="#000000" opacity=".12"/>
+<text x="400" y="106" text-anchor="middle" font-family="Inter,Arial" font-size="64">🏠</text>
+<text x="400" y="452" text-anchor="middle" font-family="Inter,Arial" font-weight="800" font-size="30" fill="#FFFFFF">Uttara Garden Heights</text>
+<text x="400" y="480" text-anchor="middle" font-family="Inter,Arial" font-size="16" fill="#FFFFFF" opacity=".8">Uttara · Dhaka</text>
+</svg>
