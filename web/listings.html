@@ -161,6 +161,13 @@
 .ls-m-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 .ls-m-actions button{border:1px solid var(--border);background:var(--card);border-radius:10px;padding:8px 13px;font-size:12px;font-weight:700;cursor:pointer;color:var(--text);font-family:inherit}
 .ls-m-actions button:hover{border-color:var(--ls-accent);color:var(--ls-accent)}
+/* ── USP value strip as cards ── */
+.usp-grid .usp-item{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 18px;transition:transform .16s,box-shadow .16s}
+.usp-grid .usp-item:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(47,128,237,.12)}
+.usp-grid .u-ic{flex:none;width:44px;height:44px;border-radius:12px;background:rgba(47,128,237,.1);display:flex;align-items:center;justify-content:center;font-size:20px}
+.usp-grid h4{font-size:15px;font-weight:800;margin:0 0 5px}
+.usp-grid p{font-size:12.5px;color:var(--text-soft);line-height:1.6;margin:0}
+@media(max-width:560px){.usp-grid .usp-item{padding:16px 14px}.usp-grid .u-ic{width:40px;height:40px;font-size:18px}}
 /* ── mobile: drawer → bottom sheet, full-screen modal, stacked bars ── */
 .ls-filter-scrim{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:90;display:none}
 .ls-filter-scrim.open{display:block}
@@ -351,7 +358,7 @@
     <style>@keyframes krspin{to{transform:rotate(360deg)}}</style>
 
     <!-- USP / value-add strip (why rent through KRTaker) -->
-    <div class="usp-band">
+    <div class="card-grid usp-grid">
       <div class="usp-item"><span class="u-ic">✅</span><div><h4 data-i18n="ls.usp1t" data-cms="listings.usp.1_title">Verified, managed buildings</h4><p data-i18n="ls.usp1b" data-cms="listings.usp.1_body">Every unit is in a building KRTaker actively manages — rent, maintenance, compliance and handover are all digital.</p></div></div>
       <div class="usp-item"><span class="u-ic">📜</span><div><h4 data-i18n="ls.usp2t">Digital agreement + receipt</h4><p data-i18n="ls.usp2b">Signed standard tenancy agreement, instant money receipt after every payment. No more "advance lost" disputes.</p></div></div>
       <div class="usp-item"><span class="u-ic">💳</span><div><h4 data-i18n="ls.usp3t">Pay rent by bKash / Nagad</h4><p data-i18n="ls.usp3b">Payment link per invoice — pay in 30 seconds, get a receipt instantly, reminders handled by the AI caretaker.</p></div></div>
