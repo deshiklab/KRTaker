@@ -8962,9 +8962,9 @@ async function loadRecon(){
   const orphan=(rec.orphan_payments||[]);
   el.innerHTML=`
     <div class="grid grid-2">
-      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📣</span>${t('Unpaid invoices','অপরিশোধিত ইনভয়েস')} · ${coll.unpaid||0} · ৳${(coll.total_due||0).toLocaleString('en-IN')}</div><span class="link" onclick="runCollections(true)">${t('Send reminders','রিমাইন্ডার পাঠান')} →</span></div>
+      <div class="panel"><div class="panel-h"><div class="t"><span class="pi">📣</span>${t('Unpaid invoices','অপরিশোধিত ইনভয়েস')} · ${coll.unpaid||0} · ৳${(coll.total_due||0).toLocaleString('en-IN')}</div><span class="link" onclick="runCollections(true)">${t('Send reminders','রিমাইন্ডার পাঠান')} →</span><span class="link" onclick="pushRentDue(true)">🔔 ${t('Push owners','মালিককে পুশ')}</span></div>
         <div class="tbl-wrap"><table><thead><tr><th>Invoice</th><th>Month</th><th>Status</th><th>Due</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="c-sub">All paid up 🎉</td></tr>'}</tbody></table></div>
-        <div class="panel-b" style="border-top:1px solid var(--border)"><div class="c-sub">${t('Last run','শেষ রান')}: ${esc(coll.last_run||'never')}</div></div>
+        <div class="panel-b" style="border-top:1px solid var(--border)"><div class="c-sub">${t('Last run','শেষ রান')}: ${esc(coll.last_run||'never')} · ${t('push','পুশ')}: ${esc(coll.last_push||'never')}</div></div>
       </div>
       <div>
         <div class="panel" style="margin-bottom:18px"><div class="panel-h"><div class="t"><span class="pi">🔄</span>${t('Gateway sessions','গেটওয়ে সেশন')} · ${Object.keys(st).map(k=>gtxBadge(k+':'+st[k])).join(' ')}</div></div>
@@ -8991,6 +8991,19 @@ async function runCollections(send){
   if(send&&!confirm(t('Send overdue-rent reminder emails to all tenants with unpaid invoices?','সব ভাড়াটিয়াকে বকেয়া ভাড়ার রিমাইন্ডার ইমেইল পাঠাবেন?')))return;
   const d=await apiCall('app-collections-run',{send:!!send});
   if(d.ok){ toast((send?('Sent '+d.sent+' reminder email(s) · '):(t('Dry-run','ড্রাই-রান')+': '))+d.unpaid+' '+t('unpaid','অপরিশোধিত')+' · ৳'+(d.total_due||0).toLocaleString('en-IN')); if(send){await refreshData(); if(state.view==='recon'){render();}} }
+  else toast(d.error||'Failed');
+}
+
+/* SA1 v22: rent-due push — proactive Web Push to owners with push enabled (same gates as emails) */
+async function pushRentDue(send){
+  if(send&&!confirm(t('Send rent-due push notifications to owners who enabled push?','পুশ চালু থাকা মালিকদের কাছে ভাড়া-বকেয়া পুশ নোটিফিকেশন পাঠাবেন?')))return;
+  const d=await apiCall('app-rent-due-push',{send:!!send});
+  if(d.ok){
+    const ttl=d.totals||{};
+    const msg=(send?('🔔 '+t('Sent','পাঠানো')+' '+d.sent+'/'+d.targeted+' '+t('push(es)','টি পুশ')):(t('Dry-run','ড্রাই-রান')+': '+d.targeted+' '+t('owner(s)','জন মালিক')))+' · '+t('Overdue','মেয়াদোত্তীর্ণ')+' ৳'+(ttl.overdue||0).toLocaleString('en-IN')+((ttl.due_soon||0)?' · '+t('This month','এই মাসে')+' ৳'+(ttl.due_soon||0).toLocaleString('en-IN'):'')+((d.suppressed||0)?' · '+d.suppressed+' '+t('opted out','অপ্ট-আউট'):'');
+    toast(msg);
+    if(send){await refreshData(); if(state.view==='recon'){render();}}
+  }
   else toast(d.error||'Failed');
 }
 
