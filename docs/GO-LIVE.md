@@ -99,7 +99,7 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 ### 3.4 Infrastructure & ops
 - [ ] Backups: SQLite DB backup job (app-backup exists) → offsite (Google Drive rclone token expired — re-auth [!]; or add S3/Backblaze as backup target). Test a restore drill end-to-end.
 - [x] Uptime monitoring: hit `https://krtaker.com/api/health` every 1 min (Hermes cron `krtaker-uptime-watchdog` — script `krtaker_uptime.sh`, silent when healthy, alerts after 3 consecutive failures + recovery notice; delivers to origin chat, Discord home available).
-- [ ] Error tracking: add Sentry (or server.log capture) for the dashboard JS + API fatal errors.
+- [x] Error tracking: `app-error-log`/`app-log-error` API endpoints (JS `window.onerror` + `unhandledrejection` reporter in dashboard-v2.html via sendBeacon; PHP fatal capture via shutdown `error_get_last()`; per-IP rate limit, 24h dedup with counts, 30-day retention) + Hermes cron `krtaker-error-watchdog` (`krtaker_error_watch.py`, every 30 min, silent when clean, grouped digest when new errors).
 - [ ] cPanel disk quota: currently 1GB FTP-only — check headroom; upgrade hosting or move app+DB to the Lightsail box (18.142.98.150) with the PG migration path (phase7-deploy.md) when user count grows. SQLite is fine for launch (~100–500 active buildings); PG when you scale past that.
 - [ ] Rate limiting at the web-server layer (mod_evasive / Cloudflare) for login endpoints.
 - [ ] Cloudflare: already used for tunnel; put the apex site behind CF (free tier) for CDN + WAF + caching of static assets.

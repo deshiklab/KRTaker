@@ -737,6 +737,34 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
+/* ═══ Error tracking (GO-LIVE 3.4): report JS errors to /api/app-log-error.
+   Self-contained, silent, never throws — batch via sendBeacon (fires on unload too). ═══ */
+(function () {
+  var API_BASE = '../api/';
+  var q = [], timer = null;
+  function push(e) {
+    q.push(e);
+    if (q.length >= 5) flush();
+    else { clearTimeout(timer); timer = setTimeout(flush, 2500); }
+  }
+  function flush() {
+    if (!q.length) return;
+    var batch = q.splice(0, q.length);
+    try {
+      var body = JSON.stringify({ errors: batch, page: location.pathname });
+      if (navigator.sendBeacon) navigator.sendBeacon(API_BASE + 'app-log-error', new Blob([body], { type: 'application/json' }));
+      else fetch(API_BASE + 'app-log-error', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true });
+    } catch (e) {}
+  }
+  window.addEventListener('error', function (ev) {
+    push({ kind: 'js', msg: String(ev.message || 'Unknown error').slice(0, 500), url: String(ev.filename || '').slice(0, 300), line: ev.lineno || 0, col: ev.colno || 0 });
+  });
+  window.addEventListener('unhandledrejection', function (ev) {
+    var r = ev.reason;
+    var msg = String((r && (r.message || r.stack)) || r || 'Unhandled rejection').slice(0, 500);
+    push({ kind: 'rejection', msg: msg, url: '', line: 0, col: 0 });
+  });
+})();
 /* ════════════════════════════════════════════════════════════
    KRTaker Dashboard V2 — demo data (mirrors V1 SEED)
    ════════════════════════════════════════════════════════════ */
