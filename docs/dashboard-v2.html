@@ -605,6 +605,12 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
 @media print{
   @page{size:A4 portrait;margin:10mm}
   html,body{background:#fff !important;color:#111 !important;width:auto !important;height:auto !important;overflow:visible !important}
+  /* Bulletproof: hide EVERYTHING, then reveal only the flyer. This beats any
+     class-based display:none list — no dashboard chrome (sidebar nav like
+     📊 Overview / 🏢 Properties / 🧾 Invoices / 🔧 Maintenance / 📥 Leads,
+     topbar, drawer, footer, chat) can leak into the print. */
+  body *{visibility:hidden !important}
+  .bp-flyer,.bp-flyer *{visibility:visible !important}
   .app,.sidebar,.topbar,.content,.app-footer,.drawer-overlay,.drawer,.drawer-h,.drawer-b,.drawer-f,
   .sb-backdrop,.demo-banner,.imp-banner,.kr-widget,.auth-screen,.exit-modal,#krToast,.toast-wrap,
   .cookie-bar,.chat-fab,.chat-box,.wa-fab,.btt-btn,#authScreen,#drawerOverlay,#drawer{display:none !important}
