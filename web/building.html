@@ -64,7 +64,8 @@
 .bp-kv .k{color:var(--muted)}
 .bp-kv .v{font-weight:700;text-align:right}
 .bp-cta{background:linear-gradient(135deg,#2F80ED,#1E6FD9);border-radius:16px;padding:22px;color:#fff;margin-bottom:18px}
-.bp-cta h3{margin:0 0 6px;color:#fff;font-size:17px}
+.bp-cta h3{margin:0 0 6px;color:#fff;font-size:22px;line-height:1.3}
+.bp-cta h3 .vac-num{font-size:30px;display:inline-block;margin-right:6px;vertical-align:-2px}
 .bp-cta p{margin:0 0 14px;font-size:12.5px;opacity:.9;line-height:1.6}
 .bp-cta .btn-white{background:#fff;color:#1E6FD9;border:0}
 .bp-cta .btn-wa{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;border:0;box-shadow:0 6px 18px rgba(37,211,102,.35)}
@@ -93,32 +94,58 @@
 .bp-map-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--bp-accent);text-decoration:none}
 .bp-map-link:hover{text-decoration:underline}
 @media(max-width:860px){.bp-grid{grid-template-columns:1fr}.bp-hero{flex-direction:column}.bp-qr{width:100%}.bp-qr img,.bp-qr svg{margin:0 auto}.bp-photo img{height:220px}}
-/* ═══ PRINT — QR/public building profile ═══ */
+/* ═══ PRINT — QR/public building profile (compact 2-page layout) ═══ */
 @media print{
-  @page{margin:14mm 12mm}
-  body{background:#fff !important;color:#111 !important}
+  @page{size:A4 portrait;margin:10mm}
+  body{background:#fff !important;color:#111 !important;font-size:11px}
   .navbar,.footer,.cta-section,.sticky-cta,.btt-btn,.chat-fab,.chat-box,.wa-fab,.cookie-bar,.exit-modal,#krToast,.bp-actions,.bp-sim,.bp-map,.bp-map-link,.bp-load,.bp-err{display:none !important}
   .page-body{padding:0 !important}
   .container{max-width:100% !important}
-  .bp-print-hdr{display:flex !important;align-items:center;justify-content:space-between;gap:16px;border-bottom:2.5px solid #2F80ED;padding-bottom:10px;margin-bottom:18px}
-  .bp-print-hdr .brand{font-weight:800;font-size:16px;color:#2F80ED;display:flex;align-items:center;gap:8px}
-  .bp-print-hdr .brand .logo-mark{width:30px;height:30px;font-size:13px}
-  .bp-print-hdr .meta{font-size:10.5px;color:#555;text-align:right;line-height:1.6}
+  .bp-print-hdr{display:flex !important;align-items:center;justify-content:space-between;gap:16px;border-bottom:2.5px solid #2F80ED;padding-bottom:8px;margin-bottom:12px}
+  .bp-print-hdr .brand{font-weight:800;font-size:15px;color:#2F80ED;display:flex;align-items:center;gap:8px}
+  .bp-print-hdr .brand .logo-mark{width:26px;height:26px;font-size:12px}
+  .bp-print-hdr .meta{font-size:10px;color:#555;text-align:right;line-height:1.5}
   .bp-print-hdr .meta b{color:#111}
-  .bp-hero{flex-direction:row !important;align-items:flex-start !important}
+  .bp-crumb{display:none !important}
+  .bp-photo img{height:130px !important}
+  .bp-photo .ph{height:130px !important;font-size:48px}
+  .bp-photo{margin-bottom:10px}
+  .bp-hero{flex-direction:row !important;align-items:flex-start !important;margin:8px 0 4px;gap:14px}
   .bp-title{min-width:0 !important}
-  .bp-qr{order:2;margin-left:auto;width:auto !important;flex:none;border:1.5px solid #999;border-radius:12px;padding:12px;background:#fff !important;box-shadow:none !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .bp-qr img,.bp-qr svg{width:170px !important;height:170px !important;padding:8px;background:#fff}
-  .bp-qr .lbl{font-size:10px}
-  .bp-badge,.bp-unit-status,.bp-stat .n,.bp-cta{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .bp-stat{border:1px solid #ddd;break-inside:avoid}
-  .bp-panel{border:1px solid #ddd;break-inside:avoid;box-shadow:none !important}
-  .bp-table td,.bp-table th{border-bottom:1px solid #eee}
-  .bp-cta{break-inside:avoid}
-  .bp-cta .btn-wa,.bp-cta .btn-white{box-shadow:none !important}
-  .bp-print-ftr{display:flex !important;justify-content:space-between;gap:12px;font-size:9.5px;color:#666;border-top:1px solid #ccc;margin-top:22px;padding-top:8px}
+  .bp-title h1{font-size:22px !important;margin-bottom:3px}
+  .bp-sub{font-size:12px;margin-bottom:4px}
+  .bp-badges{gap:5px;margin-top:6px}
+  .bp-badge{font-size:10px;padding:3px 9px}
+  .bp-qr{order:2;margin-left:auto;width:auto !important;flex:none;border:1.5px solid #999;border-radius:10px;padding:8px;background:#fff !important;box-shadow:none !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .bp-qr img,.bp-qr svg{width:110px !important;height:110px !important;padding:6px;background:#fff}
+  .bp-qr .lbl{font-size:9px}
+  .bp-stats{gap:8px;margin:10px 0}
+  .bp-stat{border:1px solid #ddd;break-inside:avoid;padding:8px 10px;border-radius:10px}
+  .bp-stat .n{font-size:16px}
+  .bp-stat .k{font-size:9.5px;line-height:1.35}
+  .bp-grid{display:block !important;margin-bottom:12px}
+  .bp-panel{border:1px solid #ddd;break-inside:avoid;box-shadow:none !important;padding:11px 13px;margin-bottom:10px;border-radius:10px}
+  .bp-panel h3{margin:0 0 7px;font-size:13px}
+  .bp-desc{font-size:11.5px;line-height:1.5}
+  .bp-table{font-size:11px}
+  .bp-table th{font-size:9px;padding:4px 6px}
+  .bp-table td{padding:5px 6px}
+  .bp-table .c-sub{font-size:9px}
+  .bp-unit-status{font-size:9px;padding:2px 7px}
+  .bp-amens{gap:5px;grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+  .bp-amen{padding:5px 8px;font-size:10px;border-radius:8px}
+  .bp-kv{padding:4px 0;font-size:11px}
+  .bp-kv .v{font-size:11px}
+  .bp-cta{break-inside:avoid;padding:12px 14px;margin-bottom:10px;border-radius:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .bp-cta h3{font-size:17px}
+  .bp-cta h3 .vac-num{font-size:22px}
+  .bp-cta p{font-size:11px;margin:0 0 8px}
+  .bp-cta .btn-wa,.bp-cta .btn-white{box-shadow:none !important;padding:6px 10px;font-size:10px;border-radius:7px}
+  .bp-print-ftr{display:flex !important;justify-content:space-between;gap:12px;font-size:9px;color:#666;border-top:1px solid #ccc;margin-top:12px;padding-top:6px}
   .bp-print-ftr a{color:#2F80ED;text-decoration:none}
   a{color:#111 !important;text-decoration:none !important}
+  h1,h2,h3{break-after:avoid}
+  .bp-panel,.bp-cta,.bp-stat,.bp-photo,.bp-hero,.bp-stats{break-inside:avoid}
 }
 </style>
 <script type="application/ld+json" id="bpSchema">{}</script>
@@ -358,11 +385,14 @@
     const canon=document.querySelector('link[rel="canonical"]');if(canon)canon.setAttribute('href',cleanUrl());
     setOG(p.name+' — Building Profile | KRTaker', p.name+' ('+p.jur+') — verified building, '+p.total_units+' units, '+p.units.filter(u=>u.status==='Vacant').length+' vacancies. Managed end-to-end by KRTaker. No broker fee.', cleanUrl());
     const vac=p.units.filter(u=>u.status==='Vacant');
+    const t=p.terms||{};
+    const firstRent=vac.length?Math.min(...vac.map(u=>u.rent||0)):0;
+    const moveIn=t.advance_months?firstRent*(1+t.advance_months):firstRent;
     const stats=[
       ['🏢',p.total_units,T('Units','ইউনিট')],
       ['🔑',vac.length,T('Vacancies','খালি ইউনিট')],
       ['📐',p.sqft?p.sqft.toLocaleString()+' sqft':'—',T('Building area','বিল্ডিং আয়তন')],
-      ['💰',moneyC(p.value),T('Property value','সম্পত্তির মূল্য')]
+      ['💵',money(moveIn),T('Estimated move-in cost (1st month + '+t.advance_months+' months deposit)','আনুমানিক ভাড়া শুরুর খরচ (১ম মাস + '+t.advance_months+' মাস জামানত)')]
     ];
     const rows=p.units.map(u=>{
       const v=u.status==='Vacant';
@@ -372,7 +402,6 @@
       return `<tr><td><b>${esc(u.name)}</b>${u.id?'<div class="c-sub">'+esc(u.id)+'</div>':''}</td><td>${esc(u.floor||'—')}</td><td>${u.sqft?u.sqft.toLocaleString()+' sqft':'—'}</td><td class="t-amount">${u.rent?money(u.rent)+'<div class="c-sub">'+T('per month','প্রতি মাসে')+'</div>':'—'}</td><td><span class="bp-unit-status ${cls}">${v?'●':''} ${esc(lbl)}</span></td></tr>`;
     }).join('');
     const amens=(p.amenities&&p.amenities.length)?p.amenities.map(a=>`<div class="bp-amen"><span>${esc(a.icon||'✨')}</span><span>${esc(a.name)}</span></div>`).join(''):'<div class="c-sub">—</div>';
-    const t=p.terms||{};
     const termsKv=[
       t.rent_per_sqft?['Rent / sqft',money(t.rent_per_sqft)]:null,
       t.service_charge_pct?['Service charge',t.service_charge_pct+'%']:null,
@@ -383,10 +412,8 @@
       t.due_day?['Due day',t.due_day+' '+T('of month','তারিখের মধ্যে')]:null,
       t.late_fee_pct?['Late fee',t.late_fee_pct+'%']:null
     ].filter(Boolean).map(([k,v])=>`<div class="bp-kv"><span class="k">${T2(k,k)}</span><span class="v">${v}</span></div>`).join('');
-    const firstRent=vac.length?Math.min(...vac.map(u=>u.rent||0)):0;
-    const moveIn=t.advance_months?firstRent*(1+t.advance_months):firstRent;
     const cta=vac.length
-      ?`<div class="bp-cta"><h3>🔑 ${T('Vacant now','এখন খালি')} — ${vac.length} ${T('units','ইউনিট')} ${firstRent?'· '+T('from','থেকে')+' '+money(firstRent)+'/mo':''}</h3><p>${T('Direct enquiry, no broker fee. KRTaker manages this building end-to-end — rent, maintenance, compliance and handover are all digital.','সরাসরি যোগাযোগ, কোনো ব্রোকার ফি নেই। ভাড়া, মেরামত, কমপ্লায়েন্স ও হ্যান্ডওভার — সব ডিজিটাল।')}</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent('Hi KRTaker — I\'m interested in '+p.name+' ('+p.jur+'). Please share available units.')}">💬 ${T('Enquire on WhatsApp','হোয়াটসঅ্যাপে জানুন')}</a><a class="btn btn-white" href="/listings.html?city=${encodeURIComponent(p.jur)}">${T('See all in '+p.jur,'এই এলাকার সব')} →</a></div></div>`
+      ?`<div class="bp-cta"><h3>🔑 ${T('Vacant now','এখন খালি')} — <span class="vac-num">${vac.length}</span> ${T('units','ইউনিট')} ${firstRent?'· '+T('from','থেকে')+' '+money(firstRent)+'/mo':''}</h3><p>${T('Direct enquiry, no broker fee. KRTaker manages this building end-to-end — rent, maintenance, compliance and handover are all digital.','সরাসরি যোগাযোগ, কোনো ব্রোকার ফি নেই। ভাড়া, মেরামত, কমপ্লায়েন্স ও হ্যান্ডওভার — সব ডিজিটাল।')}</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent('Hi KRTaker — I\'m interested in '+p.name+' ('+p.jur+'). Please share available units.')}">💬 ${T('Enquire on WhatsApp','হোয়াটসঅ্যাপে জানুন')}</a><a class="btn btn-white" href="/listings.html?city=${encodeURIComponent(p.jur)}">${T('See all in '+p.jur,'এই এলাকার সব')} →</a></div></div>`
       :`<div class="bp-cta"><h3>🏢 ${T('Fully leased','সব লিজড')}</h3><p>${T('No vacancies right now — join the waitlist on WhatsApp and we will notify you first.','এই মুহূর্তে কোনো খালি ইউনিট নেই — ওয়েটলিস্টে যোগ দিন।')}</p><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent('Hi KRTaker — add me to the waitlist for '+p.name+' ('+p.jur+').')}">💬 ${T('Join waitlist','ওয়েটলিস্টে যোগ দিন')}</a></div>`;
     $('bpRoot').innerHTML=`
       <div class="bp-crumb"><a href="/index.html">Home</a> › <a href="/listings.html">Listings</a> › <span style="font-weight:600;color:var(--text)">${esc(p.name)}</span></div>
