@@ -98,7 +98,7 @@
 @media print{
   @page{size:A4 portrait;margin:10mm}
   body{background:#fff !important;color:#111 !important;font-size:11px}
-  .navbar,.footer,.cta-section,.sticky-cta,.btt-btn,.chat-fab,.chat-box,.wa-fab,.cookie-bar,.exit-modal,#krToast,.bp-actions,.bp-sim,.bp-map,.bp-map-link,.bp-load,.bp-err{display:none !important}
+  .navbar,.footer,.cta-section,.sticky-cta,.btt-btn,.chat-fab,.chat-box,.wa-fab,.cookie-bar,.exit-modal,#krToast,.bp-actions,.bp-sim,.bp-map,.bp-load,.bp-err{display:none !important}
   .page-body{padding:0 !important}
   .container{max-width:100% !important}
   .bp-print-hdr{display:flex !important;align-items:center;justify-content:space-between;gap:16px;border-bottom:2.5px solid #2F80ED;padding-bottom:8px;margin-bottom:12px}
@@ -143,6 +143,9 @@
   .bp-cta .btn-wa,.bp-cta .btn-white{box-shadow:none !important;padding:6px 10px;font-size:10px;border-radius:7px}
   .bp-print-ftr{display:flex !important;justify-content:space-between;gap:12px;font-size:9px;color:#666;border-top:1px solid #ccc;margin-top:12px;padding-top:6px}
   .bp-print-ftr a{color:#2F80ED;text-decoration:none}
+  .bp-print-map{display:block !important;height:280px;border:1px solid #999;border-radius:10px;margin-top:12px;overflow:hidden;background:#eef2f7;break-inside:avoid}
+  .bp-print-map .leaflet-container{font-family:inherit}
+  .bp-print-map .leaflet-control-attribution{font-size:8px}
   a{color:#111 !important;text-decoration:none !important}
   h1,h2,h3{break-after:avoid}
   .bp-panel,.bp-cta,.bp-stat,.bp-photo,.bp-hero,.bp-stats{break-inside:avoid}
@@ -225,6 +228,7 @@
     <div class="bp-load" id="bpLoad"><div class="big">🏢</div><div class="spinner"></div><br><br><span id="bpLoadTxt">Loading building profile…</span></div>
     <div class="bp-err" id="bpErr" style="display:none"><div class="big">⚠️</div><div style="font-weight:800;font-size:15px" id="bpErrTxt">Building not found.</div><div style="font-size:12.5px;color:var(--muted);margin-top:8px">This profile may be unpublished or the link is wrong.</div><br><a class="btn btn-primary" href="/listings.html">Browse listings →</a></div>
   </div>
+  <div class="bp-print-map" id="bpPrintMap" style="display:none"></div>
 </div>
 <div class="bp-print-ftr" style="display:none">
   <span>KRTaker — Key Responsibility Taker · <span id="bpPrintUrl"></span></span>
@@ -470,6 +474,30 @@
       L.marker([p.lat,p.lng],{icon:ic}).addTo(_map).bindPopup('<b>'+esc(p.name)+'</b><br>'+esc(p.jur)+(p.holding?'<br>'+esc(p.holding):''));
     }catch(e){console.warn('map failed',e);}
   }
+
+  let _pMap=null;
+  function initPrintMap(){
+    const pm=document.getElementById('bpPrintMap');
+    if(!pm)return;
+    const p=BUILD;
+    if(!p||!(p.lat&&p.lng)){pm.style.display='none';return;}
+    try{
+      pm.style.display='block';pm.style.height='280px';
+      if(_pMap){_pMap.remove();_pMap=null;}
+      _pMap=L.map(pm,{scrollWheelZoom:false}).setView([p.lat,p.lng],14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(_pMap);
+      const ic=L.icon({iconUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png',shadowUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png',iconSize:[25,41],iconAnchor:[12,41]});
+      L.marker([p.lat,p.lng],{icon:ic}).addTo(_pMap).bindPopup('<b>'+esc(p.name)+'</b><br>'+esc(p.jur));
+      setTimeout(function(){if(_pMap)_pMap.invalidateSize();},60);
+    }catch(e){console.warn('print map failed',e);}
+  }
+  function destroyPrintMap(){
+    if(_pMap){_pMap.remove();_pMap=null;}
+    const pm=document.getElementById('bpPrintMap');
+    if(pm)pm.style.display='none';
+  }
+  window.addEventListener('beforeprint',initPrintMap);
+  window.addEventListener('afterprint',destroyPrintMap);
 
   function drawQr(){
     try{
