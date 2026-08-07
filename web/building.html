@@ -73,6 +73,10 @@
 .bp-actions .btn{padding:9px 16px;font-size:13px}
 /* ── Print-only header/footer (hidden on screen) ── */
 .bp-print-hdr,.bp-print-ftr{display:none}
+/* ── Property photo (hero) ── */
+.bp-photo{border-radius:18px;overflow:hidden;border:1px solid var(--border);margin-bottom:20px;background:var(--card)}
+.bp-photo img{display:block;width:100%;height:340px;object-fit:cover}
+.bp-photo .ph{display:flex;align-items:center;justify-content:center;height:240px;font-size:88px;background:linear-gradient(135deg,var(--bg-alt),var(--card))}
 .bp-sim{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .bp-sim-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;cursor:pointer;transition:border-color .13s,transform .13s}
 .bp-sim-card:hover{border-color:var(--bp-accent);transform:translateY(-2px)}
@@ -88,7 +92,7 @@
 .bp-map .leaflet-container{font-family:inherit}
 .bp-map-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--bp-accent);text-decoration:none}
 .bp-map-link:hover{text-decoration:underline}
-@media(max-width:860px){.bp-grid{grid-template-columns:1fr}.bp-hero{flex-direction:column}.bp-qr{width:100%}.bp-qr img,.bp-qr svg{margin:0 auto}}
+@media(max-width:860px){.bp-grid{grid-template-columns:1fr}.bp-hero{flex-direction:column}.bp-qr{width:100%}.bp-qr img,.bp-qr svg{margin:0 auto}.bp-photo img{height:220px}}
 /* ═══ PRINT — QR/public building profile ═══ */
 @media print{
   @page{margin:14mm 12mm}
@@ -386,6 +390,7 @@
       :`<div class="bp-cta"><h3>🏢 ${T('Fully leased','সব লিজড')}</h3><p>${T('No vacancies right now — join the waitlist on WhatsApp and we will notify you first.','এই মুহূর্তে কোনো খালি ইউনিট নেই — ওয়েটলিস্টে যোগ দিন।')}</p><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent('Hi KRTaker — add me to the waitlist for '+p.name+' ('+p.jur+').')}">💬 ${T('Join waitlist','ওয়েটলিস্টে যোগ দিন')}</a></div>`;
     $('bpRoot').innerHTML=`
       <div class="bp-crumb"><a href="/index.html">Home</a> › <a href="/listings.html">Listings</a> › <span style="font-weight:600;color:var(--text)">${esc(p.name)}</span></div>
+      ${p.photo?`<div class="bp-photo"><img src="${esc(p.photo)}" alt="${esc(p.name)} — ${esc(p.jur)}" loading="eager" onerror="this.outerHTML='<div class=&quot;ph&quot; style=&quot;font-size:88px;display:flex;align-items:center;justify-content:center;height:240px&quot;>${TYPE_ICON[p.type]||'🏢'}</div>'"></div>`:''}
       <div class="bp-hero">
         <div class="bp-title">
           <h1>${TYPE_ICON[p.type]||'🏢'} ${esc(p.name)}</h1>
