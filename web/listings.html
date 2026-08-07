@@ -26,6 +26,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="css/style.css?v=3.67">
+<link rel="stylesheet" href="css/share.css?v=3.68">
 <style>
 /* ═══ SA1 v24: listings v3 — photo-first cards, filter sidebar, favorites, featured strip, detail modal ═══ */
 :root{--ls-accent:#2F80ED}
@@ -109,6 +110,8 @@
 .lc-fav{position:absolute;top:9px;right:9px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:#94A3B8;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.14);transition:all .15s;font-family:inherit}
 .lc-fav.on{color:#EF4444}
 .lc-fav:hover{transform:scale(1.12)}
+.lc-share{position:absolute;top:9px;right:50px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:#25D366;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.14);transition:all .15s;font-family:inherit}
+.lc-share:hover{transform:scale(1.12);color:#1eb858}
 .lc-price{position:absolute;bottom:10px;left:10px;background:rgba(15,23,42,.78);color:#fff;border-radius:10px;padding:6px 11px;font-size:15px;font-weight:800;backdrop-filter:blur(3px)}
 .lc-price small{font-size:10px;font-weight:600;opacity:.85}
 .lc-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;cursor:pointer}
@@ -516,6 +519,7 @@
 <script src="js/cms-hydrate.js?v=3.67"></script>
 <script src="js/main.js?v=3.67"></script>
 <script src="js/chat.js?v=3.67"></script>
+<script src="js/share.js?v=3.68"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* SA1 v24: listings v3 — photo-first cards, filter sidebar (price/size/beds/furnishing/availability),
@@ -655,7 +659,7 @@
     const price=m?`<span class="lc-price">${fmt(m)} <small>/${T('mo','মাস')}</small></span>`:'';
     const vac=vu.length?`<span class="lc-vac">${vu.length} ${T('unit','ইউনিট')}${vu.length>1?'s':''} · ${T('available','খালি')}</span>`:`<span class="lc-vac none">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')}</span>`;
     return `<div class="lcard" data-id="${esc(p.id)}">
-      <div class="lc-img" onclick="openDetail('${esc(p.id)}')">${phImg(p)}<div class="lc-badges">${badges}</div><button class="lc-fav${fav?' on':''}" onclick="toggleFav('${esc(p.id)}',this)" aria-label="Save">${fav?'♥':'♡'}</button>${price}</div>
+      <div class="lc-img" onclick="openDetail('${esc(p.id)}')">${phImg(p)}<div class="lc-badges">${badges}</div><button class="lc-fav${fav?' on':''}" onclick="toggleFav('${esc(p.id)}',this)" aria-label="Save">${fav?'♥':'♡'}</button><button class="lc-share" onclick="event.stopPropagation();shareProp('${esc(p.id)}')" aria-label="Share">📤</button>${price}</div>
       <div class="lc-body" onclick="openDetail('${esc(p.id)}')">
         <div class="lc-name">${ICONS[p.type]||''} ${esc(p.name)}</div>
         <div class="lc-loc">📍 ${esc(addr(p))}</div>
@@ -672,7 +676,7 @@
     const badges=`${(+p.featured)?'<span class="lc-badge feat">★ '+T('Featured','ফিচার্ড')+'</span>':''}<span class="lc-badge ver">✓ ${T('Verified','ভেরিফায়েড')}</span>${vu.length?`<span class="lc-badge vac">${vu.length} ${T('available','খালি')}</span>`:''}`;
     const vac=vu.length?`<span class="lc-vac">${vu.length} ${T('unit','ইউনিট')}${vu.length>1?'s':''} ${T('available','খালি')}</span>`:`<span class="lc-vac none">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')}</span>`;
     return `<div class="lcard" data-id="${esc(p.id)}">
-      <div class="lc-img" onclick="openDetail('${esc(p.id)}')">${phImg(p)}<div class="lc-badges">${badges}</div><button class="lc-fav${fav?' on':''}" onclick="toggleFav('${esc(p.id)}',this)" aria-label="Save">${fav?'♥':'♡'}</button>${m?`<span class="lc-price">${fmt(m)} <small>/${T('mo','মাস')}</small></span>`:''}</div>
+      <div class="lc-img" onclick="openDetail('${esc(p.id)}')">${phImg(p)}<div class="lc-badges">${badges}</div><button class="lc-fav${fav?' on':''}" onclick="toggleFav('${esc(p.id)}',this)" aria-label="Save">${fav?'♥':'♡'}</button><button class="lc-share" onclick="event.stopPropagation();shareProp('${esc(p.id)}')" aria-label="Share">📤</button>${m?`<span class="lc-price">${fmt(m)} <small>/${T('mo','মাস')}</small></span>`:''}</div>
       <div class="lc-body" onclick="openDetail('${esc(p.id)}')">
         <div class="lc-name">${ICONS[p.type]||''} ${esc(p.name)}</div>
         <div class="lc-loc">📍 ${esc(addr(p))}</div>
@@ -836,8 +840,13 @@
   function closeDetail(){$('lsModal').classList.remove('open');document.body.style.overflow=''}
   function shareProp(id){
     const p=all.find(x=>x.id===id);if(!p)return;
-    const msg='Check out '+p.name+' on KRTaker — '+addr(p)+'. Monthly rent from '+fmt(minRent(p))+' · '+location.origin+'/listings.html?pid='+id;
-    window.open(waLink(msg),'_blank');
+    const vu=p.vacant_units||[];
+    const m=minRent(p);
+    const lines=['🏢 '+p.name+' — '+p.jur];
+    if(vu.length)lines.push('🔑 '+vu.length+' unit'+(vu.length>1?'s':'')+' vacant'+(m?' · from ৳'+m.toLocaleString('en-IN')+'/mo':''));
+    if(p.total_units)lines.push('🏗 '+p.total_units+' units · '+p.type);
+    lines.push('✅ Verified · managed by KRTaker · no broker fee');
+    KRShare.open({title:p.name+' — KRTaker',text:lines.join('\n'),url:location.origin+'/building/'+encodeURIComponent(id)});
   }
   function copyLink(id){
     const url=location.origin+'/listings.html?pid='+id;

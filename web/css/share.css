@@ -1,0 +1,42 @@
+/* ═══ KR Share v1: WhatsApp-first share menu + inline bars ═══
+   Used by: building.html, listings.html, blog*.html — requires js/share.js */
+.kr-share-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);z-index:9999;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .18s ease;-webkit-tap-highlight-color:transparent}
+.kr-share-overlay.open{opacity:1;pointer-events:auto}
+@media(min-width:560px){.kr-share-overlay{align-items:center;padding:20px}
+  .kr-share{border-radius:20px!important;max-height:82vh}}
+.kr-share{background:var(--card,#fff);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:88vh;overflow:auto;padding:20px 20px 24px;box-shadow:0 -12px 44px rgba(0,0,0,.22);animation:krUp .22s ease;color:var(--text,#0f172a)}
+@keyframes krUp{from{transform:translateY(44px);opacity:.55}to{transform:none;opacity:1}}
+.kr-share-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+.kr-share-head b{font-size:16.5px;font-weight:800}
+.kr-share-x{border:0;background:var(--bg-alt,#eef2f7);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:13px;line-height:1;color:var(--text,#0f172a);font-family:inherit;flex:none;transition:background .13s}
+.kr-share-x:hover{background:var(--border,#dbe2ec)}
+.kr-share-sub{font-size:12px;color:var(--muted,#64748b);margin-bottom:15px;word-break:break-word;line-height:1.5;white-space:pre-line;max-height:72px;overflow:auto}
+/* ── WhatsApp hero button ── */
+.kr-wa{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#25D366;color:#fff;border:0;border-radius:14px;padding:15px 16px;font-size:15.5px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:15px;box-shadow:0 8px 22px rgba(37,211,102,.35);transition:filter .13s,transform .1s}
+.kr-wa:hover{filter:brightness(1.06)}
+.kr-wa:active{transform:scale(.99)}
+.kr-wa svg{width:22px;height:22px;flex:none}
+/* ── channel grid ── */
+.kr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kr-g{display:flex;flex-direction:column;align-items:center;gap:7px;border:1px solid var(--border,#e2e8f0);background:var(--card,#fff);border-radius:14px;padding:12px 6px 10px;cursor:pointer;font-family:inherit;color:var(--text,#0f172a);transition:border-color .13s,background .13s}
+.kr-g:hover{border-color:#2F80ED;background:rgba(47,128,237,.04)}
+.kr-g .i{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff}
+.kr-g .i svg{width:18px;height:18px}
+.kr-g .t{font-size:10.5px;font-weight:700;color:var(--text,#0f172a);white-space:nowrap}
+.kr-g .i.fb{background:#1877F2}.kr-g .i.x{background:#0f1419}.kr-g .i.li{background:#0A66C2}
+.kr-g .i.tg{background:#229ED9}.kr-g .i.em{background:#EA4335}.kr-g .i.cp{background:#64748b}.kr-g .i.mo{background:#2F80ED}
+/* ── inline bar (blog articles / static pages) ── */
+.kr-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 22px;padding:12px 14px;background:var(--bg-alt,#f4f6fa);border:1px solid var(--border,#e2e8f0);border-radius:14px}
+.kr-bar .lbl{font-size:11.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--muted,#64748b);margin-right:2px}
+.kr-bar-wa{display:inline-flex;align-items:center;gap:7px;background:#25D366;color:#fff;border:0;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(37,211,102,.3)}
+.kr-bar-wa:hover{filter:brightness(1.06)}
+.kr-bar-wa svg{width:17px;height:17px}
+.kr-bar-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid var(--border,#e2e8f0);background:var(--card,#fff);cursor:pointer;color:var(--text,#0f172a);padding:0;transition:all .13s}
+.kr-bar-btn:hover{border-color:#2F80ED;transform:translateY(-1px)}
+.kr-bar-btn svg{width:16px;height:16px}
+.kr-bar-btn.fb svg{fill:#1877F2}.kr-bar-btn.x svg{fill:#0f1419}.kr-bar-btn.li svg{fill:#0A66C2}.kr-bar-btn.tg svg{fill:#229ED9}.kr-bar-btn.em svg{fill:#EA4335}.kr-bar-btn.cp svg{fill:#64748b}
+/* toast */
+.kr-toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#0F172A;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:10001;box-shadow:0 8px 24px rgba(0,0,0,.3);display:none;max-width:88vw;text-align:center}
+/* ── blog list card share ── */
+.bc-share{margin-left:auto;border:1px solid var(--border,#e2e8f0);background:var(--card,#fff);border-radius:9px;width:30px;height:30px;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;color:#25D366;font-family:inherit;padding:0;transition:all .13s}
+.bc-share:hover{border-color:#25D366;background:rgba(37,211,102,.08);transform:translateY(-1px)}

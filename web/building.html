@@ -26,6 +26,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="/css/style.css?v=3.67">
+<link rel="stylesheet" href="/css/share.css?v=3.68">
 <style>
 /* ═══ SA1 v25: building public profile — QR-code page (bhara-style building profile) ═══ */
 :root{--bp-accent:#2F80ED}
@@ -345,6 +346,7 @@
 <script src="/js/main.js?v=3.67"></script>
 <script src="/js/chat.js?v=3.67"></script>
 <script src="/js/qrcode.min.js?v=3.67"></script>
+<script src="/js/share.js?v=3.68"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* ═══ SA1 v25: building public profile renderer ═══ */
@@ -532,8 +534,17 @@
 
   window.bpShare=()=>{
     const u=cleanUrl();
-    if(navigator.share){navigator.share({title:BUILD?BUILD.name:'KRTaker building',url:u}).catch(()=>{});}
-    else bpCopy();
+    if(!BUILD){KRShare.open({title:'KRTaker',text:'',url:u});return;}
+    const p=BUILD;
+    const vac=p.units.filter(x=>x.status==='Vacant');
+    const firstRent=vac.length?Math.min(...vac.map(x=>x.rent||0)):0;
+    const t=p.terms||{};
+    const moveIn=t.advance_months?firstRent*(1+t.advance_months):firstRent;
+    const lines=['🏢 '+p.name+' — '+p.jur];
+    if(vac.length)lines.push('🔑 '+vac.length+' unit'+(vac.length>1?'s':'')+' vacant'+(firstRent?' · from ৳'+firstRent.toLocaleString('en-IN')+'/mo':''));
+    if(moveIn)lines.push('💵 Move-in: ৳'+moveIn.toLocaleString('en-IN')+' (1st month + '+(t.advance_months||'')+' months deposit)');
+    lines.push('✅ Verified · managed by KRTaker · no broker fee');
+    KRShare.open({title:p.name+' — KRTaker',text:lines.join('\n'),url:u});
   };
   window.bpCopy=()=>{
     const u=cleanUrl();
