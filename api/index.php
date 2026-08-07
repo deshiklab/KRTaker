@@ -5785,7 +5785,7 @@ HRO);
           <a href="https://www.linkedin.com/company/krtaker" class="soc" aria-label="LinkedIn" target="_blank" rel="noopener">in</a>
           <a href="https://x.com/krtaker" class="soc" aria-label="X (Twitter)" target="_blank" rel="noopener">𝕏</a>
           <a href="https://www.youtube.com/@krtaker" class="soc" aria-label="YouTube" target="_blank" rel="noopener">▶</a>
-          <a href="https://wa.me/8801722759646" class="soc" aria-label="WhatsApp" target="_blank" rel="noopener">✆</a>
+          <a href="https://wa.me/8801844680068" class="soc" aria-label="WhatsApp" target="_blank" rel="noopener">✆</a>
         </div>
       </div>
       <div class="footer-news">

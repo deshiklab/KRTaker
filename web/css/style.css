@@ -754,3 +754,10 @@ img{max-width:100%}
   .nav-logo .logo-mark{width:30px;height:30px;font-size:12px}
   .nav-toggle{padding:4px;font-size:20px}
 }
+
+/* ── V3.72: real KRTaker logo images ── */
+.nav-logo-img{height:36px;width:auto;display:block;object-fit:contain}
+.nav-logo-footer{height:42px}
+[data-theme="dark"] .navbar .nav-logo-img{filter:brightness(0) invert(1)}
+@media (max-width:1150px){.nav-logo-img{height:32px}.nav-logo-footer{height:38px}}
+@media (max-width:380px){.nav-logo-img{height:28px}}

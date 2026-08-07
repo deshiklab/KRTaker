@@ -122,7 +122,7 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 
 ### 4.2 Support
 - [ ] Help center: extend faq.html + a docs page (tools.html exists); link from dashboard.
-- [ ] Support channels: contact form → inbox, WhatsApp Business (+8801722759646 or a dedicated line), in-app ticket (app-ticket-thread exists — verify it's user-visible).
+- [ ] Support channels: contact form → inbox, WhatsApp Business (+8801844680068 — wired in v3.72), in-app ticket (app-ticket-thread exists — verify it's user-visible).
 - [ ] Define SLAs: response times, severity levels, escalation to Kabir.
 - [ ] Refund/cancellation workflow documented for support staff.
 

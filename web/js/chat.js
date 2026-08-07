@@ -242,7 +242,7 @@
   const d = document;
   const wa = d.createElement('a');
   wa.className = 'wa-fab';
-  wa.href = 'https://wa.me/8801722759646?text=' + encodeURIComponent('Hi KRTaker — I want to know more about the 14-day free trial.');
+  wa.href = 'https://wa.me/8801844680068?text=' + encodeURIComponent('Hi KRTaker — I want to know more about the 14-day free trial.');
   wa.target = '_blank'; wa.rel = 'noopener';
   wa.setAttribute('aria-label', 'Chat on WhatsApp');
   wa.innerHTML = '<svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 .5C7.4.5.5 7.4.5 16c0 2.7.7 5.4 2 7.7L.5 31.5l8-2.1c2.3 1.2 4.8 1.9 7.5 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5zm0 28.2c-2.4 0-4.7-.6-6.7-1.8l-.5-.3-4.8 1.3 1.3-4.7-.3-.5c-1.3-2.1-2-4.5-2-7 0-7.1 5.8-12.9 12.9-12.9S29 9.4 29 16.5 23.2 28.7 16 28.7zm7.1-9.7c-.4-.2-2.3-1.1-2.7-1.3-.4-.1-.6-.2-.9.2-.3.4-1 1.3-1.2 1.6-.2.3-.4.3-.8.1-.4-.2-1.6-.6-3-1.9-1.1-1-1.9-2.2-2.1-2.6-.2-.4 0-.6.2-.8l.6-.7c.2-.2.3-.4.4-.7.1-.3.1-.5 0-.7-.1-.2-.9-2.1-1.2-2.9-.3-.8-.6-.7-.9-.7h-.7c-.3 0-.7.1-1.1.5-.4.4-1.4 1.4-1.4 3.4s1.5 3.9 1.7 4.2c.2.3 2.9 4.4 7 6.2 1 .4 1.7.7 2.3.9 1 .3 1.9.2 2.6.1.8-.1 2.3-1 2.7-1.9.3-.9.3-1.7.2-1.9-.1-.2-.3-.3-.7-.5z"/></svg>';

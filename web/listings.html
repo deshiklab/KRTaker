@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/style.css?v=3.71">
+<link rel="stylesheet" href="css/style.css?v=3.72">
 <link rel="stylesheet" href="css/share.css?v=3.68">
 <style>
 /* ═══ SA1 v24: listings v3 — photo-first cards, filter sidebar, favorites, featured strip, detail modal ═══ */
@@ -267,7 +267,7 @@ gtag('config', 'G-C68G5Q03ZT');
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="container">
-    <a class="nav-logo" href="index.html"><span class="logo-mark">KR</span> KRTaker</a>
+    <a class="nav-logo" href="index.html"><img src="assets/img/krtaker-logo.png" alt="KRTaker" class="nav-logo-img"></a>
     <button class="nav-toggle" aria-label="Menu">☰</button>
     <ul class="nav-links">
       <li class="mega-li">
@@ -431,14 +431,14 @@ gtag('config', 'G-C68G5Q03ZT');
   <div class="container">
     <div class="footer-top">
       <div class="footer-brand">
-        <div class="nav-logo"><span class="logo-mark">KR</span> KRTaker</div>
+        <div class="nav-logo"><img src="assets/img/krtaker-logo-full-white.png" alt="KRTaker" class="nav-logo-img nav-logo-footer"></div>
         <p data-i18n="footer.blurb" data-cms="footer.section.tagline">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
         <div class="footer-socials">
-          <a href="https://www.facebook.com/krtaker" class="soc" aria-label="Facebook" target="_blank" rel="noopener">f</a>
+          <a href="https://www.facebook.com/people/KRTaker/61592897676181" class="soc" aria-label="Facebook" target="_blank" rel="noopener">f</a>
           <a href="https://www.linkedin.com/company/krtaker" class="soc" aria-label="LinkedIn" target="_blank" rel="noopener">in</a>
           <a href="https://x.com/krtaker" class="soc" aria-label="X (Twitter)" target="_blank" rel="noopener">𝕏</a>
           <a href="https://www.youtube.com/@krtaker" class="soc" aria-label="YouTube" target="_blank" rel="noopener">▶</a>
-          <a href="https://wa.me/8801722759646" class="soc" aria-label="WhatsApp" target="_blank" rel="noopener">✆</a>
+          <a href="https://wa.me/8801844680068" class="soc" aria-label="WhatsApp" target="_blank" rel="noopener">✆</a>
         </div>
       </div>
       <div class="footer-news">
@@ -522,11 +522,11 @@ gtag('config', 'G-C68G5Q03ZT');
   </div>
 </div>
 
-<script src="i18n/i18n-dict.js?v=3.71"></script>
-<script src="js/i18n.js?v=3.71"></script>
-<script src="js/cms-hydrate.js?v=3.71"></script>
-<script src="js/main.js?v=3.71"></script>
-<script src="js/chat.js?v=3.71"></script>
+<script src="i18n/i18n-dict.js?v=3.72"></script>
+<script src="js/i18n.js?v=3.72"></script>
+<script src="js/cms-hydrate.js?v=3.72"></script>
+<script src="js/main.js?v=3.72"></script>
+<script src="js/chat.js?v=3.72"></script>
 <script src="js/share.js?v=3.68"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -538,7 +538,7 @@ gtag('config', 'G-C68G5Q03ZT');
   const bn=()=>document.documentElement.lang==='bn'||localStorage.getItem('krtaker_lang')==='bn';
   const T=(en,b)=>bn()?(b||en):en;
   const BN={Flat:'ফ্ল্যাট',Commercial:'কমার্শিয়াল',Industrial:'ইন্ডাস্ট্রিয়াল',Plot:'প্লট',All:'সব','Dhaka North':'ঢাকা উত্তর','Dhaka South':'ঢাকা দক্ষিণ',Chattogram:'চট্টগ্রাম',sqft:'বর্গফুট','per month':'প্রতি মাসে','Floor':'তলা','Available units':'উপলব্ধ ইউনিট','Loading listings…':'লিস্টিং লোড হচ্ছে…','No listings available right now.':'এই মুহূর্তে কোনো লিস্টিং নেই।','Could not load listings. Please try again.':'লিস্টিং লোড করা যায়নি। আবার চেষ্টা করুন।','No listings match your search.':'আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।','Clear filters':'ফিল্টার মুছুন','Clear all':'সব মুছুন','Filters':'ফিল্টার','Property type':'সম্পত্তির ধরন','Location':'অবস্থান','Monthly rent (৳)':'মাসিক ভাড়া (৳)','Size (sqft)':'আয়তন (বর্গফুট)','Bedrooms':'বেডরুম','Furnishing':'ফার্নিশিং','Only properties with vacancies':'শুধু খালি ইউনিট আছে এমন','Saved only':'শুধু সেভ করা','Featured':'ফিচার্ড','Verified':'ভেরিফায়েড','Any':'যেকোনো','Furnished':'ফার্নিশড','Unfurnished':'আনফার্নিশড','Sort: featured':'সাজান: ফিচার্ড','Newest first':'নতুন আগে','Rent: low → high':'ভাড়া: কম → বেশি','Rent: high → low':'ভাড়া: বেশি → কম','Largest first':'বড় আগে','৳/sqft: high → low':'৳/বর্গফুট: বেশি → কম','Load more listings':'আরও লিস্টিং দেখুন','No vacancies right now':'এই মুহূর্তে কোনো খালি ইউনিট নেই','Enquire on WhatsApp':'হোয়াটসঅ্যাপে জানুন','Ask about this property':'এই সম্পত্তি সম্পর্কে জানুন','View details':'বিস্তারিত দেখুন','Save':'সেভ করুন','Saved':'সেভ হয়েছে','Share':'শেয়ার','Copy link':'লিংক কপি','Description':'বিবরণ','Amenities':'সুবিধাসমূহ','Available units':'উপলব্ধ ইউনিট','Contact':'যোগাযোগ','Building area':'বিল্ডিং আয়তন','Property value':'সম্পত্তির মূল্য','Rent / sqft':'ভাড়া/বর্গফুট','From':'থেকে','List your property':'আপনার সম্পত্তি লিস্ট করুন','Clear search':'খোঁজ মুছুন','property':'সম্পত্তি','properties':'সম্পত্তি','unit':'ইউনিট','units':'ইউনিট','Saved listings':'সেভকৃত লিস্টিং','Bed':'বেড','Bath':'বাথ','beds':'বেড','baths':'বাথ','Call':'কল করুন','Email':'ইমেইল','Show':'দেখুন','Try again':'আবার চেষ্টা করুন','Your connection may be slow — we tried 3 times.':'আপনার সংযোগ ধীর হতে পারে — আমরা ৩ বার চেষ্টা করেছি।'};
-  const WA='8801722759646';
+  const WA='8801844680068';
   const fmt=n=>'৳'+(Math.round(n||0)).toLocaleString('en-IN');
   const fmtN=n=>Math.round(n||0).toLocaleString('en-IN');
   const TYPES=['Flat','Commercial','Industrial','Plot'];
@@ -817,7 +817,7 @@ gtag('config', 'G-C68G5Q03ZT');
         <div class="ls-m-contact">
           <div class="q">📞 ${T('Questions about this property?','এই সম্পত্তি নিয়ে প্রশ্ন আছে?')}</div>
           <a class="btn btn-primary" href="${propWa(p)}" target="_blank" rel="noopener">💬 ${T('WhatsApp the KRTaker team','হোয়াটসঅ্যাপে কেআরটেকার টিম')}</a>
-          <a class="btn btn-outline" href="tel:+8801722759646">📞 ${T('Call','কল করুন')}</a>
+          <a class="btn btn-outline" href="tel:+8801844680068">📞 ${T('Call','কল করুন')}</a>
           <a class="btn btn-outline" href="mailto:support@krtaker.com">✉️ ${T('Email','ইমেইল')}</a>
         </div>
         <div class="ls-m-actions">
