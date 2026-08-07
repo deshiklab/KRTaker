@@ -126,6 +126,16 @@ function db() {
         try { $pdo->exec('PRAGMA foreign_keys=ON'); } catch (Exception $e) {}
         try { $pdo->exec('PRAGMA busy_timeout=15000'); } catch (Exception $e) {}
         try { $pdo->exec('PRAGMA temp_store=MEMORY'); } catch (Exception $e) {}
+        /* ── Schema bootstrap gate (2026-08-07): the idempotent migration block below
+           used to run on EVERY request, taking SQLite write locks each time. Under
+           concurrent dashboard/API calls the DDL write-write contention exceeded
+           busy_timeout → uncaught "database is locked" 500s (82 in 24h, mostly
+           /api/app-admin + /api/listings + /api/building-public bursts).
+           PRAGMA user_version now gates it: migrations run once, then skip.
+           ⚠ BUMP 20260807 to a higher number whenever adding new CREATE/ALTER
+           statements to the block below, or they will never run on migrated DBs. ── */
+        $__sv = (int)$pdo->query('PRAGMA user_version')->fetchColumn();
+        if ($__sv < 20260807) {
         $pdo->exec("CREATE TABLE IF NOT EXISTS auth_attempts (
             id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT DEFAULT '', ip TEXT DEFAULT '',
             kind TEXT DEFAULT '', ok INTEGER DEFAULT 0, ts TEXT DEFAULT (datetime('now')))");
@@ -937,6 +947,8 @@ $defTariff = $pdo->prepare('INSERT OR IGNORE INTO utility_tariffs (type, rate, s
         if (!in_array('otp_fails', $cols)) {
             $pdo->exec("ALTER TABLE subscribers ADD COLUMN otp_fails INTEGER DEFAULT 0");
         }
+        try { $pdo->exec('PRAGMA user_version=20260807'); } catch (Exception $e) {}
+        }   /* end schema bootstrap gate */
     }
     return $pdo;
 }

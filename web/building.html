@@ -99,11 +99,11 @@
 @media(max-width:860px){.bp-grid{grid-template-columns:minmax(0,1fr)}.bp-hero{flex-direction:column}.bp-qr{width:100%}.bp-qr img,.bp-qr svg{margin:0 auto}.bp-photo img{height:220px}}
 /* ═══ PRINT — QR/public building profile (compact 2-page layout) ═══ */
 .bp-print-map-wrap{height:0;overflow:hidden}
-.bp-print-map{width:718px;height:280px;visibility:hidden;pointer-events:none;background:#eef2f7}
+.bp-print-map{width:718px;height:250px;visibility:hidden;pointer-events:none;background:#eef2f7}
 @media print{
   @page{size:A4 portrait;margin:10mm}
   body{background:#fff !important;color:#111 !important;font-size:11px}
-  .navbar,.footer,.cta-section,.sticky-cta,.btt-btn,.chat-fab,.chat-box,.wa-fab,.cookie-bar,.exit-modal,#krToast,.bp-actions,.bp-sim,.bp-map,.bp-load,.bp-err{display:none !important}
+  .navbar,.footer,.cta-section,.sticky-cta,.btt-btn,.chat-fab,.chat-box,.wa-fab,.cookie-bar,.exit-modal,#krToast,.bp-actions,.bp-sim,.bp-sim-panel,.bp-map,.bp-load,.bp-err{display:none !important}
   .page-body{padding:0 !important}
   .container{max-width:100% !important}
   .bp-print-hdr{display:flex !important;align-items:center;justify-content:space-between;gap:16px;border-bottom:2.5px solid #2F80ED;padding-bottom:8px;margin-bottom:12px}
@@ -133,6 +133,7 @@
   .bp-panel h3{margin:0 0 7px;font-size:13px}
   .bp-desc{font-size:11.5px;line-height:1.5}
   .bp-table{font-size:11px}
+  .tbl-wrap{overflow:visible !important}
   .bp-table th{font-size:9px;padding:4px 6px}
   .bp-table td{padding:5px 6px}
   .bp-table .c-sub{font-size:9px}
@@ -149,7 +150,7 @@
   .bp-print-ftr{display:flex !important;justify-content:space-between;gap:12px;font-size:9px;color:#666;border-top:1px solid #ccc;margin-top:12px;padding-top:6px}
   .bp-print-ftr a{color:#2F80ED;text-decoration:none}
   .bp-print-map-wrap{height:auto;overflow:visible}
-  .bp-print-map{display:block !important;width:100%;height:280px;border:1px solid #999;border-radius:10px;margin-top:12px;overflow:hidden;background:#eef2f7;break-inside:avoid;visibility:visible}
+  .bp-print-map{display:block !important;width:100%;height:250px;border:1px solid #999;border-radius:10px;margin-top:12px;overflow:hidden;background:#eef2f7;break-inside:avoid;visibility:visible}
   .bp-print-map.no-map{display:none !important}
   .bp-print-map .leaflet-container{font-family:inherit}
   .bp-print-map .leaflet-control-attribution{font-size:8px}
@@ -463,7 +464,7 @@
           ${cta}
           ${termsKv?`<div class="bp-panel"><h3>📜 ${T('Lease terms','লিজ শর্ত')}</h3>${termsKv}${t.advance_months&&firstRent?`<div class="bp-kv" style="border-top:2px solid var(--border);margin-top:6px;padding-top:12px"><span class="k">💵 ${T('First month + deposit','প্রথম মাস + জামানত')}</span><span class="v" style="font-size:15px">${money(moveIn)}</span></div>`:''}</div>`:''}
           ${p.terms&&p.terms.notes?`<div class="bp-panel"><h3>📌 ${T('Notes','নোট')}</h3><div class="bp-desc">${esc(p.terms.notes)}</div></div>`:''}
-          <div class="bp-panel"><h3>🏢 ${T('Similar buildings','অনুরূপ ভবন')}</h3><div class="bp-sim" id="bpSim"><div class="c-sub">Loading…</div></div></div>
+          <div class="bp-panel bp-sim-panel"><h3>🏢 ${T('Similar buildings','অনুরূপ ভবন')}</h3><div class="bp-sim" id="bpSim"><div class="c-sub">Loading…</div></div></div>
         </div>
       </div>`;
     drawQr();
