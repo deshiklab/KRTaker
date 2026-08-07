@@ -9,6 +9,8 @@ Options -Indexes
 
 # Custom 404 (branded page)
 ErrorDocument 404 /404.html
+# Custom 403 (branded page — shows message, auto-redirects to homepage)
+ErrorDocument 403 /403.html
 
 # ── Security headers ──────────────────────────────────────────────────────
 <IfModule mod_headers.c>
