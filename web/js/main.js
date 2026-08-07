@@ -74,22 +74,41 @@ document.addEventListener('DOMContentLoaded', () => {
       const navImg = document.querySelector('.navbar .nav-logo-img');
       if (navImg && BRAND) {
         const customDark = !!BRAND.logo_nav_dark;
+        const slot = (th === 'dark' && customDark) ? 'site_nav_dark' : 'site_nav';
         const src = th === 'dark' ? (customDark ? BRAND.logo_nav_dark : (BRAND.logo_nav || DEFAULT_NAV_DARK)) : (BRAND.logo_nav || DEFAULT_NAV);
         navImg.src = src;
         /* the default navy logo auto-inverts to white via CSS in dark mode;
            a custom dark logo is already correct → disable the filter */
         navImg.style.filter = (th === 'dark' && customDark) ? 'none' : '';
-        if (BRAND.sizes && BRAND.sizes.site_nav) navImg.style.height = BRAND.sizes.site_nav + 'px';
+        if (BRAND.sizes && BRAND.sizes[slot]) navImg.style.height = BRAND.sizes[slot] + 'px';
+        if (BRAND.margin && BRAND.margin[slot] !== undefined) navImg.style.margin = BRAND.margin[slot] ? BRAND.margin[slot] + 'px' : '';
+        if (BRAND.padding && BRAND.padding[slot] !== undefined) navImg.style.padding = BRAND.padding[slot] ? BRAND.padding[slot] + 'px' : '';
+        applyTitle(navImg, BRAND, slot);
       }
       const footImg = document.querySelector('.nav-logo-footer');
       if (footImg && BRAND) {
+        const footSlot = (th === 'dark' && BRAND.logo_footer_dark) ? 'site_footer_dark' : 'site_footer';
         const src = th === 'dark' ? (BRAND.logo_footer_dark || BRAND.logo_footer || DEFAULT_FOOTER) : (BRAND.logo_footer || DEFAULT_FOOTER);
         footImg.src = src;
-        if (BRAND.sizes && BRAND.sizes.site_footer) footImg.style.height = BRAND.sizes.site_footer + 'px';
+        if (BRAND.sizes && BRAND.sizes[footSlot]) footImg.style.height = BRAND.sizes[footSlot] + 'px';
+        if (BRAND.margin && BRAND.margin[footSlot] !== undefined) footImg.style.margin = BRAND.margin[footSlot] ? BRAND.margin[footSlot] + 'px' : '';
+        if (BRAND.padding && BRAND.padding[footSlot] !== undefined) footImg.style.padding = BRAND.padding[footSlot] ? BRAND.padding[footSlot] + 'px' : '';
+        applyTitle(footImg, BRAND, footSlot);
       }
       const icon = document.querySelector('link[rel="icon"]');
       if (icon && BRAND && BRAND.favicon) icon.href = BRAND.favicon;
     };
+    /* V3.77: show/hide the site-name title next to a logo (per-slot title toggle) */
+    function applyTitle(img, brand, slot) {
+      const wrap = img && img.closest('.nav-logo');
+      if (!wrap) return;
+      let t = wrap.querySelector('.kr-logo-title');
+      if (brand.titles && brand.titles[slot] === '1') {
+        if (!t) { t = document.createElement('span'); t.className = 'kr-logo-title'; wrap.appendChild(t); }
+        t.textContent = brand.site_name || 'KRTaker';
+        wrap.classList.add('kr-has-title');
+      } else if (t) { t.remove(); wrap.classList.remove('kr-has-title'); }
+    }
     window.__KRTheme = applyBrand; // re-apply on theme toggle
     try {
       fetch('api/app-theme').then(r => r.json()).then(d => {

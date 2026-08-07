@@ -375,6 +375,7 @@ td .c-name:hover{color:var(--primary)}
     <main class="content" id="content"></main>
     <footer class="sa-footer">
       <img id="saFootLogo" alt="logo">
+      <span id="saFootTitle" style="display:none;font-size:12.5px;font-weight:700;color:var(--text-soft)"></span>
       <span class="sa-foot-copy">© 2026 KRTaker · Super Admin Panel</span>
     </footer>
   </div>
@@ -2582,22 +2583,12 @@ async function renderWhitelabel(){
       <button class="btn-ghost" onclick="whitelabelSave()">💾 Save branding</button>
     </div>
   </div></div>
-  <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🖼️</span>Logo manager<span class="c-sub" style="font-size:11px;margin-left:8px">all three surfaces — website, dashboard & super admin panel · header & footer · light & dark</span></span></div><div class="panel-b">
-    <div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
-      <div class="br-drop" style="cursor:default" title="Print outputs reuse the Website header logo (site_nav)">
-        <img id="br_print_prev" src="${esc(brUrl('site_nav')||'/assets/img/krtaker-logo.png')}" style="height:${brSize('print')}px;max-width:130px;object-fit:contain" onerror="this.style.opacity=.25">
-        <div class="br-hint">🖨️ print logo</div>
-      </div>
-      <div style="flex:1;min-width:190px">
-        <label class="lb" style="margin:0 0 2px">🖨️ Print logo height</label>
-        <div class="c-sub" style="font-size:11px;color:var(--text-mute)">invoices · receipts · leases · demand notices · Thana forms · to-let QR flyers — uses the Website header logo</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:7px"><input type="range" id="br_print_size" min="16" max="120" value="${brSize('print')}" oninput="brSizeLive('print',this.value)" onchange="brSizeSave('print',this.value)" style="flex:1;max-width:170px"><span class="c-sub" id="br_print_sizelbl" style="font-size:11px;min-width:40px">${brSize('print')}px</span></div>
-      </div>
-    </div>
+  <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🖼️</span>Logo manager<span class="c-sub" style="font-size:11px;margin-left:8px">all three surfaces — website, dashboard & super admin panel · header & footer · light & dark · print</span></span></div><div class="panel-b">
+    ${brSurface('🖨️','Print documents','invoices · receipts · leases · demand notices · Thana forms · to-let QR flyers',[['print','Print logo (documents & flyers)','/assets/img/krtaker-logo.png']])}
     ${brSurface('🌐','Website','public site, blog & landing pages',BR_SITE)}
     ${brSurface('📊','Dashboard','tenant / owner portal (dashboard-v2.html)',BR_DASH)}
     ${brSurface('🛠️','Super Admin Panel','superadmin.html control center',BR_SA)}
-    <div class="c-sub" style="margin-top:16px;font-size:11.5px;color:var(--text-mute)">Drag & drop a PNG (transparent background recommended) or SVG onto any preview box — or click it to pick a file. Changes apply live, no redeploy needed. Use each slider to set that logo's display height (px). A <b>dark</b> logo is used when the visitor has dark mode on; leave it empty to reuse the light one.</div>
+    <div class="c-sub" style="margin-top:16px;font-size:11.5px;color:var(--text-mute)">Drag & drop a PNG (transparent background recommended) or SVG onto any preview box — or click it to pick a file. Changes apply live, no redeploy needed. Per logo you can set: <b>height</b> (px), <b>↔ margin</b> (space around, px), <b>⬜ padding</b> (inner space, px) and tick <b>Title</b> to show the site name next to the logo (untick = logo only). A <b>dark</b> logo is used when the visitor has dark mode on; leave it empty to reuse the light one.</div>
   </div></div>
   <div class="panel"><div class="panel-b"><div class="frm grid-2">
     <div><label class="lb">Site name</label><input id="wl_site_name" value="${esc(WL.wl_site_name||'')}"></div>
@@ -2624,25 +2615,35 @@ async function whitelabelSave(){
   const d=await admin({action:'whitelabel-save',whitelabel});
   if(d.ok){toast('White-label branding saved','ok');$('sbBrand').textContent=whitelabel.wl_site_name||'KRTaker';renderWhitelabel();}else toast(d.error||'Failed','error');
 }
-/* ── V3.74: Logo manager — 12 surface slots (website/dashboard/superadmin × header/footer × light/dark) + favicon ── */
-const BR_KEY={site_nav:'wl_logo_nav',site_nav_dark:'wl_logo_nav_dark',site_footer:'wl_logo_footer',site_footer_dark:'wl_logo_footer_dark',dash_header:'wl_dash_header',dash_header_dark:'wl_dash_header_dark',dash_footer:'wl_dash_footer',dash_footer_dark:'wl_dash_footer_dark',sa_header:'wl_sa_header',sa_header_dark:'wl_sa_header_dark',sa_footer:'wl_sa_footer',sa_footer_dark:'wl_sa_footer_dark',favicon:'wl_favicon'};
+/* ── V3.74: Logo manager — 12 surface slots (website/dashboard/superadmin × header/footer × light/dark) + favicon · V3.77: print slot + margin/padding/title ── */
+const BR_KEY={site_nav:'wl_logo_nav',site_nav_dark:'wl_logo_nav_dark',site_footer:'wl_logo_footer',site_footer_dark:'wl_logo_footer_dark',print:'wl_logo_print',dash_header:'wl_dash_header',dash_header_dark:'wl_dash_header_dark',dash_footer:'wl_dash_footer',dash_footer_dark:'wl_dash_footer_dark',sa_header:'wl_sa_header',sa_header_dark:'wl_sa_header_dark',sa_footer:'wl_sa_footer',sa_footer_dark:'wl_sa_footer_dark',favicon:'wl_favicon'};
 const BR_SIZE_DEF={site_nav:36,site_nav_dark:36,site_footer:42,site_footer_dark:42,dash_header:38,dash_header_dark:38,dash_footer:20,dash_footer_dark:20,sa_header:34,sa_header_dark:34,sa_footer:18,sa_footer_dark:18,print:30};
 const BR_SITE=[['site_nav','Header · Light theme','/assets/img/krtaker-logo.png'],['site_nav_dark','Header · Dark theme','/assets/img/krtaker-logo-white.png'],['site_footer','Footer · Light theme','/assets/img/krtaker-logo-full-white.png'],['site_footer_dark','Footer · Dark theme','/assets/img/krtaker-logo-full-white.png'],['favicon','Favicon (browser tab icon)','/pwa/icon.svg']];
 const BR_DASH=[['dash_header','Header · Light theme','/assets/img/krtaker-logo.png'],['dash_header_dark','Header · Dark theme','/assets/img/krtaker-logo-white.png'],['dash_footer','Footer · Light theme','/assets/img/krtaker-logo-full-white.png'],['dash_footer_dark','Footer · Dark theme','/assets/img/krtaker-logo-full-white.png']];
 const BR_SA=[['sa_header','Header · Light theme','/assets/img/krtaker-logo.png'],['sa_header_dark','Header · Dark theme','/assets/img/krtaker-logo-white.png'],['sa_footer','Footer · Light theme','/assets/img/krtaker-logo-full-white.png'],['sa_footer_dark','Footer · Dark theme','/assets/img/krtaker-logo-full-white.png']];
 function brUrl(slot){return WL[BR_KEY[slot]]||'';}
 function brSize(slot){const v=parseInt(WL['wl_h_'+slot],10);return(v>0&&v<=240)?v:(BR_SIZE_DEF[slot]||36);}
+function brMa(slot){const v=parseInt(WL['wl_ma_'+slot],10);return(v>=0&&v<=80)?v:0;}
+function brPa(slot){const v=parseInt(WL['wl_pa_'+slot],10);return(v>=0&&v<=80)?v:0;}
+function brTitle(slot){const dv=BR_TITLE_DEF[slot]||'0';return (WL['wl_t_'+slot]!==undefined?WL['wl_t_'+slot]:dv)==='1'?'1':'0';}
+const BR_TITLE_DEF={site_nav:'0',site_nav_dark:'0',site_footer:'0',site_footer_dark:'0',dash_header:'1',dash_header_dark:'1',dash_footer:'0',dash_footer_dark:'0',sa_header:'1',sa_header_dark:'1',sa_footer:'0',sa_footer_dark:'0',print:'0'};
 function brRow(slot,label,defUrl){
-  const cur=brUrl(slot),sz=brSize(slot),nosize=slot==='favicon';
+  const cur=brUrl(slot),sz=brSize(slot),ma=brMa(slot),pa=brPa(slot),tt=brTitle(slot),nosize=slot==='favicon';
   return `<div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
     <div id="br_drop_${slot}" class="br-drop" title="Click or drag & drop to upload" onclick="document.getElementById('br_${slot}_file').click()" ondragover="brDragOver(event,'${slot}')" ondragleave="brDragLeave(event,'${slot}')" ondrop="brDrop(event,'${slot}')">
-      <img id="br_${slot}_prev" src="${esc(cur||defUrl)}" style="height:${sz}px;max-width:130px;object-fit:contain" onerror="this.style.opacity=.25">
+      <img id="br_${slot}_prev" src="${esc(cur||defUrl)}" style="height:${sz}px;max-width:130px;object-fit:contain;${ma?('margin:'+ma+'px'):''}${pa?(';padding:'+pa+'px'):''}" onerror="this.style.opacity=.25">
       <div class="br-hint">⬆ drop / click</div>
     </div>
     <div style="flex:1;min-width:190px">
       <label class="lb" style="margin:0 0 2px">${label}</label>
       <div class="c-sub" style="font-size:11px;color:var(--text-mute)">${esc(cur||'Default')}</div>
-      ${nosize?'':`<div style="display:flex;align-items:center;gap:8px;margin-top:7px"><input type="range" id="br_${slot}_size" min="16" max="120" value="${sz}" oninput="brSizeLive('${slot}',this.value)" onchange="brSizeSave('${slot}',this.value)" style="flex:1;max-width:170px"><span class="c-sub" id="br_${slot}_sizelbl" style="font-size:11px;min-width:40px">${sz}px</span></div>`}
+      ${nosize?'':`
+      <div style="display:flex;align-items:center;gap:8px;margin-top:7px"><span class="c-sub" style="font-size:10px;min-width:34px">height</span><input type="range" id="br_${slot}_size" min="16" max="120" value="${sz}" oninput="brSizeLive('${slot}',this.value)" onchange="brSizeSave('${slot}',this.value)" style="flex:1;max-width:150px"><span class="c-sub" id="br_${slot}_sizelbl" style="font-size:11px;min-width:36px">${sz}px</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
+        <span class="c-sub" style="font-size:10px;min-width:34px" title="Space around the logo">↔ margin</span><input type="range" id="br_${slot}_ma" min="0" max="80" value="${ma}" oninput="brMaLive('${slot}',this.value)" onchange="brMaSave('${slot}',this.value)" style="width:70px"><span class="c-sub" id="br_${slot}_malbl" style="font-size:10px;min-width:24px">${ma}</span>
+        <span class="c-sub" style="font-size:10px;min-width:38px" title="Inner space around the logo">⬜ padding</span><input type="range" id="br_${slot}_pa" min="0" max="80" value="${pa}" oninput="brPaLive('${slot}',this.value)" onchange="brPaSave('${slot}',this.value)" style="width:70px"><span class="c-sub" id="br_${slot}_palbl" style="font-size:10px;min-width:24px">${pa}</span>
+        <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-soft);cursor:pointer" title="Show the site name next to this logo"><input type="checkbox" id="br_${slot}_title" ${tt==='1'?'checked':''} onchange="brTitleSave('${slot}',this.checked)" style="width:14px;height:14px">Title</label>
+      </div>`}
     </div>
     <input type="file" id="br_${slot}_file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="display:none" onchange="brFilePick('${slot}')">
     <button class="btn-ghost" style="padding:6px 12px;font-size:12px" onclick="brReset('${slot}')">↺ Reset</button>
@@ -2682,9 +2683,29 @@ function brDrop(e,slot){
 function brDragOver(e,slot){e.preventDefault();const el=$('br_drop_'+slot);if(el)el.classList.add('drag');}
 function brDragLeave(e,slot){const el=$('br_drop_'+slot);if(el)el.classList.remove('drag');}
 function brSizeLive(slot,v){const p=$('br_'+slot+'_prev'),l=$('br_'+slot+'_sizelbl');if(p)p.style.height=v+'px';if(l)l.textContent=v+'px';}
+function brMaLive(slot,v){const p=$('br_'+slot+'_prev'),l=$('br_'+slot+'_malbl');if(p)p.style.margin=v+'px';if(l)l.textContent=v;}
+function brPaLive(slot,v){const p=$('br_'+slot+'_prev'),l=$('br_'+slot+'_palbl');if(p)p.style.padding=v+'px';if(l)l.textContent=v;}
 function brSizeSave(slot,v){
   admin({action:'whitelabel-save',whitelabel:{['wl_h_'+slot]:String(v)}}).then(d=>{
     if(d.ok){WL['wl_h_'+slot]=String(v);toast(slot+' display height set to '+v+'px','ok');applyAdminTheme();}
+    else toast(d.error||'Failed','error');
+  });
+}
+function brMaSave(slot,v){
+  admin({action:'whitelabel-save',whitelabel:{['wl_ma_'+slot]:String(v)}}).then(d=>{
+    if(d.ok){WL['wl_ma_'+slot]=String(v);toast(slot+' margin set to '+v+'px','ok');applyAdminTheme();}
+    else toast(d.error||'Failed','error');
+  });
+}
+function brPaSave(slot,v){
+  admin({action:'whitelabel-save',whitelabel:{['wl_pa_'+slot]:String(v)}}).then(d=>{
+    if(d.ok){WL['wl_pa_'+slot]=String(v);toast(slot+' padding set to '+v+'px','ok');applyAdminTheme();}
+    else toast(d.error||'Failed','error');
+  });
+}
+function brTitleSave(slot,on){
+  admin({action:'whitelabel-save',whitelabel:{['wl_t_'+slot]:on?'1':'0'}}).then(d=>{
+    if(d.ok){WL['wl_t_'+slot]=on?'1':'0';toast(slot+(on?' · title shown next to logo':' · logo only'),'ok');applyAdminTheme();}
     else toast(d.error||'Failed','error');
   });
 }
@@ -2781,18 +2802,24 @@ async function applyAdminTheme(){
 function applySaBranding(){
   const t=window.__SA_THEME; if(!t)return;
   const th=document.documentElement.getAttribute('data-theme')||'light';
+  const hSlot=(th==='dark'&&t.sa_header_dark)?'sa_header_dark':'sa_header';
+  const fSlot=(th==='dark'&&t.sa_footer_dark)?'sa_footer_dark':'sa_footer';
   const header=th==='dark'?(t.sa_header_dark||t.sa_header||''):(t.sa_header||'');
   const footer=th==='dark'?(t.sa_footer_dark||t.sa_footer||''):(t.sa_footer||'');
-  const hImg=$('saLogo'), hMark=document.querySelector('.sb-brand .sb-logo');
+  const hImg=$('saLogo'), hMark=document.querySelector('.sb-brand .sb-logo'), hText=document.querySelector('.sb-brand > div:last-child');
   if(hImg&&hMark){
     if(header){hImg.src=header;hImg.style.display='block';hMark.style.display='none';}
     else{hImg.style.display='none';hMark.style.display='';}
-    if(t.sizes&&t.sizes.sa_header)hImg.style.height=t.sizes.sa_header+'px';
+    if(t.sizes&&t.sizes[hSlot])hImg.style.height=t.sizes[hSlot]+'px';
+    if(t.margin&&t.margin[hSlot]!==undefined)hImg.style.margin=t.margin[hSlot]?t.margin[hSlot]+'px':'';
+    if(t.padding&&t.padding[hSlot]!==undefined)hImg.style.padding=t.padding[hSlot]?t.padding[hSlot]+'px':'';
+    if(hText)hText.style.display=(t.titles&&t.titles[hSlot]==='1')?'':'none';
   }
-  const fImg=$('saFootLogo');
+  const fImg=$('saFootLogo'), fTitle=$('saFootTitle');
   if(fImg){
-    if(footer){fImg.src=footer;fImg.style.display='inline-block';if(t.sizes&&t.sizes.sa_footer)fImg.style.height=t.sizes.sa_footer+'px';}
+    if(footer){fImg.src=footer;fImg.style.display='inline-block';if(t.sizes&&t.sizes[fSlot])fImg.style.height=t.sizes[fSlot]+'px';if(t.margin&&t.margin[fSlot]!==undefined)fImg.style.margin=t.margin[fSlot]?t.margin[fSlot]+'px':'';if(t.padding&&t.padding[fSlot]!==undefined)fImg.style.padding=t.padding[fSlot]?t.padding[fSlot]+'px':'';}
     else fImg.style.display='none';
+    if(fTitle){fTitle.style.display=(footer&&t.titles&&t.titles[fSlot]==='1')?'inline-block':'none';if(t.site_name)fTitle.textContent=t.site_name;}
   }
 }
 function rgbaHex(hex,a){

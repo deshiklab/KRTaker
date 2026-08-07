@@ -2375,19 +2375,32 @@ function wa_link($phone, $text) {
 }
 /* Generate a printable invoice (Phase 8: invoice PDF/print) */
 /* V3.75: branded print logo — Website header logo (wl_logo_nav) at the print size
-   (wl_h_print, default 30px); falls back to wl_logo_url, then a text wordmark. */
+   (wl_h_print, default 30px); falls back to wl_logo_url, then a text wordmark.
+   V3.77: dedicated print slot (wl_logo_print) takes precedence; margin (wl_ma_print) /
+   padding (wl_pa_print) / title (wl_t_print — site name next to the logo). */
 function print_brand_img() {
     $pdo = db();
-    $def = ['wl_site_name' => 'KRTaker', 'wl_logo_nav' => '', 'wl_logo_url' => '', 'wl_h_print' => '30'];
-    $st = $pdo->query("SELECT k, v FROM admin_settings WHERE k IN ('wl_site_name','wl_logo_nav','wl_logo_url','wl_h_print')");
+    $def = ['wl_site_name' => 'KRTaker', 'wl_logo_print' => '', 'wl_logo_nav' => '', 'wl_logo_url' => '',
+            'wl_h_print' => '30', 'wl_ma_print' => '0', 'wl_pa_print' => '0', 'wl_t_print' => '0'];
+    $st = $pdo->query("SELECT k, v FROM admin_settings WHERE k IN ('wl_site_name','wl_logo_print','wl_logo_nav','wl_logo_url','wl_h_print','wl_ma_print','wl_pa_print','wl_t_print')");
     foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $r) $def[$r['k']] = $r['v'];
     $h = max(16, min(240, (int)($def['wl_h_print'] ?: 30)));
+    $ma = max(0, min(80, (int)($def['wl_ma_print'] ?: 0)));
+    $pa = max(0, min(80, (int)($def['wl_pa_print'] ?: 0)));
     $name = esc($def['wl_site_name'] ?: 'KRTaker');
-    $logo = $def['wl_logo_nav'] !== '' ? $def['wl_logo_nav'] : $def['wl_logo_url'];
+    $logo = $def['wl_logo_print'] !== '' ? $def['wl_logo_print'] : ($def['wl_logo_nav'] !== '' ? $def['wl_logo_nav'] : $def['wl_logo_url']);
+    $style = 'height:' . $h . 'px;width:auto;object-fit:contain';
+    if ($ma) $style .= ';margin:' . $ma . 'px';
+    if ($pa) $style .= ';padding:' . $pa . 'px';
     if ($logo !== '') {
-        return '<img src="' . esc($logo) . '" alt="' . $name . '" style="height:' . $h . 'px;width:auto;object-fit:contain">';
+        $out = '<img src="' . esc($logo) . '" alt="' . $name . '" style="' . $style . '">';
+    } else {
+        $out = '<span style="font-size:' . max(16, $h - 2) . 'px;font-weight:800;color:#2F80ED;letter-spacing:-.3px">' . $name . '</span>';
     }
-    return '<span style="font-size:' . max(16, $h - 2) . 'px;font-weight:800;color:#2F80ED;letter-spacing:-.3px">' . $name . '</span>';
+    if (($def['wl_t_print'] ?? '0') === '1') {
+        $out .= '<span style="display:block;font-size:' . max(13, (int)round($h * 0.75)) . 'px;font-weight:800;color:#101828;letter-spacing:-.3px;margin-top:2px">' . $name . '</span>';
+    }
+    return $out;
 }
 function invoice_print_html($u, $invId) {
     $pdo = db();
@@ -17169,7 +17182,7 @@ case 'app-theme': {
             'wl_primary_color' => '#2F80ED', 'wl_secondary_color' => '#1E5EB8',
             'wl_accent_color' => '#27AE60', 'wl_logo_url' => '',
             'wl_logo_nav' => '', 'wl_logo_nav_dark' => '', 'wl_logo_footer' => '',
-            'wl_logo_footer_dark' => '', 'wl_dash_header' => '', 'wl_dash_header_dark' => '',
+            'wl_logo_footer_dark' => '', 'wl_logo_print' => '', 'wl_dash_header' => '', 'wl_dash_header_dark' => '',
             'wl_dash_footer' => '', 'wl_dash_footer_dark' => '', 'wl_sa_header' => '',
             'wl_sa_header_dark' => '', 'wl_sa_footer' => '', 'wl_sa_footer_dark' => '',
             'wl_favicon' => '', 'wl_theme' => 'light'];
@@ -17184,18 +17197,32 @@ case 'app-theme': {
         $v = (int)($def['wl_h_' . $slot] ?? 0);
         $h[$slot] = ($v > 0 && $v <= 240) ? $v : $dv;
     }
+    /* V3.77: per-slot margin (wl_ma_<slot>), padding (wl_pa_<slot>) px and title
+       toggle (wl_t_<slot> '1'=show site name next to logo). dash_header/sa_header
+       default title ON to preserve the pre-v3.77 look (logo + brand text). */
+    $allSlots = ['site_nav','site_nav_dark','site_footer','site_footer_dark',
+                 'dash_header','dash_header_dark','dash_footer','dash_footer_dark',
+                 'sa_header','sa_header_dark','sa_footer','sa_footer_dark','print'];
+    $ma = []; $pa = []; $tt = [];
+    foreach ($allSlots as $s) {
+        $mv = (int)($def['wl_ma_' . $s] ?? 0); $ma[$s] = ($mv >= 0 && $mv <= 80) ? $mv : 0;
+        $pv = (int)($def['wl_pa_' . $s] ?? 0); $pa[$s] = ($pv >= 0 && $pv <= 80) ? $pv : 0;
+        $dv = in_array($s, ['dash_header', 'sa_header'], true) ? '1' : '0';
+        $tt[$s] = (string)($def['wl_t_' . $s] ?? $dv) === '1' ? '1' : '0';
+    }
     json_out(['ok' => true, 'theme' => [
         'site_name' => $def['wl_site_name'], 'logo_text' => $def['wl_logo_text'],
         'primary' => $def['wl_primary_color'], 'secondary' => $def['wl_secondary_color'],
         'accent' => $def['wl_accent_color'], 'logo_url' => $def['wl_logo_url'],
         'logo_nav' => $def['wl_logo_nav'], 'logo_nav_dark' => $def['wl_logo_nav_dark'],
         'logo_footer' => $def['wl_logo_footer'], 'logo_footer_dark' => $def['wl_logo_footer_dark'],
+        'logo_print' => $def['wl_logo_print'],
         'dash_header' => $def['wl_dash_header'], 'dash_header_dark' => $def['wl_dash_header_dark'],
         'dash_footer' => $def['wl_dash_footer'], 'dash_footer_dark' => $def['wl_dash_footer_dark'],
         'sa_header' => $def['wl_sa_header'], 'sa_header_dark' => $def['wl_sa_header_dark'],
         'sa_footer' => $def['wl_sa_footer'], 'sa_footer_dark' => $def['wl_sa_footer_dark'],
         'favicon' => $def['wl_favicon'], 'theme' => $def['wl_theme'],
-        'sizes' => $h,
+        'sizes' => $h, 'margin' => $ma, 'padding' => $pa, 'titles' => $tt,
     ]]);
 }
 
@@ -17898,7 +17925,7 @@ case 'app-admin': {
         $def = ['wl_site_name' => 'KRTaker', 'wl_logo_text' => 'KR', 'wl_primary_color' => '#2F80ED',
                 'wl_secondary_color' => '#1E5EB8', 'wl_accent_color' => '#27AE60', 'wl_logo_url' => '',
                 'wl_logo_nav' => '', 'wl_logo_nav_dark' => '', 'wl_logo_footer' => '',
-                'wl_logo_footer_dark' => '', 'wl_dash_header' => '', 'wl_dash_header_dark' => '',
+                'wl_logo_footer_dark' => '', 'wl_logo_print' => '', 'wl_dash_header' => '', 'wl_dash_header_dark' => '',
                 'wl_dash_footer' => '', 'wl_dash_footer_dark' => '', 'wl_sa_header' => '',
                 'wl_sa_header_dark' => '', 'wl_sa_footer' => '', 'wl_sa_footer_dark' => '',
                 'wl_h_site_nav' => '36', 'wl_h_site_nav_dark' => '36', 'wl_h_site_footer' => '42',
@@ -17927,12 +17954,12 @@ case 'app-admin': {
     if ($action === 'branding-upload') {
         $slot = trim((string)($_POST['slot'] ?? ''));
         $slots = ['site_nav'=>'wl_logo_nav','site_nav_dark'=>'wl_logo_nav_dark','site_footer'=>'wl_logo_footer',
-                  'site_footer_dark'=>'wl_logo_footer_dark','dash_header'=>'wl_dash_header',
+                  'site_footer_dark'=>'wl_logo_footer_dark','print'=>'wl_logo_print','dash_header'=>'wl_dash_header',
                   'dash_header_dark'=>'wl_dash_header_dark','dash_footer'=>'wl_dash_footer',
                   'dash_footer_dark'=>'wl_dash_footer_dark','sa_header'=>'wl_sa_header',
                   'sa_header_dark'=>'wl_sa_header_dark','sa_footer'=>'wl_sa_footer',
                   'sa_footer_dark'=>'wl_sa_footer_dark','favicon'=>'wl_favicon'];
-        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of site_nav|site_nav_dark|site_footer|site_footer_dark|dash_header|dash_header_dark|dash_footer|dash_footer_dark|sa_header|sa_header_dark|sa_footer|sa_footer_dark|favicon.'], 400);
+        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of site_nav|site_nav_dark|site_footer|site_footer_dark|print|dash_header|dash_header_dark|dash_footer|dash_footer_dark|sa_header|sa_header_dark|sa_footer|sa_footer_dark|favicon.'], 400);
         $key = $slots[$slot];
         $f = $_FILES['file'] ?? null;
         if (!$f || !is_uploaded_file($f['tmp_name'] ?? '')) json_out(['ok' => false, 'error' => 'A file upload is required.'], 400);
@@ -17956,12 +17983,12 @@ case 'app-admin': {
     if ($action === 'branding-reset') {
         $slot = trim((string)($body['slot'] ?? ''));
         $slots = ['site_nav'=>'wl_logo_nav','site_nav_dark'=>'wl_logo_nav_dark','site_footer'=>'wl_logo_footer',
-                  'site_footer_dark'=>'wl_logo_footer_dark','dash_header'=>'wl_dash_header',
+                  'site_footer_dark'=>'wl_logo_footer_dark','print'=>'wl_logo_print','dash_header'=>'wl_dash_header',
                   'dash_header_dark'=>'wl_dash_header_dark','dash_footer'=>'wl_dash_footer',
                   'dash_footer_dark'=>'wl_dash_footer_dark','sa_header'=>'wl_sa_header',
                   'sa_header_dark'=>'wl_sa_header_dark','sa_footer'=>'wl_sa_footer',
                   'sa_footer_dark'=>'wl_sa_footer_dark','favicon'=>'wl_favicon'];
-        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of site_nav|site_nav_dark|site_footer|site_footer_dark|dash_header|dash_header_dark|dash_footer|dash_footer_dark|sa_header|sa_header_dark|sa_footer|sa_footer_dark|favicon.'], 400);
+        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of site_nav|site_nav_dark|site_footer|site_footer_dark|print|dash_header|dash_header_dark|dash_footer|dash_footer_dark|sa_header|sa_header_dark|sa_footer|sa_footer_dark|favicon.'], 400);
         $key = $slots[$slot];
         $old = (string)$pdo->query("SELECT v FROM admin_settings WHERE k='" . $key . "'")->fetchColumn();
         if ($old !== '' && strpos($old, '/assets/branding/') === 0) {

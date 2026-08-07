@@ -778,6 +778,7 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
 <!-- ═══ Desktop sticky footer ═══ -->
 <footer class="app-footer">
   <img id="dashFootLogo" alt="logo">
+  <span id="dashFootTitle" style="display:none;font-size:12px;font-weight:700;color:var(--text)"></span>
   <div class="crumb" id="crumb"></div>
   <div class="f-copy">© 2026 KRTaker — Key Responsibility Taker · All rights reserved · Made with ❤️ in Dhaka 🇧🇩</div>
   <div class="f-actions">
@@ -1449,22 +1450,28 @@ async function applyBrandTheme() {
     applyDashLogos();
   } catch (e) { /* theme optional */ }
 }
-/* V3.74: dashboard header (sidebar) + footer logos — light/dark per current theme + display size */
+/* V3.74: dashboard header (sidebar) + footer logos — light/dark per current theme + display size · V3.77: margin/padding/title per active slot */
 function applyDashLogos(){
   const t = window.__DASH_THEME; if (!t) return;
   const th = document.documentElement.getAttribute('data-theme') || 'light';
+  const hSlot = (th === 'dark' && t.dash_header_dark) ? 'dash_header_dark' : 'dash_header';
+  const fSlot = (th === 'dark' && t.dash_footer_dark) ? 'dash_footer_dark' : 'dash_footer';
   const header = th === 'dark' ? (t.dash_header_dark || t.dash_header || '') : (t.dash_header || '');
   const footer = th === 'dark' ? (t.dash_footer_dark || t.dash_footer || '') : (t.dash_footer || '');
-  const hImg = $('dashLogo'), hMark = document.querySelector('.sb-logo .logo-mark');
+  const hImg = $('dashLogo'), hMark = document.querySelector('.sb-logo .logo-mark'), hBrand = document.querySelector('.sb-logo .brand');
   if (hImg && hMark) {
     if (header) { hImg.src = header; hImg.style.display = 'block'; hMark.style.display = 'none'; }
     else { hImg.style.display = 'none'; hMark.style.display = ''; }
-    if (t.sizes && t.sizes.dash_header) hImg.style.height = t.sizes.dash_header + 'px';
+    if (t.sizes && t.sizes[hSlot]) hImg.style.height = t.sizes[hSlot] + 'px';
+    if (t.margin && t.margin[hSlot] !== undefined) hImg.style.margin = t.margin[hSlot] ? t.margin[hSlot] + 'px' : '';
+    if (t.padding && t.padding[hSlot] !== undefined) hImg.style.padding = t.padding[hSlot] ? t.padding[hSlot] + 'px' : '';
+    if (hBrand) hBrand.style.display = (t.titles && t.titles[hSlot] === '1') ? '' : 'none';
   }
-  const fImg = $('dashFootLogo');
+  const fImg = $('dashFootLogo'), fTitle = $('dashFootTitle');
   if (fImg) {
-    if (footer) { fImg.src = footer; fImg.style.display = 'inline-block'; if (t.sizes && t.sizes.dash_footer) fImg.style.height = t.sizes.dash_footer + 'px'; }
+    if (footer) { fImg.src = footer; fImg.style.display = 'inline-block'; if (t.sizes && t.sizes[fSlot]) fImg.style.height = t.sizes[fSlot] + 'px'; if (t.margin && t.margin[fSlot] !== undefined) fImg.style.margin = t.margin[fSlot] ? t.margin[fSlot] + 'px' : ''; if (t.padding && t.padding[fSlot] !== undefined) fImg.style.padding = t.padding[fSlot] ? t.padding[fSlot] + 'px' : ''; }
     else fImg.style.display = 'none';
+    if (fTitle) { fTitle.style.display = (footer && t.titles && t.titles[fSlot] === '1') ? 'inline-block' : 'none'; if (t.site_name) fTitle.textContent = t.site_name; }
   }
 }
 async function initApp() {
@@ -10085,8 +10092,8 @@ async function printBuildingFlyer(id){
   const th=await ensurePrintTheme();
   if(th){
     const fImg=document.getElementById('flyerLogo'), fMark=document.querySelector('.flyer-brand .logo-mark'), fName=document.querySelector('.flyer-brand .fb-name');
-    const logo=th.logo_nav||th.logo_url||'';
-    if(logo&&fImg){fImg.src=logo;fImg.style.height=((th.sizes&&th.sizes.print)||30)+'px';fImg.style.display='inline-block';if(fMark)fMark.style.display='none';}
+    const logo=th.logo_print||th.logo_nav||th.logo_url||'';
+    if(logo&&fImg){fImg.src=logo;fImg.style.height=((th.sizes&&th.sizes.print)||30)+'px';fImg.style.display='inline-block';if(th.margin&&th.margin.print)fImg.style.margin=th.margin.print+'px';if(th.padding&&th.padding.print)fImg.style.padding=th.padding.print+'px';if(fMark)fMark.style.display='none';}
     if(th.site_name&&fName)fName.textContent=th.site_name;
   }
   const url=(location.origin||'https://krtaker.com')+'/building/'+encodeURIComponent(id);

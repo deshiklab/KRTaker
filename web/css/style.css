@@ -761,3 +761,8 @@ img{max-width:100%}
 [data-theme="dark"] .navbar .nav-logo-img{filter:brightness(0) invert(1)}
 @media (max-width:1150px){.nav-logo-img{height:32px}.nav-logo-footer{height:38px}}
 @media (max-width:380px){.nav-logo-img{height:28px}}
+/* V3.77: optional site-name title next to a logo (Logo manager → Title toggle) */
+.nav-logo.kr-has-title{display:flex;align-items:center;gap:10px}
+.kr-logo-title{font-weight:800;font-size:17px;letter-spacing:-.3px;color:var(--text);white-space:nowrap}
+.footer .kr-logo-title{color:#fff}
+@media (max-width:380px){.kr-logo-title{font-size:15px}}
