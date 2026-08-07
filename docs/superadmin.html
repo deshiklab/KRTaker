@@ -440,8 +440,21 @@ async function api(path,data){
   if(data)opts.headers['Content-Type']='application/json';
   if(TOKEN)opts.headers['Authorization']='Bearer '+TOKEN;
   if(data)opts.body=JSON.stringify(data);
-  const res=await fetch(API+path,opts);
-  return res.json().catch(()=>({ok:false,error:'Parse error'}));
+  /* SA1 v26: transient API failures (SQLite lock, LiteSpeed 503, empty body) used to
+     surface as a raw JSON-parse error and forced manual refresh. Retry with backoff
+     first; only give up after 3 attempts so the caller can show a graceful Retry panel. */
+  let last=null;
+  for(let i=0;i<3;i++){
+    try{
+      const res=await fetch(API+path,opts);
+      if(res.status===503 || res.status===502 || res.status===504){ last={ok:false,error:'Server busy — retrying…'}; await new Promise(r=>setTimeout(r,500*(i+1))); continue; }
+      const d=await res.json();
+      if(d&&typeof d==='object') return d;
+      last={ok:false,error:'Bad server response.'};
+    }catch(e){ last={ok:false,error:'Network error.'}; }
+    await new Promise(r=>setTimeout(r,500*(i+1)));
+  }
+  return last||{ok:false,error:'Could not load — tap Retry.'};
 }
 async function admin(data){return api('app-admin',data)}
 /* ── SA1-fullsite-v3: Global search (topbar, Ctrl+K) ── */
@@ -640,8 +653,20 @@ function donutChart(rows){
 }
 async function renderDashboard(){
   load('pageBody','<div class="c-sub" style="color:var(--text-mute);padding:20px">Loading…</div>');
-  const [d,m]=await Promise.all([admin({action:'overview'}),admin({action:'mis'})]);
-  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  let d,m;
+  try{
+    [d,m]=await Promise.all([admin({action:'overview'}),admin({action:'mis'})]);
+  }catch(e){ d={ok:false,error:'Could not load.'}; m={ok:false}; }
+  if(!d.ok){
+    load('pageBody',
+      `<div class="empty" style="padding:70px 20px">
+        <div style="font-size:42px;margin-bottom:14px">📡</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px">Couldn’t load the dashboard</div>
+        <div class="c-sub" style="margin-bottom:20px">${esc(d.error||'The server didn’t respond.')} — tap Retry and we’ll try again.</div>
+        <button class="btn-primary" onclick="renderDashboard()">🔄 Retry</button>
+       </div>`);
+    return;
+  }
   const s=d.stats, mis=m.ok?(m.mis||{}):{};
   pageHead(`Platform at a glance · ${s.subscribers} subscribers · MRR ${moneyC(s.mrr)}`,
     `<button class="btn-primary" onclick="nav('subscribers')">＋ Subscriber</button><button class="btn-outline" onclick="nav('tickets')">🎫 Ticket</button><button class="btn-outline" onclick="nav('backup')">💾 Backup</button><button class="btn-outline" onclick="nav('cms')">🌐 CMS</button>`);
@@ -3154,7 +3179,7 @@ async function cmsMediaUpload() {
   const fd = new FormData();
   fd.append('file', inp.files[0]);
   const res = await fetch(API + 'app-admin', { method: 'POST', headers: { 'Authorization': 'Bearer ' + TOKEN }, body: fd });
-  const d = await res.json().catch(() => ({ ok: false, error: 'Parse error' }));
+  const d = await res.json().catch(() => ({ ok: false, error: 'Upload failed — server error. Try again.' }));
   if (d.ok) { toast('Uploaded ' + d.name, 'ok'); cmsMediaList(); }
   else toast(d.error || 'Failed', 'error');
 }

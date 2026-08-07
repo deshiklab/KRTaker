@@ -27,6 +27,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
+/* ── SA1 v26: JSON-always guarantee — no request may ever return an empty/HTML body.
+   Intermittent SQLite locks, PHP limits or a 503 previously produced non-JSON output
+   → clients showed "Parse error" and needed manual refresh. Now every exit path emits
+   valid JSON: uncaught exceptions become {"ok":false}, and output buffering discards
+   any stray bytes that would corrupt the payload. ── */
+@ini_set('memory_limit', '256M');
+@set_time_limit(90);
+if (!headers_sent()) { ob_start(); }
+function json_fail_safe($err) {
+    /* never let error handling itself blow up */
+    if (ob_get_level()) { while (ob_get_level()) { ob_end_clean(); } }
+    if (!headers_sent()) {
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(500);
+    }
+    echo json_encode(['ok' => false, 'error' => 'Server error — please retry.', 'detail' => (string)$err], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+    exit;
+}
+set_exception_handler(function ($e) { json_fail_safe($e->getMessage()); });
+
+
 /* ── Error tracking (GO-LIVE 3.4): capture uncaught PHP fatals + JS-reported errors into
    app_error_log. Every capture path is defensive — logging must never break the API. ── */
 function errlog_table($pdo) {
@@ -49,11 +70,20 @@ register_shutdown_function(function () {
             substr((string)($e['file'] ?? ''), 0, 200),
             substr((string)($_SERVER['REQUEST_URI'] ?? ''), 0, 300),
             substr((string)$e['message'], 0, 500),
-            substr((string)($e['file'] ?? ''), 0, 300) . ':' . (int)($e['line'] ?? 0),
+            substr((string)($e['file'] ?? '') . ':' . (int)($e['line'] ?? 0), 0, 300),
             substr(hash('sha256', (string)($_SERVER['REMOTE_ADDR'] ?? '')), 0, 12),
         ]);
         if (random_int(1, 20) === 1) $pdo->exec("DELETE FROM app_error_log WHERE last_ts < datetime('now','-30 days')");
     } catch (Exception $ex) { /* never break shutdown */ }
+    /* SA1 v26: a fatal mid-request must still return JSON, not an empty body.
+       If headers are already sent there is nothing we can do — the buffer is flushed
+       by PHP itself — but while they are not, give the client a parseable error. */
+    if (!headers_sent()) {
+        if (ob_get_level()) { while (ob_get_level()) { ob_end_clean(); } }
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(500);
+        echo json_encode(['ok' => false, 'error' => 'Server error — please retry.', 'detail' => substr((string)($e['message'] ?? ''), 0, 200)], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+    }
 });
 
 /* ── SA1 v25.6: secrets moved OUT of webroot into /home/krtaker/krtaker.env.php (return array).
@@ -77,6 +107,8 @@ define('SERVICE_KEY', krenv('SERVICE_KEY', ''));
 $SMTP = is_array($__env['SMTP'] ?? null) ? $__env['SMTP'] : ['host' => '', 'port' => 587, 'user' => '', 'pass' => '', 'from' => ''];
 
 function json_out($data, $code = 200) {
+    /* discard any stray bytes (PHP notices, accidental echoes) that would corrupt JSON */
+    if (ob_get_level()) { while (ob_get_level()) { ob_end_clean(); } }
     http_response_code($code);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     exit;
@@ -92,7 +124,7 @@ function db() {
         try { $pdo->exec('PRAGMA journal_mode=WAL'); } catch (Exception $e) { /* fall back to default */ }
         try { $pdo->exec('PRAGMA synchronous=NORMAL'); } catch (Exception $e) {}
         try { $pdo->exec('PRAGMA foreign_keys=ON'); } catch (Exception $e) {}
-        try { $pdo->exec('PRAGMA busy_timeout=5000'); } catch (Exception $e) {}
+        try { $pdo->exec('PRAGMA busy_timeout=15000'); } catch (Exception $e) {}
         try { $pdo->exec('PRAGMA temp_store=MEMORY'); } catch (Exception $e) {}
         $pdo->exec("CREATE TABLE IF NOT EXISTS auth_attempts (
             id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT DEFAULT '', ip TEXT DEFAULT '',

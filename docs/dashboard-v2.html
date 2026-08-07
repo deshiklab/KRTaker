@@ -1291,8 +1291,21 @@ async function apiCall(path, data) {
   if (data) opts.headers['Content-Type'] = 'application/json';
   if (TOKEN) opts.headers['Authorization'] = 'Bearer ' + TOKEN;
   if (data) opts.body = JSON.stringify(data);
-  const res = await fetch(API + path, opts);
-  return res.json();
+  /* SA1 v26: never throw / never surface a raw "Parse error". Transient API failures
+     (SQLite lock, LiteSpeed 503, empty body) are retried with backoff; a parse failure
+     becomes {ok:false} so callers can render a graceful Retry state. */
+  let last = null;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const res = await fetch(API + path, opts);
+      if (res.status === 503 || res.status === 502 || res.status === 504) { last = { ok: false, error: 'Server busy — retrying…' }; await new Promise(r => setTimeout(r, 500 * (i + 1))); continue; }
+      const d = await res.json();
+      if (d && typeof d === 'object') return d;
+      last = { ok: false, error: 'Bad server response.' };
+    } catch (e) { last = { ok: false, error: 'Network error.' }; }
+    await new Promise(r => setTimeout(r, 500 * (i + 1)));
+  }
+  return last || { ok: false, error: 'Could not load — tap Retry.' };
 }
 /* safe variant — never throws; retries transient failures (network drop, 5xx HTML, timeout)
    so one flaky endpoint can't nuke a Promise.all of independent calls */
@@ -1354,11 +1367,36 @@ async function applyBrandTheme() {
 }
 async function initApp() {
   if (!TOKEN) { showAuth(); return; }
-  try {
-    const d = await apiCall('app-bootstrap');
-    if (!d.ok) { TOKEN=''; try { localStorage.removeItem('krtaker_dash_token'); } catch (x) {} showAuth(); return; }
-    applyLive(d);
-  } catch (e) { enterDemo(); }
+  const boot = async () => {
+    try {
+      const d = await apiCall('app-bootstrap');
+      if (!d.ok) {
+        /* Unauthorized → token expired/invalid → back to auth (normal path). */
+        if (d.error && /unauthor|login|token|expired/i.test(d.error)) { TOKEN=''; try { localStorage.removeItem('krtaker_dash_token'); } catch (x) {} showAuth(); return true; }
+        return d;
+      }
+      applyLive(d);
+      return true;
+    } catch (e) { return { ok:false, error: e && e.message ? e.message : 'Network error.' }; }
+  };
+  let r = await boot();
+  if (r === true) return;
+  /* SA1 v26: instead of silently showing demo data or a raw "Parse error", retry the
+     bootstrap once more, then give the user a clear Retry panel. */
+  r = await boot();
+  if (r === true) return;
+  const err = (r && r.error) ? r.error : 'Could not reach the server.';
+  const vr = $('viewRoot');
+  if (vr) vr.innerHTML =
+    `<div class="panel" style="max-width:520px;margin:12vh auto;text-align:center;padding:44px 28px">
+      <div style="font-size:44px;margin-bottom:14px">📡</div>
+      <div style="font-weight:800;font-size:17px;margin-bottom:8px">${t('Couldn’t load your workspace','আপনার ওয়ার্কস্পেস লোড করা যায়নি')}</div>
+      <div class="c-sub" style="margin-bottom:22px">${esc(err)} — ${t('tap Retry and we’ll try again.','রিট্রাই চাপুন, আবার চেষ্টা করব।')}</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-primary" onclick="location.reload()">🔄 ${t('Retry','রিট্রাই')}</button>
+        <button class="btn-outline" onclick="enterDemo()">${t('Continue in demo','ডেমোতে চালিয়ে যান')}</button>
+      </div>
+    </div>`;
 }
 function applyLive(d, silent) {
   LIVE.user = d.user; LIVE.catalog = d.catalog || []; LIVE.subscription = d.subscription || null;
@@ -7648,7 +7686,7 @@ async function uploadPhoto(url, fileInputId, onDone){
     fd.append('file', file);
     if(onDone&&onDone.append) onDone.append(fd);
     const res=await fetch(url,{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
-    const d=await res.json().catch(()=>({ok:false,error:'Parse error'}));
+    const d=await res.json().catch(()=>({ok:false,error:t('Upload failed — server error. Try again.','আপলোড ব্যর্থ — সার্ভার সমস্যা। আবার চেষ্টা করুন।')}));
     if(d.ok){
       toast(t('Photo saved','ছবি সেভ হয়েছে'),'ok');
       if(url.includes('action=tenant-upload')) photoCacheClear('tenant', (fd.get('id')||'').trim());
