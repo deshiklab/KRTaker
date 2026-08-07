@@ -17273,6 +17273,17 @@ case 'app-admin': {
         audit($u['name'], 'Subscriber delete', 'subscribers', (string)$id, '');
         json_out(['ok' => true]);
     }
+    if ($action === 'newsletter-list') {
+        $rows = $q('SELECT id, email, created_at FROM newsletter_emails ORDER BY id DESC');
+        json_out(['ok' => true, 'rows' => $rows]);
+    }
+    if ($action === 'newsletter-delete') {
+        $id = (int)($body['id'] ?? 0);
+        if (!$id) json_out(['ok' => false, 'error' => 'id required.'], 400);
+        $pdo->prepare('DELETE FROM newsletter_emails WHERE id=?')->execute([$id]);
+        audit($u['name'], 'Newsletter row delete', 'newsletter_emails', (string)$id, '');
+        json_out(['ok' => true]);
+    }
 
     if ($action === 'users') {
         json_out(['ok' => true, 'users' => $q('SELECT id, name, email, role, dept, avatar, is_staff, active, last_login, phone, title, employee_id, joined_at, address, notes FROM app_users ORDER BY id')]);

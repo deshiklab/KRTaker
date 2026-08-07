@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const data = await res.json();
         const d = (window.KR_I18N && KR_I18N[krLang()]) || {};
-        krToast(data.ok ? (d['footer.newsDone'] || 'Subscribed — check your inbox to confirm ✓') : (data.error || 'Try again.'));
+        krToast(data.ok ? (d['footer.newsDone'] || 'Subscribed — thank you! ✓') : (data.error || 'Try again.'));
         if (data.ok) nf.reset();
       } catch (err) { krToast('Network error — please try again.'); }
       btn.disabled = false;
