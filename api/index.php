@@ -17152,16 +17152,32 @@ case 'app-theme': {
             'wl_primary_color' => '#2F80ED', 'wl_secondary_color' => '#1E5EB8',
             'wl_accent_color' => '#27AE60', 'wl_logo_url' => '',
             'wl_logo_nav' => '', 'wl_logo_nav_dark' => '', 'wl_logo_footer' => '',
+            'wl_logo_footer_dark' => '', 'wl_dash_header' => '', 'wl_dash_header_dark' => '',
+            'wl_dash_footer' => '', 'wl_dash_footer_dark' => '', 'wl_sa_header' => '',
+            'wl_sa_header_dark' => '', 'wl_sa_footer' => '', 'wl_sa_footer_dark' => '',
             'wl_favicon' => '', 'wl_theme' => 'light'];
     $st = $pdo->query('SELECT k, v FROM admin_settings WHERE k LIKE \'wl_%\'');
     foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $r) $def[$r['k']] = $r['v'];
+    /* V3.74: per-slot display heights (px). Stored as wl_h_<slot>; fall back to defaults. */
+    $h = ['site_nav'=>36,'site_nav_dark'=>36,'site_footer'=>42,'site_footer_dark'=>42,
+          'dash_header'=>38,'dash_header_dark'=>38,'dash_footer'=>20,'dash_footer_dark'=>20,
+          'sa_header'=>34,'sa_header_dark'=>34,'sa_footer'=>18,'sa_footer_dark'=>18];
+    foreach ($h as $slot => $dv) {
+        $v = (int)($def['wl_h_' . $slot] ?? 0);
+        $h[$slot] = ($v > 0 && $v <= 240) ? $v : $dv;
+    }
     json_out(['ok' => true, 'theme' => [
         'site_name' => $def['wl_site_name'], 'logo_text' => $def['wl_logo_text'],
         'primary' => $def['wl_primary_color'], 'secondary' => $def['wl_secondary_color'],
         'accent' => $def['wl_accent_color'], 'logo_url' => $def['wl_logo_url'],
         'logo_nav' => $def['wl_logo_nav'], 'logo_nav_dark' => $def['wl_logo_nav_dark'],
-        'logo_footer' => $def['wl_logo_footer'],
+        'logo_footer' => $def['wl_logo_footer'], 'logo_footer_dark' => $def['wl_logo_footer_dark'],
+        'dash_header' => $def['wl_dash_header'], 'dash_header_dark' => $def['wl_dash_header_dark'],
+        'dash_footer' => $def['wl_dash_footer'], 'dash_footer_dark' => $def['wl_dash_footer_dark'],
+        'sa_header' => $def['wl_sa_header'], 'sa_header_dark' => $def['wl_sa_header_dark'],
+        'sa_footer' => $def['wl_sa_footer'], 'sa_footer_dark' => $def['wl_sa_footer_dark'],
         'favicon' => $def['wl_favicon'], 'theme' => $def['wl_theme'],
+        'sizes' => $h,
     ]]);
 }
 
@@ -17864,6 +17880,13 @@ case 'app-admin': {
         $def = ['wl_site_name' => 'KRTaker', 'wl_logo_text' => 'KR', 'wl_primary_color' => '#2F80ED',
                 'wl_secondary_color' => '#1E5EB8', 'wl_accent_color' => '#27AE60', 'wl_logo_url' => '',
                 'wl_logo_nav' => '', 'wl_logo_nav_dark' => '', 'wl_logo_footer' => '',
+                'wl_logo_footer_dark' => '', 'wl_dash_header' => '', 'wl_dash_header_dark' => '',
+                'wl_dash_footer' => '', 'wl_dash_footer_dark' => '', 'wl_sa_header' => '',
+                'wl_sa_header_dark' => '', 'wl_sa_footer' => '', 'wl_sa_footer_dark' => '',
+                'wl_h_site_nav' => '36', 'wl_h_site_nav_dark' => '36', 'wl_h_site_footer' => '42',
+                'wl_h_site_footer_dark' => '42', 'wl_h_dash_header' => '38', 'wl_h_dash_header_dark' => '38',
+                'wl_h_dash_footer' => '20', 'wl_h_dash_footer_dark' => '20', 'wl_h_sa_header' => '34',
+                'wl_h_sa_header_dark' => '34', 'wl_h_sa_footer' => '18', 'wl_h_sa_footer_dark' => '18',
                 'wl_domain' => 'krtaker.com', 'wl_favicon' => '', 'wl_login_heading' => 'Welcome back',
                 'wl_footer_text' => '© KRTaker', 'wl_support_email' => 'support@krtaker.com', 'wl_theme' => 'light'];
         $stored = $q('SELECT k, v FROM admin_settings WHERE k LIKE \'wl_%\'');
@@ -17881,11 +17904,16 @@ case 'app-admin': {
         json_out(['ok' => true]);
     }
 
-    /* ── V3.73: logo slots — upload a file to a whitelabel logo slot (multipart: file + slot) ── */
+    /* ── V3.74: logo slots — 12 surface slots (website/dashboard/superadmin × header/footer × light/dark) + favicon ── */
     if ($action === 'branding-upload') {
         $slot = trim((string)($_POST['slot'] ?? ''));
-        $slots = ['nav' => 'wl_logo_nav', 'nav_dark' => 'wl_logo_nav_dark', 'footer' => 'wl_logo_footer', 'favicon' => 'wl_favicon'];
-        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of nav|nav_dark|footer|favicon.'], 400);
+        $slots = ['site_nav'=>'wl_logo_nav','site_nav_dark'=>'wl_logo_nav_dark','site_footer'=>'wl_logo_footer',
+                  'site_footer_dark'=>'wl_logo_footer_dark','dash_header'=>'wl_dash_header',
+                  'dash_header_dark'=>'wl_dash_header_dark','dash_footer'=>'wl_dash_footer',
+                  'dash_footer_dark'=>'wl_dash_footer_dark','sa_header'=>'wl_sa_header',
+                  'sa_header_dark'=>'wl_sa_header_dark','sa_footer'=>'wl_sa_footer',
+                  'sa_footer_dark'=>'wl_sa_footer_dark','favicon'=>'wl_favicon'];
+        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of site_nav|site_nav_dark|site_footer|site_footer_dark|dash_header|dash_header_dark|dash_footer|dash_footer_dark|sa_header|sa_header_dark|sa_footer|sa_footer_dark|favicon.'], 400);
         $key = $slots[$slot];
         $f = $_FILES['file'] ?? null;
         if (!$f || !is_uploaded_file($f['tmp_name'] ?? '')) json_out(['ok' => false, 'error' => 'A file upload is required.'], 400);
@@ -17908,8 +17936,13 @@ case 'app-admin': {
     }
     if ($action === 'branding-reset') {
         $slot = trim((string)($body['slot'] ?? ''));
-        $slots = ['nav' => 'wl_logo_nav', 'nav_dark' => 'wl_logo_nav_dark', 'footer' => 'wl_logo_footer', 'favicon' => 'wl_favicon'];
-        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of nav|nav_dark|footer|favicon.'], 400);
+        $slots = ['site_nav'=>'wl_logo_nav','site_nav_dark'=>'wl_logo_nav_dark','site_footer'=>'wl_logo_footer',
+                  'site_footer_dark'=>'wl_logo_footer_dark','dash_header'=>'wl_dash_header',
+                  'dash_header_dark'=>'wl_dash_header_dark','dash_footer'=>'wl_dash_footer',
+                  'dash_footer_dark'=>'wl_dash_footer_dark','sa_header'=>'wl_sa_header',
+                  'sa_header_dark'=>'wl_sa_header_dark','sa_footer'=>'wl_sa_footer',
+                  'sa_footer_dark'=>'wl_sa_footer_dark','favicon'=>'wl_favicon'];
+        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of site_nav|site_nav_dark|site_footer|site_footer_dark|dash_header|dash_header_dark|dash_footer|dash_footer_dark|sa_header|sa_header_dark|sa_footer|sa_footer_dark|favicon.'], 400);
         $key = $slots[$slot];
         $old = (string)$pdo->query("SELECT v FROM admin_settings WHERE k='" . $key . "'")->fetchColumn();
         if ($old !== '' && strpos($old, '/assets/branding/') === 0) {

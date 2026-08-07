@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     b.addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
   });
 
-  // ── V3.73: dynamic branding — swap navbar/footer/favicon logos from app-theme (superadmin white-label) ──
+  // ── V3.74: dynamic branding — swap navbar/footer/favicon logos + sizes from app-theme (superadmin white-label) ──
   (function () {
     const DEFAULT_NAV = '/assets/img/krtaker-logo.png';
     const DEFAULT_NAV_DARK = '/assets/img/krtaker-logo-white.png';
@@ -79,9 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
         /* the default navy logo auto-inverts to white via CSS in dark mode;
            a custom dark logo is already correct → disable the filter */
         navImg.style.filter = (th === 'dark' && customDark) ? 'none' : '';
+        if (BRAND.sizes && BRAND.sizes.site_nav) navImg.style.height = BRAND.sizes.site_nav + 'px';
       }
       const footImg = document.querySelector('.nav-logo-footer');
-      if (footImg && BRAND) footImg.src = BRAND.logo_footer || DEFAULT_FOOTER;
+      if (footImg && BRAND) {
+        const src = th === 'dark' ? (BRAND.logo_footer_dark || BRAND.logo_footer || DEFAULT_FOOTER) : (BRAND.logo_footer || DEFAULT_FOOTER);
+        footImg.src = src;
+        if (BRAND.sizes && BRAND.sizes.site_footer) footImg.style.height = BRAND.sizes.site_footer + 'px';
+      }
       const icon = document.querySelector('link[rel="icon"]');
       if (icon && BRAND && BRAND.favicon) icon.href = BRAND.favicon;
     };

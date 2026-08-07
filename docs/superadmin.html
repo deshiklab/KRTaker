@@ -90,6 +90,14 @@ label.lb{display:block;font-size:11.5px;font-weight:600;color:var(--text-soft);m
 .sidebar{width:var(--sidebar-w);background:var(--bg-dark);color:#CBD5E6;display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:60;transition:width .2s ease,transform .22s}
 .sb-brand{display:flex;align-items:center;gap:11px;padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
 .sb-logo{width:38px;height:38px;border-radius:11px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
+#saLogo{display:none;height:34px;width:auto;max-width:150px;object-fit:contain;flex-shrink:0}
+.sa-footer{display:flex;align-items:center;gap:10px;max-width:1240px;width:calc(100% - 56px);margin:0 auto;padding:10px 0 14px;border-top:1px solid var(--border);font-size:11.5px;color:var(--text-mute)}
+.sa-footer #saFootLogo{display:none;height:18px;width:auto;max-width:110px;object-fit:contain}
+@media (max-width:900px){.sa-footer{width:calc(100% - 32px)}}
+.br-drop{width:150px;min-height:64px;border:1.5px dashed var(--border);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;cursor:pointer;background:var(--bg-alt);transition:border-color .15s,background .15s}
+.br-drop:hover{border-color:var(--primary)}
+.br-drop.drag{border-color:var(--primary);background:var(--primary-light)}
+.br-hint{font-size:10.5px;color:var(--text-mute);white-space:nowrap}
 .sb-brand .bn{color:#fff;font-size:14px;font-weight:800;line-height:1.15}
 .sb-brand .bs{font-size:10.5px;opacity:.7}
 .sb-scroll{flex:1;overflow-y:auto;padding:12px 10px 18px}
@@ -334,6 +342,7 @@ td .c-name:hover{color:var(--primary)}
   <div class="sb-backdrop" id="sbBackdrop" onclick="closeSidebar()"></div>
   <aside class="sidebar" id="sidebar">
     <div class="sb-brand">
+      <img id="saLogo" alt="logo">
       <div class="sb-logo">KR</div>
       <div><div class="bn" id="sbBrand">KRTaker</div><div class="bs">Super Admin</div></div>
     </div>
@@ -364,6 +373,10 @@ td .c-name:hover{color:var(--primary)}
       </div>
     </header>
     <main class="content" id="content"></main>
+    <footer class="sa-footer">
+      <img id="saFootLogo" alt="logo">
+      <span class="sa-foot-copy">© 2026 KRTaker · Super Admin Panel</span>
+    </footer>
   </div>
 </div>
 
@@ -434,7 +447,7 @@ function tipShow(e){
 function tipHide(){clearTimeout(TIP_T);TIP_T=setTimeout(()=>{const el=$('tipEl');if(el)el.classList.remove('show')},70);}
 document.addEventListener('mouseover',e=>{if(e.target.closest('[data-tip]'))tipShow(e)});
 document.addEventListener('mouseout',e=>{if(e.target.closest('[data-tip]'))tipHide()});
-function toggleTheme(){STATE.theme=STATE.theme==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',STATE.theme);localStorage.setItem('krtaker_admin_theme',STATE.theme);$('tbTitle').textContent='';renderTitle();toast(STATE.theme==='dark'?'Dark mode on':'Light mode on')}
+function toggleTheme(){STATE.theme=STATE.theme==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',STATE.theme);localStorage.setItem('krtaker_admin_theme',STATE.theme);$('tbTitle').textContent='';renderTitle();applySaBranding();toast(STATE.theme==='dark'?'Dark mode on':'Light mode on')}
 async function api(path,data){
   const opts={method:data?'POST':'GET',headers:{}};
   if(data)opts.headers['Content-Type']='application/json';
@@ -2569,19 +2582,11 @@ async function renderWhitelabel(){
       <button class="btn-ghost" onclick="whitelabelSave()">💾 Save branding</button>
     </div>
   </div></div>
-  <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🖼️</span>Logo files<span class="c-sub" style="font-size:11px;margin-left:8px">uploaded to /assets/branding — applies live to the website navbar, footer and browser tab (favicon)</span></span></div><div class="panel-b">
-    ${[['nav','Navbar logo (light theme)','krtaker-logo.png'],['nav_dark','Navbar logo (dark theme)','krtaker-logo-white.png'],['footer','Footer logo','krtaker-logo-full-white.png'],['favicon','Favicon (small icon)','']].map(s=>`
-      <div style="display:flex;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
-        <img id="br_${s[0]}_prev" src="${esc((s[0]==='favicon'?WL.wl_favicon:WL['wl_logo_'+s[0]])||(s[0]==='favicon'?'/pwa/icon.svg':'/assets/img/'+s[2]))}" style="width:38px;height:38px;object-fit:contain;border:1px solid var(--border);border-radius:8px;background:#fff" onerror="this.style.opacity=.25">
-        <div style="flex:1;min-width:200px">
-          <label class="lb" style="margin:0 0 2px">${s[1]}</label>
-          <div class="c-sub" style="font-size:11px;color:var(--text-mute)">${esc((s[0]==='favicon'?WL.wl_favicon:WL['wl_logo_'+s[0]])||'Default')}</div>
-        </div>
-        <input type="file" id="br_${s[0]}_file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="max-width:170px;font-size:11px">
-        <button class="btn-primary" style="padding:6px 12px;font-size:12px" onclick="brandingUpload('${s[0]}')">⬆ Upload</button>
-        <button class="btn-ghost" style="padding:6px 12px;font-size:12px" onclick="brandingReset('${s[0]}')">↺ Reset</button>
-      </div>`).join('')}
-    <div class="c-sub" style="margin-top:12px;font-size:11.5px;color:var(--text-mute)">Upload a PNG (transparent background recommended) or SVG. Navbar ~36px tall, footer ~42px, favicon square. Changes appear on the public website within seconds — no redeploy needed.</div>
+  <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🖼️</span>Logo manager<span class="c-sub" style="font-size:11px;margin-left:8px">all three surfaces — website, dashboard & super admin panel · header & footer · light & dark</span></span></div><div class="panel-b">
+    ${brSurface('🌐','Website','public site, blog & landing pages',BR_SITE)}
+    ${brSurface('📊','Dashboard','tenant / owner portal (dashboard-v2.html)',BR_DASH)}
+    ${brSurface('🛠️','Super Admin Panel','superadmin.html control center',BR_SA)}
+    <div class="c-sub" style="margin-top:16px;font-size:11.5px;color:var(--text-mute)">Drag & drop a PNG (transparent background recommended) or SVG onto any preview box — or click it to pick a file. Changes apply live, no redeploy needed. Use each slider to set that logo's display height (px). A <b>dark</b> logo is used when the visitor has dark mode on; leave it empty to reuse the light one.</div>
   </div></div>
   <div class="panel"><div class="panel-b"><div class="frm grid-2">
     <div><label class="lb">Site name</label><input id="wl_site_name" value="${esc(WL.wl_site_name||'')}"></div>
@@ -2608,22 +2613,74 @@ async function whitelabelSave(){
   const d=await admin({action:'whitelabel-save',whitelabel});
   if(d.ok){toast('White-label branding saved','ok');$('sbBrand').textContent=whitelabel.wl_site_name||'KRTaker';renderWhitelabel();}else toast(d.error||'Failed','error');
 }
-async function brandingUpload(slot){
-  const inp=$('br_'+slot+'_file');
-  if(!inp||!inp.files||!inp.files[0]){toast('Choose a file first','error');return;}
+/* ── V3.74: Logo manager — 12 surface slots (website/dashboard/superadmin × header/footer × light/dark) + favicon ── */
+const BR_KEY={site_nav:'wl_logo_nav',site_nav_dark:'wl_logo_nav_dark',site_footer:'wl_logo_footer',site_footer_dark:'wl_logo_footer_dark',dash_header:'wl_dash_header',dash_header_dark:'wl_dash_header_dark',dash_footer:'wl_dash_footer',dash_footer_dark:'wl_dash_footer_dark',sa_header:'wl_sa_header',sa_header_dark:'wl_sa_header_dark',sa_footer:'wl_sa_footer',sa_footer_dark:'wl_sa_footer_dark',favicon:'wl_favicon'};
+const BR_SIZE_DEF={site_nav:36,site_nav_dark:36,site_footer:42,site_footer_dark:42,dash_header:38,dash_header_dark:38,dash_footer:20,dash_footer_dark:20,sa_header:34,sa_header_dark:34,sa_footer:18,sa_footer_dark:18};
+const BR_SITE=[['site_nav','Header · Light theme','/assets/img/krtaker-logo.png'],['site_nav_dark','Header · Dark theme','/assets/img/krtaker-logo-white.png'],['site_footer','Footer · Light theme','/assets/img/krtaker-logo-full-white.png'],['site_footer_dark','Footer · Dark theme','/assets/img/krtaker-logo-full-white.png'],['favicon','Favicon (browser tab icon)','/pwa/icon.svg']];
+const BR_DASH=[['dash_header','Header · Light theme','/assets/img/krtaker-logo.png'],['dash_header_dark','Header · Dark theme','/assets/img/krtaker-logo-white.png'],['dash_footer','Footer · Light theme','/assets/img/krtaker-logo-full-white.png'],['dash_footer_dark','Footer · Dark theme','/assets/img/krtaker-logo-full-white.png']];
+const BR_SA=[['sa_header','Header · Light theme','/assets/img/krtaker-logo.png'],['sa_header_dark','Header · Dark theme','/assets/img/krtaker-logo-white.png'],['sa_footer','Footer · Light theme','/assets/img/krtaker-logo-full-white.png'],['sa_footer_dark','Footer · Dark theme','/assets/img/krtaker-logo-full-white.png']];
+function brUrl(slot){return WL[BR_KEY[slot]]||'';}
+function brSize(slot){const v=parseInt(WL['wl_h_'+slot],10);return(v>0&&v<=240)?v:(BR_SIZE_DEF[slot]||36);}
+function brRow(slot,label,defUrl){
+  const cur=brUrl(slot),sz=brSize(slot),nosize=slot==='favicon';
+  return `<div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
+    <div id="br_drop_${slot}" class="br-drop" title="Click or drag & drop to upload" onclick="document.getElementById('br_${slot}_file').click()" ondragover="brDragOver(event,'${slot}')" ondragleave="brDragLeave(event,'${slot}')" ondrop="brDrop(event,'${slot}')">
+      <img id="br_${slot}_prev" src="${esc(cur||defUrl)}" style="height:${sz}px;max-width:130px;object-fit:contain" onerror="this.style.opacity=.25">
+      <div class="br-hint">⬆ drop / click</div>
+    </div>
+    <div style="flex:1;min-width:190px">
+      <label class="lb" style="margin:0 0 2px">${label}</label>
+      <div class="c-sub" style="font-size:11px;color:var(--text-mute)">${esc(cur||'Default')}</div>
+      ${nosize?'':`<div style="display:flex;align-items:center;gap:8px;margin-top:7px"><input type="range" id="br_${slot}_size" min="16" max="120" value="${sz}" oninput="brSizeLive('${slot}',this.value)" onchange="brSizeSave('${slot}',this.value)" style="flex:1;max-width:170px"><span class="c-sub" id="br_${slot}_sizelbl" style="font-size:11px;min-width:40px">${sz}px</span></div>`}
+    </div>
+    <input type="file" id="br_${slot}_file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="display:none" onchange="brFilePick('${slot}')">
+    <button class="btn-ghost" style="padding:6px 12px;font-size:12px" onclick="brReset('${slot}')">↺ Reset</button>
+  </div>`;
+}
+function brSurface(ic,title,sub,rows){
+  return `<div style="margin:6px 0 2px"><div style="display:flex;align-items:center;gap:8px;margin:10px 0 2px"><span style="font-weight:700;font-size:13px">${ic} ${title}</span><span class="c-sub" style="font-size:11px">${sub}</span></div>${rows.map(r=>brRow(r[0],r[1],r[2])).join('')}</div>`;
+}
+function brPreview(slot,file){
+  const prev=$('br_'+slot+'_prev');
+  if(prev){const rd=new FileReader();rd.onload=e=>{prev.src=e.target.result;prev.style.opacity=1};rd.readAsDataURL(file);}
+}
+async function uploadBranding(slot,file){
   const fd=new FormData();
   fd.append('action','branding-upload');
   fd.append('slot',slot);
-  fd.append('file',inp.files[0]);
+  fd.append('file',file);
   const res=await fetch(API+'app-admin',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd});
   const d=await res.json().catch(()=>({ok:false,error:'Upload failed — server error. Try again.'}));
-  if(d.ok){toast('Logo uploaded ('+slot+')','ok');renderWhitelabel();}
+  if(d.ok){toast('Logo uploaded ('+slot+')','ok');renderWhitelabel();applyAdminTheme();}
   else toast(d.error||'Failed','error');
 }
-async function brandingReset(slot){
+function brFilePick(slot){
+  const inp=$('br_'+slot+'_file');
+  if(!inp||!inp.files||!inp.files[0])return;
+  const f=inp.files[0];
+  if(!/\.(png|jpe?g|webp|gif|svg)$/i.test(f.name)){toast('Images only (png/jpg/webp/gif/svg)','error');return;}
+  brPreview(slot,f);uploadBranding(slot,f);
+}
+function brDrop(e,slot){
+  e.preventDefault();brDragLeave(e,slot);
+  const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+  if(!f){toast('No file dropped','error');return;}
+  if(!/\.(png|jpe?g|webp|gif|svg)$/i.test(f.name)){toast('Images only (png/jpg/webp/gif/svg)','error');return;}
+  brPreview(slot,f);uploadBranding(slot,f);
+}
+function brDragOver(e,slot){e.preventDefault();const el=$('br_drop_'+slot);if(el)el.classList.add('drag');}
+function brDragLeave(e,slot){const el=$('br_drop_'+slot);if(el)el.classList.remove('drag');}
+function brSizeLive(slot,v){const p=$('br_'+slot+'_prev'),l=$('br_'+slot+'_sizelbl');if(p)p.style.height=v+'px';if(l)l.textContent=v+'px';}
+function brSizeSave(slot,v){
+  admin({action:'whitelabel-save',whitelabel:{['wl_h_'+slot]:String(v)}}).then(d=>{
+    if(d.ok){WL['wl_h_'+slot]=String(v);toast(slot+' display height set to '+v+'px','ok');applyAdminTheme();}
+    else toast(d.error||'Failed','error');
+  });
+}
+async function brReset(slot){
   if(!confirm('Reset the '+slot+' logo to the KRTaker default?'))return;
   const d=await admin({action:'branding-reset',slot});
-  if(d.ok){toast('Logo reset to default','ok');renderWhitelabel();}
+  if(d.ok){toast('Logo reset to default','ok');renderWhitelabel();applyAdminTheme();}
   else toast(d.error||'Failed','error');
 }
 /* ── Health ── */
@@ -2705,7 +2762,27 @@ async function applyAdminTheme(){
     r.setProperty('--grad',`linear-gradient(135deg,${primary} 0%,${secondary} 100%)`);
     const sh=rgbaHex(primary,.30);
     if(sh)r.setProperty('--shadow',`0 8px 22px ${sh}`);
+    window.__SA_THEME=t;
+    applySaBranding();
   }catch(e){}
+}
+/* V3.74: superadmin panel header (sidebar) + footer logos — light/dark per current theme + display size */
+function applySaBranding(){
+  const t=window.__SA_THEME; if(!t)return;
+  const th=document.documentElement.getAttribute('data-theme')||'light';
+  const header=th==='dark'?(t.sa_header_dark||t.sa_header||''):(t.sa_header||'');
+  const footer=th==='dark'?(t.sa_footer_dark||t.sa_footer||''):(t.sa_footer||'');
+  const hImg=$('saLogo'), hMark=document.querySelector('.sb-brand .sb-logo');
+  if(hImg&&hMark){
+    if(header){hImg.src=header;hImg.style.display='block';hMark.style.display='none';}
+    else{hImg.style.display='none';hMark.style.display='';}
+    if(t.sizes&&t.sizes.sa_header)hImg.style.height=t.sizes.sa_header+'px';
+  }
+  const fImg=$('saFootLogo');
+  if(fImg){
+    if(footer){fImg.src=footer;fImg.style.display='inline-block';if(t.sizes&&t.sizes.sa_footer)fImg.style.height=t.sizes.sa_footer+'px';}
+    else fImg.style.display='none';
+  }
 }
 function rgbaHex(hex,a){
   const m=/^#?([0-9a-f]{6})$/i.exec((hex||'').trim());if(!m)return null;
