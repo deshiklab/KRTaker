@@ -134,14 +134,14 @@ gtag('config', 'G-XXXXXXXXXX');
       <div class="auth-card" style="box-shadow:none;border:1px solid var(--border)">
         <form id="contactForm">
           <div class="form-row">
-            <div class="form-group"><label data-i18n="contact.name" data-cms="contact.form.name">Your name</label><input type="text" required placeholder="Full name" data-cms-ph="contact.form.ph_name"></div>
-            <div class="form-group"><label data-i18n="contact.email" data-cms="contact.form.email">Email</label><input type="email" required placeholder="you@example.com" data-cms-ph="contact.form.ph_email"></div>
+            <div class="form-group"><label data-i18n="contact.name" data-cms="contact.form.name">Your name</label><input type="text" name="name" required placeholder="Full name" data-cms-ph="contact.form.ph_name"></div>
+            <div class="form-group"><label data-i18n="contact.email" data-cms="contact.form.email">Email</label><input type="email" name="email" required placeholder="you@example.com" data-cms-ph="contact.form.ph_email"></div>
           </div>
           <div class="form-group"><label data-cms="contact.form.iam">I am a…</label>
             <select><option>Property Owner</option><option>Service Partner</option><option>Legal Firm / Consultant</option><option>Tenant</option><option>NRB Investor</option><option>Other</option></select>
           </div>
-          <div class="form-group"><label data-cms="contact.form.subject">Subject</label><input type="text" placeholder="What's this about?" data-cms-ph="contact.form.ph_subject"></div>
-          <div class="form-group"><label data-i18n="contact.msg" data-cms="contact.form.msg">Message</label><textarea rows="5" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:11px;font-family:inherit;font-size:14px;outline:none" placeholder="Tell us more…" data-cms-ph="contact.form.ph_msg"></textarea></div>
+          <div class="form-group"><label data-cms="contact.form.subject">Subject</label><input type="text" name="subject" placeholder="What's this about?" data-cms-ph="contact.form.ph_subject"></div>
+          <div class="form-group"><label data-i18n="contact.msg" data-cms="contact.form.msg">Message</label><textarea name="message" rows="5" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:11px;font-family:inherit;font-size:14px;outline:none" placeholder="Tell us more…" data-cms-ph="contact.form.ph_msg"></textarea></div>
           <button type="submit" data-i18n="contact.btn" class="btn btn-primary btn-block" data-cms="contact.form.btn">Send message</button>
         </form>
       </div>
