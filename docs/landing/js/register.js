@@ -6,6 +6,8 @@
   const $ = (id) => document.getElementById(id);
   const steps = ['pane1', 'pane2', 'pane3', 'pane4'];
   const dict = () => (window.KR_I18N ? (KR_I18N[krLang()] || KR_I18N.en) : null);
+  /* GA4 conversion tracking (safe — no-op if the tag is blocked/not loaded) */
+  const ga = (event, params) => { try { if (window.gtag) window.gtag('event', event, params || {}); } catch (e) {} };
 
   function go(n) {
     steps.forEach((p, i) => $(p).classList.toggle('active', i === n - 1));
@@ -33,6 +35,8 @@
   $('backTo2').addEventListener('click', () => go(2));
 
   // Account submit → register API (plan NOT collected — chosen later in dashboard)
+  const refCode = new URLSearchParams(location.search).get('ref') || '';
+  if (refCode) { try { localStorage.setItem('krtaker_ref', refCode); } catch (x) {} }
   $('acctForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const d = dict() || {};
@@ -45,12 +49,16 @@
     const btn = $('regSubmit');
     btn.disabled = true; btn.textContent = d['reg.working'] || 'Please wait…';
     try {
+      const body = { name, org: $('rOrg').value.trim(), email, phone: $('rPhone').value.trim(), role: state.role, pass };
+      const ref = refCode || (function(){ try { return localStorage.getItem('krtaker_ref') || ''; } catch (x) { return ''; } })();
+      if (ref) body.ref = ref;
       const res = await fetch(API + 'register', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, org: $('rOrg').value.trim(), email, phone: $('rPhone').value.trim(), role: state.role })
+        body: JSON.stringify(body)
       });
       const data = await res.json();
       if (data.ok) {
+        ga('sign_up', { method: 'email', role: state.role });
         state.email = email;
         $('otpEmail').textContent = email;
         startTimer(60);
@@ -121,6 +129,7 @@
       const res = await fetch(API + 'verify-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: state.email, otp: code }) });
       const data = await res.json();
       if (data.ok) {
+        ga('trial_started', { trial_days: data.trial_days || 14 });
         $('trialNote').textContent = (dict() ? dict()['reg.successSub'] : '') + ' ' + (data.trial_end || '');
         go(4);
       } else {

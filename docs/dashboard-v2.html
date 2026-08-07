@@ -11,6 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Google Analytics (GA4) — conversion events: sign_up / trial_started (landing), payment_completed (dashboard) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C68G5Q03ZT"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-C68G5Q03ZT');
+</script>
 <style>
 /* ============================================================
    KRTaker Dashboard V2 — design system inherited from the
@@ -8903,7 +8911,7 @@ async function recordPayment(invId){
   const method=document.getElementById('payMethod').value;
   if(amount<=0){toast('Enter a valid amount');return}
   const d=await apiCall('app-payment',{invoice_id:invId,amount,method});
-  if(d.ok){ toast('Payment '+d.payment+' recorded · receipt '+d.receipt); await refreshData(); closeDrawer(); }
+  if(d.ok){ trackGA('payment_completed',{value:amount,currency:'BDT',transaction_id:String(d.payment),payment_method:method}); toast('Payment '+d.payment+' recorded · receipt '+d.receipt); await refreshData(); closeDrawer(); }
   else toast(d.error||'Payment failed');
 }
 function ticketStatusForm(id){
@@ -9393,9 +9401,12 @@ async function recordPaymentFromForm(){
   const date=document.getElementById('pfDate').value||new Date().toISOString().slice(0,10);
   if(amount<=0){toast('Enter a valid amount');return}
   const d=await apiCall('app-payment',{invoice_id:inv,amount,method,date});
-  if(d.ok){ toast('Payment '+d.payment+' · receipt '+d.receipt); await refreshData(); closeDrawer(); }
+  if(d.ok){ trackGA('payment_completed',{value:amount,currency:'BDT',transaction_id:String(d.payment),payment_method:method}); toast('Payment '+d.payment+' · receipt '+d.receipt); await refreshData(); closeDrawer(); }
   else toast(d.error||'Payment failed');
 }
+
+/* GA4 conversion tracking (safe — no-op if the tag is blocked/not loaded) */
+function trackGA(event, params){ try{ if(window.gtag) gtag('event', event, params||{}); }catch(e){} }
 
 /* Gateway checkout */
 function gatewayPay(invId){
@@ -9460,6 +9471,7 @@ async function gatewayReturn(){
   if(!ref){ toast('Gateway did not return a reference — contact support with session '+sid); return; }
   const d=await apiCall('app-payment-confirm',{session_id:sid,gateway_ref:ref});
   if(d.ok){
+    trackGA('payment_completed',{value:pend.amount||0,currency:'BDT',transaction_id:String(d.payment),payment_method:gw});
     toast('Payment '+d.payment+' recorded · receipt '+d.receipt);
     if(typeof refreshData==='function') refreshData();
   } else {
@@ -9470,6 +9482,7 @@ async function gatewayReturn(){
 async function gatewayConfirm(sid,amount){
   const d=await apiCall('app-payment-confirm',{session_id:sid});
   if(d.ok){
+    trackGA('payment_completed',{value:amount,currency:'BDT',transaction_id:String(d.payment),payment_method:d.gateway||'gateway'});
     openDrawer('✅ Payment successful',
       `<div style="text-align:center;padding:18px 6px">
         <div style="font-size:44px">🎉</div>

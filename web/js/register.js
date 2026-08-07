@@ -6,6 +6,8 @@
   const $ = (id) => document.getElementById(id);
   const steps = ['pane1', 'pane2', 'pane3', 'pane4'];
   const dict = () => (window.KR_I18N ? (KR_I18N[krLang()] || KR_I18N.en) : null);
+  /* GA4 conversion tracking (safe — no-op if the tag is blocked/not loaded) */
+  const ga = (event, params) => { try { if (window.gtag) window.gtag('event', event, params || {}); } catch (e) {} };
 
   function go(n) {
     steps.forEach((p, i) => $(p).classList.toggle('active', i === n - 1));
@@ -56,6 +58,7 @@
       });
       const data = await res.json();
       if (data.ok) {
+        ga('sign_up', { method: 'email', role: state.role });
         state.email = email;
         $('otpEmail').textContent = email;
         startTimer(60);
@@ -126,6 +129,7 @@
       const res = await fetch(API + 'verify-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: state.email, otp: code }) });
       const data = await res.json();
       if (data.ok) {
+        ga('trial_started', { trial_days: data.trial_days || 14 });
         $('trialNote').textContent = (dict() ? dict()['reg.successSub'] : '') + ' ' + (data.trial_end || '');
         go(4);
       } else {
