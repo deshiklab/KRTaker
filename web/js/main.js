@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
       '<p>Leases, rent, TDS, holding tax and maintenance — KR handles it all, 24/7. No credit card needed.</p>' +
       '<a href="register.html" class="btn btn-primary btn-lg">Start free trial →</a>' +
       '<a href="how-it-works.html" class="btn btn-outline">See how it works</a>' +
-      '<p class="exit-note">Join 128 subscribers managing ৳74.55 Cr in property</p>' +
+      '<p class="exit-note">Start managing your property portfolio with KRTaker</p>' +
       '</div>';
     d.body.appendChild(modal);
     const close = () => { modal.classList.remove('show'); setTimeout(() => modal.remove(), 350); };
