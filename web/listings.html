@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.66">
+<link rel="stylesheet" href="css/style.css?v=3.67">
 <style>
 /* ═══ SA1 v24: listings v3 — photo-first cards, filter sidebar, favorites, featured strip, detail modal ═══ */
 :root{--ls-accent:#2F80ED}
@@ -60,6 +60,12 @@
 /* ── results column ── */
 .ls-results{min-width:0}
 .ls-res-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 14px}
+/* ── area chips strip (SA1 v25) ── */
+.ls-areas{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 12px}
+.ls-area{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--card);border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--text);font-family:inherit;transition:all .13s}
+.ls-area:hover{border-color:var(--ls-accent);color:var(--ls-accent)}
+.ls-area.on{background:var(--ls-accent);border-color:var(--ls-accent);color:#fff}
+.ls-area .n{opacity:.6;font-size:11px}
 .ls-count{font-size:13px;font-weight:700;color:var(--text)}
 .ls-count b{color:var(--ls-accent)}
 .ls-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
@@ -154,6 +160,20 @@
 .ls-m-amen{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;background:var(--card)}
 .ls-m-units{display:flex;flex-direction:column;gap:9px}
 .ls-m-unit{border:1px solid var(--border);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+/* ── similar listings + move-in (SA1 v25) ── */
+.ls-m-sim{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px}
+.ls-m-sim-card{border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color .13s,transform .13s}
+.ls-m-sim-card:hover{border-color:var(--ls-accent);transform:translateY(-1px)}
+.ls-m-sim-card .t{font-weight:700;font-size:13px}
+.ls-m-sim-card .s{font-size:11.5px;color:var(--muted);margin:3px 0 5px}
+.ls-m-sim-card .r{font-size:13.5px;font-weight:800;color:var(--ls-accent)}
+.ls-m-movein{display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(47,128,237,.08),rgba(47,128,237,.02));border:1px solid rgba(47,128,237,.25);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+.ls-m-movein .k{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.ls-m-movein .v{font-size:17px;font-weight:800;color:var(--ls-accent)}
+.ls-m-report{background:none;border:0;color:var(--muted);font-size:11.5px;cursor:pointer;text-decoration:underline;font-family:inherit;padding:0}
+.ls-m-report:hover{color:#e5484d}
+.ls-m-prof{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--ls-accent);text-decoration:none}
+.ls-m-prof:hover{text-decoration:underline}
 .ls-m-unit .n{font-weight:800;font-size:13.5px}
 .ls-m-unit .m{font-size:11.5px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
 .ls-m-unit .r{margin-left:auto;font-weight:800;color:var(--ls-accent);font-size:15px}
@@ -336,6 +356,7 @@
       </aside>
 
       <div class="ls-results">
+        <div class="ls-areas" id="lsAreas"></div>
         <div class="ls-res-bar">
           <button class="ls-fbtn" id="lsFbtn">⚙️ <span data-i18n="ls.filters">Filters</span><span class="ls-fcnt" id="lsFcnt"></span></button>
           <span class="ls-count" id="lsCount"></span>
@@ -483,11 +504,11 @@
   </div>
 </div>
 
-<script src="i18n/i18n-dict.js?v=3.66"></script>
-<script src="js/i18n.js?v=3.66"></script>
-<script src="js/cms-hydrate.js?v=3.66"></script>
-<script src="js/main.js?v=3.66"></script>
-<script src="js/chat.js?v=3.66"></script>
+<script src="i18n/i18n-dict.js?v=3.67"></script>
+<script src="js/i18n.js?v=3.67"></script>
+<script src="js/cms-hydrate.js?v=3.67"></script>
+<script src="js/main.js?v=3.67"></script>
+<script src="js/chat.js?v=3.67"></script>
 <script>
 /* SA1 v24: listings v3 — photo-first cards, filter sidebar (price/size/beds/furnishing/availability),
    favorites, featured strip, detail modal, URL state, load-more, grid/list (bilingual) */
@@ -679,6 +700,7 @@
     const _fc=$('lsFcnt');if(_fc)_fc.textContent=activeCount()||'';
     const _fa=$('lsFapply');if(_fa)_fa.textContent='✓ '+T('Show','দেখুন')+' '+total+' '+T(total===1?'property':'properties',total===1?'সম্পত্তি':'সম্পত্তি');
     renderChips();
+    renderAreas();
     if(!total){
       $('lsGrid').className='ls-grid';$('lsGrid').style.gridTemplateColumns='';
       $('lsGrid').innerHTML=`<div class="ls-empty"><div class="big">🔍</div><div style="font-weight:800;font-size:15px;margin-bottom:6px">${T('No listings match your search.','আপনার খোঁজের সাথে মিলে এমন লিস্টিং নেই।')}</div><div style="font-size:12.5px;margin-bottom:16px">${T('Try clearing filters or widening the price range.','ফিল্টার মুছে বা দামের সীমা বাড়িয়ে দেখুন।')}</div><a href="register.html" class="btn btn-primary">${T('List your property','আপনার সম্পত্তি লিস্ট করুন')}</a></div>`;
@@ -705,6 +727,24 @@
     if(F.saved)add('❤️ '+T('Saved','সেভকৃত'),"F.saved=false;apply()");
     $('lsChips').innerHTML=chips.join('');
   }
+  /* ── area chips strip (SA1 v25) ── */
+  function renderAreas(){
+    const el=$('lsAreas');if(!el)return;
+    const jurs=[...new Set(all.map(p=>p.jur))].sort();
+    const cnt=j=>all.filter(p=>p.jur===j).length;
+    const btn=(label,val,cur,cb)=>`<button class="ls-area ${cur===val?'on':''}" onclick="${cb}">${esc(label)}${val!=='all'?`<span class="n">${cnt(val)}</span>`:''}</button>`;
+    el.innerHTML=btn(T('All','সব')+' · '+all.length,'all',F.city,"F.city='all';apply(true)")
+      +jurs.map(j=>btn(T(j,BN[j]),j,F.city,`F.city='${esc(j)}';apply(true)`)).join('')
+      +`<a class="ls-area" style="text-decoration:none" href="area.html" title="${T('Area landing pages','এলাকা ল্যান্ডিং পেজ')}">🗺️ ${T('Areas','এলাকা')} →</a>`;
+  }
+  function reportListing(id){
+    const p=all.find(x=>x.id===id);if(!p)return;
+    const subj='Report listing: '+p.id+' '+p.name;
+    const body='Listing: '+p.name+' ('+p.id+')\nLocation: '+addr(p)+'\n\nPlease describe the issue:\n';
+    const url='mailto:support@krtaker.com?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+    location.href=url;
+    toastMsg(T('Report sent — thank you!','রিপোর্ট পাঠানো হয়েছে — ধন্যবাদ!'));
+  }
   function apply(keep){
     F.page=1;
     writeURL();
@@ -727,6 +767,10 @@
         ${unitWa(u,p)}
       </div>`).join(''):`<div class="c-sub" style="font-size:12.5px">${T('No vacancies right now','এই মুহূর্তে কোনো খালি ইউনিট নেই')} — ${T('join the waitlist on WhatsApp','হোয়াটসঅ্যাপে ওয়েটলিস্টে যোগ দিন')}.</div>`;
     const price=(m&&mx&&m!==mx)?`${fmt(m)} – ${fmt(mx)}`:(m?fmt(m):'—');
+    const terms=p.terms||{};
+    const moveIn=(terms.advance_months&&m)?m*(1+terms.advance_months):0;
+    const sim=all.filter(x=>x.id!==p.id&&x.jur===p.jur).slice(0,3);
+    const simCards=sim.length?`<div class="ls-m-h">🏢 ${T('Similar listings','অনুরূপ লিস্টিং')}</div><div class="ls-m-sim">${sim.map(s=>{const sm=minRent(s);return `<div class="ls-m-sim-card" onclick="openDetail('${esc(s.id)}')"><div class="t">${ICONS[s.type]||''} ${esc(s.name)}</div><div class="s">${esc(s.jur)} · ${T(s.type,BN[s.type])}</div><div class="r">${sm?fmt(sm)+'<small style="font-size:10px;color:var(--muted)">/mo</small>':'—'}</div></div>`}).join('')}</div>`:'';
     $('lsMBody').innerHTML=`
       <div class="ls-m-img">${phImg(p)}</div>
       <div class="ls-m-body">
@@ -745,8 +789,10 @@
         </div>
         ${p.description?`<div class="ls-m-h">📝 ${T('Description','বিবরণ')}</div><div class="ls-m-desc">${esc(p.description)}</div>`:''}
         ${(p.amenities||[]).length?`<div class="ls-m-h">✨ ${T('Amenities','সুবিধাসমূহ')}</div><div class="ls-m-amens">${amens}</div>`:''}
+        ${moveIn?`<div class="ls-m-movein"><span class="k">💵 ${T('Estimated move-in cost','আনুমানিক মুভ-ইন খরচ')} <span style="text-transform:none;font-weight:500">(1st month + ${terms.advance_months} ${T('months deposit','মাসের জামানত')})</span></span><span class="v">${fmt(moveIn)}</span></div>`:''}
         <div class="ls-m-h">🔑 ${T('Available units','উপলব্ধ ইউনিট')} (${vu.length})</div>
         <div class="ls-m-units">${units}</div>
+        ${simCards}
         <div class="ls-m-contact">
           <div class="q">📞 ${T('Questions about this property?','এই সম্পত্তি নিয়ে প্রশ্ন আছে?')}</div>
           <a class="btn btn-primary" href="${propWa(p)}" target="_blank" rel="noopener">💬 ${T('WhatsApp the KRTaker team','হোয়াটসঅ্যাপে কেআরটেকার টিম')}</a>
@@ -757,6 +803,8 @@
           <button id="lsMSave" onclick="toggleFav('${esc(p.id)}',this)">${favs.has(p.id)?'♥ '+T('Saved','সেভ হয়েছে'):'♡ '+T('Save','সেভ করুন')}</button>
           <button onclick="shareProp('${esc(p.id)}')">📤 ${T('Share','শেয়ার')}</button>
           <button onclick="copyLink('${esc(p.id)}')">🔗 ${T('Copy link','লিংক কপি')}</button>
+          <a class="ls-m-prof" href="building.html?pid=${esc(p.id)}" onclick="event.stopPropagation()">🏢 ${T('Building profile','বিল্ডিং প্রোফাইল')} →</a>
+          <button class="ls-m-report" onclick="reportListing('${esc(p.id)}')">🚩 ${T('Report this listing','এই লিস্টিং রিপোর্ট করুন')}</button>
         </div>
       </div>`;
     $('lsModal').classList.add('open');
@@ -873,7 +921,7 @@
   init();
   // expose for inline onclick handlers
   window.openDetail=openDetail;window.closeDetail=closeDetail;window.toggleFav=toggleFav;
-  window.shareProp=shareProp;window.copyLink=copyLink;
+  window.shareProp=shareProp;window.copyLink=copyLink;window.reportListing=reportListing;
   window.apply=apply;window.F=F;
   window.retryLoad=()=>startLoad(readURL());
 })();

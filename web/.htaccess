@@ -1,0 +1,24 @@
+# KRTaker — LiteSpeed rewrites + security hardening
+# - /api/<action>    -> api/index.php (API router reads REQUEST_URI)
+# - /blog/<slug>     -> api/index.php (dynamic blog article renderer)
+# - /building/<id>   -> building.html?pid=<id>  (public QR building profile)
+# - /area/<slug>     -> area.html?jur=<slug>    (jurisdiction landing page)
+
+# Disable directory listing everywhere (security)
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Block access to leftover legacy admin tree (old third-party project, not KRTaker)
+  RewriteRule ^admin/ - [F,L]
+  RewriteRule ^_autoindex/ - [F,L]
+
+  # Defense in depth: never execute PHP inside legacy/upload trees
+  RewriteRule ^(admin/|uploads/).*\.(php|phtml|php3|php4|php5|php7|phar|pl|cgi|sh)$ - [F,L]
+
+  RewriteRule ^api/(.*)$ api/index.php [L,QSA]
+  RewriteRule ^blog/([a-z0-9-]+)/?$ api/index.php [L,QSA]
+  RewriteRule ^building/([A-Za-z0-9_-]+)/?$ building.html?pid=$1 [L,QSA]
+  RewriteRule ^area/([a-z0-9-]+)/?$ area.html?jur=$1 [L,QSA]
+</IfModule>
