@@ -101,9 +101,9 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 - [x] Uptime monitoring: hit `https://krtaker.com/api/health` every 1 min (Hermes cron `krtaker-uptime-watchdog` — script `krtaker_uptime.sh`, silent when healthy, alerts after 3 consecutive failures + recovery notice; delivers to origin chat, Discord home available).
 - [x] Error tracking: `app-error-log`/`app-log-error` API endpoints (JS `window.onerror` + `unhandledrejection` reporter in dashboard-v2.html via sendBeacon; PHP fatal capture via shutdown `error_get_last()`; per-IP rate limit, 24h dedup with counts, 30-day retention) + Hermes cron `krtaker-error-watchdog` (`krtaker_error_watch.py`, every 30 min, silent when clean, grouped digest when new errors).
 - [x] cPanel disk quota: checked 2026-08 via UAPI Quota/get_quota_info — 182.97 MB used / 1 GB limit → **817 MB free (82% headroom)**; bandwidth 524 MB/10 GB. Comfortable for launch; re-check when uploads/media grow.
-- [ ] Rate limiting at the web-server layer (mod_evasive / Cloudflare) for login endpoints.
-- [ ] Cloudflare: already used for tunnel; put the apex site behind CF (free tier) for CDN + WAF + caching of static assets.
-- [ ] SSL: confirm auto-renew on the cPanel cert (no manual expiry handling).
+- [ ] Rate limiting at the web-server layer (mod_evasive / Cloudflare) for login endpoints. [! blocked: shared LiteSpeed host (no mod_evasive) + Cloudflare-at-apex needs registrar NS change; API-level throttling (auth_attempts, api_rate_limit_ok) already active]
+- [ ] Cloudflare: already used for tunnel; put the apex site behind CF (free tier) for CDN + WAF + caching of static assets. [! blocked: domain NS = ns1/ns2.coderdrop.com — needs registrar access + a Cloudflare account; no creds on box]
+- [x] SSL: AutoSSL enabled (no excluded domains — verified via `SSL/get_autossl_excluded_domains` → `[]`; forced `SSL/start_autossl_check` → status 1). Served cert = Let's Encrypt via AutoSSL, expires 2026-10-12 (66 days) — renewal is automatic, no manual expiry handling.
 
 ### 3.5 Legal pages & trust
 - [ ] Review terms.html / privacy.html / contact.html for: entity name, address, refund policy, DPA-2023 disclosures, dispute/complaint channel, data-subject request procedure.
