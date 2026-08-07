@@ -93,31 +93,36 @@
 .bp-map-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--bp-accent);text-decoration:none}
 .bp-map-link:hover{text-decoration:underline}
 @media(max-width:860px){.bp-grid{grid-template-columns:1fr}.bp-hero{flex-direction:column}.bp-qr{width:100%}.bp-qr img,.bp-qr svg{margin:0 auto}.bp-photo img{height:220px}}
-/* ═══ PRINT — QR/public building profile ═══ */
+/* ═══ PRINT — A4/A5 property flyer (brand + title + big QR + notes) ═══ */
+.bp-flyer{display:none}
 @media print{
-  @page{margin:14mm 12mm}
-  body{background:#fff !important;color:#111 !important}
-  .navbar,.footer,.cta-section,.sticky-cta,.btt-btn,.chat-fab,.chat-box,.wa-fab,.cookie-bar,.exit-modal,#krToast,.bp-actions,.bp-sim,.bp-map,.bp-map-link,.bp-load,.bp-err{display:none !important}
-  .page-body{padding:0 !important}
-  .container{max-width:100% !important}
-  .bp-print-hdr{display:flex !important;align-items:center;justify-content:space-between;gap:16px;border-bottom:2.5px solid #2F80ED;padding-bottom:10px;margin-bottom:18px}
-  .bp-print-hdr .brand{font-weight:800;font-size:16px;color:#2F80ED;display:flex;align-items:center;gap:8px}
-  .bp-print-hdr .brand .logo-mark{width:30px;height:30px;font-size:13px}
-  .bp-print-hdr .meta{font-size:10.5px;color:#555;text-align:right;line-height:1.6}
-  .bp-print-hdr .meta b{color:#111}
-  .bp-hero{flex-direction:row !important;align-items:flex-start !important}
-  .bp-title{min-width:0 !important}
-  .bp-qr{order:2;margin-left:auto;width:auto !important;flex:none;border:1.5px solid #999;border-radius:12px;padding:12px;background:#fff !important;box-shadow:none !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .bp-qr img,.bp-qr svg{width:170px !important;height:170px !important;padding:8px;background:#fff}
-  .bp-qr .lbl{font-size:10px}
-  .bp-badge,.bp-unit-status,.bp-stat .n,.bp-cta{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .bp-stat{border:1px solid #ddd;break-inside:avoid}
-  .bp-panel{border:1px solid #ddd;break-inside:avoid;box-shadow:none !important}
-  .bp-table td,.bp-table th{border-bottom:1px solid #eee}
-  .bp-cta{break-inside:avoid}
-  .bp-cta .btn-wa,.bp-cta .btn-white{box-shadow:none !important}
-  .bp-print-ftr{display:flex !important;justify-content:space-between;gap:12px;font-size:9.5px;color:#666;border-top:1px solid #ccc;margin-top:22px;padding-top:8px}
-  .bp-print-ftr a{color:#2F80ED;text-decoration:none}
+  @page{size:A4 portrait;margin:10mm}
+  html,body{background:#fff !important;color:#111 !important}
+  .navbar,.footer,.cta-section,.sticky-cta,.btt-btn,.chat-fab,.chat-box,.wa-fab,.cookie-bar,.exit-modal,#krToast,
+  .page-body,.bp-print-hdr,.bp-print-ftr,.bp-load,.bp-err,.bp-photo{display:none !important}
+  .bp-flyer{display:flex !important;flex-direction:column;min-height:277mm;box-sizing:border-box;
+    font-family:'Inter','Hind Siliguri',Arial,sans-serif;color:#111;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  /* ── brand bar ── */
+  .flyer-brand{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:3px solid #2F80ED}
+  .flyer-brand .logo-mark{width:34px;height:34px;font-size:14px}
+  .flyer-brand .fb-name{font-size:20px;font-weight:800;color:#2F80ED;letter-spacing:.2px}
+  .flyer-brand .fb-tag{font-size:10px;color:#64748B;margin-top:1px;letter-spacing:.3px;text-transform:uppercase}
+  /* ── body ── */
+  .flyer-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6mm 0}
+  .flyer-title{font-size:30px;font-weight:800;line-height:1.25;margin:0 0 2mm}
+  .flyer-sub{font-size:13px;color:#64748B;margin:0 0 8mm}
+  .flyer-msg{font-size:16px;line-height:1.55;color:#1E293B;max-width:150mm;margin:0 0 7mm}
+  .flyer-msg b{color:#2F80ED}
+  .flyer-qr-wrap{border:1.2mm solid #94A3B8;border-radius:4mm;padding:4mm;background:#fff;display:inline-block}
+  .flyer-qr-wrap svg,.flyer-qr-wrap img{display:block;width:66mm;height:66mm}
+  .flyer-qr-lbl{margin-top:4mm;font-size:11px;color:#64748B;letter-spacing:.3px}
+  /* ── footer ── */
+  .flyer-foot{border-top:2px solid #2F80ED;padding-top:8px;display:flex;justify-content:space-between;gap:10px;
+    font-size:10px;color:#64748B;line-height:1.6}
+  .flyer-foot .f-notes{max-width:130mm}
+  .flyer-foot .f-meta{text-align:right;white-space:nowrap}
+  .flyer-foot a{color:#2F80ED;text-decoration:none}
   a{color:#111 !important;text-decoration:none !important}
 }
 </style>
@@ -190,18 +195,31 @@
 </nav>
 
 <div class="page-body">
-  <div class="bp-print-hdr">
-    <div class="brand"><span class="logo-mark">KR</span> KRTaker — Verified Building Profile</div>
-    <div class="meta" id="bpPrintMeta"></div>
-  </div>
   <div class="container" id="bpRoot">
     <div class="bp-load" id="bpLoad"><div class="big">🏢</div><div class="spinner"></div><br><br><span id="bpLoadTxt">Loading building profile…</span></div>
     <div class="bp-err" id="bpErr" style="display:none"><div class="big">⚠️</div><div style="font-weight:800;font-size:15px" id="bpErrTxt">Building not found.</div><div style="font-size:12.5px;color:var(--muted);margin-top:8px">This profile may be unpublished or the link is wrong.</div><br><a class="btn btn-primary" href="/listings.html">Browse listings →</a></div>
   </div>
 </div>
-<div class="bp-print-ftr" style="display:none">
-  <span>KRTaker — Key Responsibility Taker · <span id="bpPrintUrl"></span></span>
-  <span id="bpPrintDate"></span>
+<!-- A4/A5 PRINT FLYER (only visible when printing) -->
+<div class="bp-flyer" id="bpFlyer">
+  <div class="flyer-brand">
+    <span class="logo-mark">KR</span>
+    <div>
+      <div class="fb-name">KRTaker</div>
+      <div class="fb-tag">Key Responsibility Taker · Managed Buildings</div>
+    </div>
+  </div>
+  <div class="flyer-body">
+    <h1 class="flyer-title" id="flyerTitle"></h1>
+    <div class="flyer-sub" id="flyerSub"></div>
+    <p class="flyer-msg">🏠 <b>This property is available for rent.</b><br>Scan this QR code to see details / open the profile.</p>
+    <div class="flyer-qr-wrap"><div id="flyerQr"></div></div>
+    <div class="flyer-qr-lbl">Scan to view live profile · No broker fee</div>
+  </div>
+  <div class="flyer-foot">
+    <div class="f-notes" id="flyerNotes"></div>
+    <div class="f-meta" id="flyerMeta"></div>
+  </div>
 </div>
 
 <section class="cta-section">
@@ -349,10 +367,7 @@
   function render(p){
     BUILD=p;
     document.title=p.name+' — Building Profile | KRTaker';
-    const pm=document.getElementById('bpPrintMeta');
-    if(pm)pm.innerHTML='<b>'+esc(p.name)+'</b><br>'+esc(p.jur)+(p.holding?' · '+esc(p.holding):'');
-    const pu=document.getElementById('bpPrintUrl');if(pu)pu.textContent=cleanUrl();
-    const pd=document.getElementById('bpPrintDate');if(pd)pd.textContent=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+    fillFlyer(p);
     const meta=document.querySelector('meta[name="description"]');
     if(meta)meta.setAttribute('content',p.name+' ('+p.jur+') — units, rents, amenities and lease terms. Managed end-to-end by KRTaker.');
     const canon=document.querySelector('link[rel="canonical"]');if(canon)canon.setAttribute('href',cleanUrl());
@@ -451,6 +466,28 @@
       const el=$('bpQr');
       if(el)el.innerHTML=qr.createSvgTag({cellSize:5,margin:2,scalable:true})||qr.createImgTag(5,10);
     }catch(e){console.warn('qr failed',e);}
+  }
+
+  /* A4/A5 print flyer — brand + title + big QR + notes footer */
+  function fillFlyer(p){
+    const t=document.getElementById('flyerTitle'); if(t)t.textContent=p.name;
+    const s=document.getElementById('flyerSub'); if(s)s.textContent=[p.type,p.jur,p.holding].filter(Boolean).join(' · ');
+    const n=document.getElementById('flyerNotes');
+    if(n){
+      const notes=[];
+      if(p.terms&&p.terms.notes)notes.push(p.terms.notes);
+      const vu=p.units.filter(u=>u.status==='Vacant');
+      if(vu.length)notes.push('Available units: '+vu.map(u=>u.name).join(', '));
+      n.innerHTML=notes.length?esc(notes.join(' · ')):'Verified building profile — rent, maintenance, compliance and handover are all digital.';
+    }
+    const m=document.getElementById('flyerMeta');
+    if(m)m.innerHTML='KRTaker · krtaker.com<br>'+esc(cleanUrl())+'<br>'+new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+    try{
+      const qr=qrcode(0,'M');
+      qr.addData(cleanUrl());qr.make();
+      const el=document.getElementById('flyerQr');
+      if(el)el.innerHTML=qr.createSvgTag({cellSize:8,margin:4,scalable:true})||qr.createImgTag(10,20);
+    }catch(e){console.warn('flyer qr failed',e);}
   }
 
   function loadSimilar(p){
