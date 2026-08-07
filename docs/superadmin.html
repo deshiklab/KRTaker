@@ -2583,6 +2583,17 @@ async function renderWhitelabel(){
     </div>
   </div></div>
   <div class="panel"><div class="panel-h"><span class="t"><span class="pi">🖼️</span>Logo manager<span class="c-sub" style="font-size:11px;margin-left:8px">all three surfaces — website, dashboard & super admin panel · header & footer · light & dark</span></span></div><div class="panel-b">
+    <div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
+      <div class="br-drop" style="cursor:default" title="Print outputs reuse the Website header logo (site_nav)">
+        <img id="br_print_prev" src="${esc(brUrl('site_nav')||'/assets/img/krtaker-logo.png')}" style="height:${brSize('print')}px;max-width:130px;object-fit:contain" onerror="this.style.opacity=.25">
+        <div class="br-hint">🖨️ print logo</div>
+      </div>
+      <div style="flex:1;min-width:190px">
+        <label class="lb" style="margin:0 0 2px">🖨️ Print logo height</label>
+        <div class="c-sub" style="font-size:11px;color:var(--text-mute)">invoices · receipts · leases · demand notices · Thana forms · to-let QR flyers — uses the Website header logo</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:7px"><input type="range" id="br_print_size" min="16" max="120" value="${brSize('print')}" oninput="brSizeLive('print',this.value)" onchange="brSizeSave('print',this.value)" style="flex:1;max-width:170px"><span class="c-sub" id="br_print_sizelbl" style="font-size:11px;min-width:40px">${brSize('print')}px</span></div>
+      </div>
+    </div>
     ${brSurface('🌐','Website','public site, blog & landing pages',BR_SITE)}
     ${brSurface('📊','Dashboard','tenant / owner portal (dashboard-v2.html)',BR_DASH)}
     ${brSurface('🛠️','Super Admin Panel','superadmin.html control center',BR_SA)}
@@ -2615,7 +2626,7 @@ async function whitelabelSave(){
 }
 /* ── V3.74: Logo manager — 12 surface slots (website/dashboard/superadmin × header/footer × light/dark) + favicon ── */
 const BR_KEY={site_nav:'wl_logo_nav',site_nav_dark:'wl_logo_nav_dark',site_footer:'wl_logo_footer',site_footer_dark:'wl_logo_footer_dark',dash_header:'wl_dash_header',dash_header_dark:'wl_dash_header_dark',dash_footer:'wl_dash_footer',dash_footer_dark:'wl_dash_footer_dark',sa_header:'wl_sa_header',sa_header_dark:'wl_sa_header_dark',sa_footer:'wl_sa_footer',sa_footer_dark:'wl_sa_footer_dark',favicon:'wl_favicon'};
-const BR_SIZE_DEF={site_nav:36,site_nav_dark:36,site_footer:42,site_footer_dark:42,dash_header:38,dash_header_dark:38,dash_footer:20,dash_footer_dark:20,sa_header:34,sa_header_dark:34,sa_footer:18,sa_footer_dark:18};
+const BR_SIZE_DEF={site_nav:36,site_nav_dark:36,site_footer:42,site_footer_dark:42,dash_header:38,dash_header_dark:38,dash_footer:20,dash_footer_dark:20,sa_header:34,sa_header_dark:34,sa_footer:18,sa_footer_dark:18,print:30};
 const BR_SITE=[['site_nav','Header · Light theme','/assets/img/krtaker-logo.png'],['site_nav_dark','Header · Dark theme','/assets/img/krtaker-logo-white.png'],['site_footer','Footer · Light theme','/assets/img/krtaker-logo-full-white.png'],['site_footer_dark','Footer · Dark theme','/assets/img/krtaker-logo-full-white.png'],['favicon','Favicon (browser tab icon)','/pwa/icon.svg']];
 const BR_DASH=[['dash_header','Header · Light theme','/assets/img/krtaker-logo.png'],['dash_header_dark','Header · Dark theme','/assets/img/krtaker-logo-white.png'],['dash_footer','Footer · Light theme','/assets/img/krtaker-logo-full-white.png'],['dash_footer_dark','Footer · Dark theme','/assets/img/krtaker-logo-full-white.png']];
 const BR_SA=[['sa_header','Header · Light theme','/assets/img/krtaker-logo.png'],['sa_header_dark','Header · Dark theme','/assets/img/krtaker-logo-white.png'],['sa_footer','Footer · Light theme','/assets/img/krtaker-logo-full-white.png'],['sa_footer_dark','Footer · Dark theme','/assets/img/krtaker-logo-full-white.png']];

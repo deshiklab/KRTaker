@@ -2374,6 +2374,21 @@ function wa_link($phone, $text) {
     return 'https://wa.me/' . $p . '?text=' . rawurlencode($text);
 }
 /* Generate a printable invoice (Phase 8: invoice PDF/print) */
+/* V3.75: branded print logo — Website header logo (wl_logo_nav) at the print size
+   (wl_h_print, default 30px); falls back to wl_logo_url, then a text wordmark. */
+function print_brand_img() {
+    $pdo = db();
+    $def = ['wl_site_name' => 'KRTaker', 'wl_logo_nav' => '', 'wl_logo_url' => '', 'wl_h_print' => '30'];
+    $st = $pdo->query("SELECT k, v FROM admin_settings WHERE k IN ('wl_site_name','wl_logo_nav','wl_logo_url','wl_h_print')");
+    foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $r) $def[$r['k']] = $r['v'];
+    $h = max(16, min(240, (int)($def['wl_h_print'] ?: 30)));
+    $name = esc($def['wl_site_name'] ?: 'KRTaker');
+    $logo = $def['wl_logo_nav'] !== '' ? $def['wl_logo_nav'] : $def['wl_logo_url'];
+    if ($logo !== '') {
+        return '<img src="' . esc($logo) . '" alt="' . $name . '" style="height:' . $h . 'px;width:auto;object-fit:contain">';
+    }
+    return '<span style="font-size:' . max(16, $h - 2) . 'px;font-weight:800;color:#2F80ED;letter-spacing:-.3px">' . $name . '</span>';
+}
 function invoice_print_html($u, $invId) {
     $pdo = db();
     $st = $pdo->prepare('SELECT i.*, l.u AS uid, l.t AS tid, l.rent, l.adv, l.start AS ls, l.end AS le,
@@ -2401,7 +2416,7 @@ function invoice_print_html($u, $invId) {
 *{box-sizing:border-box}body{font-family:Inter,Helvetica,Arial,sans-serif;color:#101828;margin:0;padding:32px;background:#F4F6FA}
 .page{max-width:760px;margin:0 auto;background:#fff;border:1px solid #E4EAF3;border-radius:16px;padding:36px}
 .top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #2F80ED;padding-bottom:20px;margin-bottom:24px}
-.brand{font-size:22px;font-weight:800;color:#2F80ED;letter-spacing:-.3px}.brand small{display:block;font-size:11px;font-weight:500;color:#8A94A6;letter-spacing:1.2px;text-transform:uppercase;margin-top:2px}
+.brand{font-size:22px;font-weight:800;color:#2F80ED;letter-spacing:-.3px}.brand img{display:block;margin-bottom:6px}.brand small{display:block;font-size:11px;font-weight:500;color:#8A94A6;letter-spacing:1.2px;text-transform:uppercase;margin-top:2px}
 .meta{text-align:right;font-size:13px;color:#475467;line-height:1.7}.meta b{color:#101828}
 h1{font-size:26px;margin:0 0 4px;color:#101828}.st{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700}
 .st.unpaid{background:#FEF3C7;color:#92400E}.st.paid{background:#D1FAE5;color:#065F46}.st.overdue{background:#FEE2E2;color:#B91C1C}
@@ -2418,7 +2433,7 @@ td{padding:10px;font-size:13.5px;border-bottom:1px solid #F2F4F7}.r{text-align:r
 </style></head><body>
 <div class="noprint"><button class="btn" onclick="window.print()">🖨 Print / Save PDF</button></div>
 <div class="page">
-<div class="top"><div><div class="brand">KRTaker<small>AI CARETAKER · RENT INVOICE</small></div></div>
+<div class="top"><div><div class="brand">' . print_brand_img() . '<small>AI CARETAKER · RENT INVOICE</small></div></div>
 <div class="meta"><b>' . esc($invId) . '</b><br>Month: ' . esc($r['m']) . '<br>Issued: ' . esc(gmdate('d M Y')) . '</div></div>
 <h1>Rent invoice</h1><span class="st ' . ($due > 0 ? (($r['status'] === 'Overdue') ? 'overdue' : 'unpaid') : 'paid') . '">' . esc($r['status']) . ($due > 0 ? ' · due ৳' . number_format($due) : ' · paid in full') . '</span>
 <div class="grid"><div><p class="h6">Billed to</p><div style="font-size:14px;line-height:1.7"><b>' . esc($r['tname']) . '</b><br>' . esc($r['tphone']) . '<br>' . esc($r['temail']) . '</div></div>
@@ -3062,14 +3077,14 @@ function tpl_print_page($tpl, $merged, $kind) {
         . '*{box-sizing:border-box}body{font-family:Inter,"Hind Siliguri",Arial,sans-serif;color:#101828;margin:0;padding:32px;background:#F4F6FA}'
         . '.page{max-width:800px;margin:0 auto;background:#fff;border:1px solid #E4EAF3;border-radius:16px;padding:44px}'
         . '.brand{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #2F80ED;padding-bottom:14px;margin-bottom:18px}'
-        . '.brand b{font-size:19px;color:#2F80ED;letter-spacing:-.3px}.brand small{display:block;font-size:9.5px;letter-spacing:1.6px;color:#8A94A6;text-transform:uppercase}'
+        . '.brand img{display:block;margin-bottom:3px}.brand b{font-size:19px;color:#2F80ED;letter-spacing:-.3px}.brand small{display:block;font-size:9.5px;letter-spacing:1.6px;color:#8A94A6;text-transform:uppercase}'
         . '.ttl{font-size:15px;font-weight:700;color:#1A2433}'
         . '.tpl-body{font-family:Inter,"Hind Siliguri",Arial,sans-serif;font-size:13.5px;line-height:1.9;color:#1A2433;white-space:pre-wrap}'
         . '.sig{margin-top:38px;display:grid;grid-template-columns:1fr 1fr;gap:26px}.sig div{border-top:1px dashed #98A2B3;padding-top:8px;font-size:12px;color:#475467}'
         . '.noprint{position:fixed;top:16px;right:16px}.btn{font:600 13px Inter;padding:9px 16px;border-radius:10px;border:1px solid #D0D5DD;background:#fff;cursor:pointer}.btn.p{background:#2F80ED;color:#fff;border-color:#2F80ED}'
         . '@media print{body{background:#fff;padding:0}.page{border:0;box-shadow:none}.noprint{display:none}}'
         . '</style></head><body><div class="noprint"><button class="btn" onclick="window.print()">🖨 Print / Save PDF</button></div><div class="page">'
-        . '<div class="brand"><div><b>KRTaker</b><small>KEY RESPONSIBILITY TAKER</small></div><div class="ttl">' . esc($tpl['title']) . '</div></div>'
+        . '<div class="brand"><div>' . print_brand_img() . '<small>KEY RESPONSIBILITY TAKER</small></div><div class="ttl">' . esc($tpl['title']) . '</div></div>'
         . '<div class="tpl-body">' . $merged . '</div>'
         . $sig
         . '<div style="margin-top:26px;padding-top:12px;border-top:1px dashed #E4EAF3;font-size:11px;color:#8A94A6;text-align:center">System-generated by KRTaker — your AI caretaker · Verify at krtaker.com</div>'
@@ -6770,6 +6785,7 @@ function legal_notice_html($n, $lease, $cfg) {
     }
     $body = nl2br(esc($n['body']));
     return '<div style="font-family:Arial;max-width:820px;margin:0 auto;padding:20px">'
+        . '<div style="margin-bottom:10px">' . print_brand_img() . '</div>'
         . '<div style="border-bottom:3px solid #2F80ED;padding-bottom:12px;margin-bottom:16px"><div style="font-size:20px;font-weight:800">' . esc($meta['en']) . '</div><div style="font-size:12px;color:#667">' . esc($meta['bn']) . ' — ' . esc($meta['ref']) . '</div></div>'
         . '<table style="border-collapse:collapse;width:100%">' . $rows . '</table>'
         . '<div style="margin-top:16px;padding:14px;border:1px solid #E4EAF3;border-radius:8px;background:#FAFCFE;font-size:13px;line-height:1.7">' . $body . '</div></div>';
@@ -6874,6 +6890,7 @@ function tif_print_html($row) {
     $district = $row['district'] ?: ($p['district'] ?? '');
     $statusBadge = ['Draft' => '#F0B429', 'Submitted' => '#2F80ED', 'Verified' => '#27AE60'][$row['status']] ?? '#8A94A6';
     return '<div style="font-family:Arial,Helvetica,sans-serif;color:#223;max-width:820px;margin:0 auto;padding:20px">
+        <div style="margin-bottom:10px">' . print_brand_img() . '</div>
         <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #2F80ED;padding-bottom:12px;margin-bottom:16px">
             <div><div style="font-size:20px;font-weight:800">Tenant Information Form</div>
             <div style="font-size:12px;color:#667">ভাড়াটিয়া তথ্য ফরম — ' . htmlspecialchars($thana ?: '—') . ' থানা, ' . htmlspecialchars($district ?: '') . '</div></div>
@@ -17161,7 +17178,8 @@ case 'app-theme': {
     /* V3.74: per-slot display heights (px). Stored as wl_h_<slot>; fall back to defaults. */
     $h = ['site_nav'=>36,'site_nav_dark'=>36,'site_footer'=>42,'site_footer_dark'=>42,
           'dash_header'=>38,'dash_header_dark'=>38,'dash_footer'=>20,'dash_footer_dark'=>20,
-          'sa_header'=>34,'sa_header_dark'=>34,'sa_footer'=>18,'sa_footer_dark'=>18];
+          'sa_header'=>34,'sa_header_dark'=>34,'sa_footer'=>18,'sa_footer_dark'=>18,
+          'print'=>30];
     foreach ($h as $slot => $dv) {
         $v = (int)($def['wl_h_' . $slot] ?? 0);
         $h[$slot] = ($v > 0 && $v <= 240) ? $v : $dv;
@@ -17887,6 +17905,7 @@ case 'app-admin': {
                 'wl_h_site_footer_dark' => '42', 'wl_h_dash_header' => '38', 'wl_h_dash_header_dark' => '38',
                 'wl_h_dash_footer' => '20', 'wl_h_dash_footer_dark' => '20', 'wl_h_sa_header' => '34',
                 'wl_h_sa_header_dark' => '34', 'wl_h_sa_footer' => '18', 'wl_h_sa_footer_dark' => '18',
+                'wl_h_print' => '30',
                 'wl_domain' => 'krtaker.com', 'wl_favicon' => '', 'wl_login_heading' => 'Welcome back',
                 'wl_footer_text' => '© KRTaker', 'wl_support_email' => 'support@krtaker.com', 'wl_theme' => 'light'];
         $stored = $q('SELECT k, v FROM admin_settings WHERE k LIKE \'wl_%\'');

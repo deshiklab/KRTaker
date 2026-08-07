@@ -621,6 +621,7 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
     -webkit-print-color-adjust:exact;print-color-adjust:exact}
   /* ── brand bar ── */
   .flyer-brand{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:3px solid #2F80ED}
+  .flyer-brand img{height:34px;width:auto;max-height:48px;object-fit:contain}
   .flyer-brand .logo-mark{width:34px;height:34px;font-size:14px;border-radius:10px;background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;box-shadow:none}
   .flyer-brand .fb-name{font-size:22px;font-weight:800;color:#2F80ED;letter-spacing:.2px}
   .flyer-brand .fb-tag{font-size:10px;color:#64748B;margin-top:1px;letter-spacing:.3px;text-transform:uppercase}
@@ -744,6 +745,7 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
 <!-- ═══ A4/A5 PRINT FLYER (only visible when printing from the "Public page & QR" drawer) ═══ -->
 <div class="bp-flyer" id="bpFlyer">
   <div class="flyer-brand">
+    <img id="flyerLogo" alt="KRTaker" style="display:none">
     <span class="logo-mark">KR</span>
     <div>
       <div class="fb-name">KRTaker</div>
@@ -10054,10 +10056,26 @@ function buildingQrDrawer(id){
   const foot=`<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">${t('Close','বন্ধ')}</button><button class="btn-outline" onclick="copyQrUrl('${esc(url)}')">📋 ${t('Copy link','লিংক কপি')}</button><button class="btn-outline" onclick="printBuildingFlyer('${esc(id)}')">🖨 ${t('Print','প্রিন্ট')}</button></div>`;
   openDrawer('📱 '+t('Public page & QR','পাবলিক পেজ ও কিউআর')+' — '+id, body, foot);
 }
+/* V3.75: cached app-theme for print branding (fallback to a fresh fetch) */
+async function ensurePrintTheme(){
+  if(window.__DASH_THEME) return window.__DASH_THEME;
+  try{
+    const d=await fetch(API+'app-theme').then(r=>r.json());
+    if(d.ok&&d.theme){window.__DASH_THEME=d.theme;return d.theme;}
+  }catch(e){}
+  return null;
+}
 /* A4/A5 print flyer — brand + big title + big QR + notes footer (one page) */
-function printBuildingFlyer(id){
+async function printBuildingFlyer(id){
   const p=DB.properties.find(x=>String(x.id)===String(id));
   if(!p){toast('Property not found');return}
+  const th=await ensurePrintTheme();
+  if(th){
+    const fImg=document.getElementById('flyerLogo'), fMark=document.querySelector('.flyer-brand .logo-mark'), fName=document.querySelector('.flyer-brand .fb-name');
+    const logo=th.logo_nav||th.logo_url||'';
+    if(logo&&fImg){fImg.src=logo;fImg.style.height=((th.sizes&&th.sizes.print)||30)+'px';fImg.style.display='inline-block';if(fMark)fMark.style.display='none';}
+    if(th.site_name&&fName)fName.textContent=th.site_name;
+  }
   const url=(location.origin||'https://krtaker.com')+'/building/'+encodeURIComponent(id);
   const t=document.getElementById('flyerTitle'); if(t)t.textContent=p.name;
   const s=document.getElementById('flyerSub'); if(s)s.textContent=[p.type,p.jur,p.holding].filter(Boolean).join(' · ');
