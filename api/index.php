@@ -132,10 +132,10 @@ function db() {
            busy_timeout → uncaught "database is locked" 500s (82 in 24h, mostly
            /api/app-admin + /api/listings + /api/building-public bursts).
            PRAGMA user_version now gates it: migrations run once, then skip.
-           ⚠ BUMP 20260807 to a higher number whenever adding new CREATE/ALTER
+           ⚠ BUMP 20260808 to a higher number whenever adding new CREATE/ALTER
            statements to the block below, or they will never run on migrated DBs. ── */
         $__sv = (int)$pdo->query('PRAGMA user_version')->fetchColumn();
-        if ($__sv < 20260807) {
+        if ($__sv < 20260808) {
         $pdo->exec("CREATE TABLE IF NOT EXISTS auth_attempts (
             id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT DEFAULT '', ip TEXT DEFAULT '',
             kind TEXT DEFAULT '', ok INTEGER DEFAULT 0, ts TEXT DEFAULT (datetime('now')))");
@@ -331,6 +331,8 @@ function db() {
             id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT UNIQUE, title TEXT NOT NULL, tag TEXT DEFAULT '',
             excerpt TEXT DEFAULT '', body TEXT DEFAULT '', cover_emoji TEXT DEFAULT '📰',
             read_min INTEGER DEFAULT 5, status TEXT DEFAULT 'draft',
+            author TEXT DEFAULT '', meta_title TEXT DEFAULT '', meta_desc TEXT DEFAULT '',
+            cover_image TEXT DEFAULT '', category TEXT DEFAULT '',
             created_at TEXT DEFAULT (datetime('now')), updated_at TEXT DEFAULT (datetime('now')))");
         $pdo->exec("CREATE INDEX IF NOT EXISTS idx_cms_hist_page ON cms_history(page)");
         $pdo->exec("CREATE TABLE IF NOT EXISTS api_usage (
@@ -947,7 +949,7 @@ $defTariff = $pdo->prepare('INSERT OR IGNORE INTO utility_tariffs (type, rate, s
         if (!in_array('otp_fails', $cols)) {
             $pdo->exec("ALTER TABLE subscribers ADD COLUMN otp_fails INTEGER DEFAULT 0");
         }
-        try { $pdo->exec('PRAGMA user_version=20260807'); } catch (Exception $e) {}
+        try { $pdo->exec('PRAGMA user_version=20260808'); } catch (Exception $e) {}
         }   /* end schema bootstrap gate */
     }
     return $pdo;
@@ -9403,7 +9405,7 @@ function seed_app() {
         $st->execute(['BX-002', 'BP-001', 'Mason & helper wages', 650000, 'labour', '2026-07-25', 1, '4 crews × 12 weeks']);
         $st->execute(['BX-003', 'BP-001', 'Tiles & fittings', 400000, 'material', '2026-07-30', 0, 'Imported porcelain — partial payment']);
         $st->execute(['BX-004', 'BP-002', 'Steel & concrete', 5000000, 'material', '2026-04-20', 1, 'BSRM rod + ready-mix']);
-        $st->execute(['BX-005', 'BP-002', 'Site labour', 3500000, 'labour', '2026-08-01', 0, 'Daily-wage site crew — over budget']);
+        $st->execute(['BX-005', 'BP-002', 'Site labour', 4000000, 'labour', '2026-08-01', 0, 'Daily-wage site crew — over budget']);
         $st->execute(['BX-006', 'BP-003', 'Repair materials + labour', 148000, 'material', '2026-06-12', 1, 'Sanitary + fittings + 1 crew']);
     }
     $bdc = (int)$pdo->query('SELECT COUNT(*) FROM build_media')->fetchColumn();
@@ -17370,8 +17372,8 @@ case 'app-admin': {
             $nv = (string)($b['v'] ?? '');
             $sel->execute([$page, $section, $k]);
             $old = $sel->fetchColumn();
-            if ($old !== false && (string)$old !== $nv) {
-                $hist->execute([$page, $section, $k, (string)$old, $u['name']]);
+            if ($old === false || (string)$old !== $nv) {
+                $hist->execute([$page, $section, $k, $old === false ? '' : (string)$old, $u['name']]);
                 $changed++;
             }
             $st->execute([$page, $section, $k, $nv]);
@@ -18503,6 +18505,11 @@ case 'sitemap': {
     $bp = $pdo->query("SELECT slug, created_at FROM blog_posts WHERE status='published' ORDER BY created_at DESC");
     foreach ($bp as $row) {
         $out .= "\n  <url>\n    <loc>https://krtaker.com/blog/" . rawurlencode($row['slug']) . "</loc>\n    <lastmod>" . substr((string)$row['created_at'], 0, 10) . "</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>";
+    }
+    /* published property pages are indexable (server-side OG) — property id IS the code (P-001…) */
+    $pr = $pdo->query("SELECT id, created_at FROM properties WHERE published=1 ORDER BY id");
+    foreach ($pr as $row) {
+        $out .= "\n  <url>\n    <loc>https://krtaker.com/building/" . rawurlencode($row['id']) . "</loc>\n    <lastmod>" . substr((string)$row['created_at'], 0, 10) . "</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>";
     }
     $out .= "\n</urlset>\n";
     header('Content-Type: application/xml; charset=utf-8');
