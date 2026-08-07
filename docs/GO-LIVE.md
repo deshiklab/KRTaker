@@ -108,7 +108,7 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 ### 3.5 Legal pages & trust
 - [ ] Review terms.html / privacy.html / contact.html for: entity name, address, refund policy, DPA-2023 disclosures, dispute/complaint channel, data-subject request procedure.
 - [ ] Add a "Security" page or badge section (SSl, data localization, backups) — buyers in BD ask.
-- [x] Verify the "128 subscribers · ৳74.55 Cr" claim on the homepage is either true or softened — done 2026-08: claim was fiction (real DB had 16). All 16 cleared (0 subscribers), 6 real trial accounts registered via the actual OTP flow, and the claim copy removed everywhere (web+docs+i18n EN/BN+CMS default+stored override → "Start managing your property portfolio with KRTaker — free 14-day trial, no card required."). NOTE: hero stats row (৳74.55 Cr / 70% / 1,240+ / 24/7) still shows demo-data numbers — decide whether to keep (demo portfolio still in app) or remove before public launch.
+- [x] Verify the "128 subscribers · ৳74.55 Cr" claim on the homepage is either true or softened — done 2026-08: claim was fiction (real DB had 16). All 16 cleared (0 subscribers), 6 real trial accounts registered via the actual OTP flow, and the claim copy removed everywhere (web+docs+i18n EN/BN+CMS default+stored override → "Start managing your property portfolio with KRTaker — free 14-day trial, no card required."). Hero stats row fixed 2026-08: now honest — ৳0 broker fee / 4+ properties live / 6+ teams onboarded / 24/7 AI caretaker (HTML + i18n EN/BN + live CMS blocks via cms-save; commit 16b1429).
 
 ---
 
