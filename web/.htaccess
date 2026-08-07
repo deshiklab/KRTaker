@@ -76,7 +76,7 @@ ErrorDocument 403 /403.html
 
   RewriteRule ^api/(.*)$ api/index.php [L,QSA]
   RewriteRule ^blog/([a-z0-9-]+)/?$ api/index.php [L,QSA]
-  RewriteRule ^building/([A-Za-z0-9_-]+)/?$ building.html?pid=$1 [L,QSA]
+  RewriteRule ^building/([A-Za-z0-9_-]+)/?$ api/index.php [L,QSA]
   RewriteRule ^area/([a-z0-9-]+)/?$ area.html?jur=$1 [L,QSA]
 
   # IndexNow key file: /<32-hex>.txt -> API (Bing/Seznam site verification)

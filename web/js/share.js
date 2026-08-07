@@ -35,7 +35,7 @@
     var u=o.url||location.href, t=o.text||'', title=o.title||document.title;
     return {
       wa:'https://wa.me/?text='+enc(text),
-      fb:'https://www.facebook.com/sharer/sharer.php?u='+enc(u)+(t?'&quote='+enc(t):''),
+      fb:'https://www.facebook.com/sharer/sharer.php?u='+enc(u),
       x:'https://twitter.com/intent/tweet?text='+enc(t||title)+(u?'&url='+enc(u):''),
       li:'https://www.linkedin.com/sharing/share-offsite/?url='+enc(u),
       tg:'https://t.me/share/url?url='+enc(u)+(t?'&text='+enc(t):''),

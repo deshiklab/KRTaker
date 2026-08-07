@@ -9528,6 +9528,47 @@ if (preg_match('#^blog/([a-z0-9-]+)$#', $action, $m)) {
     exit;
 }
 
+/* Dynamic building profile page: /building/<code> (rewritten from .htaccess, public HTML).
+   Server-side OG tags so Facebook/X/LinkedIn crawlers (which don't run JS) get a
+   property-specific preview card instead of the generic static one. */
+if (preg_match('#^building/([A-Za-z0-9_-]{1,64})$#', $action, $m)) {
+    header('Content-Type: text/html; charset=utf-8');
+    $pdo = db();
+    $st = $pdo->prepare("SELECT id, name, type, jur, holding, sqft, status, address, photo, description, lat, lng FROM properties WHERE id=? AND published=1");
+    $st->execute([$m[1]]);
+    $p = $st->fetch(PDO::FETCH_ASSOC);
+    if (!$p) { http_response_code(404); echo '<!DOCTYPE html><html><head><title>404 — KRTaker</title><meta http-equiv="refresh" content="0;url=/404.html"></head><body></body></html>'; exit; }
+    /* Same CSP override as blog articles: public page with inline styles + Leaflet/jsdelivr */
+    header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; upgrade-insecure-requests");
+    $html = @file_get_contents(__DIR__ . '/../building.html');
+    if ($html === false) { http_response_code(500); echo '<!DOCTYPE html><html><head><title>Error — KRTaker</title></head><body>building page unavailable</body></html>'; exit; }
+    $st = $pdo->prepare("SELECT rent FROM units WHERE p=? AND status='Vacant' ORDER BY rent"); $st->execute([$m[1]]);
+    $vacs = $st->fetchAll(PDO::FETCH_COLUMN);
+    $nVac = count($vacs);
+    $minRent = $nVac ? (int)min($vacs) : 0;
+    $ogTitle = $p['name'] . ' — ' . $p['jur'] . ' | KRTaker';
+    $ogDesc = $p['name'] . ' (' . $p['jur'] . ') — verified building';
+    if ($nVac) $ogDesc .= ' · ' . $nVac . ' unit' . ($nVac > 1 ? 's' : '') . ' vacant' . ($minRent ? ' · from ৳' . number_format($minRent) . '/mo' : '');
+    $ogDesc .= ' · Managed end-to-end by KRTaker · no broker fee';
+    $ogUrl = 'https://krtaker.com/building/' . rawurlencode($p['id']);
+    $ogImg = 'https://krtaker.com/assets/img/og-card.png';
+    $ph = (string)($p['photo'] ?? '');
+    if ($ph !== '' && preg_match('#\.(png|jpe?g|webp)$#i', $ph)) {
+        $ogImg = preg_match('#^https?://#', $ph) ? $ph : 'https://krtaker.com' . $ph;
+    }
+    $esc = function($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
+    $subs = [
+        ['<meta property="og:title" content="Building Profile — KRTaker"', '<meta property="og:title" content="' . $esc($ogTitle) . '"'],
+        ['<meta property="og:description" content="Verified building profile — units, rents, amenities and lease terms. Managed end-to-end by KRTaker."', '<meta property="og:description" content="' . $esc($ogDesc) . '"'],
+        ['<meta property="og:url" content="https://krtaker.com/building.html"', '<meta property="og:url" content="' . $esc($ogUrl) . '"'],
+        ['<meta property="og:image" content="https://krtaker.com/assets/img/og-card.png"', '<meta property="og:image" content="' . $esc($ogImg) . '"'],
+        ['<link rel="canonical" href="https://krtaker.com/building.html">', '<link rel="canonical" href="' . $esc($ogUrl) . '">'],
+    ];
+    foreach ($subs as $s) { $html = str_replace($s[0], $s[1], $html); }
+    echo $html;
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !in_array($action, ['health', 'listings', 'app-setup', 'app-me', 'app-bootstrap', 'app-ai-meta', 'app-gateways', 'app-health', 'app-backup', 'app-export', 'app-audit', 'app-invoice-print', 'app-doc-download', 'app-doc-view', 'app-doc-vault', 'app-ticket-thread', 'app-notice-list', 'app-referral-list', 'app-collections-summary', 'app-payment-recon', 'app-tpl-list', 'app-tpl-get', 'app-email-tpl-list', 'app-email-tpl-get', 'app-email-preview', 'app-hando-list', 'app-hando-get', 'app-portal', 'app-portal-agreement', 'app-reminder-config', 'app-reminder-summary', 'app-renewal-list', 'app-meter-list', 'app-score-list', 'app-score-detail', 'app-vetting-report', 'app-settlement-report', 'app-premium-plans', 'app-premium-sub-list', 'app-gdpr-export', 'app-profile', 'app-settings-get', 'app-org-settings-get', 'app-utility-tariff-get', 'app-utility-bill-list', 'app-rent-config-get', 'app-moveout', 'app-premium-billing', 'app-insurance', 'app-maintenance', 'app-leads', 'app-statements', 'app-compliance', 'app-utility-summary', 'app-vendors', 'app-remit', 'app-onboarding', 'app-job-media', 'app-sla', 'app-kr-alert', 'app-kr-wa', 'app-analytics', 'app-legal', 'app-trust', 'app-land', 'app-nrb', 'app-concierge', 'app-smarthome', 'app-healthcheck', 'app-build', 'app-gate', 'app-firesafety', 'app-systems', 'app-staffwatch','app-samity', 'app-photo', 'app-tenant-me', 'host-tenant', 'app-theme', 'cms-read', 'plans', 'sitemap', 'blog-list', 'app-error-log', 'building-public'], true)) {
     json_out(['ok' => false, 'error' => 'POST required.'], 405);
 }
