@@ -241,7 +241,7 @@ img{max-width:100%}
 .blog-meta{font-size:11px;color:var(--text-mute);display:flex;gap:12px}
 
 /* ── Case studies ── */
-.case-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.case-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:22px}
 .case-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .2s;display:flex;flex-direction:column;gap:14px}
 .case-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
 .case-head{display:flex;gap:14px;align-items:center}
@@ -250,7 +250,7 @@ img{max-width:100%}
 .case-ico.orange{background:linear-gradient(135deg,#C96A12,#E67E22)}
 .case-head h3{font-size:17px;margin:0 0 3px}
 .case-deck{font-size:13.5px;color:var(--text-soft);margin:0}
-.case-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;padding:14px}
+.case-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;padding:14px}
 .case-stats div{text-align:center}
 .case-stats b{display:block;font-size:18px;font-weight:800;color:var(--primary)}
 .case-stats span{font-size:10.5px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.4px}
@@ -429,7 +429,8 @@ img{max-width:100%}
 /* ============================================================
    Footer redesign + nav fixes + dark theme text corrections
    ============================================================ */
-.footer-top{display:grid;grid-template-columns:1.2fr 1fr;gap:34px;padding-bottom:34px;border-bottom:1px solid rgba(255,255,255,.09);margin-bottom:34px}
+.footer-top{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:34px;padding-bottom:34px;border-bottom:1px solid rgba(255,255,255,.09);margin-bottom:34px}
+.footer-top>*{min-width:0}
 .footer-socials{display:flex;gap:9px;margin-top:16px}
 .footer-socials .soc{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .15s;text-decoration:none}
 .footer-socials .soc:hover{background:var(--grad);transform:translateY(-2px)}
@@ -445,7 +446,7 @@ img{max-width:100%}
 .footer-pay .pay-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:4px 12px;font-weight:700;font-size:11px;color:#C6D3E8}
 .footer-contact li{display:flex;align-items:center;gap:6px}
 .footer-made{color:#7EB3F5;font-weight:600}
-@media(max-width:860px){.footer-top{grid-template-columns:1fr}}
+@media(max-width:860px){.footer-top{grid-template-columns:minmax(0,1fr)}}
 
 /* ── Nav menu fixes ── */
 .nav-links{flex-wrap:nowrap}
@@ -545,7 +546,7 @@ img{max-width:100%}
 }
 
 /* ── V2: Calculators page ── */
-.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px}
 .calc-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px 24px;box-shadow:var(--shadow)}
 .calc-head{display:flex;gap:13px;align-items:flex-start;margin-bottom:18px}
 .calc-head .calc-ico{width:44px;height:44px;border-radius:12px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
@@ -743,3 +744,13 @@ img{max-width:100%}
 [data-theme="dark"] .shot-frame .shot-bar .url{background:#1A2433;color:#8FA3C0}
 [data-theme="dark"] .vlist .vi{background:rgba(47,128,237,.15);color:#7EB3F5}
 
+/* ── V3.69: small-phone navbar fit (must stay LAST to win the cascade) ── */
+@media(max-width:380px){
+  .navbar .container{padding:0 12px}
+  .nav-cta{gap:6px}
+  .nav-cta .icon-btn{padding:6px 8px}
+  .nav-cta .btn{font-size:12px;padding:8px 12px}
+  .nav-logo{font-size:16px;gap:7px}
+  .nav-logo .logo-mark{width:30px;height:30px;font-size:12px}
+  .nav-toggle{padding:4px;font-size:20px}
+}

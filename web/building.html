@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="/css/style.css?v=3.67">
+<link rel="stylesheet" href="/css/style.css?v=3.69">
 <link rel="stylesheet" href="/css/share.css?v=3.68">
 <style>
 /* ═══ SA1 v25: building public profile — QR-code page (bhara-style building profile) ═══ */
@@ -46,10 +46,12 @@
 .bp-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
 .bp-stat .n{font-size:22px;font-weight:800;color:var(--bp-accent)}
 .bp-stat .k{font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
-.bp-grid{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start;margin-bottom:26px}
+.bp-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start;margin-bottom:26px}
+.bp-grid>*{min-width:0}
 .bp-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:18px}
 .bp-panel h3{margin:0 0 14px;font-size:16px;display:flex;align-items:center;gap:8px}
 .bp-desc{font-size:13.5px;color:var(--text-soft);line-height:1.7;white-space:pre-line}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .bp-table{width:100%;border-collapse:collapse;font-size:13px}
 .bp-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border)}
 .bp-table td{padding:10px;border-bottom:1px solid var(--border)}
@@ -94,7 +96,7 @@
 .bp-map .leaflet-container{font-family:inherit}
 .bp-map-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--bp-accent);text-decoration:none}
 .bp-map-link:hover{text-decoration:underline}
-@media(max-width:860px){.bp-grid{grid-template-columns:1fr}.bp-hero{flex-direction:column}.bp-qr{width:100%}.bp-qr img,.bp-qr svg{margin:0 auto}.bp-photo img{height:220px}}
+@media(max-width:860px){.bp-grid{grid-template-columns:minmax(0,1fr)}.bp-hero{flex-direction:column}.bp-qr{width:100%}.bp-qr img,.bp-qr svg{margin:0 auto}.bp-photo img{height:220px}}
 /* ═══ PRINT — QR/public building profile (compact 2-page layout) ═══ */
 .bp-print-map-wrap{height:0;overflow:hidden}
 .bp-print-map{width:718px;height:280px;visibility:hidden;pointer-events:none;background:#eef2f7}
@@ -340,12 +342,12 @@
 <!-- Back to top -->
 <button class="btt-btn" aria-label="Back to top">↑</button>
 
-<script src="/i18n/i18n-dict.js?v=3.67"></script>
-<script src="/js/i18n.js?v=3.67"></script>
-<script src="/js/cms-hydrate.js?v=3.67"></script>
-<script src="/js/main.js?v=3.67"></script>
-<script src="/js/chat.js?v=3.67"></script>
-<script src="/js/qrcode.min.js?v=3.67"></script>
+<script src="/i18n/i18n-dict.js?v=3.69"></script>
+<script src="/js/i18n.js?v=3.69"></script>
+<script src="/js/cms-hydrate.js?v=3.69"></script>
+<script src="/js/main.js?v=3.69"></script>
+<script src="/js/chat.js?v=3.69"></script>
+<script src="/js/qrcode.min.js?v=3.69"></script>
 <script src="/js/share.js?v=3.68"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
