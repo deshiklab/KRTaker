@@ -5667,14 +5667,14 @@ function blog_article_html($p) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css?v=3.67">
-<!-- KRTaker analytics: replace G-XXXXXXXXXX with your GA4 Measurement ID (or swap for Plausible) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<link rel="stylesheet" href="/css/style.css?v=3.71">
+<!-- KRTaker analytics: Google Analytics 4 (G-C68G5Q03ZT) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C68G5Q03ZT"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-XXXXXXXXXX');
+gtag('config', 'G-C68G5Q03ZT');
 </script>
 </head>
 <body data-page="blog-__PAGE__">

@@ -81,7 +81,7 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 
 ### 3.1 Analytics & SEO
 - [x] Sitemap.xml exists — submit to Google Search Console (verify property: DNS TXT or HTML tag).
-- [ ] GA4: replace `G-XXXXXXXXXX` in ALL web/*.html (currently placeholder) with the real Measurement ID; configure events: signup, payment_completed, trial_started.
+- [x] GA4: real Measurement ID `G-C68G5Q03ZT` wired into ALL web/*.html + API blog template (v3.71). TODO: configure events (signup, payment_completed, trial_started) in GA4 console.
 - [ ] Search Console: submit sitemap, monitor indexing, fix the known blog slug 404s (`/blog/<slug>` route needs .htaccess rewrite — currently dormant) — decide: enable dynamic blog or keep static blog-*.html (recommend static for launch; fix 404s to avoid SEO bleed).
 - [x] IndexNow: key generated live + stored in platform_meta (`cms-ping-sitemap` admin action; live key `98d9653cfce08cc2928a42fe97b41546` — the old rig-mirror key `bb63…` was never in the LIVE DB, so the key file 404'd); `https://krtaker.com/<key>.txt` serves 200; 22 URLs submitted to api.indexnow.org → HTTP 200 (the old /ping 410s are gone).
 
@@ -159,7 +159,7 @@ Last updated: 2026-08 · Current live version: v3.66 / SW v74 · Branch: `supera
 ## 6. Immediate next actions (this week)
 
 1. [ ] Decide the merchant legal entity (BITSCOL vs new KRTaker entity) → start SSLCommerz KYC (longest lead time).
-2. [ ] Get real GA4 Measurement ID + Search Console verification → I'll swap `G-XXXXXXXXXX` everywhere + submit sitemap.
+2. [x] GA4 Measurement ID (`G-C68G5Q03ZT`) swapped in — DONE v3.71. [ ] Search Console verification → submit sitemap.
 3. [ ] Provide DeepSeek/OpenAI API key for the AI console.
 4. [ ] Pick an SMS provider (SSLCommerz SMS / DopeSMS) + provide creds → I'll wire OTP.
 5. [ ] Re-auth Google Drive rclone (paste the auth URL output) → backups go offsite.
