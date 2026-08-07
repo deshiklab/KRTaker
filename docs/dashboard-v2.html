@@ -622,8 +622,10 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
   .flyer-brand .logo-mark{width:34px;height:34px;font-size:14px;border-radius:10px;background:linear-gradient(135deg,#2F80ED,#1E5EB8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;box-shadow:none}
   .flyer-brand .fb-name{font-size:22px;font-weight:800;color:#2F80ED;letter-spacing:.2px}
   .flyer-brand .fb-tag{font-size:10px;color:#64748B;margin-top:1px;letter-spacing:.3px;text-transform:uppercase}
+  .flyer-avail{margin-left:auto;background:#2F80ED;color:#fff;font-size:15px;font-weight:800;padding:7px 16px;border-radius:999px;letter-spacing:.3px;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   /* ── body ── */
   .flyer-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4mm 0}
+  .flyer-tolet{font-size:64px;font-weight:900;line-height:1;color:#2F80ED;letter-spacing:6px;text-transform:uppercase;margin:0 0 3mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .flyer-title{font-size:40px;font-weight:800;line-height:1.18;margin:0 0 2mm;max-width:180mm}
   .flyer-sub{font-size:14px;color:#64748B;margin:0 0 8mm}
   .flyer-msg{font-size:17px;line-height:1.5;color:#1E293B;max-width:160mm;margin:0 0 7mm}
@@ -744,8 +746,10 @@ tbody tr.kr-empty td{text-align:center;padding:26px;color:var(--text-mute);font-
       <div class="fb-name">KRTaker</div>
       <div class="fb-tag">Key Responsibility Taker · Managed Buildings</div>
     </div>
+    <div class="flyer-avail" id="flyerAvail">From August</div>
   </div>
   <div class="flyer-body">
+    <div class="flyer-tolet">To-Let</div>
     <h1 class="flyer-title" id="flyerTitle"></h1>
     <div class="flyer-sub" id="flyerSub"></div>
     <p class="flyer-msg">🏠 <b>This property is available for rent.</b><br>Scan this QR code to see details / open the profile.</p>
@@ -10033,6 +10037,20 @@ function printBuildingFlyer(id){
   const url=(location.origin||'https://krtaker.com')+'/building/'+encodeURIComponent(id);
   const t=document.getElementById('flyerTitle'); if(t)t.textContent=p.name;
   const s=document.getElementById('flyerSub'); if(s)s.textContent=[p.type,p.jur,p.holding].filter(Boolean).join(' · ');
+  /* "From <Month>" badge — earliest upcoming lease start for this property,
+     otherwise the current month (units are available now). */
+  const av=document.getElementById('flyerAvail');
+  if(av){
+    const today=new Date(); today.setHours(0,0,0,0);
+    let from=null;
+    (DB.leases||[]).forEach(l=>{
+      const un=unitById(l.u); if(!un||un.p!==id) return;
+      const st=l.start?new Date(l.start+'T00:00:00'):null;
+      if(st&&!isNaN(st)&&st>=today&&(!from||st<from)) from=st;
+    });
+    if(!from) from=today;
+    av.textContent='From '+from.toLocaleString('en-US',{month:'long'});
+  }
   const n=document.getElementById('flyerNotes');
   if(n){
     const notes=[];
