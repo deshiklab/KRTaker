@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2F80ED">
+<title>User Guide &amp; Knowledge Base — KRTaker</title>
+<meta name="description" content="KRTaker knowledge base — step-by-step guides for every role: owners, managers, tenants, accountants, partners, legal, NRB investors and admins. Learn invoices, rent collection, maintenance, TDS, compliance and more.">
+<link rel="canonical" href="https://krtaker.com/docs.html">
+<meta property="og:title" content="User Guide &amp; Knowledge Base — KRTaker">
+<meta property="og:description" content="Step-by-step guides for every KRTaker role — owners, managers, tenants, accountants, partners, legal, NRB and admins.">
+<meta property="og:url" content="https://krtaker.com/docs.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KRTaker">
+<meta property="og:image" content="https://krtaker.com/assets/img/og-card.webp">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="bn_BD">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@krtaker">
+<meta name="twitter:title" content="User Guide &amp; Knowledge Base — KRTaker">
+<meta name="twitter:description" content="Step-by-step guides for every KRTaker role.">
+<meta name="twitter:image" content="https://krtaker.com/assets/img/og-card.webp">
+<link rel="icon" href="assets/img/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=3.67">
+<style>
+/* ═══ SA1 v25: knowledge base / wiki — per-role guides ═══ */
+:root{--kb-accent:#2F80ED}
+.kb-hero{margin:30px 0 8px;text-align:center}
+.kb-hero h1{font-size:30px;margin:0 0 8px;font-weight:800}
+.kb-hero p{color:var(--muted);font-size:14px;max-width:640px;margin:0 auto;line-height:1.65}
+.kb-search{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:12px 18px;max-width:520px;margin:18px auto 4px;transition:border-color .15s}
+.kb-search:focus-within{border-color:var(--kb-accent)}
+.kb-search input{border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:14px;width:100%}
+.kb-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 4px}
+.kb-tab{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text);font-family:inherit;transition:all .13s}
+.kb-tab:hover{border-color:var(--kb-accent);color:var(--kb-accent);transform:translateY(-1px)}
+.kb-tab.on{background:var(--kb-accent);border-color:var(--kb-accent);color:#fff}
+.kb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;margin:18px 0 10px}
+.kb-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;transition:border-color .13s,transform .13s,box-shadow .13s}
+.kb-card:hover{border-color:var(--kb-accent);transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.06)}
+.kb-card .kb-ic{width:42px;height:42px;border-radius:12px;background:var(--bg-alt);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
+.kb-card h3{margin:0 0 4px;font-size:15px;font-weight:800}
+.kb-card .kb-role{font-size:11px;font-weight:700;color:var(--kb-accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.kb-card .kb-body{font-size:12.5px;color:var(--text-soft);line-height:1.6}
+.kb-card .kb-steps{margin:10px 0 0;padding-left:18px;font-size:12.5px;color:var(--text-soft);line-height:1.65}
+.kb-card .kb-steps li{margin-bottom:5px}
+.kb-card .kb-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.kb-tag{font-size:10.5px;font-weight:600;background:var(--bg-alt);border:1px solid var(--border);border-radius:999px;padding:3px 9px;color:var(--muted)}
+.kb-empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.kb-empty .big{font-size:40px;margin-bottom:10px}
+.kb-faq{margin:26px 0}
+.kb-faq h2{font-size:20px;font-weight:800;margin:0 0 14px}
+.kb-faq details{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+.kb-faq summary{font-weight:700;font-size:14px;cursor:pointer}
+.kb-faq details p{font-size:13px;color:var(--text-soft);line-height:1.65;margin:10px 0 0}
+.kb-support{background:linear-gradient(135deg,#2F80ED,#1E6FD9);border-radius:16px;padding:24px;color:#fff;text-align:center;margin:26px 0}
+.kb-support h3{margin:0 0 6px;color:#fff;font-size:18px}
+.kb-support p{margin:0 0 14px;font-size:13px;opacity:.92}
+.kb-support .btn-white{background:#fff;color:#1E6FD9;border:0}
+@media(max-width:640px){.kb-grid{grid-template-columns:1fr}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"KRTaker User Guide & Knowledge Base","url":"https://krtaker.com/docs.html","description":"Step-by-step guides for every KRTaker role — owners, managers, tenants, accountants, partners, legal, NRB investors and admins.","isPartOf":{"@type":"WebSite","name":"KRTaker","url":"https://krtaker.com"}}</script>
+</head>
+<body data-page="docs">
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container">
+    <a class="nav-logo" href="index.html"><span class="logo-mark">KR</span> KRTaker</a>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <ul class="nav-links">
+      <li class="mega-li">
+        <a href="features.html" class="mega-trigger " data-i18n="nav.platform">Platform <span class="chev">▾</span></a>
+        <div class="mega-dropdown mega-wide mega-center">
+          <div class="mega-featured">
+            <h4 data-i18n="nav.mfPlatform">Everything a building needs</h4>
+            <p data-i18n="nav.mfPlatformSub">Nine modules working as one digital caretaker.</p>
+          </div>
+          <a href="features.html"><span class="mega-ico">🧾</span><span data-i18n="nav.features">Features</span></a>
+          <a href="how-it-works.html"><span class="mega-ico">🗺️</span><span data-i18n="nav.how">How it works</span></a>
+          <a href="legal-compliance.html"><span class="mega-ico">⚖️</span><span data-i18n="footer.legal">Legal &amp; Compliance</span></a>
+          <a href="features.html"><span class="mega-ico">🏦</span><span data-i18n="home.feat2t">Holding tax engine</span></a>
+          <a href="features.html"><span class="mega-ico">💳</span><span data-i18n="home.feat4t">bKash &amp; SSLCommerz</span></a>
+          <a href="features.html"><span class="mega-ico">📊</span><span data-i18n="home.feat9t">Reports that tell the truth</span></a>
+        </div>
+      </li>
+      <li class="mega-li">
+        <a href="for-owners.html" class="mega-trigger " data-i18n="nav.forYou">For you <span class="chev">▾</span></a>
+        <div class="mega-dropdown mega-wide mega-center">
+          <div class="mega-featured">
+            <h4 data-i18n="nav.mfForYou">One platform, nine roles</h4>
+            <p data-i18n="nav.mfForYouSub">From owner to field crew — everyone in the same system.</p>
+          </div>
+          <a href="for-owners.html"><span class="mega-ico">🏠</span><span data-i18n="footer.owners">Property Owners</span></a>
+          <a href="for-tenants.html"><span class="mega-ico">👤</span><span data-i18n="footer.tenants">Tenants</span></a>
+          <a href="for-partners.html"><span class="mega-ico">🛠️</span><span data-i18n="footer.partners">Service Partners</span></a>
+          <a href="for-nrb.html"><span class="mega-ico">🌍</span><span data-i18n="footer.nrb">NRB Investors</span></a>
+          <a href="register.html"><span class="mega-ico">📝</span><span data-i18n="footer.register">Register</span></a>
+          <a href="login.html"><span class="mega-ico">🔐</span><span data-i18n="footer.login">Log in</span></a>
+        </div>
+      </li>
+      <li class="mega-li">
+        <a href="blog.html" class="mega-trigger " data-i18n="nav.resources">Resources <span class="chev">▾</span></a>
+        <div class="mega-dropdown mega-center">
+          <div class="mega-featured">
+            <h4 data-i18n="nav.mfResources">Insights &amp; Blog</h4>
+            <p data-i18n="nav.mfResourcesSub">Guides on BD property law, taxes &amp; portfolio management.</p>
+          </div>
+          <a href="tools.html"><span class="mega-ico">🧮</span><span data-i18n="misc.calculators">Calculators</span></a>
+          <a href="docs.html" class="kb-nav-active"><span class="mega-ico">📖</span><span data-i18n="nav.docs">User Guide</span></a>
+          <a href="blog.html"><span class="mega-ico">📰</span><span data-i18n="footer.blog">Insights &amp; Blog</span></a>
+          <a href="case-studies.html"><span class="mega-ico">📈</span><span data-i18n="footer.caseStudies">Case studies</span></a>
+          <a href="faq.html"><span class="mega-ico">❓</span><span data-i18n="footer.faq">FAQ</span></a>
+          <a href="about.html"><span class="mega-ico">ℹ️</span><span data-i18n="footer.about">About us</span></a>
+          <a href="contact.html"><span class="mega-ico">📞</span><span data-i18n="footer.contact">Contact</span></a>
+        </div>
+      </li>
+      <li><a href="pricing.html" class="" data-i18n="nav.pricing">Pricing</a></li>
+      <li><a href="ai-caretaker.html" class="" data-i18n="nav.ai">AI Caretaker</a></li>
+      <li><a href="listings.html" class="" data-i18n="nav.listings">Listings</a></li>
+    </ul>
+    <div class="nav-cta">
+      <button class="icon-btn" data-lang-toggle aria-label="Language">বাং</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      <a href="login.html" class="btn btn-ghost nav-ghost" data-i18n="nav.login">Log in</a>
+      <a href="register.html" class="btn btn-primary nav-primary" data-i18n="nav.getStarted">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-body">
+  <div class="container">
+    <div class="kb-hero">
+      <h1>📖 User Guide &amp; Knowledge Base</h1>
+      <p>Everything you need to run KRTaker — step-by-step guides for every role in your building. Pick your role below or search for a topic.</p>
+      <div class="kb-search"><span style="opacity:.5">🔍</span><input id="kbQ" type="search" placeholder="Search guides — invoice, rent, TDS, maintenance, QR…"></div>
+    </div>
+    <div class="kb-tabs" id="kbTabs"></div>
+    <div class="kb-grid" id="kbGrid"></div>
+    <div class="kb-empty" id="kbEmpty" style="display:none"><div class="big">🔍</div><div style="font-weight:800;font-size:15px">No guides match your search.</div><div style="font-size:12.5px;margin-top:6px">Try another keyword or pick a role.</div></div>
+
+    <div class="kb-faq">
+      <h2>❓ Frequently asked questions</h2>
+      <details open><summary>How do I start my 14-day free trial?</summary><p>Go to <a href="register.html">Register</a>, create your account with your email, verify the OTP we send you, then log in to the dashboard. Your trial starts automatically — no card required.</p></details>
+      <details><summary>How do I add my first building?</summary><p>Log in → <b>Properties</b> → <b>＋ Add property</b>. Enter the name, type, city corporation and holding address. Then add units (flats/floors) under <b>Units</b>. Once published, your building gets a <b>QR / Public page</b> — print it for the lobby.</p></details>
+      <details><summary>How do I generate rent invoices and collect payments?</summary><p><b>Invoices</b> → <b>＋ Generate invoice</b> selects the month, lease and computes TDS automatically. Tenants pay via bKash/Nagad/bank — record the payment in <b>Payments</b> and a digitally-signed receipt is created instantly. You can email the invoice or receipt with one click.</p></details>
+      <details><summary>What does the AI caretaker (KR) do?</summary><p>KR reads your portfolio and answers questions in plain language — occupancy, rent roll, unpaid invoices, upcoming renewals, tax deadlines. Open the <b>🤖 AI Caretaker</b> module in the dashboard or use the chat widget.</p></details>
+      <details><summary>Can my tenants log in?</summary><p>Yes. Tenants get their own portal (via the <b>Portal</b> action on their row) — they can see their lease, pay rent online, view receipts and raise maintenance tickets without seeing any other data.</p></details>
+      <details><summary>How do I give my manager or accountant access?</summary><p>Superadmin/Owner → <b>Team</b> → invite by email. Each member gets a role (manager, accountant, service manager, legal…) and sees only the modules that role needs.</p></details>
+    </div>
+
+    <div class="kb-support">
+      <h3>Still stuck?</h3>
+      <p>Our team and the AI caretaker are available 24/7.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-white" href="contact.html">📧 Contact support</a>
+        <a class="btn btn-wa" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;border:0" href="https://wa.me/8801722759646" target="_blank" rel="noopener">💬 WhatsApp us</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="cta-section">
+  <div class="container">
+    <h2 data-i18n="cta.title">Ready to put your property on autopilot?</h2>
+    <p data-i18n="cta.sub">Start managing your property portfolio with KRTaker — free 14-day trial, no card required.</p>
+    <div class="cta-actions">
+      <a href="register.html" class="btn btn-white btn-lg" data-i18n="cta.btn">Start free trial</a>
+      <a href="contact.html" class="btn btn-outline btn-lg" data-i18n="shared.ctaBtn2">Talk to us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo"><span class="logo-mark">KR</span> KRTaker</div>
+        <p data-i18n="footer.blurb" data-cms="footer.section.tagline">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
+        <div class="footer-socials">
+          <a href="https://www.facebook.com/krtaker" class="soc" aria-label="Facebook" target="_blank" rel="noopener">f</a>
+          <a href="https://www.linkedin.com/company/krtaker" class="soc" aria-label="LinkedIn" target="_blank" rel="noopener">in</a>
+          <a href="https://x.com/krtaker" class="soc" aria-label="X (Twitter)" target="_blank" rel="noopener">𝕏</a>
+          <a href="https://www.youtube.com/@krtaker" class="soc" aria-label="YouTube" target="_blank" rel="noopener">▶</a>
+          <a href="https://wa.me/8801722759646" class="soc" aria-label="WhatsApp" target="_blank" rel="noopener">✆</a>
+        </div>
+      </div>
+      <div class="footer-news">
+        <h4 data-i18n="footer.newsTitle" data-cms="footer.news.title">Property insights, in Bengali &amp; English</h4>
+        <p data-i18n="footer.newsSub" data-cms="footer.news.sub">Holding tax, TDS, PRCA updates and product news — once a month, no spam.</p>
+        <form class="news-form" id="newsletterForm" novalidate>
+          <input type="email" id="newsEmail" data-i18n-ph="footer.newsPh" placeholder="you@example.com" required data-cms-ph="footer.news.ph">
+          <button type="submit" data-i18n="footer.newsBtn" data-cms="footer.news.btn">Subscribe</button>
+        </form>
+        <div class="footer-pay">
+          <span data-cms="footer.pay.label">Pays with</span>
+          <span class="pay-chip">bKash</span>
+          <span class="pay-chip">Nagad</span>
+          <span class="pay-chip">SSLCommerz</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <h4 data-i18n="footer.p1" data-cms="footer.cols.c1">Platform</h4>
+        <ul>
+          <li><a href="features.html" data-i18n="footer.features">Features</a></li>
+          <li><a href="how-it-works.html" data-i18n="footer.how">How it works</a></li>
+          <li><a href="pricing.html" data-i18n="footer.pricing">Pricing</a></li>
+          <li><a href="register.html" data-i18n="footer.register">Register</a></li>
+          <li><a href="login.html" data-i18n="footer.login">Log in</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="footer.p2" data-cms="footer.cols.c2">For you</h4>
+        <ul>
+          <li><a href="for-owners.html" data-i18n="footer.owners">Property Owners</a></li>
+          <li><a href="for-tenants.html" data-i18n="footer.tenants">Tenants</a></li>
+          <li><a href="for-partners.html" data-i18n="footer.partners">Service Partners</a></li>
+          <li><a href="for-nrb.html" data-i18n="footer.nrb">NRB Investors</a></li>
+          <li><a href="legal-compliance.html" data-i18n="footer.legal">Legal &amp; Compliance</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="footer.p3" data-cms="footer.cols.c3">Company</h4>
+        <ul>
+          <li><a href="about.html" data-i18n="footer.about">About us</a></li>
+          <li><a href="blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
+          <li><a href="docs.html" data-i18n="footer.docs">📖 User Guide</a></li>
+          <li><a href="case-studies.html" data-i18n="footer.caseStudies">Case studies</a></li>
+          <li><a href="faq.html" data-i18n="footer.faq">FAQ</a></li>
+          <li><a href="contact.html" data-i18n="footer.contact">Contact</a></li>
+          <li><a href="ai-caretaker.html" data-i18n="footer.ai">AI Caretaker</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="footer.p4" data-cms="footer.cols.c4">Get in touch</h4>
+        <ul class="footer-contact">
+          <li data-i18n="footer.c1" data-cms="footer.contact.c1">📧 hello@krtaker.com</li>
+          <li data-i18n="footer.c2" data-cms="footer.contact.c2">📞 +880 1712-000000</li>
+          <li data-i18n="footer.c3" data-cms="footer.contact.c3">📍 Dhaka, Bangladesh</li>
+          <li data-i18n="footer.c4" data-cms="footer.contact.c4">🕐 24/7 AI caretaker online</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-i18n="footer.rights">© 2026 KRTaker. All rights reserved.</span>
+      <span class="footer-made" data-i18n="footer.madeIn" data-cms="footer.bottom.made">Made in Bangladesh 🇧🇩</span>
+      <span><a href="terms.html" data-i18n="footer.terms">Terms</a> · <a href="privacy.html" data-i18n="footer.privacy">Privacy</a> · <a href="contact.html" data-i18n="footer.support">Support</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile sticky CTA -->
+<div class="sticky-cta">
+  <a href="register.html" data-i18n="shared.stickyCta" data-cms="home.sticky.cta">Start free trial — 14 days, no card</a>
+</div>
+<!-- Back to top -->
+<button class="btt-btn" aria-label="Back to top">↑</button>
+
+<script src="i18n/i18n-dict.js?v=3.67"></script>
+<script src="js/i18n.js?v=3.67"></script>
+<script src="js/cms-hydrate.js?v=3.67"></script>
+<script src="js/main.js?v=3.67"></script>
+<script src="js/chat.js?v=3.67"></script>
+<script>
+/* ═══ SA1 v25: knowledge base renderer — per-role guides with search + tabs ═══ */
+(function(){
+  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const $=id=>document.getElementById(id);
+  const ROLES=[
+    {id:'owner',icon:'🏠',label:'Owner'},
+    {id:'manager',icon:'🧑‍🔧',label:'Manager'},
+    {id:'tenant',icon:'👤',label:'Tenant'},
+    {id:'accountant',icon:'🧾',label:'Accountant'},
+    {id:'partner',icon:'🛠️',label:'Partner'},
+    {id:'svc',icon:'✅',label:'Service QC'},
+    {id:'legal',icon:'⚖️',label:'Legal'},
+    {id:'nrb',icon:'🌍',label:'NRB'},
+    {id:'admin',icon:'👑',label:'Superadmin'}
+  ];
+  const GUIDES=[
+    /* ── Owner ── */
+    {r:'owner',ic:'🏢',t:'Add your first building',body:'Start with one property, then scale to a full portfolio.',steps:['Log in → Properties → ＋ Add property','Fill name, type (Flat/Commercial/Plot/Industrial), city corporation & holding address','Add units under Units → ＋ Add unit (floor, size, rent)','Toggle published on to create the public QR profile page'],tags:['properties','onboarding','QR']},
+    {r:'owner',ic:'🧾',t:'Generate invoices & collect rent',body:'Monthly invoices with TDS computed automatically under Bangladeshi law.',steps:['Invoices → ＋ Generate invoice (pick month)','TDS is auto-computed for corporate tenants','Share the invoice by email or WhatsApp','Record the payment in Payments — receipt is auto-signed'],tags:['invoice','tds','rent','payment']},
+    {r:'owner',ic:'📱',t:'Building QR & public page',body:'Give every building a public profile that tenants can scan in the lobby.',steps:['Properties → 📱 QR button on a building card','Copy the link or print the QR','Visitors see floor view, rents, amenities & terms','Enquiries land directly on WhatsApp'],tags:['qr','building','public','marketing']},
+    {r:'owner',ic:'📊',t:'Read your reports like a pro',body:'Rent roll, occupancy, unpaid invoices, capital gains — one calm screen.',steps:['Dashboard → stat cards summarise the portfolio','Reports → export rent roll / statements to CSV','Taxes → holding tax schedule + TDS ledger','AI caretaker can answer any question about the numbers'],tags:['reports','analytics','dashboard']},
+    {r:'owner',ic:'🔑',t:'Onboard a new tenant',body:'From lease to keys — the full digital handover.',steps:['Tenants → ＋ Add tenant (name, NID, phone)','Leases → ＋ New lease (unit, term, rent, advance)','Print the agreement & get Sub-Registry registration on track','Handover → checklist with photos + move-out wizard at the end'],tags:['tenant','lease','handover']},
+    {r:'owner',ic:'🔧',t:'Run maintenance without chasing vendors',body:'Tenant reports → assign vendor → QC → paid. Tracked end to end.',steps:['Maintenance → Report issue (category, priority)','Assign a vetted partner from your list','Approve quotes and QC after the job','Costs flow into your statements automatically'],tags:['maintenance','vendor','ticket']},
+    /* ── Manager ── */
+    {r:'manager',ic:'🗂️',t:'Your day-to-day board',body:'Assigned buildings, open tickets and today’s focus in one place.',steps:['Dashboard → Assigned Properties shows only your buildings','Today’s focus lists open tickets to resolve','Occupancy by building tracks leasing progress','KR suggestions flag risks like long-vacant units'],tags:['dashboard','daily','tickets']},
+    {r:'manager',ic:'📟',t:'Meter readings & utility billing',body:'Water/gas/electricity metered per unit, billed automatically.',steps:['Units → 📟 Meter readings → enter per-unit readings','Utility billing drawer generates the split','Tariffs are saved per building (service charge %)','Tenants see utility bills in their portal'],tags:['utility','meter','billing']},
+    {r:'manager',ic:'🚪',t:'Gate watch & visitor control',body:'Who enters and leaves — with a watchlist for NRB owners.',steps:['Gate Watch → check in visitors/vehicles','Daily gate register is saved automatically','Watchlist alerts for flagged individuals','Export the register when needed'],tags:['gate','security','visitor']},
+    {r:'manager',ic:'📅',t:'Track renewals before they expire',body:'Never miss a lease end or escalation window.',steps:['Leases → Renewal requests panel','Review offered terms (rent + escalation)','Send the renewal proposal to the tenant','Stamp the new term on acceptance'],tags:['lease','renewal','escalation']},
+    /* ── Tenant ── */
+    {r:'tenant',ic:'🏠',t:'Your tenant portal',body:'Everything about your home — lease, payments and tickets — in one calm screen.',steps:['Owner shares your portal access (Portal action)','See your lease, rent and due date','Pay rent online via bKash/Nagad/gateway','Download receipts instantly'],tags:['portal','lease','payment']},
+    {r:'tenant',ic:'🔧',t:'Report an issue',body:'Raise a maintenance ticket in seconds and track it to done.',steps:['Maintenance → Report issue','Pick category (plumbing, electrical…) + photo','Watch the status: Open → Assigned → Resolved','Get updates in the ticket thread'],tags:['maintenance','ticket']},
+    {r:'tenant',ic:'💬',t:'Talk to your owner',body:'Direct chat with the building manager — no phone tag.',steps:['Open the chat from your portal','Messages go to the owner/manager dashboard','Attach photos of issues or documents','Threads stay per-tenant (private)'],tags:['chat','communication']},
+    /* ── Accountant ── */
+    {r:'accountant',ic:'💳',t:'Reconcile payments',body:'bKash, Nagad, bank and cheque — matched automatically.',steps:['Payments → Record payment with method + reference','Reconciliation view matches gateway/bank entries','Flag discrepancies for review','Each payment mints a digitally-signed receipt'],tags:['payment','recon','receipt']},
+    {r:'accountant',ic:'🧾',t:'TDS & tax bookkeeping',body:'TDS withheld, holding tax schedule and statements — all computed.',steps:['Taxes → TDS ledger per invoice','Holding tax schedule with due dates','Statements → monthly income/expense export to CSV','Capital gains estimator for disposals'],tags:['tds','tax','statements','csv']},
+    {r:'accountant',ic:'📎',t:'Print & email official documents',body:'Invoices, receipts, statements — print-ready and emailable.',steps:['Invoices → 🖨 Print/PDF per invoice','Receipts → print rent or advance receipt','Email invoice/receipt with one click','Templates can be customised under Templates'],tags:['invoice','receipt','pdf','email']},
+    /* ── Partner ── */
+    {r:'partner',ic:'🏗️',t:'Get jobs & quotes',body:'Work orders matched to your trade, with QC feedback built in.',steps:['Partner Works → My jobs shows your queue','Submit a quote with photos','After the job, QC checklist + approval','Approved work → payout summary'],tags:['jobs','quote','payout']},
+    {r:'partner',ic:'📋',t:'Pass QC every time',body:'Know exactly what the site inspection checks.',steps:['Material & workmanship photos','Safety compliance (BFSCD)','Invoice & VAT challan','Site cleanliness — mark each item done'],tags:['qc','compliance']},
+    /* ── Service QC ── */
+    {r:'svc',ic:'✅',t:'Manage the QC queue',body:'Approve or reject vendor work against SLAs.',steps:['QC & Service Management → queue of completed jobs','Check photos + cost vs quote','Approve → partner gets paid; Reject → rework','SLA monitor flags overdue jobs in red'],tags:['qc','sla','vendor']},
+    {r:'svc',ic:'⏱️',t:'Enforce SLAs',body:'Response and resolve SLAs per priority — configurable.',steps:['SLA config under Maintenance (per priority)','Monitor board shows on-track / at-risk / breached','Escalate breached tickets automatically','Partner ratings follow SLA history'],tags:['sla','escalation']},
+    /* ── Legal ── */
+    {r:'legal',ic:'📜',t:'Registrations & compliance calendar',body:'Lease registration, PRCA cases, holding tax — tracked by the legal engine.',steps:['Legal & Compliance → registration status per lease','Compliance calendar of deadlines (TPA, PRCA, IT Act)','Case tracker for disputes with documents','Trust engine verifies tenants (NID/vetting)'],tags:['registration','compliance','cases']},
+    {r:'legal',ic:'🚪',t:'Lawful eviction workflow',body:'Grounds, notice and the paperwork — built for PRCA 1991.',steps:['Open the eviction checklist on the lease','30-day notice generated with the right grounds','Document service of notice with photos','Move-out wizard closes the tenancy lawfully'],tags:['eviction','notice','prca']},
+    /* ── NRB ── */
+    {r:'nrb',ic:'🌐',t:'Manage from abroad',body:'Your whole portfolio, monitored from anywhere in the world.',steps:['NRB Hub → portfolio at a glance','Remittances → track inward remittance docs','Gate Watch + CCTV notes for site security','Land Guard monitors land documents & alerts'],tags:['nrb','remittance','monitoring']},
+    {r:'nrb',ic:'💸',t:'Rent collection & remittance',body:'See collections land and documents for sending money home.',steps:['Payments → rent collected into your account','Remittance module stores the export/import papers','Statements exportable for your accountant','Escalations are handled by the on-ground manager'],tags:['remittance','payments','export']},
+    /* ── Superadmin ── */
+    {r:'admin',ic:'👑',t:'Manage users, plans & settings',body:'The control panel for the whole KRTaker account.',steps:['Superadmin panel → overview of subscribers & MRR','Users → roles, seats and permissions','Plans → package catalog & feature limits','Settings → org branding, SMTP, payment gateways'],tags:['admin','plans','users']},
+    {r:'admin',ic:'🛡️',t:'Security & backups',body:'Keep the account safe and restorable.',steps:['Audit log → every action is recorded','Backups → download/restore database snapshots','API keys for web/mobile/tenant integrations','Gateways → payment credentials & recon'],tags:['security','backup','audit']}
+  ];
+  let cur='all', q='';
+  function render(){
+    const tabs=$('kbTabs'), grid=$('kbGrid'), empty=$('kbEmpty');
+    tabs.innerHTML=[{id:'all',icon:'✨',label:'All roles'}].concat(ROLES).map(r=>`<button class="kb-tab ${cur===r.id?'on':''}" onclick="kbRole('${r.id}')">${r.icon} ${esc(r.label)}</button>`).join('');
+    const needle=q.toLowerCase();
+    const list=GUIDES.filter(g=>(cur==='all'||g.r===cur)&&(!needle||(g.t+' '+g.body+' '+g.tags.join(' ')+' '+g.r).toLowerCase().includes(needle)));
+    const roleOf=id=>ROLES.find(r=>r.id===id);
+    grid.innerHTML=list.map(g=>{const rl=roleOf(g.r);return `<div class="kb-card">
+      <div class="kb-ic">${g.ic}</div>
+      <div class="kb-role">${rl?rl.icon+' '+esc(rl.label):''}</div>
+      <h3>${esc(g.t)}</h3>
+      <div class="kb-body">${esc(g.body)}</div>
+      <ol class="kb-steps">${g.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
+      <div class="kb-tags">${g.tags.map(t=>`<span class="kb-tag">#${esc(t)}</span>`).join('')}</div>
+    </div>`;}).join('');
+    empty.style.display=list.length?'none':'block';
+  }
+  window.kbRole=id=>{cur=id;render();};
+  const $q=$('kbQ');
+  let dt=null;
+  $q.addEventListener('input',e=>{clearTimeout(dt);dt=setTimeout(()=>{q=e.target.value.trim();render();},200);});
+  render();
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+</script>
+</body>
+</html>

@@ -24,6 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="css/style.css?v=3.67">
 <style>
 /* ═══ SA1 v24: listings v3 — photo-first cards, filter sidebar, favorites, featured strip, detail modal ═══ */
@@ -161,6 +162,10 @@
 .ls-m-units{display:flex;flex-direction:column;gap:9px}
 .ls-m-unit{border:1px solid var(--border);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 /* ── similar listings + move-in (SA1 v25) ── */
+.ls-m-map{height:220px;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px;z-index:0;position:relative}
+.ls-m-map .leaflet-container{font-family:inherit}
+.ls-m-maplink{display:inline-flex;align-items:center;gap:6px;margin:2px 0 12px;font-size:12.5px;font-weight:700;color:var(--ls-accent);text-decoration:none}
+.ls-m-maplink:hover{text-decoration:underline}
 .ls-m-sim{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px}
 .ls-m-sim-card{border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color .13s,transform .13s}
 .ls-m-sim-card:hover{border-color:var(--ls-accent);transform:translateY(-1px)}
@@ -292,6 +297,7 @@
             <p data-i18n="nav.mfResourcesSub">Guides on BD property law, taxes &amp; portfolio management.</p>
           </div>
           <a href="tools.html"><span class="mega-ico">🧮</span><span data-i18n="misc.calculators">Calculators</span></a>
+          <a href="docs.html"><span class="mega-ico">📖</span><span data-i18n="nav.docs">User Guide</span></a>
           <a href="blog.html"><span class="mega-ico">📰</span><span data-i18n="footer.blog">Insights &amp; Blog</span></a>
           <a href="case-studies.html"><span class="mega-ico">📈</span><span data-i18n="footer.caseStudies">Case studies</span></a>
           <a href="faq.html"><span class="mega-ico">❓</span><span data-i18n="footer.faq">FAQ</span></a>
@@ -466,6 +472,7 @@
           <li><a href="about.html" data-i18n="footer.about">About us</a></li>
           <li><a href="blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
           <li><a href="case-studies.html" data-i18n="footer.caseStudies">Case studies</a></li>
+          <li><a href="docs.html" data-i18n="footer.docs">📖 User Guide</a></li>
           <li><a href="faq.html" data-i18n="footer.faq">FAQ</a></li>
           <li><a href="contact.html" data-i18n="footer.contact">Contact</a></li>
           <li><a href="ai-caretaker.html" data-i18n="footer.ai">AI Caretaker</a></li>
@@ -509,6 +516,7 @@
 <script src="js/cms-hydrate.js?v=3.67"></script>
 <script src="js/main.js?v=3.67"></script>
 <script src="js/chat.js?v=3.67"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* SA1 v24: listings v3 — photo-first cards, filter sidebar (price/size/beds/furnishing/availability),
    favorites, featured strip, detail modal, URL state, load-more, grid/list (bilingual) */
@@ -788,6 +796,7 @@
           ${p.total_units?`<div class="ls-m-spec"><div class="k">${T('Total units','মোট ইউনিট')}</div><div class="v">${p.total_units}</div></div>`:''}
         </div>
         ${p.description?`<div class="ls-m-h">📝 ${T('Description','বিবরণ')}</div><div class="ls-m-desc">${esc(p.description)}</div>`:''}
+        ${(p.lat&&p.lng)?`<div class="ls-m-h">📍 ${T('Location','অবস্থান')}</div><div id="lsMMap" class="ls-m-map"></div><a class="ls-m-maplink" href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" rel="noopener">🗺 ${T('Open in Google Maps','গুগল ম্যাপে খুলুন')} →</a>`:''}
         ${(p.amenities||[]).length?`<div class="ls-m-h">✨ ${T('Amenities','সুবিধাসমূহ')}</div><div class="ls-m-amens">${amens}</div>`:''}
         ${moveIn?`<div class="ls-m-movein"><span class="k">💵 ${T('Estimated move-in cost','আনুমানিক মুভ-ইন খরচ')} <span style="text-transform:none;font-weight:500">(1st month + ${terms.advance_months} ${T('months deposit','মাসের জামানত')})</span></span><span class="v">${fmt(moveIn)}</span></div>`:''}
         <div class="ls-m-h">🔑 ${T('Available units','উপলব্ধ ইউনিট')} (${vu.length})</div>
@@ -809,6 +818,20 @@
       </div>`;
     $('lsModal').classList.add('open');
     document.body.style.overflow='hidden';
+    if(p.lat&&p.lng)initModalMap(p);
+  }
+  let _lsMap=null;
+  function initModalMap(p){
+    const el=document.getElementById('lsMMap');
+    if(!el)return;
+    try{
+      if(_lsMap){_lsMap.remove();_lsMap=null;}
+      _lsMap=L.map(el,{scrollWheelZoom:false}).setView([p.lat,p.lng],14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(_lsMap);
+      const ic=L.icon({iconUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png',shadowUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png',iconSize:[25,41],iconAnchor:[12,41]});
+      L.marker([p.lat,p.lng],{icon:ic}).addTo(_lsMap).bindPopup('<b>'+esc(p.name)+'</b><br>'+esc(p.jur));
+      setTimeout(()=>_lsMap&&_lsMap.invalidateSize(),80);
+    }catch(e){console.warn('map failed',e);}
   }
   function closeDetail(){$('lsModal').classList.remove('open');document.body.style.overflow=''}
   function shareProp(id){

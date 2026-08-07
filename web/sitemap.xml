@@ -175,6 +175,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://krtaker.com/docs.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://krtaker.com/area/dhaka-north</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>weekly</changefreq>

@@ -24,6 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="css/style.css?v=3.67">
 <style>
 /* ═══ SA1 v25: area landing pages — jurisdiction SEO pages (bhara-style area browse) ═══ */
@@ -58,6 +59,9 @@
 .ar-load{text-align:center;padding:70px 20px;color:var(--muted)}
 .spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--ar-accent);border-radius:50%;animation:krspin 1s linear infinite}
 @keyframes krspin{to{transform:rotate(360deg)}}
+/* ── map (SA1 v25) ── */
+.ar-map{height:320px;border-radius:16px;overflow:hidden;border:1px solid var(--border);margin:14px 0 4px;z-index:0;position:relative}
+.ar-map .leaflet-container{font-family:inherit}
 </style>
 <script type="application/ld+json" id="arSchema">{}</script>
 </head>
@@ -106,6 +110,7 @@
             <p data-i18n="nav.mfResourcesSub">Guides on BD property law, taxes &amp; portfolio management.</p>
           </div>
           <a href="/tools.html"><span class="mega-ico">🧮</span><span data-i18n="misc.calculators">Calculators</span></a>
+          <a href="docs.html"><span class="mega-ico">📖</span><span data-i18n="nav.docs">User Guide</span></a>
           <a href="/blog.html"><span class="mega-ico">📰</span><span data-i18n="footer.blog">Insights &amp; Blog</span></a>
           <a href="/case-studies.html"><span class="mega-ico">📈</span><span data-i18n="footer.caseStudies">Case studies</span></a>
           <a href="/faq.html"><span class="mega-ico">❓</span><span data-i18n="footer.faq">FAQ</span></a>
@@ -201,6 +206,7 @@
           <li><a href="/about.html" data-i18n="footer.about">About us</a></li>
           <li><a href="/blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
           <li><a href="/case-studies.html" data-i18n="footer.caseStudies">Case studies</a></li>
+          <li><a href="docs.html" data-i18n="footer.docs">📖 User Guide</a></li>
           <li><a href="/faq.html" data-i18n="footer.faq">FAQ</a></li>
           <li><a href="/contact.html" data-i18n="footer.contact">Contact</a></li>
           <li><a href="/ai-caretaker.html" data-i18n="footer.ai">AI Caretaker</a></li>
@@ -236,6 +242,7 @@
 <script src="/js/cms-hydrate.js?v=3.67"></script>
 <script src="/js/main.js?v=3.67"></script>
 <script src="/js/chat.js?v=3.67"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* ═══ SA1 v25: area landing renderer ═══ */
 (function(){
@@ -295,10 +302,32 @@
       </div>
       <div class="ar-chips">${chips}</div>
       <div class="ar-count">📌 ${list.length} ${list.length===1?'property':'properties'} in ${esc(CUR)}${vac.length?' · '+vac.length+' with vacancies':''}</div>
+      ${list.some(p=>p.lat&&p.lng)?`<div id="arMap" class="ar-map"></div>`:''}
       <div class="ar-grid">${cards||'<div class="ar-empty">No properties here yet — <a href="/listings.html">browse all</a>.</div>'}</div>`;
     injectSchema(CUR,list);
+    initAreaMap(list);
   }
   function T(en,bn){return (window.__KR_LANG==='bn'?bn:en);}
+
+  let _arMap=null;
+  function initAreaMap(list){
+    const el=document.getElementById('arMap');
+    const pts=list.filter(p=>p.lat&&p.lng);
+    if(!el||!pts.length)return;
+    try{
+      if(_arMap){_arMap.remove();_arMap=null;}
+      const lat=pts.reduce((s,p)=>s+p.lat,0)/pts.length;
+      const lng=pts.reduce((s,p)=>s+p.lng,0)/pts.length;
+      _arMap=L.map(el,{scrollWheelZoom:false}).setView([lat,lng],pts.length>1?12:14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(_arMap);
+      const ic=L.icon({iconUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png',shadowUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png',iconSize:[25,41],iconAnchor:[12,41]});
+      pts.forEach(p=>{
+        const min=p.vacant_units&&p.vacant_units.length?Math.min(...p.vacant_units.map(u=>u.rent||0)):0;
+        L.marker([p.lat,p.lng],{icon:ic}).addTo(_arMap).bindPopup('<b>'+esc(p.name)+'</b><br>'+esc(p.jur)+(min?'<br>From ৳'+min.toLocaleString('en-IN')+'/mo':'')+'<br><a href="/building/'+encodeURIComponent(p.id)+'" target="_blank">View profile →</a>');
+      });
+      setTimeout(()=>_arMap&&_arMap.invalidateSize(),80);
+    }catch(e){console.warn('map failed',e);}
+  }
 
   function injectSchema(jur,list){
     const items=list.slice(0,8).map(p=>({'@type':'ListItem','position':list.indexOf(p)+1,'name':p.name,'url':'https://krtaker.com/building/'+encodeURIComponent(p.id)}));
