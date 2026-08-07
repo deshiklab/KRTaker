@@ -12,14 +12,14 @@
 <meta property="og:url" content="https://krtaker.com/area/dhaka-north">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KRTaker">
-<meta property="og:image" content="https://krtaker.com/assets/img/og-card.webp">
+<meta property="og:image" content="https://krtaker.com/assets/img/og-card.png">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="bn_BD">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@krtaker">
 <meta name="twitter:title" content="Rentals in Dhaka North — KRTaker">
 <meta name="twitter:description" content="Verified rental properties in Dhaka North — direct enquiry, no broker fee.">
-<meta name="twitter:image" content="https://krtaker.com/assets/img/og-card.webp">
+<meta name="twitter:image" content="https://krtaker.com/assets/img/og-card.png">
 <link rel="icon" href="/assets/img/favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -269,6 +269,11 @@
       .catch(e=>{if(attempt<3)setTimeout(()=>load(attempt+1),600*attempt);else{ $('arLoad').style.display='none';$('arErr').style.display='block'; }});
   }
 
+  function setOG(t,d,u){
+    const s=(k,c)=>{let m=document.querySelector('meta[property="'+k+'"]');if(!m){m=document.createElement('meta');m.setAttribute('property',k);document.head.appendChild(m);}m.setAttribute('content',c);};
+    s('og:title',t);s('og:description',d);s('og:url',u);s('og:image','https://krtaker.com/assets/img/og-card.png');s('og:type','website');
+  }
+
   function render(){
     CUR=jurFromParam()||'Dhaka North';
     const jurs=[...new Set(ALL.map(p=>p.jur))].sort();
@@ -278,6 +283,7 @@
     document.title='Rentals in '+CUR+' — KRTaker';
     const canon=document.querySelector('link[rel="canonical"]');if(canon)canon.setAttribute('href',cleanUrl());
     const meta=document.querySelector('meta[name="description"]');if(meta)meta.setAttribute('content','Browse verified rental properties in '+CUR+' managed by KRTaker — flats, commercial floors and industrial sheds. Direct enquiry, no broker fee.');
+    setOG('Rentals in '+CUR+' — KRTaker', 'Browse verified rental properties in '+CUR+' managed by KRTaker — '+list.length+' buildings, direct enquiry, no broker fee.', cleanUrl());
     const chips=jurs.map(j=>`<a class="ar-chip ${j===CUR?'on':''}" href="/area/${slugOf(j)}">${esc(j)} <span style="opacity:.65">(${ALL.filter(p=>p.jur===j).length})</span></a>`).join('');
     const cards=list.map(p=>{
       const vu=p.vacant_units||[];

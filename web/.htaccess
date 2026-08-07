@@ -7,6 +7,9 @@
 # Disable directory listing everywhere (security)
 Options -Indexes
 
+# Custom 404 (branded page)
+ErrorDocument 404 /404.html
+
 # ── Security headers ──────────────────────────────────────────────────────
 <IfModule mod_headers.c>
   # HTTPS-only (site already forces HTTPS via rewrite below)
@@ -15,6 +18,14 @@ Options -Indexes
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set X-Permitted-Cross-Domain-Policies "none"
+  Header always set Cross-Origin-Resource-Policy "same-origin"
+  # HTML pages get a site CSP ('unsafe-inline' needed by inline scripts/styles;
+  # blob: for the dashboard doc viewer). Exclude /api/* — PHP sets its OWN
+  # stricter CSP (default-src 'none') and Apache "always set" would override it.
+  <If "%{REQUEST_URI} !~ m#^/api#">
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https:; frame-src 'self' blob: https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+  </If>
 </IfModule>
 
 # ── Caching ───────────────────────────────────────────────────────────────
@@ -56,8 +67,16 @@ Options -Indexes
   RewriteCond %{HTTPS} !=on
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
+  # Pretty single-segment URLs: /pricing -> /pricing.html (only if it exists)
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}\.html -f
+  RewriteRule ^([^/.]+)/?$ $1.html [L]
+
   RewriteRule ^api/(.*)$ api/index.php [L,QSA]
   RewriteRule ^blog/([a-z0-9-]+)/?$ api/index.php [L,QSA]
   RewriteRule ^building/([A-Za-z0-9_-]+)/?$ building.html?pid=$1 [L,QSA]
   RewriteRule ^area/([a-z0-9-]+)/?$ area.html?jur=$1 [L,QSA]
+
+  # IndexNow key file: /<32-hex>.txt -> API (Bing/Seznam site verification)
+  RewriteRule ^([0-9a-f]{32})\.txt$ api/index.php [L,QSA]
 </IfModule>
