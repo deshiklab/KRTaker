@@ -1,4 +1,24 @@
 /* KRTaker landing — main.js (nav, theme, reveal, forms) */
+/* ── Origin-aware rewrite (staging mirror support) ──
+   The repo hardcodes https://krtaker.com in canonical/OG meta + footer links.
+   When served from a different origin (test.krtaker.com), rewrite them so the
+   test site never points at the live domain. On krtaker.com this is a no-op. */
+(function () {
+  try {
+    const LIVE = 'https://krtaker.com';
+    const here = location.origin;
+    if (here === LIVE) return; // live site — keep canonical URLs as-is
+    const swap = (v) => (v && v.indexOf(LIVE) === 0) ? here + v.slice(LIVE.length) : v;
+    const fix = () => {
+      document.querySelectorAll('link[rel="canonical"], meta[property^="og:"], meta[property^="twitter:"], meta[name^="twitter:"]').forEach(m => {
+        ['href', 'content'].forEach(a => { if (m.hasAttribute(a)) m.setAttribute(a, swap(m.getAttribute(a))); });
+      });
+      document.querySelectorAll('a[href^="' + LIVE + '"]').forEach(a => { a.href = swap(a.getAttribute('href')); });
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fix);
+    else fix();
+  } catch (e) {}
+})();
 document.addEventListener('DOMContentLoaded', () => {
   // Mobile nav toggle
   const t = document.querySelector('.nav-toggle');
@@ -149,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('krt_cookie_ok')) return;
     const b = document.createElement('div');
     b.className = 'cookie-bar';
-    b.innerHTML = '<span>We use cookies to improve your experience and measure traffic. <a href="privacy.html">Privacy policy</a></span><button class="cookie-ok">Got it</button>';
+    b.innerHTML = '<span>We use cookies to improve your experience and measure traffic. <a href="/privacy.html">Privacy policy</a></span><button class="cookie-ok">Got it</button>';
     document.body.appendChild(b);
     b.querySelector('.cookie-ok').addEventListener('click', function () {
       localStorage.setItem('krt_cookie_ok', '1');

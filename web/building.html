@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/style.css?v=3.67">
+<link rel="stylesheet" href="/css/style.css?v=3.67">
 <style>
 /* ═══ SA1 v25: building public profile — QR-code page (bhara-style building profile) ═══ */
 :root{--bp-accent:#2F80ED}
@@ -71,6 +71,8 @@
 .bp-cta .btn-wa:hover{filter:brightness(1.06)}
 .bp-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bp-actions .btn{padding:9px 16px;font-size:13px}
+/* ── Print-only header/footer (hidden on screen) ── */
+.bp-print-hdr,.bp-print-ftr{display:none}
 .bp-sim{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .bp-sim-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;cursor:pointer;transition:border-color .13s,transform .13s}
 .bp-sim-card:hover{border-color:var(--bp-accent);transform:translateY(-2px)}
@@ -87,6 +89,33 @@
 .bp-map-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--bp-accent);text-decoration:none}
 .bp-map-link:hover{text-decoration:underline}
 @media(max-width:860px){.bp-grid{grid-template-columns:1fr}.bp-hero{flex-direction:column}.bp-qr{width:100%}.bp-qr img,.bp-qr svg{margin:0 auto}}
+/* ═══ PRINT — QR/public building profile ═══ */
+@media print{
+  @page{margin:14mm 12mm}
+  body{background:#fff !important;color:#111 !important}
+  .navbar,.footer,.cta-section,.sticky-cta,.btt-btn,.chat-fab,.chat-box,.wa-fab,.cookie-bar,.exit-modal,#krToast,.bp-actions,.bp-sim,.bp-map,.bp-map-link,.bp-load,.bp-err{display:none !important}
+  .page-body{padding:0 !important}
+  .container{max-width:100% !important}
+  .bp-print-hdr{display:flex !important;align-items:center;justify-content:space-between;gap:16px;border-bottom:2.5px solid #2F80ED;padding-bottom:10px;margin-bottom:18px}
+  .bp-print-hdr .brand{font-weight:800;font-size:16px;color:#2F80ED;display:flex;align-items:center;gap:8px}
+  .bp-print-hdr .brand .logo-mark{width:30px;height:30px;font-size:13px}
+  .bp-print-hdr .meta{font-size:10.5px;color:#555;text-align:right;line-height:1.6}
+  .bp-print-hdr .meta b{color:#111}
+  .bp-hero{flex-direction:row !important;align-items:flex-start !important}
+  .bp-title{min-width:0 !important}
+  .bp-qr{order:2;margin-left:auto;width:auto !important;flex:none;border:1.5px solid #999;border-radius:12px;padding:12px;background:#fff !important;box-shadow:none !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .bp-qr img,.bp-qr svg{width:170px !important;height:170px !important;padding:8px;background:#fff}
+  .bp-qr .lbl{font-size:10px}
+  .bp-badge,.bp-unit-status,.bp-stat .n,.bp-cta{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .bp-stat{border:1px solid #ddd;break-inside:avoid}
+  .bp-panel{border:1px solid #ddd;break-inside:avoid;box-shadow:none !important}
+  .bp-table td,.bp-table th{border-bottom:1px solid #eee}
+  .bp-cta{break-inside:avoid}
+  .bp-cta .btn-wa,.bp-cta .btn-white{box-shadow:none !important}
+  .bp-print-ftr{display:flex !important;justify-content:space-between;gap:12px;font-size:9.5px;color:#666;border-top:1px solid #ccc;margin-top:22px;padding-top:8px}
+  .bp-print-ftr a{color:#2F80ED;text-decoration:none}
+  a{color:#111 !important;text-decoration:none !important}
+}
 </style>
 <script type="application/ld+json" id="bpSchema">{}</script>
 </head>
@@ -135,7 +164,7 @@
             <p data-i18n="nav.mfResourcesSub">Guides on BD property law, taxes &amp; portfolio management.</p>
           </div>
           <a href="/tools.html"><span class="mega-ico">🧮</span><span data-i18n="misc.calculators">Calculators</span></a>
-          <a href="docs.html"><span class="mega-ico">📖</span><span data-i18n="nav.docs">User Guide</span></a>
+          <a href="/docs.html"><span class="mega-ico">📖</span><span data-i18n="nav.docs">User Guide</span></a>
           <a href="/blog.html"><span class="mega-ico">📰</span><span data-i18n="footer.blog">Insights &amp; Blog</span></a>
           <a href="/case-studies.html"><span class="mega-ico">📈</span><span data-i18n="footer.caseStudies">Case studies</span></a>
           <a href="/faq.html"><span class="mega-ico">❓</span><span data-i18n="footer.faq">FAQ</span></a>
@@ -157,10 +186,18 @@
 </nav>
 
 <div class="page-body">
+  <div class="bp-print-hdr">
+    <div class="brand"><span class="logo-mark">KR</span> KRTaker — Verified Building Profile</div>
+    <div class="meta" id="bpPrintMeta"></div>
+  </div>
   <div class="container" id="bpRoot">
     <div class="bp-load" id="bpLoad"><div class="big">🏢</div><div class="spinner"></div><br><br><span id="bpLoadTxt">Loading building profile…</span></div>
     <div class="bp-err" id="bpErr" style="display:none"><div class="big">⚠️</div><div style="font-weight:800;font-size:15px" id="bpErrTxt">Building not found.</div><div style="font-size:12.5px;color:var(--muted);margin-top:8px">This profile may be unpublished or the link is wrong.</div><br><a class="btn btn-primary" href="/listings.html">Browse listings →</a></div>
   </div>
+</div>
+<div class="bp-print-ftr" style="display:none">
+  <span>KRTaker — Key Responsibility Taker · <span id="bpPrintUrl"></span></span>
+  <span id="bpPrintDate"></span>
 </div>
 
 <section class="cta-section">
@@ -231,7 +268,7 @@
           <li><a href="/about.html" data-i18n="footer.about">About us</a></li>
           <li><a href="/blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
           <li><a href="/case-studies.html" data-i18n="footer.caseStudies">Case studies</a></li>
-          <li><a href="docs.html" data-i18n="footer.docs">📖 User Guide</a></li>
+          <li><a href="/docs.html" data-i18n="footer.docs">📖 User Guide</a></li>
           <li><a href="/faq.html" data-i18n="footer.faq">FAQ</a></li>
           <li><a href="/contact.html" data-i18n="footer.contact">Contact</a></li>
           <li><a href="/ai-caretaker.html" data-i18n="footer.ai">AI Caretaker</a></li>
@@ -278,7 +315,7 @@
   const money=n=>'৳'+Number(n||0).toLocaleString('en-IN');
   const moneyC=n=>'৳'+Number(n||0).toLocaleString('en-IN');
   const TYPE_ICON={Flat:'🏢',Commercial:'🏬',Industrial:'🏭',Plot:'🌳'};
-  const BN={Vacant:'খালি',Leased:'লিজড','Available now':'এখনই পাওয়া যাচ্ছে','Fully leased':'সব লিজড',Units:'ইউনিট',Vacancies:'খালি ইউনিট','Floor view':'ফ্লোর ভিউ','Amenities':'সুবিধাসমূহ','Lease terms':'লিজ শর্ত','Monthly rent':'মাসিক ভাড়া','Rent / sqft':'ভাড়া/বর্গফুট','Service charge':'সার্ভিস চার্জ','Utility advance':'ইউটিলিটি অগ্রিম','Parking fee':'পার্কিং ফি','Annual escalation':'বার্ষিক এস্কেলেশন','Due day':'বকেয়া দিন','Late fee':'লেট ফি','Advance (deposit)':'অগ্রিম (জামানত)','Building area':'বিল্ডিং আয়তন','Property value':'সম্পত্তির মূল্য','Scan to share this profile':'প্রোফাইল শেয়ার করতে স্ক্যান করুন','Share':'শেয়ার','Copy link':'লিংক কপি','Vacant now':'এখন খালি','Enquire on WhatsApp':'হোয়াটসঅ্যাপে জানুন','Similar buildings':'অনুরূপ ভবন','Managed by KRTaker':'কেআরটেকার দ্বারা পরিচালিত','No active leases':'কোনো সক্রিয় লিজ নেই','Unit':'ইউনিট','Floor':'তলা','Size':'আয়তন','Status':'অবস্থা','Loading building profile…':'বিল্ডিং প্রোফাইল লোড হচ্ছে…','Building not found.':'বিল্ডিং পাওয়া যায়নি।','This profile may be unpublished or the link is wrong.':'এই প্রোফাইলটি প্রকাশিত নয় অথবা লিংকটি ভুল।','Browse listings':'লিস্টিং দেখুন','First month + deposit':'প্রথম মাস + জামানত','per month':'প্রতি মাসে'};
+  const BN={Vacant:'খালি',Leased:'লিজড','Available now':'এখনই পাওয়া যাচ্ছে','Fully leased':'সব লিজড',Units:'ইউনিট',Vacancies:'খালি ইউনিট','Floor view':'ফ্লোর ভিউ','Amenities':'সুবিধাসমূহ','Lease terms':'লিজ শর্ত','Monthly rent':'মাসিক ভাড়া','Rent / sqft':'ভাড়া/বর্গফুট','Service charge':'সার্ভিস চার্জ','Utility advance':'ইউটিলিটি অগ্রিম','Parking fee':'পার্কিং ফি','Annual escalation':'বার্ষিক এস্কেলেশন','Due day':'বকেয়া দিন','Late fee':'লেট ফি','Advance (deposit)':'অগ্রিম (জামানত)','Building area':'বিল্ডিং আয়তন','Property value':'সম্পত্তির মূল্য','Scan to share this profile':'প্রোফাইল শেয়ার করতে স্ক্যান করুন','Share':'শেয়ার','Copy link':'লিংক কপি','Print':'প্রিন্ট','Vacant now':'এখন খালি','Enquire on WhatsApp':'হোয়াটসঅ্যাপে জানুন','Similar buildings':'অনুরূপ ভবন','Managed by KRTaker':'কেআরটেকার দ্বারা পরিচালিত','No active leases':'কোনো সক্রিয় লিজ নেই','Unit':'ইউনিট','Floor':'তলা','Size':'আয়তন','Status':'অবস্থা','Loading building profile…':'বিল্ডিং প্রোফাইল লোড হচ্ছে…','Building not found.':'বিল্ডিং পাওয়া যায়নি।','This profile may be unpublished or the link is wrong.':'এই প্রোফাইলটি প্রকাশিত নয় অথবা লিংকটি ভুল।','Browse listings':'লিস্টিং দেখুন','First month + deposit':'প্রথম মাস + জামানত','per month':'প্রতি মাসে'};
   const T2=(en,bn)=>T(en,BN[en]||bn);
   const $=id=>document.getElementById(id);
   let BUILD=null;
@@ -302,12 +339,16 @@
 
   function setOG(t,d,u){
     const s=(k,c)=>{let m=document.querySelector('meta[property="'+k+'"]');if(!m){m=document.createElement('meta');m.setAttribute('property',k);document.head.appendChild(m);}m.setAttribute('content',c);};
-    s('og:title',t);s('og:description',d);s('og:url',u);s('og:image','https://krtaker.com/assets/img/og-card.png');s('og:type','website');
+    s('og:title',t);s('og:description',d);s('og:url',u);s('og:image',location.origin+'/assets/img/og-card.png');s('og:type','website');
   }
 
   function render(p){
     BUILD=p;
     document.title=p.name+' — Building Profile | KRTaker';
+    const pm=document.getElementById('bpPrintMeta');
+    if(pm)pm.innerHTML='<b>'+esc(p.name)+'</b><br>'+esc(p.jur)+(p.holding?' · '+esc(p.holding):'');
+    const pu=document.getElementById('bpPrintUrl');if(pu)pu.textContent=cleanUrl();
+    const pd=document.getElementById('bpPrintDate');if(pd)pd.textContent=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
     const meta=document.querySelector('meta[name="description"]');
     if(meta)meta.setAttribute('content',p.name+' ('+p.jur+') — units, rents, amenities and lease terms. Managed end-to-end by KRTaker.');
     const canon=document.querySelector('link[rel="canonical"]');if(canon)canon.setAttribute('href',cleanUrl());
@@ -358,6 +399,7 @@
           <div class="bp-actions">
             <button class="btn btn-outline" onclick="bpShare()">🔗 ${T('Share','শেয়ার')}</button>
             <button class="btn btn-ghost" onclick="bpCopy()">📋 ${T('Copy link','লিংক কপি')}</button>
+            <button class="btn btn-ghost" onclick="window.print()">🖨 ${T('Print','প্রিন্ট')}</button>
           </div>
         </div>
         <div class="bp-qr"><div id="bpQr"></div><div class="lbl">📱 ${T('Scan to share this profile','প্রোফাইল শেয়ার করতে স্ক্যান করুন')}</div></div>

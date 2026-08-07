@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/style.css?v=3.67">
+<link rel="stylesheet" href="/css/style.css?v=3.67">
 <style>
 /* ═══ SA1 v25: area landing pages — jurisdiction SEO pages (bhara-style area browse) ═══ */
 :root{--ar-accent:#2F80ED}
@@ -110,7 +110,7 @@
             <p data-i18n="nav.mfResourcesSub">Guides on BD property law, taxes &amp; portfolio management.</p>
           </div>
           <a href="/tools.html"><span class="mega-ico">🧮</span><span data-i18n="misc.calculators">Calculators</span></a>
-          <a href="docs.html"><span class="mega-ico">📖</span><span data-i18n="nav.docs">User Guide</span></a>
+          <a href="/docs.html"><span class="mega-ico">📖</span><span data-i18n="nav.docs">User Guide</span></a>
           <a href="/blog.html"><span class="mega-ico">📰</span><span data-i18n="footer.blog">Insights &amp; Blog</span></a>
           <a href="/case-studies.html"><span class="mega-ico">📈</span><span data-i18n="footer.caseStudies">Case studies</span></a>
           <a href="/faq.html"><span class="mega-ico">❓</span><span data-i18n="footer.faq">FAQ</span></a>
@@ -206,7 +206,7 @@
           <li><a href="/about.html" data-i18n="footer.about">About us</a></li>
           <li><a href="/blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
           <li><a href="/case-studies.html" data-i18n="footer.caseStudies">Case studies</a></li>
-          <li><a href="docs.html" data-i18n="footer.docs">📖 User Guide</a></li>
+          <li><a href="/docs.html" data-i18n="footer.docs">📖 User Guide</a></li>
           <li><a href="/faq.html" data-i18n="footer.faq">FAQ</a></li>
           <li><a href="/contact.html" data-i18n="footer.contact">Contact</a></li>
           <li><a href="/ai-caretaker.html" data-i18n="footer.ai">AI Caretaker</a></li>
@@ -271,7 +271,7 @@
 
   function setOG(t,d,u){
     const s=(k,c)=>{let m=document.querySelector('meta[property="'+k+'"]');if(!m){m=document.createElement('meta');m.setAttribute('property',k);document.head.appendChild(m);}m.setAttribute('content',c);};
-    s('og:title',t);s('og:description',d);s('og:url',u);s('og:image','https://krtaker.com/assets/img/og-card.png');s('og:type','website');
+    s('og:title',t);s('og:description',d);s('og:url',u);s('og:image',location.origin+'/assets/img/og-card.png');s('og:type','website');
   }
 
   function render(){
@@ -336,10 +336,10 @@
   }
 
   function injectSchema(jur,list){
-    const items=list.slice(0,8).map(p=>({'@type':'ListItem','position':list.indexOf(p)+1,'name':p.name,'url':'https://krtaker.com/building/'+encodeURIComponent(p.id)}));
+    const items=list.slice(0,8).map(p=>({'@type':'ListItem','position':list.indexOf(p)+1,'name':p.name,'url':location.origin+'/building/'+encodeURIComponent(p.id)}));
     const el=document.getElementById('arSchema');
     if(el)el.textContent=JSON.stringify({'@context':'https://schema.org','@graph':[
-      {'@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'Home','item':'https://krtaker.com'},{'@type':'ListItem','position':2,'name':'Listings','item':'https://krtaker.com/listings.html'},{'@type':'ListItem','position':3,'name':jur,'item':cleanUrl()}]},
+      {'@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'Home','item':location.origin},{'@type':'ListItem','position':2,'name':'Listings','item':location.origin+'/listings.html'},{'@type':'ListItem','position':3,'name':jur,'item':cleanUrl()}]},
       {'@type':'ItemList','name':'Rentals in '+jur,'itemListElement':items}
     ]});
   }

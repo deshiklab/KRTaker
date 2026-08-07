@@ -5571,7 +5571,10 @@ function blog_article_html($p) {
     $excerpt = htmlspecialchars((string)$p['excerpt'], ENT_QUOTES);
     $tag = htmlspecialchars((string)$p['tag'], ENT_QUOTES);
     $slug = rawurlencode((string)$p['slug']);
-    $url = 'https://krtaker.com/blog/' . $slug;
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'krtaker.com';
+    $base = $scheme . '://' . $host;
+    $url = $base . '/blog/' . $slug;
     $date = date('M j, Y', strtotime((string)$p['created_at']));
     $iso = substr((string)$p['created_at'], 0, 10);
     $read = (int)($p['read_min'] ?? 5); if ($read < 1) $read = 1;
@@ -5596,29 +5599,29 @@ function blog_article_html($p) {
 <meta name="theme-color" content="#2F80ED">
 <meta name="description" content="__EXCERPT__">
 <title>__TITLE__ — KRTaker</title>
-<base href="https://krtaker.com/">
+<base href="$base/">
 <link rel="canonical" href="__URL__">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="KRTaker">
 <meta property="og:title" content="__TITLE__ — KRTaker">
 <meta property="og:description" content="__EXCERPT__">
 <meta property="og:url" content="__URL__">
-<meta property="og:image" content="https://krtaker.com/assets/og-default.png">
+<meta property="og:image" content="$base/assets/og-default.png">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="bn_BD">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="__TITLE__ — KRTaker">
 <meta name="twitter:description" content="__EXCERPT__">
-<meta name="twitter:image" content="https://krtaker.com/assets/og-default.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "__TITLE__ — KRTaker", "description": "__EXCERPT__", "datePublished": "__ISO__", "dateModified": "__ISO__", "author": {"@type": "Organization", "name": "KRTaker"}, "publisher": {"@type": "Organization", "name": "KRTaker", "logo": {"@type": "ImageObject", "url": "https://krtaker.com/pwa/icon-192.png"}}, "mainEntityOfPage": "__URL__"}</script>
-<link rel="icon" href="../pwa/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="pwa/icon-192.png">
-<link rel="manifest" href="manifest.json">
+<meta name="twitter:image" content="$base/assets/og-default.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "__TITLE__ — KRTaker", "description": "__EXCERPT__", "datePublished": "__ISO__", "dateModified": "__ISO__", "author": {"@type": "Organization", "name": "KRTaker"}, "publisher": {"@type": "Organization", "name": "KRTaker", "logo": {"@type": "ImageObject", "url": "$base/pwa/icon-192.png"}}, "mainEntityOfPage": "__URL__"}</script>
+<link rel="icon" href="/pwa/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/pwa/icon-192.png">
+<link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.66">
+<link rel="stylesheet" href="/css/style.css?v=3.67">
 <!-- KRTaker analytics: replace G-XXXXXXXXXX with your GA4 Measurement ID (or swap for Plausible) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
@@ -5640,63 +5643,63 @@ HDR;
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="container">
-    <a class="nav-logo" href="index.html"><span class="logo-mark">KR</span> KRTaker</a>
+    <a class="nav-logo" href="/index.html"><span class="logo-mark">KR</span> KRTaker</a>
     <button class="nav-toggle" aria-label="Menu">☰</button>
     <ul class="nav-links">
       <li class="mega-li">
-        <a href="features.html" class="mega-trigger " data-i18n="nav.platform">Platform <span class="chev">▾</span></a>
+        <a href="/features.html" class="mega-trigger " data-i18n="nav.platform">Platform <span class="chev">▾</span></a>
         <div class="mega-dropdown mega-wide mega-center">
           <div class="mega-featured">
             <h4 data-i18n="nav.mfPlatform">Everything a building needs</h4>
             <p data-i18n="nav.mfPlatformSub">Nine modules working as one digital caretaker.</p>
           </div>
-          <a href="features.html"><span class="mega-ico">🧾</span><span data-i18n="nav.features">Features</span></a>
-          <a href="how-it-works.html"><span class="mega-ico">🗺️</span><span data-i18n="nav.how">How it works</span></a>
-          <a href="legal-compliance.html"><span class="mega-ico">⚖️</span><span data-i18n="footer.legal">Legal &amp; Compliance</span></a>
-          <a href="features.html"><span class="mega-ico">🏦</span><span data-i18n="home.feat2t">Holding tax engine</span></a>
-          <a href="features.html"><span class="mega-ico">💳</span><span data-i18n="home.feat4t">bKash &amp; SSLCommerz</span></a>
-          <a href="features.html"><span class="mega-ico">📊</span><span data-i18n="home.feat9t">Reports that tell the truth</span></a>
+          <a href="/features.html"><span class="mega-ico">🧾</span><span data-i18n="nav.features">Features</span></a>
+          <a href="/how-it-works.html"><span class="mega-ico">🗺️</span><span data-i18n="nav.how">How it works</span></a>
+          <a href="/legal-compliance.html"><span class="mega-ico">⚖️</span><span data-i18n="footer.legal">Legal &amp; Compliance</span></a>
+          <a href="/features.html"><span class="mega-ico">🏦</span><span data-i18n="home.feat2t">Holding tax engine</span></a>
+          <a href="/features.html"><span class="mega-ico">💳</span><span data-i18n="home.feat4t">bKash &amp; SSLCommerz</span></a>
+          <a href="/features.html"><span class="mega-ico">📊</span><span data-i18n="home.feat9t">Reports that tell the truth</span></a>
         </div>
       </li>
       <li class="mega-li">
-        <a href="for-owners.html" class="mega-trigger " data-i18n="nav.forYou">For you <span class="chev">▾</span></a>
+        <a href="/for-owners.html" class="mega-trigger " data-i18n="nav.forYou">For you <span class="chev">▾</span></a>
         <div class="mega-dropdown mega-wide mega-center">
           <div class="mega-featured">
             <h4 data-i18n="nav.mfForYou">One platform, nine roles</h4>
             <p data-i18n="nav.mfForYouSub">From owner to field crew — everyone in the same system.</p>
           </div>
-          <a href="for-owners.html"><span class="mega-ico">🏠</span><span data-i18n="footer.owners">Property Owners</span></a>
-          <a href="for-tenants.html"><span class="mega-ico">👤</span><span data-i18n="footer.tenants">Tenants</span></a>
-          <a href="for-partners.html"><span class="mega-ico">🛠️</span><span data-i18n="footer.partners">Service Partners</span></a>
-          <a href="for-nrb.html"><span class="mega-ico">🌍</span><span data-i18n="footer.nrb">NRB Investors</span></a>
-          <a href="register.html"><span class="mega-ico">📝</span><span data-i18n="footer.register">Register</span></a>
-          <a href="login.html"><span class="mega-ico">🔐</span><span data-i18n="footer.login">Log in</span></a>
+          <a href="/for-owners.html"><span class="mega-ico">🏠</span><span data-i18n="footer.owners">Property Owners</span></a>
+          <a href="/for-tenants.html"><span class="mega-ico">👤</span><span data-i18n="footer.tenants">Tenants</span></a>
+          <a href="/for-partners.html"><span class="mega-ico">🛠️</span><span data-i18n="footer.partners">Service Partners</span></a>
+          <a href="/for-nrb.html"><span class="mega-ico">🌍</span><span data-i18n="footer.nrb">NRB Investors</span></a>
+          <a href="/register.html"><span class="mega-ico">📝</span><span data-i18n="footer.register">Register</span></a>
+          <a href="/login.html"><span class="mega-ico">🔐</span><span data-i18n="footer.login">Log in</span></a>
         </div>
       </li>
       <li class="mega-li">
-        <a href="blog.html" class="mega-trigger active" data-i18n="nav.resources">Resources <span class="chev">▾</span></a>
+        <a href="/blog.html" class="mega-trigger active" data-i18n="nav.resources">Resources <span class="chev">▾</span></a>
         <div class="mega-dropdown mega-center">
           <div class="mega-featured">
             <h4 data-i18n="nav.mfResources">Insights &amp; Blog</h4>
             <p data-i18n="nav.mfResourcesSub">Guides on BD property law, taxes &amp; portfolio management.</p>
           </div>
-          <a href="tools.html"><span class="mega-ico">🧮</span><span data-i18n="misc.calculators">Calculators</span></a>
-          <a href="blog.html"><span class="mega-ico">📰</span><span data-i18n="footer.blog">Insights &amp; Blog</span></a>
-          <a href="case-studies.html"><span class="mega-ico">📈</span><span data-i18n="footer.caseStudies">Case studies</span></a>
-          <a href="faq.html"><span class="mega-ico">❓</span><span data-i18n="footer.faq">FAQ</span></a>
-          <a href="about.html"><span class="mega-ico">ℹ️</span><span data-i18n="footer.about">About us</span></a>
-          <a href="contact.html"><span class="mega-ico">📞</span><span data-i18n="footer.contact">Contact</span></a>
+          <a href="/tools.html"><span class="mega-ico">🧮</span><span data-i18n="misc.calculators">Calculators</span></a>
+          <a href="/blog.html"><span class="mega-ico">📰</span><span data-i18n="footer.blog">Insights &amp; Blog</span></a>
+          <a href="/case-studies.html"><span class="mega-ico">📈</span><span data-i18n="footer.caseStudies">Case studies</span></a>
+          <a href="/faq.html"><span class="mega-ico">❓</span><span data-i18n="footer.faq">FAQ</span></a>
+          <a href="/about.html"><span class="mega-ico">ℹ️</span><span data-i18n="footer.about">About us</span></a>
+          <a href="/contact.html"><span class="mega-ico">📞</span><span data-i18n="footer.contact">Contact</span></a>
         </div>
       </li>
-      <li><a href="pricing.html" class="" data-i18n="nav.pricing">Pricing</a></li>
-      <li><a href="ai-caretaker.html" class="" data-i18n="nav.ai">AI Caretaker</a></li>
-      <li><a href="listings.html" class="" data-i18n="nav.listings">Listings</a></li>
+      <li><a href="/pricing.html" class="" data-i18n="nav.pricing">Pricing</a></li>
+      <li><a href="/ai-caretaker.html" class="" data-i18n="nav.ai">AI Caretaker</a></li>
+      <li><a href="/listings.html" class="" data-i18n="nav.listings">Listings</a></li>
     </ul>
     <div class="nav-cta">
       <button class="icon-btn" data-lang-toggle aria-label="Language">বাং</button>
       <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
-      <a href="login.html" class="btn btn-ghost nav-ghost" data-i18n="nav.login">Log in</a>
-      <a href="register.html" class="btn btn-primary nav-primary" data-i18n="nav.getStarted">Get started</a>
+      <a href="/login.html" class="btn btn-ghost nav-ghost" data-i18n="nav.login">Log in</a>
+      <a href="/register.html" class="btn btn-primary nav-primary" data-i18n="nav.getStarted">Get started</a>
     </div>
   </div>
 </nav>
@@ -5718,7 +5721,7 @@ NVB;
   <div class="container" style="max-width:780px">
     <div class="share-strip"><span class="share-label">Share this guide</span><a class="share-btn" href="https://twitter.com/intent/tweet?text=__TITLE_Q__&amp;url=__URL__" target="_blank" rel="noopener" aria-label="Share on X">𝕏</a><a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=__URL__" target="_blank" rel="noopener" aria-label="Share on Facebook">f</a><a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=__URL__" target="_blank" rel="noopener" aria-label="Share on LinkedIn">in</a><a class="share-btn wa" href="https://wa.me/?text=__TITLE_Q__%20__URL__" target="_blank" rel="noopener" aria-label="Share on WhatsApp">✆</a></div>
     <div class="related-grid"><h3>Keep reading</h3><div class="related-cards">__RELATED__</div></div>
-    <div class="post-cta"><div><h3>Put this into action</h3><p>KRTaker computes holding tax, TDS, NAV and compliance dates automatically for every property.</p></div><a href="register.html" class="btn btn-white">Start free trial →</a></div>
+    <div class="post-cta"><div><h3>Put this into action</h3><p>KRTaker computes holding tax, TDS, NAV and compliance dates automatically for every property.</p></div><a href="/register.html" class="btn btn-white">Start free trial →</a></div>
   </div>
 </div>
 
@@ -5758,32 +5761,32 @@ HRO);
       <div>
         <h4 data-i18n="footer.p1" data-cms="footer.cols.c1">Platform</h4>
         <ul>
-          <li><a href="features.html" data-i18n="footer.features">Features</a></li>
-          <li><a href="how-it-works.html" data-i18n="footer.how">How it works</a></li>
-          <li><a href="pricing.html" data-i18n="footer.pricing">Pricing</a></li>
-          <li><a href="register.html" data-i18n="footer.register">Register</a></li>
-          <li><a href="login.html" data-i18n="footer.login">Log in</a></li>
+          <li><a href="/features.html" data-i18n="footer.features">Features</a></li>
+          <li><a href="/how-it-works.html" data-i18n="footer.how">How it works</a></li>
+          <li><a href="/pricing.html" data-i18n="footer.pricing">Pricing</a></li>
+          <li><a href="/register.html" data-i18n="footer.register">Register</a></li>
+          <li><a href="/login.html" data-i18n="footer.login">Log in</a></li>
         </ul>
       </div>
       <div>
         <h4 data-i18n="footer.p2" data-cms="footer.cols.c2">For you</h4>
         <ul>
-          <li><a href="for-owners.html" data-i18n="footer.owners">Property Owners</a></li>
-          <li><a href="for-tenants.html" data-i18n="footer.tenants">Tenants</a></li>
-          <li><a href="for-partners.html" data-i18n="footer.partners">Service Partners</a></li>
-          <li><a href="for-nrb.html" data-i18n="footer.nrb">NRB Investors</a></li>
-          <li><a href="legal-compliance.html" data-i18n="footer.legal">Legal &amp; Compliance</a></li>
+          <li><a href="/for-owners.html" data-i18n="footer.owners">Property Owners</a></li>
+          <li><a href="/for-tenants.html" data-i18n="footer.tenants">Tenants</a></li>
+          <li><a href="/for-partners.html" data-i18n="footer.partners">Service Partners</a></li>
+          <li><a href="/for-nrb.html" data-i18n="footer.nrb">NRB Investors</a></li>
+          <li><a href="/legal-compliance.html" data-i18n="footer.legal">Legal &amp; Compliance</a></li>
         </ul>
       </div>
       <div>
         <h4 data-i18n="footer.p3" data-cms="footer.cols.c3">Company</h4>
         <ul>
-          <li><a href="about.html" data-i18n="footer.about">About us</a></li>
-          <li><a href="blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
-          <li><a href="case-studies.html" data-i18n="footer.caseStudies">Case studies</a></li>
-          <li><a href="faq.html" data-i18n="footer.faq">FAQ</a></li>
-          <li><a href="contact.html" data-i18n="footer.contact">Contact</a></li>
-          <li><a href="ai-caretaker.html" data-i18n="footer.ai">AI Caretaker</a></li>
+          <li><a href="/about.html" data-i18n="footer.about">About us</a></li>
+          <li><a href="/blog.html" data-i18n="footer.blog">Insights &amp; Blog</a></li>
+          <li><a href="/case-studies.html" data-i18n="footer.caseStudies">Case studies</a></li>
+          <li><a href="/faq.html" data-i18n="footer.faq">FAQ</a></li>
+          <li><a href="/contact.html" data-i18n="footer.contact">Contact</a></li>
+          <li><a href="/ai-caretaker.html" data-i18n="footer.ai">AI Caretaker</a></li>
         </ul>
       </div>
       <div>
