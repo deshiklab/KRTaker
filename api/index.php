@@ -4839,7 +4839,7 @@ function CMS_DEFAULTS() {
         // Footer
         ['footer','section','tagline','Key Responsibility Taker — your building, handled.'],
         ['footer','section','copyright','© 2026 KRTaker. All rights reserved.'],
-        ['footer','social','facebook','https://facebook.com/krtaker'],
+        ['footer','social','facebook','https://www.facebook.com/people/KRTaker/61592897676181'],
         ['footer','social','linkedin','https://linkedin.com/company/krtaker'],
         ['footer','social','youtube','https://youtube.com/@krtaker'],
         // SEO
@@ -5667,7 +5667,7 @@ function blog_article_html($p) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css?v=3.71">
+<link rel="stylesheet" href="/css/style.css?v=3.73">
 <!-- KRTaker analytics: Google Analytics 4 (G-C68G5Q03ZT) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-C68G5Q03ZT"></script>
 <script>
@@ -5689,7 +5689,7 @@ HDR;
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="container">
-    <a class="nav-logo" href="/index.html"><span class="logo-mark">KR</span> KRTaker</a>
+    <a class="nav-logo" href="/index.html"><img src="/assets/img/krtaker-logo.png" alt="KRTaker" class="nav-logo-img"></a>
     <button class="nav-toggle" aria-label="Menu">☰</button>
     <ul class="nav-links">
       <li class="mega-li">
@@ -5778,10 +5778,10 @@ HRO);
   <div class="container">
     <div class="footer-top">
       <div class="footer-brand">
-        <div class="nav-logo"><span class="logo-mark">KR</span> KRTaker</div>
+        <div class="nav-logo"><img src="/assets/img/krtaker-logo-full-white.png" alt="KRTaker" class="nav-logo-img nav-logo-footer"></div>
         <p data-i18n="footer.blurb" data-cms="footer.section.tagline">Key Responsibility Taker — the AI-driven autonomous property management platform for Bangladesh. One caretaker for your entire portfolio, from anywhere in the world.</p>
         <div class="footer-socials">
-          <a href="https://www.facebook.com/krtaker" class="soc" aria-label="Facebook" target="_blank" rel="noopener">f</a>
+          <a href="https://www.facebook.com/people/KRTaker/61592897676181" class="soc" aria-label="Facebook" target="_blank" rel="noopener">f</a>
           <a href="https://www.linkedin.com/company/krtaker" class="soc" aria-label="LinkedIn" target="_blank" rel="noopener">in</a>
           <a href="https://x.com/krtaker" class="soc" aria-label="X (Twitter)" target="_blank" rel="noopener">𝕏</a>
           <a href="https://www.youtube.com/@krtaker" class="soc" aria-label="YouTube" target="_blank" rel="noopener">▶</a>
@@ -17151,6 +17151,7 @@ case 'app-theme': {
     $def = ['wl_site_name' => 'KRTaker', 'wl_logo_text' => 'KR',
             'wl_primary_color' => '#2F80ED', 'wl_secondary_color' => '#1E5EB8',
             'wl_accent_color' => '#27AE60', 'wl_logo_url' => '',
+            'wl_logo_nav' => '', 'wl_logo_nav_dark' => '', 'wl_logo_footer' => '',
             'wl_favicon' => '', 'wl_theme' => 'light'];
     $st = $pdo->query('SELECT k, v FROM admin_settings WHERE k LIKE \'wl_%\'');
     foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $r) $def[$r['k']] = $r['v'];
@@ -17158,6 +17159,8 @@ case 'app-theme': {
         'site_name' => $def['wl_site_name'], 'logo_text' => $def['wl_logo_text'],
         'primary' => $def['wl_primary_color'], 'secondary' => $def['wl_secondary_color'],
         'accent' => $def['wl_accent_color'], 'logo_url' => $def['wl_logo_url'],
+        'logo_nav' => $def['wl_logo_nav'], 'logo_nav_dark' => $def['wl_logo_nav_dark'],
+        'logo_footer' => $def['wl_logo_footer'],
         'favicon' => $def['wl_favicon'], 'theme' => $def['wl_theme'],
     ]]);
 }
@@ -17860,6 +17863,7 @@ case 'app-admin': {
     if ($action === 'whitelabel-get') {
         $def = ['wl_site_name' => 'KRTaker', 'wl_logo_text' => 'KR', 'wl_primary_color' => '#2F80ED',
                 'wl_secondary_color' => '#1E5EB8', 'wl_accent_color' => '#27AE60', 'wl_logo_url' => '',
+                'wl_logo_nav' => '', 'wl_logo_nav_dark' => '', 'wl_logo_footer' => '',
                 'wl_domain' => 'krtaker.com', 'wl_favicon' => '', 'wl_login_heading' => 'Welcome back',
                 'wl_footer_text' => '© KRTaker', 'wl_support_email' => 'support@krtaker.com', 'wl_theme' => 'light'];
         $stored = $q('SELECT k, v FROM admin_settings WHERE k LIKE \'wl_%\'');
@@ -17875,6 +17879,46 @@ case 'app-admin': {
         }
         audit($u['name'], 'White-label', 'system', '', implode(',', array_keys($in)));
         json_out(['ok' => true]);
+    }
+
+    /* ── V3.73: logo slots — upload a file to a whitelabel logo slot (multipart: file + slot) ── */
+    if ($action === 'branding-upload') {
+        $slot = trim((string)($_POST['slot'] ?? ''));
+        $slots = ['nav' => 'wl_logo_nav', 'nav_dark' => 'wl_logo_nav_dark', 'footer' => 'wl_logo_footer', 'favicon' => 'wl_favicon'];
+        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of nav|nav_dark|footer|favicon.'], 400);
+        $key = $slots[$slot];
+        $f = $_FILES['file'] ?? null;
+        if (!$f || !is_uploaded_file($f['tmp_name'] ?? '')) json_out(['ok' => false, 'error' => 'A file upload is required.'], 400);
+        $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'], true)) json_out(['ok' => false, 'error' => 'Images only (jpg/png/webp/gif/svg).'], 400);
+        if ($f['size'] > 5 * 1048576) json_out(['ok' => false, 'error' => 'Max 5 MB.'], 400);
+        $dir = dirname(__DIR__) . '/assets/branding';
+        if (!is_dir($dir)) @mkdir($dir, 0755, true);
+        $name = 'brand-' . $slot . '-' . gmdate('Ymd-His') . '-' . substr(md5(uniqid('', true)), 0, 6) . '.' . $ext;
+        if (!move_uploaded_file($f['tmp_name'], $dir . '/' . $name)) json_out(['ok' => false, 'error' => 'Failed to store file.'], 500);
+        /* remove the previous uploaded branding file for this slot (only files under /assets/branding) */
+        $old = (string)$pdo->query("SELECT v FROM admin_settings WHERE k='" . $key . "'")->fetchColumn();
+        if ($old !== '' && strpos($old, '/assets/branding/') === 0) {
+            $oldPath = dirname(__DIR__) . $old;
+            if (is_file($oldPath)) @unlink($oldPath);
+        }
+        admin_cfg_save($pdo, $key, '/assets/branding/' . $name);
+        audit($u['name'], 'Branding upload', 'system', $slot, $name . ' (' . $f['size'] . ' bytes)');
+        json_out(['ok' => true, 'slot' => $slot, 'name' => $name, 'url' => '/assets/branding/' . $name]);
+    }
+    if ($action === 'branding-reset') {
+        $slot = trim((string)($body['slot'] ?? ''));
+        $slots = ['nav' => 'wl_logo_nav', 'nav_dark' => 'wl_logo_nav_dark', 'footer' => 'wl_logo_footer', 'favicon' => 'wl_favicon'];
+        if (!isset($slots[$slot])) json_out(['ok' => false, 'error' => 'slot must be one of nav|nav_dark|footer|favicon.'], 400);
+        $key = $slots[$slot];
+        $old = (string)$pdo->query("SELECT v FROM admin_settings WHERE k='" . $key . "'")->fetchColumn();
+        if ($old !== '' && strpos($old, '/assets/branding/') === 0) {
+            $oldPath = dirname(__DIR__) . $old;
+            if (is_file($oldPath)) @unlink($oldPath);
+        }
+        admin_cfg_save($pdo, $key, '');
+        audit($u['name'], 'Branding reset', 'system', $slot, '');
+        json_out(['ok' => true, 'slot' => $slot]);
     }
 
     if ($action === 'health') {

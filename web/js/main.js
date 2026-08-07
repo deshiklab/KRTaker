@@ -56,11 +56,45 @@ document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.setAttribute('data-theme', th);
     document.querySelectorAll('[data-theme-toggle]').forEach(b => { b.textContent = th === 'dark' ? '☀️' : '🌙'; });
     try { localStorage.setItem(THEME_KEY, th); } catch (e) {}
+    if (window.__KRTheme) window.__KRTheme(th);
   };
   applyTheme(theme);
   document.querySelectorAll('[data-theme-toggle]').forEach(b => {
     b.addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
   });
+
+  // ── V3.73: dynamic branding — swap navbar/footer/favicon logos from app-theme (superadmin white-label) ──
+  (function () {
+    const DEFAULT_NAV = '/assets/img/krtaker-logo.png';
+    const DEFAULT_NAV_DARK = '/assets/img/krtaker-logo-white.png';
+    const DEFAULT_FOOTER = '/assets/img/krtaker-logo-full-white.png';
+    let BRAND = null;
+    const applyBrand = () => {
+      const th = (document.documentElement.getAttribute('data-theme') || 'light');
+      const navImg = document.querySelector('.navbar .nav-logo-img');
+      if (navImg && BRAND) {
+        const customDark = !!BRAND.logo_nav_dark;
+        const src = th === 'dark' ? (customDark ? BRAND.logo_nav_dark : (BRAND.logo_nav || DEFAULT_NAV_DARK)) : (BRAND.logo_nav || DEFAULT_NAV);
+        navImg.src = src;
+        /* the default navy logo auto-inverts to white via CSS in dark mode;
+           a custom dark logo is already correct → disable the filter */
+        navImg.style.filter = (th === 'dark' && customDark) ? 'none' : '';
+      }
+      const footImg = document.querySelector('.nav-logo-footer');
+      if (footImg && BRAND) footImg.src = BRAND.logo_footer || DEFAULT_FOOTER;
+      const icon = document.querySelector('link[rel="icon"]');
+      if (icon && BRAND && BRAND.favicon) icon.href = BRAND.favicon;
+    };
+    window.__KRTheme = applyBrand; // re-apply on theme toggle
+    try {
+      fetch('api/app-theme').then(r => r.json()).then(d => {
+        if (d && d.ok && d.theme) {
+          BRAND = d.theme;
+          applyBrand();
+        }
+      }).catch(() => {});
+    } catch (e) {}
+  })();
 
   // Scroll reveal
   const revealEls = document.querySelectorAll('.reveal');
