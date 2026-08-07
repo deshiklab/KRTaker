@@ -206,6 +206,10 @@ function db() {
         $pdo->exec("CREATE TABLE IF NOT EXISTS audit_log (
             id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT DEFAULT (datetime('now')),
             user TEXT, action TEXT, module TEXT, entity TEXT, details TEXT)");
+        /* tenants must exist before the photo-column migration below (fresh-DB fix) */
+        $pdo->exec("CREATE TABLE IF NOT EXISTS tenants (
+            id TEXT PRIMARY KEY, name TEXT, phone TEXT, email TEXT, nid TEXT,
+            nrb INTEGER DEFAULT 0, kind TEXT DEFAULT 'Individual', sub_email TEXT DEFAULT '')");
         $pc2 = array_column($pdo->query('PRAGMA table_info(tenants)')->fetchAll(PDO::FETCH_ASSOC), 'name');
         if (!in_array('photo', $pc2, true)) $pdo->exec("ALTER TABLE tenants ADD COLUMN photo TEXT DEFAULT ''");
         $pc3 = array_column($pdo->query('PRAGMA table_info(app_users)')->fetchAll(PDO::FETCH_ASSOC), 'name');
@@ -8752,7 +8756,7 @@ function seed_app() {
             ['T-007','Maria Chowdhury (NRB)','+1 646-555-0182','maria.chowdhury@nyc.com','1975123456780',1,'Individual',''],
             ['T-008','Ahmed & Sons Traders','01715-990011','ahmedsons@outlook.com','BIN-009812345',0,'Corporate',''],
         ];
-        $st = $pdo->prepare('INSERT INTO tenants VALUES (?,?,?,?,?,?,?,?)');
+        $st = $pdo->prepare('INSERT INTO tenants (id,name,phone,email,nid,nrb,kind,sub_email) VALUES (?,?,?,?,?,?,?,?)');
         foreach ($tenants as $t) $st->execute($t);
 
         $leases = [
@@ -8812,7 +8816,7 @@ function seed_app() {
             ['SP-04','SecureLine Security','Security Services',4.9,33,'Active',''],
             ['SP-05','CleanPro BD','Cleaning & Facility',4.0,52,'Onboarding',''],
         ];
-        $st = $pdo->prepare('INSERT INTO partners VALUES (?,?,?,?,?,?,?)');
+        $st = $pdo->prepare('INSERT INTO partners (id,name,trade,rating,jobs,status,sub_email) VALUES (?,?,?,?,?,?,?)');
         foreach ($partners as $p) $st->execute($p);
 
         $staff = [
