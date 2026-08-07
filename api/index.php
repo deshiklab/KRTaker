@@ -9515,12 +9515,12 @@ if (preg_match('/^[0-9a-f]{32}\.txt$/', $action)) {
 
 /* Dynamic blog article: /blog/<slug> (rewritten from .htaccess, public HTML) */
 if (preg_match('#^blog/([a-z0-9-]+)$#', $action, $m)) {
+    header('Content-Type: text/html; charset=utf-8');   /* blog 404 must NOT carry the API JSON content-type */
     $pdo = db();
     $st = $pdo->prepare('SELECT * FROM blog_posts WHERE slug=? AND status=\'published\'');
     $st->execute([$m[1]]);
     $p = $st->fetch(PDO::FETCH_ASSOC);
     if (!$p) { http_response_code(404); echo '<!DOCTYPE html><html><head><title>404 — KRTaker</title><meta http-equiv="refresh" content="0;url=/404.html"></head><body></body></html>'; exit; }
-    header('Content-Type: text/html; charset=utf-8');
     /* SA1 v21: blog articles are HTML — override the API-wide default-src 'none' CSP
        so inline styles/fonts/images render (article pages are public marketing content). */
     header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; upgrade-insecure-requests");
