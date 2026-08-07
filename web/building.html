@@ -95,6 +95,7 @@
 .bp-map-link:hover{text-decoration:underline}
 @media(max-width:860px){.bp-grid{grid-template-columns:1fr}.bp-hero{flex-direction:column}.bp-qr{width:100%}.bp-qr img,.bp-qr svg{margin:0 auto}.bp-photo img{height:220px}}
 /* ═══ PRINT — QR/public building profile (compact 2-page layout) ═══ */
+.bp-print-map{position:fixed;left:-99999px;top:0;width:714px;height:280px;visibility:hidden;pointer-events:none;z-index:-1;background:#eef2f7}
 @media print{
   @page{size:A4 portrait;margin:10mm}
   body{background:#fff !important;color:#111 !important;font-size:11px}
@@ -143,9 +144,11 @@
   .bp-cta .btn-wa,.bp-cta .btn-white{box-shadow:none !important;padding:6px 10px;font-size:10px;border-radius:7px}
   .bp-print-ftr{display:flex !important;justify-content:space-between;gap:12px;font-size:9px;color:#666;border-top:1px solid #ccc;margin-top:12px;padding-top:6px}
   .bp-print-ftr a{color:#2F80ED;text-decoration:none}
-  .bp-print-map{display:block !important;height:280px;border:1px solid #999;border-radius:10px;margin-top:12px;overflow:hidden;background:#eef2f7;break-inside:avoid}
+  .bp-print-map{display:block !important;position:static;left:auto;width:100%;height:280px;border:1px solid #999;border-radius:10px;margin-top:12px;overflow:hidden;background:#eef2f7;break-inside:avoid;visibility:visible}
+  .bp-print-map.no-map{display:none !important}
   .bp-print-map .leaflet-container{font-family:inherit}
   .bp-print-map .leaflet-control-attribution{font-size:8px}
+  .bp-print-map .leaflet-tile-pane,.bp-print-map .leaflet-overlay-pane,.bp-print-map .leaflet-marker-pane,.bp-print-map .leaflet-shadow-pane{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   a{color:#111 !important;text-decoration:none !important}
   h1,h2,h3{break-after:avoid}
   .bp-panel,.bp-cta,.bp-stat,.bp-photo,.bp-hero,.bp-stats{break-inside:avoid}
@@ -228,7 +231,7 @@
     <div class="bp-load" id="bpLoad"><div class="big">🏢</div><div class="spinner"></div><br><br><span id="bpLoadTxt">Loading building profile…</span></div>
     <div class="bp-err" id="bpErr" style="display:none"><div class="big">⚠️</div><div style="font-weight:800;font-size:15px" id="bpErrTxt">Building not found.</div><div style="font-size:12.5px;color:var(--muted);margin-top:8px">This profile may be unpublished or the link is wrong.</div><br><a class="btn btn-primary" href="/listings.html">Browse listings →</a></div>
   </div>
-  <div class="bp-print-map" id="bpPrintMap" style="display:none"></div>
+  <div class="bp-print-map no-map" id="bpPrintMap"></div>
 </div>
 <div class="bp-print-ftr" style="display:none">
   <span>KRTaker — Key Responsibility Taker · <span id="bpPrintUrl"></span></span>
@@ -459,6 +462,7 @@
       </div>`;
     drawQr();
     initMap(p);
+    ensurePrintMap();
     loadSimilar(p);
   }
 
@@ -475,29 +479,33 @@
     }catch(e){console.warn('map failed',e);}
   }
 
-  let _pMap=null;
-  function initPrintMap(){
+  let _pMap=null,_pMapFor=null;
+  function ensurePrintMap(){
     const pm=document.getElementById('bpPrintMap');
-    if(!pm)return;
     const p=BUILD;
-    if(!p||!(p.lat&&p.lng)){pm.style.display='none';return;}
+    if(!pm)return;
+    if(!p||!(p.lat&&p.lng)){pm.classList.add('no-map');return;}
     try{
-      pm.style.display='block';pm.style.height='280px';
-      if(_pMap){_pMap.remove();_pMap=null;}
-      _pMap=L.map(pm,{scrollWheelZoom:false}).setView([p.lat,p.lng],14);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(_pMap);
-      const ic=L.icon({iconUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png',shadowUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png',iconSize:[25,41],iconAnchor:[12,41]});
-      L.marker([p.lat,p.lng],{icon:ic}).addTo(_pMap).bindPopup('<b>'+esc(p.name)+'</b><br>'+esc(p.jur));
-      setTimeout(function(){if(_pMap)_pMap.invalidateSize();},60);
+      const key=p.code||p.id||(p.name+','+p.lat);
+      if(_pMap&&_pMapFor!==key){_pMap.remove();_pMap=null;}
+      if(!_pMap){
+        pm.classList.remove('no-map');
+        _pMap=L.map(pm,{scrollWheelZoom:false}).setView([p.lat,p.lng],14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(_pMap);
+        const ic=L.icon({iconUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png',shadowUrl:'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png',iconSize:[25,41],iconAnchor:[12,41]});
+        L.marker([p.lat,p.lng],{icon:ic}).addTo(_pMap).bindPopup('<b>'+esc(p.name)+'</b><br>'+esc(p.jur));
+        _pMapFor=key;
+      }
     }catch(e){console.warn('print map failed',e);}
   }
-  function destroyPrintMap(){
-    if(_pMap){_pMap.remove();_pMap=null;}
+  function showPrintMap(){
     const pm=document.getElementById('bpPrintMap');
-    if(pm)pm.style.display='none';
+    if(!pm)return;
+    ensurePrintMap();
+    if(!_pMap){pm.classList.add('no-map');return;}
+    setTimeout(function(){if(_pMap)_pMap.invalidateSize();},120);
   }
-  window.addEventListener('beforeprint',initPrintMap);
-  window.addEventListener('afterprint',destroyPrintMap);
+  window.addEventListener('beforeprint',showPrintMap);
 
   function drawQr(){
     try{
