@@ -19,6 +19,10 @@
    Falls back silently to the static HTML if the API is unreachable. */
 (function () {
   const API = (window.KR_API_BASE || '/api/') + 'cms-read';
+  /* v3.82: a CMS value counts as HTML when it contains a real block/inline tag —
+     the Web CMS rich editor stores tags like <strong>/<p>/<ul>; plain text stays text */
+  const HTML_TAG_RE = /<(p|div|h[1-6]|ul|ol|li|br|img|strong|b|em|i|u|a|span|blockquote|hr|table|tr|td|th)[\s>]/i;
+  function isHtmlContent(v) { return HTML_TAG_RE.test(String(v)); }
   function lang() {
     try { return localStorage.getItem('krtaker_lang') || 'en'; } catch (e) { return 'en'; }
   }
@@ -62,7 +66,10 @@
     }
     document.querySelectorAll('[data-cms]').forEach(el => {
       const v = val(el.getAttribute('data-cms'));
-      if (v !== undefined) el.textContent = v;
+      if (v !== undefined) {
+        if (isHtmlContent(v)) el.innerHTML = v; /* v3.82: admin-authored HTML (rich editor) renders */
+        else el.textContent = v;
+      }
     });
     document.querySelectorAll('[data-cms-html]').forEach(el => {
       const v = val(el.getAttribute('data-cms-html'));

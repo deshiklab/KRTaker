@@ -320,6 +320,22 @@ td .c-name:hover{color:var(--primary)}
   .row-actions{gap:2px}
   .row-actions .btn-ghost{padding:7px 9px}
 }
+/* ── Web CMS rich-text editor (v3.82): WYSIWYG + </> HTML source toggle for long fields ── */
+.cms-rte{border:1px solid var(--border,#e3e8f0);border-radius:10px;overflow:hidden;background:var(--bg,#fff)}
+.cms-rte:focus-within{border-color:var(--primary,#2F80ED);box-shadow:0 0 0 2px rgba(47,128,237,.15)}
+.cms-rte-tb{display:flex;align-items:center;gap:2px;flex-wrap:wrap;padding:5px 6px;background:var(--bg-alt,#f4f6fa);border-bottom:1px solid var(--border,#e3e8f0)}
+.cms-rte-b{min-width:28px;height:26px;padding:0 7px;font-size:12.5px;font-weight:700;line-height:1;border:none;border-radius:6px;background:transparent;color:var(--text,#1a2233);cursor:pointer}
+.cms-rte-b:hover{background:rgba(47,128,237,.12);color:var(--primary,#2F80ED)}
+.cms-rte-sep{width:1px;height:16px;background:var(--border,#e3e8f0);margin:0 4px}
+.cms-rte-b.cms-rte-html{margin-left:auto;font-weight:800;color:var(--primary,#2F80ED);border:1px dashed rgba(47,128,237,.45);border-radius:7px}
+.cms-rte-b.cms-rte-html:hover{background:rgba(47,128,237,.1)}
+.cms-rte-rich{min-height:110px;max-height:420px;overflow:auto;padding:10px 12px;font-size:13.5px;line-height:1.6;outline:none;color:var(--text,#1a2233)}
+.cms-rte-rich:empty::before{content:'Write here…';color:var(--text-mute,#8a94a6)}
+.cms-rte-rich h2{font-size:17px;margin:8px 0 4px}
+.cms-rte-rich h3{font-size:15px;margin:6px 0 3px}
+.cms-rte-rich ul,.cms-rte-rich ol{margin:4px 0 4px 18px;padding:0}
+.cms-rte-rich a{color:var(--primary,#2F80ED);text-decoration:underline}
+.cms-rte textarea{width:100%;min-height:110px;max-height:420px;padding:10px 12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;border:none;outline:none;resize:vertical;background:var(--bg,#fff);color:var(--text,#1a2233)}
 </style>
 </head>
 <body>
@@ -1184,7 +1200,7 @@ async function providerSave(id){
 }
 /* ── Web CMS (SA1-fullsite-v3 redesign: collapsible sections, dirty tracking, publish/draft,
       global find & replace, clone page, field-type inputs, all-page search, generic preview) ── */
-let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en',dirty:new Set(),openSecs:{},pub:{},flt:{q:'',page:'',sec:'',type:'',status:'',lang:''},fltOpen:false,fltN:0,sel:new Set(),fltM:[]};
+let CMS={blocks:[],defKeys:new Set(),tab:'home',lang:'en',dirty:new Set(),openSecs:{},pub:{},flt:{q:'',page:'',sec:'',type:'',status:'',lang:''},fltOpen:false,fltN:0,sel:new Set(),fltM:[],rteHtml:new Set()};
 const CMS_PAGES={home:{l:'Home',ic:'🏠',f:'index.html'},features:{l:'Features',ic:'✨',f:'features.html'},pricing:{l:'Pricing',ic:'💎',f:'pricing.html'},about:{l:'About',ic:'ℹ️',f:'about.html'},contact:{l:'Contact',ic:'📮',f:'contact.html'},howitworks:{l:'How it works',ic:'🗺️',f:'how-it-works.html'},ai:{l:'AI Caretaker',ic:'🤖',f:'ai-caretaker.html'},owners:{l:'For Owners',ic:'🏠',f:'for-owners.html'},tenants:{l:'For Tenants',ic:'👤',f:'for-tenants.html'},partners:{l:'For Partners',ic:'🛠️',f:'for-partners.html'},nrb:{l:'For NRB',ic:'🌍',f:'for-nrb.html'},legal:{l:'Legal & Compliance',ic:'⚖️',f:'legal-compliance.html'},faq:{l:'FAQ',ic:'❓',f:'faq.html'},tools:{l:'Calculators',ic:'🧮',f:'tools.html'},blog:{l:'Blog',ic:'📰',f:'blog.html'},'blog-eviction':{l:'Eviction guide',ic:'📄',f:'blog-eviction.html'},'blog-holding-tax':{l:'Holding tax',ic:'📄',f:'blog-holding-tax.html'},'blog-lease-registration':{l:'Lease registration',ic:'📄',f:'blog-lease-registration.html'},'blog-nrb-buying':{l:'NRB buying',ic:'📄',f:'blog-nrb-buying.html'},'blog-nrb-remittance':{l:'NRB remittance',ic:'📄',f:'blog-nrb-remittance.html'},'blog-tds-commercial':{l:'TDS commercial',ic:'📄',f:'blog-tds-commercial.html'},terms:{l:'Terms',ic:'📜',f:'terms.html'},privacy:{l:'Privacy',ic:'🔒',f:'privacy.html'},listings:{l:'Listings',ic:'🏘️',f:'listings.html'},cases:{l:'Case Studies',ic:'📈',f:'case-studies.html'},login:{l:'Login',ic:'🔐',f:'login.html'},register:{l:'Register',ic:'📝',f:'register.html'},site:{l:'Site',ic:'⚙️',f:'index.html'},footer:{l:'Footer',ic:'🔗',f:'index.html'},seo:{l:'SEO',ic:'🔍',f:'index.html'}};
 const CMS_SEC_LABEL={hero:'Hero',article:'Article body',usp:'Why rent with us',cta:'Call to action',section:'Section heading',cards:'Feature cards',social:'Social links',stats:'Stats bar',trust:'Trust strip',steps:'How it works steps',roles:'Roles',featcards:'Feature cards',gallery:'Product gallery',legal:'Legal strip',testi:'Testimonials',ctaband:'CTA band',partners:'Partners',sticky:'Sticky CTA',modules:'Feature modules',visual:'Visual band',note:'Pricing note',compare:'Compare table',callout:'Callout',why:'Why we exist',principles:'Principles',team:'Team',milestones:'Milestones',join:'Join CTA',talk:'Talk to the team',rows:'Contact rows',form:'Contact form',items:'Items',sections:'Sections',cols:'Footer columns',contact:'Contact',news:'Newsletter',pay:'Payment chips',bottom:'Footer bottom',home:'Home',features:'Features',pricing:'Pricing',about:'About',footer:'Footer',seo:'Search engine verification'};
 const CMS_LONG=['subtitle','desc','meta_description','tagline','address','body','_text','content','story'];
@@ -1304,6 +1320,7 @@ function cmsRenderPanels(){
         </span></div>
       <div class="panel-b" style="${open?'':'display:none'}"><div class="frm">${bySec[sec].map(b=>cmsFieldHtml(b)).join('')}</div></div>
     </div>`;}).join(''):'<div class="empty">No fields in this language yet.</div>')+(p==='site'?cmsSeoPanel():'');
+  cmsRteInit();
 }
 function cmsSeoPanel(){
   const url='https://krtaker.com/api/sitemap';
@@ -1339,7 +1356,28 @@ function cmsFieldHtml(b,sel){
   const chk=sel?`<input type="checkbox" class="cms-sel" id="cms-sel-${esc(tag.replace(/\|/g,'_'))}" onchange="cmsSelToggle('${esc(tag)}',this.checked)" ${CMS.sel.has(tag)?'checked':''} data-tip="Select for bulk edit" data-tip-pos="left" title="Bulk edit" style="margin-right:6px;width:15px;height:15px;accent-color:var(--primary);flex-shrink:0">`:'';
   let inp;
   if(long){
-    inp=`<textarea data-cms="${esc(tag)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="${dirty?'border-color:#E67E22':''}">${esc(b.v)}</textarea>`;
+    const htmlMode=CMS.rteHtml.has(tag);
+    inp=`<div class="cms-rte ${htmlMode?'rte-html':''}" data-rte="${esc(tag)}">
+      <div class="cms-rte-tb">
+        <button type="button" class="cms-rte-b" data-cmd="bold" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Bold" tabindex="-1"><b>B</b></button>
+        <button type="button" class="cms-rte-b" data-cmd="italic" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Italic" tabindex="-1"><i>I</i></button>
+        <button type="button" class="cms-rte-b" data-cmd="underline" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Underline" tabindex="-1"><u>U</u></button>
+        <span class="cms-rte-sep"></span>
+        <button type="button" class="cms-rte-b" data-cmd="h2" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Heading 2" tabindex="-1">H2</button>
+        <button type="button" class="cms-rte-b" data-cmd="h3" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Heading 3" tabindex="-1">H3</button>
+        <button type="button" class="cms-rte-b" data-cmd="p" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Paragraph" tabindex="-1">¶</button>
+        <span class="cms-rte-sep"></span>
+        <button type="button" class="cms-rte-b" data-cmd="ul" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Bullet list" tabindex="-1">•≡</button>
+        <button type="button" class="cms-rte-b" data-cmd="ol" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Numbered list" tabindex="-1">1≡</button>
+        <button type="button" class="cms-rte-b" data-cmd="link" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Insert link" tabindex="-1">🔗</button>
+        <button type="button" class="cms-rte-b" data-cmd="unlink" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Remove link" tabindex="-1">⛓</button>
+        <span class="cms-rte-sep"></span>
+        <button type="button" class="cms-rte-b" data-cmd="clear" onclick="cmsRteCmd(this,'${esc(tag)}')" title="Clear formatting" tabindex="-1">🧹</button>
+        <button type="button" class="cms-rte-b cms-rte-html" onclick="cmsRteToggle('${esc(tag)}')" title="Toggle HTML source editing" tabindex="-1">${htmlMode?'✏️ Text':'</> HTML'}</button>
+      </div>
+      <div class="cms-rte-rich" contenteditable="true" style="${htmlMode?'display:none':''}" oninput="cmsRteSync('${esc(tag)}')" data-rt="${esc(tag)}"></div>
+      <textarea data-cms="${esc(tag)}" style="${htmlMode?'':'display:none'}" oninput="cmsRteSrc('${esc(tag)}',this);cmsMarkDirty('${esc(tag)}')" placeholder="Raw HTML…">${esc(b.v)}</textarea>
+    </div>`;
   }else if(ft==='color'){
     const hex=/^#[0-9a-fA-F]{3,8}$/.test(String(b.v))?String(b.v):'#2F80ED';
     inp=`<div style="display:flex;gap:6px"><input type="color" value="${hex}" oninput="cmsColorSync('${esc(tag)}',this.value)" style="width:44px;height:34px;padding:2px;flex-shrink:0"><input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="flex:1"></div>`;
@@ -1360,6 +1398,70 @@ function cmsFieldHtml(b,sel){
   </div>`;
 }
 function cmsColorSync(tag,v){const el=document.querySelector('[data-cms="'+tag+'"]');if(el)el.value=v;cmsMarkDirty(tag);}
+/* ── Web CMS rich-text editor (v3.82) ── */
+function cmsRteInit(){
+  /* after panels render: fill each contenteditable with the raw block value (plain text or HTML) */
+  document.querySelectorAll('#cmsPanels .cms-rte').forEach(wrap=>{
+    const rich=wrap.querySelector('.cms-rte-rich');
+    if(!rich||rich.dataset.init==='1')return;
+    const tag=wrap.getAttribute('data-rte');
+    const b=CMS.blocks.find(x=>x.page+'|'+x.section+'|'+x.k===tag);
+    rich.innerHTML=b?String(b.v||''):'';
+    rich.dataset.init='1';
+    if(CMS.rteHtml.has(tag)){ /* start in HTML mode: put raw source in the textarea */
+      const ta=wrap.querySelector('textarea');
+      if(ta&&!ta.value)ta.value=rich.innerHTML;
+    }
+  });
+}
+function cmsRteSync(tag){
+  const wrap=document.querySelector('.cms-rte[data-rte="'+tag+'"]');
+  if(!wrap)return;
+  const rich=wrap.querySelector('.cms-rte-rich'),ta=wrap.querySelector('textarea');
+  if(rich&&ta){ta.value=rich.innerHTML;cmsCount(ta);}
+  cmsMarkDirty(tag);
+}
+function cmsRteSrc(tag,ta){
+  /* typing raw HTML in source mode — keep the rich pane out of the way (value already in ta) */
+  cmsCount(ta);cmsMarkDirty(tag);
+}
+function cmsRteToggle(tag){
+  const wrap=document.querySelector('.cms-rte[data-rte="'+tag+'"]');
+  if(!wrap)return;
+  const rich=wrap.querySelector('.cms-rte-rich'),ta=wrap.querySelector('textarea');
+  const btn=wrap.querySelector('.cms-rte-html');
+  const toHtml=!CMS.rteHtml.has(tag);
+  if(toHtml){ /* rich → source: snapshot innerHTML into the textarea */
+    ta.value=rich.innerHTML;
+    rich.style.display='none';ta.style.display='';
+    if(btn)btn.textContent='✏️ Text';
+    wrap.classList.add('rte-html');
+  }else{ /* source → rich: re-parse the textarea value */
+    rich.innerHTML=ta.value;
+    ta.style.display='none';rich.style.display='';
+    if(btn)btn.textContent='</> HTML';
+    wrap.classList.remove('rte-html');
+  }
+  if(toHtml)CMS.rteHtml.add(tag);else CMS.rteHtml.delete(tag);
+  cmsMarkDirty(tag);
+}
+function cmsRteCmd(btn,tag){
+  const wrap=document.querySelector('.cms-rte[data-rte="'+tag+'"]');
+  if(!wrap)return;
+  const rich=wrap.querySelector('.cms-rte-rich');
+  if(!rich)return;
+  const cmd=btn.getAttribute('data-cmd');
+  if(cmd==='link'){const u=prompt('Link URL (https://…):','https://');if(u&&u.trim()){rich.focus();document.execCommand('createLink',false,u.trim());}}
+  else if(cmd==='unlink'){rich.focus();document.execCommand('unlink',false,null);}
+  else if(cmd==='h2'){rich.focus();document.execCommand('formatBlock',false,'h2');}
+  else if(cmd==='h3'){rich.focus();document.execCommand('formatBlock',false,'h3');}
+  else if(cmd==='p'){rich.focus();document.execCommand('formatBlock',false,'p');}
+  else if(cmd==='ul'){rich.focus();document.execCommand('insertUnorderedList',false,null);}
+  else if(cmd==='ol'){rich.focus();document.execCommand('insertOrderedList',false,null);}
+  else if(cmd==='clear'){rich.focus();document.execCommand('removeFormat',false,null);}
+  else {rich.focus();document.execCommand(cmd,false,null);}
+  cmsRteSync(tag);
+}
 function cmsMarkDirty(tag){
   CMS.dirty.add(tag);cmsRenderDirty();
 }
@@ -1478,6 +1580,7 @@ function cmsFilterApply(){
       }).join('')+`</div></div>`;
   });
   el.innerHTML=html;
+  cmsRteInit();
   cmsRenderDirty();
 }
 function cmsClearFilter(){
