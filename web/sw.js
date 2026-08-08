@@ -1,7 +1,7 @@
 /* KRTaker landing + dashboard — production Service Worker
    Strategy: network-first for HTML (always fresh), cache-first for static assets,
    API (/api/*) is NEVER intercepted. Push notifications handled for the dashboard. */
-const CACHE = 'krtaker-site-v85';
+const CACHE = 'krtaker-site-v86';
 const STATIC = [
   'css/style.css',
   'css/share.css',

@@ -1103,6 +1103,35 @@ function recent_any($email, $ip, $mins, $email_max, $ip_max, $kinds = null) {
     return ($email_max > 0 && $byEmail >= $email_max) || ($ip_max > 0 && $byIp >= $ip_max);
 }
 
+/* v3.78: seconds until the sliding throttle window clears (oldest failure + window − now).
+   $kinds = null → count ALL failures (recent_fails semantics: login/OTP);
+   $kinds = [...] → kind-filtered (recent_any semantics: register/resend/forgot/newsletter/contact/payinit). */
+function retry_after_secs($email, $ip, $mins, $kinds = null) {
+    try {
+        $pdo = db();
+        $kindSql = $kinds ? " AND kind IN (" . implode(',', array_fill(0, count($kinds), '?')) . ")" : '';
+        $args0 = ['-' . (int)$mins . ' minutes'];
+        foreach (($kinds ?: []) as $k) $args0[] = (string)$k;
+        $best = 0;
+        foreach ([['email', strtolower(trim($email))], ['ip', $ip]] as $pair) {
+            if ($pair[0] === 'email' && $pair[1] === '') continue;
+            $st = $pdo->prepare("SELECT MIN(strftime('%s', ts)) FROM auth_attempts WHERE ok=0 AND ts >= datetime('now', ?) AND " . $pair[0] . "=?" . $kindSql);
+            $st->execute(array_merge($args0, [$pair[1]], $kinds ?: []));
+            $old = (int)$st->fetchColumn();
+            if ($old > 0) $best = max($best, $old + (int)$mins * 60 - time());
+        }
+        if ($best <= 0) $best = 1;
+        return max(1, min((int)$mins * 60, $best));
+    } catch (Exception $e) { return (int)$mins * 60; }
+}
+
+/* v3.78: emit a 429 with a standards-compliant Retry-After header + JSON retry_after field */
+function throttle_out($msg, $email, $ip, $mins, $kinds = null) {
+    $ra = retry_after_secs($email, $ip, $mins, $kinds);
+    header('Retry-After: ' . $ra);
+    json_out(['ok' => false, 'error' => $msg, 'retry_after' => $ra], 429);
+}
+
 function mail_fallback($to, $subject, $html, $text = null) {
     $text = $text ?? strip_tags(str_replace(['<br>', '<br/>', '</p>', '</div>', '</li>'], "\n", $html));
     /* SA1 v21: sanitize at the boundary (CRLF-injection guard) */
@@ -9527,8 +9556,10 @@ if (in_array($action, ['app-photo', 'app-job-media', 'app-tenant-me'], true)) {
             $res = api_key_resolve($pdo0, $xk);
             if ($res) {
                 $rlKind = $res['kind'] . ($res['kind'] === 'tenant' ? '_t' . $res['tenant_id'] : '');
-                if (!api_rate_limit_ok($pdo0, $rlKind, max(10, (int)$km['rate_limit'])))
-                    json_out(['ok' => false, 'error' => 'Rate limit exceeded for this API key.'], 429);
+                if (!api_rate_limit_ok($pdo0, $rlKind, max(10, (int)$km['rate_limit']))) {
+                    header('Retry-After: 60');
+                    json_out(['ok' => false, 'error' => 'Rate limit exceeded for this API key.', 'retry_after' => 60], 429);
+                }
                 if ($res['kind'] === 'tenant') tenant_key_touch($pdo0, $res['row']);
                 else api_key_touch($pdo0, $res['kind']);
                 header('X-KRTaker-Key: ' . $res['kind'] . ($res['tenant_id'] ? ':' . $res['tenant_id'] : ''));
@@ -9677,7 +9708,7 @@ case 'register': {
     /* SA1 v21: register previously used recent_fails() which counts ONLY failed rows —
        register only records successes → the cap was inert. recent_any() counts all. */
     if (recent_any($email, $ip, 60, 4, 8, ['register', 'resend'])) {   /* ≤8/IP/hr, ≤4/email/hr */
-        json_out(['ok' => false, 'error' => 'Too many attempts from this address. Try again later.'], 429);
+        throttle_out('Too many attempts from this address. Try again later.', $email, $ip, 60, ['register', 'resend']);
     }
     if (!$name || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         json_out(['ok' => false, 'error' => 'Invalid name or email.'], 400);
@@ -9735,7 +9766,7 @@ case 'verify-otp': {
     $otp   = trim($body['otp'] ?? '');
     $ip = client_ip();
     if (otp_blocked($email, $ip)) {
-        json_out(['ok' => false, 'error' => 'Too many failed attempts. Request a new code in 15 minutes.'], 429);
+        throttle_out('Too many failed attempts. Request a new code in 15 minutes.', $email, $ip, 15);
     }
     $pdo = db();
     $st = $pdo->prepare('SELECT * FROM subscribers WHERE email = ?');
@@ -9772,7 +9803,7 @@ case 'resend-otp': {
     $ip = client_ip();
     /* SA1 v21: count ALL resends+registers (recent_fails only counts failed OTP verifies) */
     if (recent_any($email, $ip, 10, 3, 10, ['resend', 'register'])) {   /* ≤3 per email / 10 min */
-        json_out(['ok' => false, 'error' => 'Too many resend requests. Try again later.'], 429);
+        throttle_out('Too many resend requests. Try again later.', $email, $ip, 10, ['resend', 'register']);
     }
     $pdo = db();
     $st = $pdo->prepare('SELECT * FROM subscribers WHERE email = ?');
@@ -9797,7 +9828,7 @@ case 'forgot-password': {
         json_out(['ok' => false, 'error' => 'Invalid email.'], 400);
     }
     if (recent_any($email, $ip, 60, 4, 8, ['forgot-password', 'register', 'resend'])) {
-        json_out(['ok' => false, 'error' => 'Too many requests from this address. Try again later.'], 429);
+        throttle_out('Too many requests from this address. Try again later.', $email, $ip, 60, ['forgot-password', 'register', 'resend']);
     }
     $pdo = db();
     $st = $pdo->prepare('SELECT * FROM subscribers WHERE email = ?');
@@ -9823,7 +9854,7 @@ case 'reset-password': {
     $pass  = $body['pass'] ?? '';
     $ip = client_ip();
     if (otp_blocked($email, $ip)) {
-        json_out(['ok' => false, 'error' => 'Too many failed attempts. Request a new code in 15 minutes.'], 429);
+        throttle_out('Too many failed attempts. Request a new code in 15 minutes.', $email, $ip, 15);
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $otp === '') {
         json_out(['ok' => false, 'error' => 'Email and code are required.'], 400);
@@ -9858,7 +9889,7 @@ case 'newsletter': {
     $email = strtolower(trim($body['email'] ?? ''));
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) json_out(['ok' => false, 'error' => 'Invalid email.'], 400);
     $ip = client_ip();
-    if (recent_any('', $ip, 10, 0, 6, ['newsletter'])) json_out(['ok' => false, 'error' => 'Too many signups from this address.'], 429);
+    if (recent_any('', $ip, 10, 0, 6, ['newsletter'])) throttle_out('Too many signups from this address.', '', $ip, 10, ['newsletter']);
     $pdo = db();
     try {
         $pdo->prepare('INSERT INTO newsletter_emails (email) VALUES (?)')->execute([$email]);
@@ -9877,7 +9908,7 @@ case 'contact': {
     $msg  = trim($body['message'] ?? '');
     if (!$name || !$email || !$msg) json_out(['ok' => false, 'error' => 'Name, email and message are required.'], 400);
     $ip = client_ip();
-    if (recent_any('', $ip, 10, 0, 5, ['contact'])) json_out(['ok' => false, 'error' => 'Too many messages from this address. Try again later.'], 429);
+    if (recent_any('', $ip, 10, 0, 5, ['contact'])) throttle_out('Too many messages from this address. Try again later.', '', $ip, 10, ['contact']);
     if (strlen($name) > 100 || strlen($msg) > 5000 || strlen($email) > 254) json_out(['ok' => false, 'error' => 'Message too long.'], 400);
     /* SA1 v21: strip CR/LF from stored fields (injection + log-poisoning guard) */
     $name = str_replace(["\r", "\n", "\0"], ' ', $name);
@@ -9906,7 +9937,8 @@ case 'app-login': {
     if (!$email || !$pass) json_out(['ok' => false, 'error' => 'Email and password are required.'], 400);
     if (auth_blocked($email, $ip)) {
         record_attempt($email, $ip, 'login-blocked', false);
-        json_out(['ok' => false, 'error' => 'Too many failed attempts. Try again in 15 minutes.'], 429);
+        $lm = (int)admin_cfg(db(), 'sec_lockout_minutes', 15); if ($lm < 1) $lm = 1; if ($lm > 1440) $lm = 1440;
+        throttle_out('Too many failed attempts. Try again later.', $email, $ip, $lm);
     }
     $pdo = db();
     $u = null;
@@ -11106,6 +11138,14 @@ case 'app-payment-init': {
     $inv = trim($body['invoice_id'] ?? '');
     $method = trim($body['method'] ?? 'bkash');
     if (!isset(GATEWAYS()[$method])) json_out(['ok' => false, 'error' => 'Unsupported gateway.'], 400);
+    /* v3.78: payment-session throttle — ≤6 init/min/IP, ≤20 init/hr/IP (prevents gateway spam) */
+    $ip = client_ip();
+    if (recent_any('', $ip, 1, 0, 6, ['payinit']) || recent_any('', $ip, 60, 0, 20, ['payinit'])) {
+        $ra = max(retry_after_secs('', $ip, 1, ['payinit']), retry_after_secs('', $ip, 60, ['payinit']));
+        header('Retry-After: ' . $ra);
+        json_out(['ok' => false, 'error' => 'Too many payment sessions from this address. Try again later.', 'retry_after' => $ra], 429);
+    }
+    record_attempt($u['email'] ?? '', $ip, 'payinit', true);
     $pdo = db();
     $due = invoice_due($pdo, $inv);
     if (!$due) json_out(['ok' => false, 'error' => 'Invoice not found.'], 404);
@@ -17294,6 +17334,48 @@ case 'app-admin': {
         ]]);
     }
 
+    if ($action === 'security-summary') {
+        /* v3.78: security operations view — lockouts, attempt history, 429 hits, policy */
+        $cfg = [
+            'sec_login_attempts'  => max(3, min(100, (int)admin_cfg($pdo, 'sec_login_attempts', 10))),
+            'sec_lockout_minutes' => max(1, min(1440, (int)admin_cfg($pdo, 'sec_lockout_minutes', 15))),
+        ];
+        $lm  = $cfg['sec_lockout_minutes'];
+        $mx  = $cfg['sec_login_attempts'];
+        $lockouts = $q("SELECT email, ip, COUNT(*) fails, MAX(ts) last_ts FROM auth_attempts WHERE ok=0 AND ts >= datetime('now', ?) GROUP BY email, ip ORDER BY last_ts DESC LIMIT 40", ['-' . $lm . ' minutes']);
+        foreach ($lockouts as &$l) $l['blocked'] = ((int)$l['fails'] >= $mx || (int)$l['fails'] >= $mx * 4) ? 1 : 0;
+        unset($l);
+        $recent   = $q('SELECT ts, kind, email, ip, ok FROM auth_attempts ORDER BY id DESC LIMIT 100');
+        $rateHits = $q("SELECT ts, action, method, status, ms, ip_hash FROM api_usage WHERE status=429 ORDER BY id DESC LIMIT 40");
+        $gateway24h = (int)$one("SELECT COUNT(*) FROM gateway_tx WHERE created_at >= datetime('now','-24 hours')");
+        json_out(['ok' => true, 'config' => $cfg, 'lockouts' => $lockouts, 'recent' => $recent, 'rate_hits' => $rateHits, 'gateway_24h' => $gateway24h]);
+    }
+
+    if ($action === 'security-unlock') {
+        /* v3.78: clear lockout rows for an email, an IP, or everything */
+        $email = strtolower(trim($body['email'] ?? ''));
+        $ip    = trim($body['ip'] ?? '');
+        $all   = !empty($body['all']);
+        $n = 0;
+        if ($all) {
+            $n = (int)$one('SELECT COUNT(*) FROM auth_attempts');
+            $pdo->exec('DELETE FROM auth_attempts');
+        } elseif ($email !== '' && $ip !== '') {
+            $n = (int)$one('SELECT COUNT(*) FROM auth_attempts WHERE email=? OR ip=?', [$email, $ip]);
+            $st = $pdo->prepare('DELETE FROM auth_attempts WHERE email=? OR ip=?'); $st->execute([$email, $ip]);
+        } elseif ($email !== '') {
+            $n = (int)$one('SELECT COUNT(*) FROM auth_attempts WHERE email=?', [$email]);
+            $st = $pdo->prepare('DELETE FROM auth_attempts WHERE email=?'); $st->execute([$email]);
+        } elseif ($ip !== '') {
+            $n = (int)$one('SELECT COUNT(*) FROM auth_attempts WHERE ip=?', [$ip]);
+            $st = $pdo->prepare('DELETE FROM auth_attempts WHERE ip=?'); $st->execute([$ip]);
+        } else {
+            json_out(['ok' => false, 'error' => 'Specify email, ip, or all.'], 400);
+        }
+        audit($u['name'], 'Security unlock', 'security', $all ? 'all' : ($email ?: $ip), "cleared $n attempt rows");
+        json_out(['ok' => true, 'cleared' => $n]);
+    }
+
     if ($action === 'subscribers') {
         $rows = $q('SELECT * FROM subscribers ORDER BY id DESC');
         foreach ($rows as &$r) {
@@ -18654,7 +18736,10 @@ case 'app-log-error': {
     if (!is_array($errs) || !$errs) {
         $errs = [['kind' => 'js', 'msg' => (string)($body['err'] ?? ''), 'url' => (string)($body['url'] ?? ''), 'line' => (int)($body['line'] ?? 0), 'col' => (int)($body['col'] ?? 0)]];
     }
-    if (!api_rate_limit_ok($pdo, 'errlog', 30)) json_out(['ok' => true, 'logged' => 0, 'throttled' => true]);
+    if (!api_rate_limit_ok($pdo, 'errlog', 30)) {
+        header('Retry-After: 60');
+        json_out(['ok' => true, 'logged' => 0, 'throttled' => true, 'retry_after' => 60]);
+    }
     $page = substr((string)($_SERVER['HTTP_REFERER'] ?? $body['page'] ?? ''), 0, 300);
     $ua   = substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 200);
     $ip   = substr(hash('sha256', (string)($_SERVER['REMOTE_ADDR'] ?? '')), 0, 12);

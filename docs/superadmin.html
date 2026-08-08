@@ -549,7 +549,7 @@ function renderNav(){
     ['Content & CRM',['cms','blog','onboarding','mis']],
     ['Developers',['api','ai','webhooks','domains']],
     ['Commerce',['payments','finance']],
-    ['System',['settings','integrations','tickets','backup','modules','whitelabel','health','audit']]
+    ['System',['settings','security','integrations','tickets','backup','modules','whitelabel','health','audit']]
   ];
   $('sbNav').innerHTML=groups.map(g=>`<div class="sb-group">${g[0]}</div>`+g[1].map(k=>{const n=NAV[k];return `<div class="sb-item ${STATE.view===k?'active':''}" onclick="nav('${k}')" data-nav="${k}" data-group="${esc(g[0])}" data-desc="${esc(NAV_DESC[k]||'')}"><span class="ic">${n.ic}</span><span class="txt">${n.l}</span>${n.chip?`<span class="chip">${n.chip}</span>`:''}</div>`}).join('')).join('');
 }
@@ -566,6 +566,7 @@ const NAV_DESC={
   payments:'Payment gateway configuration (bKash / SSLCommerz / Nagad)',
   finance:'Company accounts — subscription revenue, expenses and balance',
   settings:'Application-wide settings — signups, trials, branding defaults',
+  security:'Security operations — login lockouts, attempt history and rate-limit hits',
   integrations:'Third-party integrations across the platform',
   tickets:'Platform-wide support & ticketing for all system users',
   backup:'Database snapshots, download and full JSON export',
@@ -591,6 +592,7 @@ const NAV={
   payments:{ic:'💳',l:'Payment Integrations'},
   finance:{ic:'💰',l:'Company Finance'},
   settings:{ic:'⚙️',l:'App Settings'},
+  security:{ic:'🛡️',l:'Security Ops'},
   integrations:{ic:'🔌',l:'3rd-party Integrations'},
   tickets:{ic:'🎫',l:'Support & Ticketing'},
   backup:{ic:'💾',l:'Data Backup'},
@@ -606,7 +608,7 @@ const NAV={
 function nav(v){closeSidebar();STATE.view=v;renderNav();renderTitle();render();window.scrollTo(0,0)}
 function render(){
   const el=$('content');
-  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi,ai:renderAi,webhooks:renderWebhooks,domains:renderDomains}[STATE.view];
+  const r={dashboard:renderDashboard,subscribers:renderSubscribers,packages:renderPackages,users:renderUsers,providers:renderProviders,cms:renderCms,blog:renderBlog,onboarding:renderOnboarding,mis:renderMis,payments:renderPayments,finance:renderFinance,settings:renderSettings,security:renderSecurity,integrations:renderIntegrations,tickets:renderTickets,backup:renderBackup,modules:renderModules,whitelabel:renderWhitelabel,health:renderHealth,audit:renderAudit,api:renderApi,ai:renderAi,webhooks:renderWebhooks,domains:renderDomains}[STATE.view];
   el.innerHTML='<div id="pageBody"></div>';STATE._sub='';STATE._actions='';STATE._primary=null;
   r();
 }
@@ -2132,6 +2134,56 @@ async function settingsPruneAudit(){
   if(!confirm('Delete audit log entries older than the configured retention window?'))return;
   const d=await admin({action:'settings-prune-audit'});
   if(d.ok){toast((d.deleted||0)+' audit rows pruned ('+d.retention_days+'d retention)','ok');}else toast(d.error||'Failed','error');
+}
+/* ── Security Ops (v3.78) ── */
+let SEC={cfg:{},lockouts:[],recent:[],hits:[]};
+async function renderSecurity(){
+  pageHead('Login lockouts, attempt history and rate-limit enforcement — live view of auth_attempts and 429 traffic',
+    `<button class="btn-primary" onclick="securityRefresh()">🔄 Refresh</button><button class="btn-outline" onclick="securityClearAll()" data-tip="Delete every recorded auth attempt — clears all lockouts" data-tip-pos="bottom">🧹 Clear all</button>`);
+  load('pageBody','<div class="empty">Loading…</div>');
+  const d=await admin({action:'security-summary'});
+  if(!d.ok){load('pageBody',`<div class="empty">${esc(d.error||'Failed')}</div>`);return}
+  SEC.cfg=d.config||{};SEC.lockouts=d.lockouts||[];SEC.recent=d.recent||[];SEC.hits=d.rate_hits||[];
+  securityPaint(d.gateway_24h||0);
+}
+function securityPaint(gw24){
+  const mx=+SEC.cfg.sec_login_attempts||10, lm=+SEC.cfg.sec_lockout_minutes||15;
+  const lockRows=SEC.lockouts.map((l,i)=>{
+    const blk=+l.blocked===1;
+    return `<tr><td>${esc(l.email||'—')}</td><td>${esc(l.ip||'—')}</td><td><span class="chip" style="${blk?'background:#FDE8E8;color:#B91C1C':'background:#EEF2FF;color:#3730A3'}">${l.fails}</span></td><td style="white-space:nowrap">${esc(l.last_ts||'')}</td><td><button class="mini-btn" onclick="securityUnlock(${i})">🔓 Unlock</button></td></tr>`;
+  }).join('')||'<tr><td colspan="5" class="empty">No failed attempts in the lockout window — all clear.</td></tr>';
+  const recentRows=SEC.recent.map(r=>`<tr><td style="white-space:nowrap">${esc(r.ts)}</td><td><span class="chip">${esc(r.kind||'')}</span></td><td>${esc(r.email||'—')}</td><td>${esc(r.ip||'—')}</td><td>${+r.ok?'<span style="color:#15803D">✓ ok</span>':'<span style="color:#B91C1C">✗ fail</span>'}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No attempts recorded yet.</td></tr>';
+  const hitRows=SEC.hits.map(h=>`<tr><td style="white-space:nowrap">${esc(h.ts)}</td><td>${esc(h.action)}</td><td>${esc(h.method)}</td><td><span class="chip" style="background:#FDE8E8;color:#B91C1C">429</span></td><td>${esc(h.ms||'')}ms</td><td>${esc(h.ip_hash||'')}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No rate-limit hits yet.</td></tr>';
+  load('pageBody',pageBar()+
+    `<div class="cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:16px">
+      <div class="card"><div class="card-label">Lockout policy</div><div class="card-val">${mx} fails / ${lm} min</div><div class="card-sub">Edit in App Settings → Security &amp; access</div></div>
+      <div class="card"><div class="card-label">Locked emails/IPs</div><div class="card-val">${SEC.lockouts.filter(l=>+l.blocked===1).length}</div><div class="card-sub">of ${SEC.lockouts.length} groups with failures</div></div>
+      <div class="card"><div class="card-label">Attempts recorded</div><div class="card-val">${SEC.recent.length}</div><div class="card-sub">last 100 · 7-day retention</div></div>
+      <div class="card"><div class="card-label">429 rate-limit hits</div><div class="card-val">${SEC.hits.length}</div><div class="card-sub">last 40 · all surfaces</div></div>
+      <div class="card"><div class="card-label">Payment sessions</div><div class="card-val">${gw24}</div><div class="card-sub">gateway_tx created last 24h</div></div>
+    </div>
+    <div class="tbl-bar" style="margin-top:6px"><div class="tbTitle"><div class="tb-title">🛡️ Active lockouts</div><div class="tb-sub">Emails/IPs with failed attempts in the current window</div></div></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Email</th><th>IP</th><th>Fails</th><th>Last attempt</th><th></th></tr></thead><tbody>${lockRows}</tbody></table></div>
+    <div class="tbl-bar" style="margin-top:22px"><div class="tbTitle"><div class="tb-title">🧾 Recent attempts</div><div class="tb-sub">Login / register / OTP / password reset / newsletter / contact / payment-init</div></div></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Time (UTC)</th><th>Kind</th><th>Email</th><th>IP</th><th>Result</th></tr></thead><tbody>${recentRows}</tbody></table></div>
+    <div class="tbl-bar" style="margin-top:22px"><div class="tbTitle"><div class="tb-title">🚨 Rate-limit hits</div><div class="tb-sub">Requests rejected with HTTP 429 + Retry-After</div></div></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Time (UTC)</th><th>Action</th><th>Method</th><th>Status</th><th>ms</th><th>IP hash</th></tr></thead><tbody>${hitRows}</tbody></table></div>`);
+}
+async function securityRefresh(){
+  const d=await admin({action:'security-summary'});
+  if(d.ok){SEC.cfg=d.config||{};SEC.lockouts=d.lockouts||[];SEC.recent=d.recent||[];SEC.hits=d.rate_hits||[];securityPaint(d.gateway_24h||0);}else toast(d.error||'Failed','error');
+}
+async function securityUnlock(i){
+  const l=SEC.lockouts[i];if(!l)return;
+  const who=l.email||l.ip||'this address';
+  if(!confirm(`Unlock ${who}? All recorded attempts for it will be cleared.`))return;
+  const d=await admin({action:'security-unlock',email:l.email||'',ip:l.ip||''});
+  if(d.ok){toast(`Cleared ${d.cleared} attempt(s) for ${who}`,'ok');securityRefresh();}else toast(d.error||'Failed','error');
+}
+async function securityClearAll(){
+  if(!confirm('Delete ALL recorded auth attempts (every lockout)?'))return;
+  const d=await admin({action:'security-unlock',all:true});
+  if(d.ok){toast(`Cleared ${d.cleared} attempt(s)`,'ok');securityRefresh();}else toast(d.error||'Failed','error');
 }
 /* ── AI Caretaker console (v3.60) ── */
 let AI={};
