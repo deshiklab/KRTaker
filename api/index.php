@@ -18026,7 +18026,16 @@ case 'app-admin': {
         if (!is_array($in)) json_out(['ok' => false, 'error' => 'whitelabel required.'], 400);
         foreach ($in as $k => $v) {
             if (strpos((string)$k, 'wl_') !== 0) continue;
-            admin_cfg_save($pdo, (string)$k, (string)$v);
+            $val = (string)$v;
+            /* V3.79: clamp logo geometry — sizes 16–240px, margin/padding 0–80px (never negative) */
+            if (preg_match('/^wl_h_[a-z_]+$/', (string)$k)) {
+                $n = (int)$val;
+                $val = (string)max(16, min(240, $n));
+            } elseif (preg_match('/^wl_(ma|pa)_[a-z_]+$/', (string)$k)) {
+                $n = (int)$val;
+                $val = (string)max(0, min(80, $n));
+            }
+            admin_cfg_save($pdo, (string)$k, $val);
         }
         audit($u['name'], 'White-label', 'system', '', implode(',', array_keys($in)));
         json_out(['ok' => true]);

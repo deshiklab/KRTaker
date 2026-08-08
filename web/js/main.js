@@ -97,6 +97,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const icon = document.querySelector('link[rel="icon"]');
       if (icon && BRAND && BRAND.favicon) icon.href = BRAND.favicon;
+      /* V3.79: print slot → property-details / building print headers (.bp-print-logo) */
+      const printImg = document.querySelector('.bp-print-logo');
+      if (printImg && BRAND) {
+        const src = BRAND.logo_print || DEFAULT_NAV;
+        printImg.src = src;
+        if (BRAND.sizes && BRAND.sizes.print) printImg.style.height = BRAND.sizes.print + 'px';
+        if (BRAND.margin && BRAND.margin.print !== undefined) printImg.style.margin = BRAND.margin.print ? BRAND.margin.print + 'px' : '';
+        if (BRAND.padding && BRAND.padding.print !== undefined) printImg.style.padding = BRAND.padding.print ? BRAND.padding.print + 'px' : '';
+      }
     };
     /* V3.77: show/hide the site-name title next to a logo (per-slot title toggle) */
     function applyTitle(img, brand, slot) {

@@ -2738,18 +2738,21 @@ function brSizeLive(slot,v){const p=$('br_'+slot+'_prev'),l=$('br_'+slot+'_sizel
 function brMaLive(slot,v){const p=$('br_'+slot+'_prev'),l=$('br_'+slot+'_malbl');if(p)p.style.margin=v+'px';if(l)l.textContent=v;}
 function brPaLive(slot,v){const p=$('br_'+slot+'_prev'),l=$('br_'+slot+'_palbl');if(p)p.style.padding=v+'px';if(l)l.textContent=v;}
 function brSizeSave(slot,v){
+  v=Math.max(16,Math.min(240,parseInt(v,10)||0));
   admin({action:'whitelabel-save',whitelabel:{['wl_h_'+slot]:String(v)}}).then(d=>{
     if(d.ok){WL['wl_h_'+slot]=String(v);toast(slot+' display height set to '+v+'px','ok');applyAdminTheme();}
     else toast(d.error||'Failed','error');
   });
 }
 function brMaSave(slot,v){
+  v=Math.max(0,Math.min(80,parseInt(v,10)||0));
   admin({action:'whitelabel-save',whitelabel:{['wl_ma_'+slot]:String(v)}}).then(d=>{
     if(d.ok){WL['wl_ma_'+slot]=String(v);toast(slot+' margin set to '+v+'px','ok');applyAdminTheme();}
     else toast(d.error||'Failed','error');
   });
 }
 function brPaSave(slot,v){
+  v=Math.max(0,Math.min(80,parseInt(v,10)||0));
   admin({action:'whitelabel-save',whitelabel:{['wl_pa_'+slot]:String(v)}}).then(d=>{
     if(d.ok){WL['wl_pa_'+slot]=String(v);toast(slot+' padding set to '+v+'px','ok');applyAdminTheme();}
     else toast(d.error||'Failed','error');
