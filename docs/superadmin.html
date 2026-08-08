@@ -1239,6 +1239,7 @@ function cmsFieldType(k){
   if(/color/.test(k))return 'color';
   if(/url|link|href|facebook|linkedin|youtube|website/.test(k))return 'url';
   if(/price|count|seats|year|sqft|rating|limit|amount|_num/.test(k))return 'num';
+  if(/(^|_)(enabled|show|visible|published|featured|active)(_|$)|_flag$/.test(k))return 'bool';
   return 'text';
 }
 function cmsSecOpen(p,sec){return CMS.openSecs[p+'|'+sec]!==false;}
@@ -1387,6 +1388,9 @@ function cmsFieldHtml(b,sel){
     inp=`<div style="display:flex;gap:6px"><input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="flex:1">${/^https?:\/\//.test(String(b.v))?`<button class="btn-ghost" onclick="window.open('${esc(b.v)}','_blank')" data-tip="Open link" data-tip-pos="left" title="Open">🔗</button>`:''}${isImg?`<button class="btn-ghost" onclick="cmsMediaDrawer('${esc(tag)}')" data-tip="Pick or upload an image" data-tip-pos="left" title="Media">🖼</button>`:''}</div>`;
   }else if(ft==='num'){
     inp=`<div style="display:flex;gap:6px"><input data-cms="${esc(tag)}" type="number" value="${esc(b.v)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="flex:1">${isImg?`<button class="btn-ghost" onclick="cmsMediaDrawer('${esc(tag)}')" data-tip="Pick or upload an image" data-tip-pos="left" title="Media">🖼</button>`:''}</div>`;
+  }else if(ft==='bool'){
+    const on=String(b.v)==='1'||String(b.v).toLowerCase()==='true'||String(b.v).toLowerCase()==='yes';
+    inp=`<label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" ${on?'checked':''} onchange="cmsBoolSync('${esc(tag)}',this.checked)" style="width:16px;height:16px;accent-color:var(--primary)"><span class="c-sub" style="font-size:11px">${on?'On (1)':'Off (0)'}</span></label><input type="hidden" data-cms="${esc(tag)}" value="${esc(b.v)}">`;
   }else{
     inp=`<div style="display:flex;gap:6px"><input data-cms="${esc(tag)}" value="${esc(b.v)}" oninput="cmsCount(this);cmsMarkDirty('${esc(tag)}')" style="flex:1">${isImg?`<button class="btn-ghost" onclick="cmsMediaDrawer('${esc(tag)}')" data-tip="Pick or upload an image" data-tip-pos="left" title="Media">🖼</button>`:''}</div>`;
   }
@@ -1400,6 +1404,11 @@ function cmsFieldHtml(b,sel){
   </div>`;
 }
 function cmsColorSync(tag,v){const el=document.querySelector('[data-cms="'+tag+'"]');if(el)el.value=v;cmsMarkDirty(tag);}
+function cmsBoolSync(tag,on){
+  const el=document.querySelector('[data-cms="'+tag+'"]');
+  if(el){el.value=on?'1':'0';cmsCount(el);}
+  cmsMarkDirty(tag);
+}
 /* ── Web CMS rich-text editor (v3.82) ── */
 function cmsRteInit(){
   /* after panels render: fill each contenteditable with the raw block value (plain text or HTML) */
@@ -1507,7 +1516,7 @@ function cmsFilterControls(){
   return `<div style="min-width:150px"><label class="lb" style="font-size:10.5px">Page</label><select id="cmsFpage" onchange="cmsFilterSecs();cmsFilterApply()"><option value="">All pages</option>`+
     Object.keys(CMS_PAGES).map(p=>`<option value="${p}" ${CMS.flt.page===p?'selected':''}>${CMS_PAGES[p].ic} ${CMS_PAGES[p].l}</option>`).join('')+`</select></div>`+
     `<div style="min-width:150px"><label class="lb" style="font-size:10.5px">Section</label><select id="cmsFsec" onchange="cmsFilterApply()"><option value="">All sections</option></select></div>`+
-    `<div style="min-width:120px"><label class="lb" style="font-size:10.5px">Field type</label><select id="cmsFtype" onchange="cmsFilterApply()"><option value="">All</option><option value="text" ${CMS.flt.type==='text'?'selected':''}>text</option><option value="long" ${CMS.flt.type==='long'?'selected':''}>long text</option><option value="color" ${CMS.flt.type==='color'?'selected':''}>color</option><option value="url" ${CMS.flt.type==='url'?'selected':''}>url</option><option value="img" ${CMS.flt.type==='img'?'selected':''}>image</option><option value="num" ${CMS.flt.type==='num'?'selected':''}>number</option></select></div>`+
+    `<div style="min-width:120px"><label class="lb" style="font-size:10.5px">Field type</label><select id="cmsFtype" onchange="cmsFilterApply()"><option value="">All</option><option value="text" ${CMS.flt.type==='text'?'selected':''}>text</option><option value="long" ${CMS.flt.type==='long'?'selected':''}>long text</option><option value="color" ${CMS.flt.type==='color'?'selected':''}>color</option><option value="url" ${CMS.flt.type==='url'?'selected':''}>url</option><option value="img" ${CMS.flt.type==='img'?'selected':''}>image</option><option value="num" ${CMS.flt.type==='num'?'selected':''}>number</option><option value="bool" ${CMS.flt.type==='bool'?'selected':''}>toggle</option></select></div>`+
     `<div style="min-width:110px"><label class="lb" style="font-size:10.5px">Status</label><select id="cmsFstatus" onchange="cmsFilterApply()"><option value="">All</option><option value="custom" ${CMS.flt.status==='custom'?'selected':''}>custom fields</option><option value="default" ${CMS.flt.status==='default'?'selected':''}>default fields</option></select></div>`+
     `<div style="min-width:110px"><label class="lb" style="font-size:10.5px">Language</label><select id="cmsFlang" onchange="cmsFilterApply()"><option value="">All</option><option value="en" ${CMS.flt.lang==='en'?'selected':''}>English</option><option value="bn" ${CMS.flt.lang==='bn'?'selected':''}>বাংলা</option></select></div>`+
     `<button class="btn-outline" onclick="cmsClearFilter()">✕ Clear</button>`;
@@ -1762,23 +1771,159 @@ async function cmsImportSave(){
   const d=await admin({action:'cms-save',blocks});
   if(d.ok){toast(`Imported ${blocks.length} blocks (${d.changed} changed)`,'ok');closeDrawer();renderCms();}else toast(d.error||'Failed','error');
 }
+/* ── Add field builder (v3.84): type-aware field creation ── */
+const CMS_ADD_TYPE={
+  text:{ic:'🔤',l:'Short text',sug:['title','subtitle','badge','button','label','name','heading'],fix:''},
+  long:{ic:'📝',l:'Long text / HTML',sug:['desc','description','body','content','story','text','tagline'],fix:'_desc'},
+  img:{ic:'🖼',l:'Image',sug:['image','banner','logo','favicon','og_image','hero_image'],fix:'_image'},
+  color:{ic:'🎨',l:'Color',sug:['color','bg_color','accent_color','primary_color'],fix:'_color'},
+  url:{ic:'🔗',l:'URL / Link',sug:['url','link','href','website','facebook','youtube'],fix:'_url'},
+  num:{ic:'🔢',l:'Number',sug:['price','count','seats','year','sqft','rating','limit'],fix:'_num'},
+  bool:{ic:'☑️',l:'Yes / No toggle',sug:['enabled','show','visible','published','featured'],fix:'_flag'}
+};
+let CMS_ADD={page:'',sec:'',type:'text',bn:false};
 function cmsAddBlock(p,sec){
-  openDrawer('Add custom field',
+  CMS_ADD={page:p||CMS.tab,sec:sec||'',type:'text',bn:false};
+  const pageOpts=Object.keys(CMS_PAGES).map(q=>`<option value="${q}" ${q===CMS_ADD.page?'selected':''}>${CMS_PAGES[q].ic} ${esc(CMS_PAGES[q].l)}</option>`).join('');
+  const secs=[...new Set(CMS.blocks.filter(b=>b.page===CMS_ADD.page).map(b=>b.section))];
+  const secOpts=secs.map(s=>`<option value="${esc(s)}" ${s===sec?'selected':''}>${esc(CMS_SEC_LABEL[s]||s)}</option>`).join('');
+  openDrawer('＋ Add custom field',
     `<div class="frm">
-      <div><label class="lb">Page</label><input value="${esc(p)}" disabled></div>
-      <div><label class="lb">Section</label><input id="cb_sec" value="${esc(sec)}" placeholder="e.g. hero, cta, section"></div>
-      <div><label class="lb">Key (lowercase slug — e.g. button_text)</label><input id="cb_key" placeholder="button_text"></div>
-      <div><label class="lb">Value</label><textarea id="cb_val"></textarea></div>
+      <div><label class="lb">Page</label><select id="cb_page" onchange="cmsAddPage(this.value)">${pageOpts}</select></div>
+      <div><label class="lb">Section <span class="c-sub">(pick existing or type a new one)</span></label>
+        <div style="display:flex;gap:6px">
+          <select id="cb_sec" onchange="cmsAddSec(this.value)" style="flex:1">${secOpts}<option value="__new__" ${sec&&!secs.includes(sec)?'selected':''}>＋ New section…</option></select>
+          <input id="cb_sec_new" placeholder="new section slug" value="${esc(sec&&!secs.includes(sec)?sec:'')}" style="${sec&&!secs.includes(sec)?'flex:1':'flex:1;display:none'}">
+        </div></div>
+      <div><label class="lb">Field type</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${Object.keys(CMS_ADD_TYPE).map(t=>`<button class="chip ${t==='text'?'on':''}" onclick="cmsAddType('${t}')" data-tip="${CMS_ADD_TYPE[t].l}" data-tip-pos="top">${CMS_ADD_TYPE[t].ic} ${CMS_ADD_TYPE[t].l}</button>`).join('')}</div>
+        <div class="c-sub" id="cb_type_hint" style="font-size:11px;margin-top:4px"></div></div>
+      <div><label class="lb">Key <span class="c-sub">(lowercase slug — suggestions below)</span></label>
+        <div style="display:flex;gap:6px"><input id="cb_key" placeholder="e.g. button_text" oninput="cmsAddKey()" style="flex:1">
+        <button class="btn-ghost" id="cb_fix" onclick="cmsAddFixKey()" style="display:none" data-tip="Append a suffix so the panel renders it as the chosen type" data-tip-pos="top">🔧 Fix key</button></div>
+        <div class="c-sub" id="cb_key_hint" style="font-size:11px;margin-top:4px"></div>
+        <div id="cb_sug" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"></div></div>
+      <div><label class="lb">Value</label><div id="cb_valwrap"></div></div>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer"><input type="checkbox" id="cb_bn" onchange="CMS_ADD.bn=this.checked" style="width:15px;height:15px;accent-color:var(--primary)"> Also add বাংলা version (<b>_bn</b>) — site shows it in বাংলা mode</label>
+      <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px"><label class="lb">Clone from existing field <span class="c-sub">(optional)</span></label>
+        <select id="cb_dup" onchange="cmsAddClone()"><option value="">— pick a field to copy key/value/type —</option>${cmsAddCloneOpts()}</select></div>
     </div>`,
-    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="cmsAddBlockSave('${esc(p)}')">＋ Add field</button></div>`);
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn-primary" onclick="cmsAddBlockSave()">＋ Add field</button></div>`);
+  cmsAddType('text');
 }
-async function cmsAddBlockSave(p){
-  const sec=$('cb_sec').value.trim(),k=$('cb_key').value.trim(),v=$('cb_val').value;
-  if(!sec||!k){toast('Section and key are required','error');return}
+function cmsAddPage(p){CMS_ADD.page=p;cmsAddBlock(p,'');}
+function cmsAddSec(v){
+  const ni=$('cb_sec_new');if(!ni)return;
+  ni.style.display=v==='__new__'?'':'none';
+  if(v!=='__new__')CMS_ADD.sec=v;
+}
+function cmsAddType(t){
+  CMS_ADD.type=t;
+  const chips=[...document.querySelectorAll('#drawerBody .chip')];
+  const typeBtn=chips.find(c=>c.textContent.includes(CMS_ADD_TYPE[t].l));
+  chips.forEach(c=>c.classList.remove('on'));
+  if(typeBtn)typeBtn.classList.add('on');
+  const hint=$('cb_type_hint');if(hint)hint.textContent=`${CMS_ADD_TYPE[t].ic} ${CMS_ADD_TYPE[t].l} — ${cmsAddTypeDesc(t)}`;
+  cmsAddKey();
+  cmsAddVal();
+}
+function cmsAddTypeDesc(t){
+  return {text:'One line of text (titles, buttons, labels, phone…).',long:'Rich text — gets the WYSIWYG + </> HTML editor after save.',img:'Image URL — gets the 🖼 media picker button.',color:'Hex color — gets a color picker.',url:'Link URL — gets an open-in-new-tab button.',num:'Number — gets a numeric input.',bool:'Yes/No — gets a checkbox (stores 1/0).'}[t]||'';
+}
+function cmsAddEffSec(){
+  const ss=$('cb_sec');if(!ss)return CMS_ADD.sec;
+  if(ss.value==='__new__'){const ni=$('cb_sec_new');return (ni&&ni.value.trim())||'';}
+  return ss.value;
+}
+function cmsAddKey(){
+  const k=$('cb_key').value.trim();
+  const hint=$('cb_key_hint'),fix=$('cb_fix');if(!hint)return;
+  if(!k){hint.textContent='';if(fix)fix.style.display='none';cmsAddSug('');return;}
+  const ft=cmsFilterTypeOf(k);
+  const matches=ft===CMS_ADD.type;
+  const effSec=cmsAddEffSec();
+  const dup=effSec&&CMS.blocks.some(b=>b.page===CMS_ADD.page&&b.section===effSec&&b.k===k);
+  const dupBn=CMS_ADD.bn&&effSec&&CMS.blocks.some(b=>b.page===CMS_ADD.page&&b.section===effSec&&b.k===k+'_bn');
+  if(!/^[a-z0-9_]+$/.test(k)){hint.innerHTML='<span style="color:var(--danger)">Lowercase a-z, 0-9, underscore only.</span>';if(fix)fix.style.display='none';}
+  else if(dup||dupBn){hint.innerHTML='<span style="color:var(--danger)">This key already exists (or its _bn twin).</span>';if(fix)fix.style.display='none';}
+  else if(matches){hint.innerHTML=`<span style="color:var(--accent)">✓ renders as ${CMS_ADD_TYPE[ft].ic} ${CMS_ADD_TYPE[ft].l}</span>`;if(fix)fix.style.display='none';}
+  else{hint.innerHTML=`<span style="color:var(--danger)">This key renders as ${CMS_ADD_TYPE[ft].ic} ${CMS_ADD_TYPE[ft].l}, not ${CMS_ADD_TYPE[CMS_ADD.type].ic} ${CMS_ADD_TYPE[CMS_ADD.type].l}.</span>`;if(fix)fix.style.display='';}
+  cmsAddSug(k);
+}
+function cmsAddSug(k){
+  const el=$('cb_sug');if(!el)return;
+  const type=CMS_ADD_TYPE[CMS_ADD.type]||CMS_ADD_TYPE.text;
+  const all=type.sug.filter(s=>!k||s.includes(k)||k.includes(s));
+  const sug=all.slice(0,6);
+  const mismatchFix=type.fix&&k&&cmsFilterTypeOf(k)!==CMS_ADD.type;
+  el.innerHTML=(sug.length?sug.map(s=>`<button class="chip" onclick="cmsAddPick('${esc(s)}')">${esc(s)}</button>`).join(''):'')+
+    (mismatchFix?`<button class="chip" onclick="cmsAddPick('${esc(k)}${type.fix}')">${esc(k)}${type.fix}</button>`:'');
+}
+function cmsAddPick(k){const el=$('cb_key');if(el){el.value=k;cmsAddKey();}const v=$('cb_val');if(v&&v.tagName==='INPUT'&&v.type==='text')v.focus();}
+function cmsAddFixKey(){
+  const k=$('cb_key').value.trim();if(!k)return;
+  const type=CMS_ADD_TYPE[CMS_ADD.type];if(!type.fix)return;
+  const el=$('cb_key');el.value=k+type.fix;cmsAddKey();
+}
+function cmsAddVal(){
+  const w=$('cb_valwrap');if(!w)return;
+  const t=CMS_ADD.type;
+  const imgBtn=`<button class="btn-ghost" onclick="cmsMediaDrawer('__cmsadd__')" data-tip="Pick or upload an image" data-tip-pos="top">🖼 Media</button>`;
+  if(t==='long')w.innerHTML=`<textarea id="cb_val" rows="4" placeholder="Text or HTML — rich editor after save"></textarea>`;
+  else if(t==='color')w.innerHTML=`<div style="display:flex;gap:6px"><input type="color" id="cb_color" value="#2F80ED" oninput="cb_val.value=this.value" style="width:44px;height:34px;padding:2px;flex-shrink:0"><input id="cb_val" placeholder="#2F80ED"></div>`;
+  else if(t==='img')w.innerHTML=`<div style="display:flex;gap:6px"><input id="cb_val" placeholder="https://…/image.png" style="flex:1">${imgBtn}</div>`;
+  else if(t==='num')w.innerHTML=`<input id="cb_val" type="number" placeholder="0">`;
+  else if(t==='url')w.innerHTML=`<input id="cb_val" placeholder="https://…">`;
+  else if(t==='bool')w.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="cb_bool" onchange="cb_val.value=this.checked?'1':'0'" style="width:16px;height:16px;accent-color:var(--primary)"><span class="c-sub">On = 1, Off = 0</span></div><input type="hidden" id="cb_val" value="1">`;
+  else w.innerHTML=`<input id="cb_val" placeholder="Short text…">`;
+}
+function cmsAddCloneOpts(){
+  return CMS.blocks.filter(b=>!b.k.endsWith('_bn')).map(b=>`<option value="${esc(b.page)}|${esc(b.section)}|${esc(b.k)}">${CMS_PAGES[b.page]?CMS_PAGES[b.page].ic+' ':''}${esc(b.page)} · ${esc(CMS_SEC_LABEL[b.section]||b.section)} · ${esc(b.k)}</option>`).join('');
+}
+function cmsAddClone(){
+  const v=$('cb_dup').value;if(!v)return;
+  const [pg,sec,k]=v.split('|');
+  const b=CMS.blocks.find(x=>x.page===pg&&x.section===sec&&x.k===k);
+  if(!b)return;
+  CMS_ADD.page=pg;CMS_ADD.sec=sec;
+  const ps=$('cb_page');if(ps)ps.value=pg;
+  const ss=$('cb_sec');
+  const secs=[...new Set(CMS.blocks.filter(x=>x.page===pg).map(x=>x.section))];
+  if(ss){ss.innerHTML=secs.map(s=>`<option value="${esc(s)}" ${s===sec?'selected':''}>${esc(CMS_SEC_LABEL[s]||s)}</option>`).join('')+`<option value="__new__">＋ New section…</option>`;ss.value=sec;}
+  const ni=$('cb_sec_new');if(ni)ni.style.display='none';
+  const t=cmsFilterTypeOf(k);CMS_ADD.type=t;
+  const chips=[...document.querySelectorAll('#drawerBody .chip')];
+  chips.forEach(c=>c.classList.remove('on'));
+  const btn=chips.find(c=>c.textContent.includes(CMS_ADD_TYPE[t].l));
+  if(btn)btn.classList.add('on');
+  const hint=$('cb_type_hint');if(hint)hint.textContent=`${CMS_ADD_TYPE[t].ic} ${CMS_ADD_TYPE[t].l} — ${cmsAddTypeDesc(t)}`;
+  const ke=$('cb_key');if(ke)ke.value=k;
+  cmsAddVal();
+  const ve=$('cb_val');if(ve)ve.value=b.v||'';
+  cmsAddKey();
+}
+async function cmsAddBlockSave(){
+  const page=CMS_ADD.page;
+  let sec=$('cb_sec').value;
+  if(sec==='__new__')sec=$('cb_sec_new').value.trim();
+  const k=$('cb_key').value.trim();
+  const v=$('cb_val')?$('cb_val').value:'';
+  const bn=$('cb_bn')&&$('cb_bn').checked;
+  if(!page||!sec){toast('Page and section are required','error');return}
   if(!/^[a-z0-9_]+$/.test(k)){toast('Key must be lowercase (a-z, 0-9, _)','error');return}
-  if(CMS.blocks.some(b=>b.page===p&&b.section===sec&&b.k===k)){toast('That block already exists','error');return}
-  const d=await admin({action:'cms-save',blocks:[{page:p,section:sec,k,v}]});
-  if(d.ok){toast('Custom field added','ok');closeDrawer();renderCms();}else toast(d.error||'Failed','error');
+  const ft=cmsFilterTypeOf(k);
+  if(ft!==CMS_ADD.type){toast(`Key renders as ${CMS_ADD_TYPE[ft].l} — use the 🔧 Fix key button or pick a suggestion`,'error');return}
+  if(CMS.blocks.some(b=>b.page===page&&b.section===sec&&b.k===k)){toast('That block already exists','error');return}
+  if(bn&&CMS.blocks.some(b=>b.page===page&&b.section===sec&&b.k===k+'_bn')){toast('The বাংলা version (_bn) already exists','error');return}
+  const blocks=[{page,section:sec,k,v}];
+  if(bn)blocks.push({page,section:sec,k:k+'_bn',v:''});
+  const d=await admin({action:'cms-save',blocks});
+  if(d.ok){
+    toast(`Custom field added${bn?' + বাংলা':''}`,'ok');
+    closeDrawer();
+    renderCms();
+    setTimeout(()=>{cmsSecJump(page,sec);setTimeout(()=>{gsHighlight('[data-cms="'+esc(page)+'|'+esc(sec)+'|'+esc(k)+'"]');},150);},80);
+  }else toast(d.error||'Failed','error');
 }
 async function cmsDelBlock(p,sec,k){
   if(!confirm('Remove custom field '+k+'?'))return;
@@ -3579,6 +3724,13 @@ async function cmsMediaUpload() {
   else toast(d.error || 'Failed', 'error');
 }
 function cmsMediaPick(url) {
+  if (CMS_MEDIA_INSERT === '__cmsadd__') {
+    const el = $('cb_val');
+    if (el) { el.value = url; toast('Image URL inserted — finish & save the field', 'ok'); }
+    CMS_MEDIA_INSERT = null;
+    closeDrawer();
+    return;
+  }
   if (CMS_MEDIA_INSERT) {
     const el = document.querySelector('[data-cms="' + CSS.escape(CMS_MEDIA_INSERT) + '"]');
     if (el) { el.value = url; el.dispatchEvent(new Event('input')); }
