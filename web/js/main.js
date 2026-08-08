@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.__KRTheme = applyBrand; // re-apply on theme toggle
     try {
-      fetch('api/app-theme').then(r => r.json()).then(d => {
+      fetch('/api/app-theme').then(r => r.json()).then(d => {
         if (d && d.ok && d.theme) {
           BRAND = d.theme;
           applyBrand();
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.disabled = true; btn.textContent = '…';
       try {
         const fd = new FormData(cf);
-        const res = await fetch('../api/contact', {
+        const res = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn = nf.querySelector('button');
       btn.disabled = true;
       try {
-        const res = await fetch('../api/newsletter', {
+        const res = await fetch('/api/newsletter', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: val })
         });
