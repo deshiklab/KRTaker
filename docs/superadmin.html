@@ -246,6 +246,8 @@ td .c-name:hover{color:var(--primary)}
 .drawer-overlay{position:fixed;inset:0;background:rgba(10,20,40,.45);backdrop-filter:blur(3px);z-index:120;display:flex;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity .22s}
 .drawer-overlay.open{opacity:1;pointer-events:auto}
 .drawer{width:min(560px,100vw);height:100%;background:var(--card);border-left:1px solid var(--border);box-shadow:-18px 0 60px rgba(10,25,50,.28);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .24s ease}
+.drawer.wide{width:min(1200px,96vw)}
+@media (max-width:640px){.drawer.wide{width:100vw}}
 .drawer.open{transform:none}
 .drawer-h{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid var(--border)}
 .drawer-h .dh-t{font-size:14.5px;font-weight:800;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -419,7 +421,7 @@ const moneyC=n=>{const a=Math.abs(n);let s=a>=10000000?(a/10000000).toFixed(2)+'
 function toast(msg,type){const d=document.createElement('div');const t=type==='ok'||type==='success'?'ok':(type==='error'?'error':'info');d.className='toast '+t;d.textContent=msg;$('toastWrap').appendChild(d);setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),300)},2800)}
 function badge(st){const map={'active':'b-green','Active':'b-green','Paid':'b-green','Success':'b-green','Resolved':'b-green','Closed':'b-green','OK':'b-green','ready':'b-green','trial':'b-purple','Trial':'b-purple','pending':'b-orange','Pending':'b-orange','suspended':'b-orange','Suspended':'b-orange','Open':'b-red','cancelled':'b-gray','Cancelled':'b-gray','In Progress':'b-blue','Answered':'b-blue','High':'b-red','Urgent':'b-red','Normal':'b-blue','Low':'b-gray','disabled':'b-gray','unconfigured':'b-orange','active':'b-green'};return`<span class="badge ${map[st]||'b-gray'}">${esc(st)}</span>`}
 function openDrawer(title,body,foot){$('drawerTitle').textContent=title;$('drawerBody').innerHTML=body;$('drawerFoot').innerHTML=foot||'';$('drawerOverlay').classList.add('open');$('drawer').classList.add('open');}
-function closeDrawer(){$('drawerOverlay').classList.remove('open');$('drawer').classList.remove('open');}
+function closeDrawer(){$('drawerOverlay').classList.remove('open');$('drawer').classList.remove('open');$('drawer').classList.remove('wide');}
 function closeSidebar(){$('sidebar').classList.remove('open');$('sbBackdrop').classList.remove('show');}
 function toggleSidebar(){$('sidebar').classList.toggle('open');$('sbBackdrop').classList.toggle('show');}
 let SIDE_MINI=false;try{SIDE_MINI=localStorage.getItem('krtaker_admin_side')==='mini'}catch(e){}
@@ -1796,34 +1798,121 @@ function cmsVal(p,s,k){
 }
 function cmsPreview(){
   const p=CMS.tab;
-  const get=(s,k)=>cmsVal(p,s,k);
-  /* build a generic preview from whatever blocks the current page has */
-  const heroTitle=get('hero','title')||get('section','title')||CMS_PAGES[p].l;
-  const heroBadge=get('hero','badge')||'';
-  const heroSub=get('hero','subtitle')||get('section','subtitle')||'';
-  const heroImg=get('hero','image')||get('hero','banner')||'';
-  const cta1=get('cta','primary')||get('hero','primary')||'';
-  const cta2=get('cta','secondary')||get('hero','secondary')||'';
-  const sections=CMS.blocks.filter(b=>b.page===p&&!b.k.endsWith('_bn')).reduce((m,b)=>{if(!m[b.section])m[b.section]=[];m[b.section].push(b);return m;},{});
-  const cards=['cards','featcards','items','steps','modules','roles','cols'].map(sec=>Object.keys(sections).includes(sec)?sections[sec].filter(b=>/_title$|_desc$|_bn$/.test(b.k)).slice(0,8):[]).flat().filter(b=>b.v);
+  const f=CMS_PAGES[p].f||'index.html';
+  /* Realistic preview: loads the actual page, applies the current draft values
+     (unsaved edits included), and renders it in a wide viewport with device toggles. */
   openDrawer('👁 Preview — '+CMS_PAGES[p].l,
-    `<div style="border:1px solid var(--border);border-radius:14px;overflow:hidden">
-      <div style="background:linear-gradient(135deg,#0F1B2D,#1E5EB8);color:#fff;padding:34px 26px;text-align:center">
-        ${heroBadge?`<div style="display:inline-block;background:rgba(47,128,237,.25);border:1px solid rgba(47,128,237,.5);color:#9CC4FF;font-size:11px;font-weight:700;border-radius:99px;padding:4px 14px;margin-bottom:14px">${esc(heroBadge)}</div>`:''}
-        <h2 style="font-size:26px;font-weight:800;margin-bottom:8px">${esc(heroTitle)}</h2>
-        <p style="opacity:.85;font-size:14px;max-width:480px;margin:0 auto 18px">${esc(heroSub)}</p>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">${cta1?`<span style="background:var(--grad);color:#fff;font-size:13px;font-weight:700;border-radius:10px;padding:9px 18px">${esc(cta1)}</span>`:''}${cta2?`<span style="border:1px solid rgba(255,255,255,.4);color:#fff;font-size:13px;font-weight:600;border-radius:10px;padding:9px 18px">${esc(cta2)}</span>`:''}</div>
-        ${heroImg?`<img src="${esc(heroImg)}" alt="" style="max-width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin-top:16px">`:''}
-      </div>
-      <div style="padding:24px 26px">
-        ${cards.length?`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">${cards.map(c=>`<div style="border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:13px;font-weight:700;margin-bottom:4px">${esc(String(c.v).slice(0,60))}</div></div>`).join('')}</div>`:`<div class="empty">No card content for this page.</div>`}
-        <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text-soft);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center">
-          ${get('contact','email')?`<span>📧 ${esc(get('contact','email'))}</span>`:''}${get('contact','phone')?`<span>📞 ${esc(get('contact','phone'))}</span>`:''}${get('contact','address')?`<span>📍 ${esc(get('contact','address'))}</span>`:''}
-        </div>
-        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);text-align:center;font-size:11.5px;color:var(--text-mute)">${esc(get('footer','tagline')||get('section','tagline')||'')}</div>
-      </div>
-    </div>`,
-    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button><a class="btn-outline" href="https://krtaker.com/${CMS_PAGES[p].f||'index.html'}" target="_blank">↗ Live page</a><button class="btn-primary" onclick="cmsSaveAll()">💾 Save & refresh</button></div>`);
+    `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+      <span class="c-sub" style="font-size:11px">Viewport</span>
+      <button class="chip on" onclick="cmsPvW('100%',this)">🖥 Desktop</button>
+      <button class="chip" onclick="cmsPvW('768px',this)">💻 Tablet</button>
+      <button class="chip" onclick="cmsPvW('390px',this)">📱 Mobile</button>
+      <span style="flex:1"></span>
+      <button class="btn-ghost" onclick="cmsPreview()" data-tip="Re-render with your latest edits" data-tip-pos="top">⟳ Refresh</button>
+    </div>
+    <div style="background:#0F1B2D;border-radius:14px;padding:14px;display:flex;justify-content:center;overflow:auto">
+      <iframe id="cmsPvFrame" sandbox="allow-same-origin allow-scripts" style="width:100%;height:64vh;border:0;border-radius:10px;background:#fff;transition:width .25s"></iframe>
+    </div>
+    <div class="c-sub" style="margin-top:8px;font-size:11px">Rendering the real <b>${esc(f)}</b> with your current draft values — save to publish.</div>`,
+    `<div class="dr-actions"><button class="btn-ghost" onclick="closeDrawer()">Close</button><a class="btn-outline" href="https://krtaker.com/${esc(f)}" target="_blank">↗ Live page</a><button class="btn-primary" onclick="cmsSaveAll()">💾 Save & refresh</button></div>`);
+  $('drawer').classList.add('wide');
+  cmsPvRender(p,f);
+}
+function cmsPvW(w,btn){
+  const fr=$('cmsPvFrame');if(!fr)return;
+  fr.style.width=w;
+  if(btn){const bar=btn.parentNode;if(bar)bar.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');}
+}
+async function cmsPvRender(p,f){
+  const fr=$('cmsPvFrame');if(!fr)return;
+  fr.srcdoc='<html><body style="font-family:sans-serif;padding:40px;color:#8A94A6;text-align:center">Loading preview…</body></html>';
+  try{
+    const r=await fetch(f,{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const doc=new DOMParser().parseFromString(await r.text(),'text/html');
+    /* strip the real hydrator so it can't overwrite our injected draft values */
+    doc.querySelectorAll('script[src*="cms-hydrate"]').forEach(s=>s.remove());
+    /* <base> so relative css/js/img resolve against the site origin */
+    const base=doc.createElement('base');base.href=location.origin+'/';
+    doc.head.insertBefore(base,doc.head.firstChild);
+    /* make the page's i18n follow the panel's EN/BN toggle (contained to this iframe) */
+    const lp=doc.createElement('script');
+    lp.textContent="(function(){try{var g=Storage.prototype.getItem;Storage.prototype.getItem=function(k){if(k==='krtaker_lang')return '"+((CMS.lang==='bn')?'bn':'en')+"';return g.call(this,k);};}catch(e){}})();";
+    doc.head.insertBefore(lp,doc.head.firstChild);
+    cmsPvInject(doc,p);
+    /* page scripts (i18n.js etc.) run after srcdoc loads and can overwrite our
+       injected values — re-apply the draft on DOMContentLoaded (after their
+       handlers) and again on load as a final pass */
+    const ri=doc.createElement('script');
+    ri.textContent="(function(){function go(){try{if(window.parent&&parent.cmsPvInject){parent.cmsPvInject(document,'"+p+"');}}catch(e){}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',go);}else{setTimeout(go,0);}})();";
+    doc.body.appendChild(ri);
+    fr.srcdoc='<!doctype html>'+doc.documentElement.outerHTML;
+    fr.onload=()=>{try{if(fr.contentDocument)cmsPvInject(fr.contentDocument,p);}catch(e){}};
+  }catch(e){
+    fr.srcdoc='<html><body style="font-family:sans-serif;padding:30px;color:#C0392B"><h3>Preview failed</h3><p style="font-size:13px">'+esc(String(e&&e.message||e))+'</p><p style="font-size:12px;color:#8A94A6">Could not load '+esc(f)+' from this origin.</p></body></html>';
+  }
+}
+function cmsPvInject(doc,p){
+  const bn=CMS.lang==='bn';
+  const map={};
+  CMS.blocks.forEach(b=>{map[b.page+'.'+b.section+'.'+b.k]=b.v;});
+  const val=k=>{
+    if(bn){const bnv=map[k+'_bn'];if(bnv!==undefined&&bnv!=='')return bnv;return undefined;}
+    const v=map[k];return (v!==undefined&&v!=='')?v:undefined;
+  };
+  const isHtml=v=>/<(p|div|h[1-6]|ul|ol|li|br|img|strong|b|em|i|u|a|span|blockquote|hr|table|tr|td|th)[\s>]/i.test(String(v));
+  /* visibility: hide sections switched off in the panel */
+  const vis=CMS.vis||{};
+  doc.querySelectorAll('[data-cms],[data-cms-html],[data-cms-ph],[data-cms-href],[data-cms-img]').forEach(el=>{
+    const k=el.getAttribute('data-cms')||el.getAttribute('data-cms-html')||el.getAttribute('data-cms-ph')||el.getAttribute('data-cms-href')||el.getAttribute('data-cms-img')||'';
+    const parts=k.split('.');
+    if(parts.length>=2&&vis[parts[0]+'.'+parts[1]]===0){
+      const host=el.closest('section')||el.closest('.page-hero')||el.closest('.cta-section')||el.closest('footer')||el;
+      if(host&&host!==el)host.style.display='none';else el.style.display='none';
+    }
+  });
+  doc.querySelectorAll('[data-cms]').forEach(el=>{
+    const v=val(el.getAttribute('data-cms'));
+    if(v!==undefined){if(isHtml(v))el.innerHTML=v;else el.textContent=v;}
+  });
+  doc.querySelectorAll('[data-cms-html]').forEach(el=>{
+    const v=val(el.getAttribute('data-cms-html'));
+    if(v!==undefined)el.innerHTML=v;
+  });
+  doc.querySelectorAll('[data-cms-bn]').forEach(el=>{
+    if(!bn)return;
+    const v=val(el.getAttribute('data-cms-bn'));
+    if(v!==undefined)el.textContent=v;
+  });
+  doc.querySelectorAll('[data-cms-ph]').forEach(el=>{
+    const v=val(el.getAttribute('data-cms-ph'));
+    if(v!==undefined)el.setAttribute('placeholder',v);
+  });
+  doc.querySelectorAll('[data-cms-href]').forEach(el=>{
+    const v=val(el.getAttribute('data-cms-href'));
+    if(v!==undefined)el.setAttribute('href',v);
+  });
+  doc.querySelectorAll('[data-cms-img]').forEach(el=>{
+    const v=val(el.getAttribute('data-cms-img'));
+    if(v!==undefined)el.setAttribute('src',v);
+  });
+  doc.querySelectorAll('[data-cms-alt]').forEach(el=>{
+    const v=val(el.getAttribute('data-cms-alt'));
+    if(v!==undefined)el.setAttribute('alt',v);
+  });
+  doc.querySelectorAll('meta[data-cms-content]').forEach(m=>{
+    const v=val(m.getAttribute('data-cms-content'));
+    if(v!==undefined)m.setAttribute('content',v);
+  });
+  let appliedTitle=null;
+  doc.querySelectorAll('[data-cms-title]').forEach(el=>{
+    const v=val(el.getAttribute('data-cms-title'));
+    if(v!==undefined){el.textContent=v;appliedTitle=v;}
+  });
+  if(!appliedTitle){
+    const t=val('seo.'+p+'.meta_title');
+    if(t)doc.title=t;
+  }
 }
 /* Ctrl+S saves CMS (and any drawer) */
 document.addEventListener('keydown',e=>{
